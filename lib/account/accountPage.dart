@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/account/aboutUsPage.dart';
+import 'package:gcargo/account/changeLanguagePage.dart';
 import 'package:gcargo/account/couponPage.dart';
+import 'package:gcargo/account/faqPage.dart';
 import 'package:gcargo/account/favoritePage.dart';
 import 'package:gcargo/account/newsPromotionPage.dart';
 import 'package:gcargo/account/profilePage.dart';
+import 'package:gcargo/account/userManualPage.dart';
 import 'package:gcargo/account/widgets/WalletCard.dart';
 import 'package:gcargo/constants.dart';
 
@@ -58,13 +62,33 @@ class AccountPage extends StatelessWidget {
                   _buildMenuItem('ที่อยู่ของฉัน', onTap: () {}),
                   _buildMenuItem('ยืนยันบัญชีธนาคาร', showVerified: true, onTap: () {}),
                   _buildMenuItem('ความปลอดภัย', onTap: () {}),
-                  _buildMenuItem('เปลี่ยนภาษา', onTap: () {}),
+                  _buildMenuItem(
+                    'เปลี่ยนภาษา',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
+                    },
+                  ),
 
                   _buildSectionTitle('ความช่วยเหลือ'),
                   _buildMenuItem('ติดต่อเจ้าหน้าที่', onTap: () {}),
-                  _buildMenuItem('คู่มือการใช้งาน', onTap: () {}),
-                  _buildMenuItem('คำถามที่พบบ่อย', onTap: () {}),
-                  _buildMenuItem('เกี่ยวกับเรา', onTap: () {}),
+                  _buildMenuItem(
+                    'คู่มือการใช้งาน',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserManualPage()));
+                    },
+                  ),
+                  _buildMenuItem(
+                    'คำถามที่พบบ่อย',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => FaqPage()));
+                    },
+                  ),
+                  _buildMenuItem(
+                    'เกี่ยวกับเรา',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUsPage()));
+                    },
+                  ),
 
                   const SizedBox(height: 24),
 
