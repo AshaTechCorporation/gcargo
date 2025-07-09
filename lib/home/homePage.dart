@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/home/exchangeRatePage.dart';
+import 'package:gcargo/home/notificationPage.dart';
+import 'package:gcargo/home/packageDepositPage.dart';
+import 'package:gcargo/home/shippingRatePage.dart';
+import 'package:gcargo/home/trackingOwnerPage.dart';
+import 'package:gcargo/home/transportCalculatePage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -36,7 +42,12 @@ class HomePage extends StatelessWidget {
               const SizedBox(width: 12),
               const Icon(Icons.delete_outline, color: Colors.black),
               const SizedBox(width: 12),
-              const Icon(Icons.notifications_none, color: Colors.black),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
+                },
+                child: Icon(Icons.notifications_none, color: Colors.black),
+              ),
             ],
           ),
         ),
@@ -114,7 +125,16 @@ class HomePage extends StatelessWidget {
                   child: Row(
                     children: [
                       // 🔹 ฝั่งซ้าย: กล่องรูปใหญ่เต็ม 50%
-                      Expanded(child: Center(child: Image.asset('assets/images/ex1.png', fit: BoxFit.cover))),
+                      Expanded(
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => PackageDepositPage()));
+                            },
+                            child: Image.asset('assets/images/ex1.png', fit: BoxFit.cover),
+                          ),
+                        ),
+                      ),
 
                       // 🔸 เส้นแบ่งกลาง
                       Container(width: 1, height: 100, margin: const EdgeInsets.symmetric(horizontal: 12), color: Colors.grey.shade300),
@@ -163,10 +183,10 @@ class HomePage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildServiceItem('assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
-                    _buildServiceItem('assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
-                    _buildServiceItem('assets/icons/cal1.png', 'คำนวณค่าบริการ'),
-                    _buildServiceItem('assets/icons/box1.png', 'ตามพัสดุของฉัน'),
+                    _buildServiceItem(context, 'assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
+                    _buildServiceItem(context, 'assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
+                    _buildServiceItem(context, 'assets/icons/cal1.png', 'คำนวณค่าบริการ'),
+                    _buildServiceItem(context, 'assets/icons/box1.png', 'ตามพัสดุของฉัน'),
                   ],
                 ),
               ),
@@ -215,13 +235,26 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceItem(String iconPath, String label) {
-    return Column(
-      children: [
-        Image.asset(iconPath, width: 36, height: 36),
-        const SizedBox(height: 6),
-        SizedBox(width: 64, child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-      ],
+  Widget _buildServiceItem(BuildContext context, String iconPath, String label) {
+    return GestureDetector(
+      onTap: () {
+        if (label == 'อัตราค่าขนส่ง') {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ShippingRatePage()));
+        } else if (label == 'อัตราแลกเปลี่ยน') {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangeRatePage()));
+        } else if (label == 'คำนวณค่าบริการ') {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => TransportCalculatePage()));
+        } else if (label == 'ตามพัสดุของฉัน') {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => TrackingOwnerPage()));
+        }
+      },
+      child: Column(
+        children: [
+          Image.asset(iconPath, width: 36, height: 36),
+          const SizedBox(height: 6),
+          SizedBox(width: 64, child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
+        ],
+      ),
     );
   }
 

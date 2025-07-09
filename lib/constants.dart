@@ -9,3 +9,6 @@ const kTextButtonColor = Color(0xFFFFFFFF);
 const kdefaultTextColor = Color(0xFF000000);
 const kHintTextColor = Color(0xFF5F657B);
 const kTextRedWanningColor = Color(0xFFD70F1C);
+const kCardLine1Color = Color(0xFF003C8D);
+const kCardLine2Color = Color(0xFF2C78C6);
+const kCardLine3Color = Color(0xFF58B3FF);
