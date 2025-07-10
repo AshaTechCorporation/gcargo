@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/parcel/claimDetailPage.dart';
 
 class ParcelPage extends StatefulWidget {
   const ParcelPage({super.key});
@@ -8,175 +9,127 @@ class ParcelPage extends StatefulWidget {
   State<ParcelPage> createState() => _ParcelPageState();
 }
 
-class _ParcelPageState extends State<ParcelPage> with SingleTickerProviderStateMixin {
+class _ParcelPageState extends State<ParcelPage> with TickerProviderStateMixin {
   late TabController _tabController;
+  late TabController _statusTabController;
+  int selectedTopTab = 2; // ✅ default: แจ้งพัสดุมีปัญหา
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _statusTabController = TabController(length: 4, vsync: this);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _statusTabController.dispose();
     super.dispose();
+  }
+
+  Widget _buildTopTabButton(String label, int index) {
+    final bool isSelected = selectedTopTab == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => selectedTopTab = index),
+        child: Container(
+          height: 36,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected ? kButtonColor : Colors.white,
+            border: Border.all(color: kButtonColor),
+            borderRadius: BorderRadius.only(
+              topLeft: index == 0 ? const Radius.circular(8) : Radius.zero,
+              bottomLeft: index == 0 ? const Radius.circular(8) : Radius.zero,
+              topRight: index == 2 ? const Radius.circular(8) : Radius.zero,
+              bottomRight: index == 2 ? const Radius.circular(8) : Radius.zero,
+            ),
+          ),
+          child: Text(label, style: TextStyle(color: isSelected ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 14)),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text('พัสดุของฉัน', style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search, color: Colors.black))],
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: kButtonColor,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: kButtonColor,
-          tabs: const [Tab(text: 'ทั้งหมด'), Tab(text: 'กำลังส่ง'), Tab(text: 'เสร็จสิ้น')],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 🔹 Tabs บนสุด (แก้ให้เรียงกระจายเหมือนในภาพ)
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [_buildTopTabButton('สถานะออเดอร์', 0), _buildTopTabButton('สถานะพัสดุ', 1), _buildTopTabButton('แจ้งพัสดุมีปัญหา', 2)],
+              ),
+            ),
+
+            // ช่องค้นหา
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Colors.white,
+              child: Container(
+                height: 36,
+                decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                alignment: Alignment.centerLeft,
+                child: const Text('ค้นหาเลขที่เอกสาร', style: TextStyle(color: Colors.grey)),
+              ),
+            ),
+
+            // Tabs สถานะ
+            Container(
+              color: Colors.white,
+              child: TabBar(
+                controller: _statusTabController,
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                indicatorColor: kButtonColor,
+                indicatorWeight: 2.5,
+                tabs: const [Tab(text: 'ทั้งหมด(4)'), Tab(text: 'รอดำเนินการ(1)'), Tab(text: 'สำเร็จ(1)'), Tab(text: 'ยกเลิก(1)')],
+              ),
+            ),
+
+            const SizedBox(height: 12),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Align(alignment: Alignment.centerLeft, child: Text('02/07/2025', style: TextStyle(color: Colors.black54))),
+            ),
+
+            const SizedBox(height: 12),
+
+            // รายการพัสดุ
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 6, offset: const Offset(0, 2))],
+                ),
+                child: ListTile(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ClaimDetailPage()));
+                  },
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  leading: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(color: kButtonColor.withOpacity(0.1), shape: BoxShape.circle),
+                    child: Image.asset('assets/icons/document-text.png', width: 24, height: 24, color: kButtonColor),
+                  ),
+                  title: const Text('เลขที่เอกสาร C181211003', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('8516.00฿'),
+                  trailing: const Text('ยกเลิก', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
-      body: TabBarView(controller: _tabController, children: [_buildParcelList('all'), _buildParcelList('shipping'), _buildParcelList('completed')]),
-      floatingActionButton: FloatingActionButton(onPressed: () {}, backgroundColor: kButtonColor, child: const Icon(Icons.add, color: Colors.white)),
-    );
-  }
-
-  Widget _buildParcelList(String type) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        return _buildParcelCard(index, type);
-      },
-    );
-  }
-
-  Widget _buildParcelCard(int index, String type) {
-    final List<Map<String, dynamic>> parcels = [
-      {
-        'id': 'GC001234567',
-        'from': 'กรุงเทพฯ',
-        'to': 'เชียงใหม่',
-        'status': 'กำลังขนส่ง',
-        'statusColor': Colors.orange,
-        'date': '15 ธ.ค. 2567',
-        'price': '120 บาท',
-      },
-      {
-        'id': 'GC001234568',
-        'from': 'เชียงใหม่',
-        'to': 'ภูเก็ต',
-        'status': 'เสร็จสิ้น',
-        'statusColor': Colors.green,
-        'date': '14 ธ.ค. 2567',
-        'price': '180 บาท',
-      },
-      {
-        'id': 'GC001234569',
-        'from': 'กรุงเทพฯ',
-        'to': 'ขอนแก่น',
-        'status': 'รอรับพัสดุ',
-        'statusColor': Colors.blue,
-        'date': '13 ธ.ค. 2567',
-        'price': '95 บาท',
-      },
-      {
-        'id': 'GC001234570',
-        'from': 'ภูเก็ต',
-        'to': 'กรุงเทพฯ',
-        'status': 'กำลังขนส่ง',
-        'statusColor': Colors.orange,
-        'date': '12 ธ.ค. 2567',
-        'price': '160 บาท',
-      },
-      {
-        'id': 'GC001234571',
-        'from': 'ขอนแก่น',
-        'to': 'อุดรธานี',
-        'status': 'เสร็จสิ้น',
-        'statusColor': Colors.green,
-        'date': '11 ธ.ค. 2567',
-        'price': '75 บาท',
-      },
-    ];
-
-    final parcel = parcels[index % parcels.length];
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.grey.withValues(alpha: 0.1), spreadRadius: 1, blurRadius: 6, offset: const Offset(0, 2))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(parcel['id'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(color: parcel['statusColor'].withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-                child: Text(parcel['status'], style: TextStyle(fontSize: 12, color: parcel['statusColor'], fontWeight: FontWeight.w500)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Icon(Icons.location_on, color: Colors.grey.shade600, size: 16),
-              const SizedBox(width: 8),
-              Text('${parcel['from']} → ${parcel['to']}', style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.calendar_today, color: Colors.grey.shade600, size: 16),
-                  const SizedBox(width: 8),
-                  Text(parcel['date'], style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
-                ],
-              ),
-              Text(parcel['price'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kButtonColor)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: kButtonColor),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('ติดตาม', style: TextStyle(color: kButtonColor)),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kButtonColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('รายละเอียด', style: TextStyle(color: Colors.white)),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

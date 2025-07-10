@@ -4,6 +4,7 @@ const String publicUrl = '';
 const String publicUrl2 = '';
 
 const kButtonColor = Color(0xFF012849);
+const kSubButtonColor = Color(0xFF3C5A9A);
 const kButtondiableColor = Color(0xFFE9EEFF);
 const kTextButtonColor = Color(0xFFFFFFFF);
 const kdefaultTextColor = Color(0xFF000000);

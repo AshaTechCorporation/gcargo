@@ -3,6 +3,8 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/home/exchangeRatePage.dart';
 import 'package:gcargo/home/notificationPage.dart';
 import 'package:gcargo/home/packageDepositPage.dart';
+import 'package:gcargo/home/productDetailPage.dart';
+import 'package:gcargo/home/rewardRedeemPage.dart';
 import 'package:gcargo/home/shippingRatePage.dart';
 import 'package:gcargo/home/trackingOwnerPage.dart';
 import 'package:gcargo/home/transportCalculatePage.dart';
@@ -144,25 +146,30 @@ class HomePage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                              decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
-                              child: Row(
-                                children: [
-                                  // ข้อความ
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: const [
-                                        Text('100', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFFF9800))),
-                                        SizedBox(height: 2),
-                                        Text('แต้มของขวัญ', style: TextStyle(fontSize: 13, color: Colors.black87)),
-                                      ],
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => RewardRedeemPage()));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
+                                child: Row(
+                                  children: [
+                                    // ข้อความ
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: const [
+                                          Text('100', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFFF9800))),
+                                          SizedBox(height: 2),
+                                          Text('แต้มของขวัญ', style: TextStyle(fontSize: 13, color: Colors.black87)),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  // รูปของขวัญด้านขวา
-                                  Image.asset('assets/icons/gif.png', width: 30, height: 30),
-                                ],
+                                    // รูปของขวัญด้านขวา
+                                    Image.asset('assets/icons/gif.png', width: 30, height: 30),
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -209,15 +216,23 @@ class HomePage extends StatelessWidget {
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
                   children: [
-                    _buildProductCard('assets/images/unsplash0.png', 'เสื้อแขนสั้น', 'เสื้อแขนสั้นไว้ใส่ไปเดินเล่นลายกราฟิก สำหรับผู้ชาย', '฿10'),
                     _buildProductCard(
+                      context,
+                      'assets/images/unsplash0.png',
+                      'เสื้อแขนสั้น',
+                      'เสื้อแขนสั้นไว้ใส่ไปเดินเล่นลายกราฟิก สำหรับผู้ชาย',
+                      '฿10',
+                    ),
+                    _buildProductCard(
+                      context,
                       'assets/images/unsplash1.png',
                       'รองเท้าบาส',
                       'รองเท้าบาสไว้ใส่เล่นกีฬาบาสเก็ตบอลเหมะสำหรับพื้นไม้ปาเก้',
                       '฿100',
                     ),
-                    _buildProductCard('assets/images/unsplash3.png', 'นาฬิกาข้อมือ', 'นาฬิกาแฟชั่น ดีไซน์ล้ำ ทันสมัย เท่ทุกมุมมอง', '฿999'),
+                    _buildProductCard(context, 'assets/images/unsplash3.png', 'นาฬิกาข้อมือ', 'นาฬิกาแฟชั่น ดีไซน์ล้ำ ทันสมัย เท่ทุกมุมมอง', '฿999'),
                     _buildProductCard(
+                      context,
                       'assets/images/unsplash2.png',
                       'เสื้อคลุม',
                       'เสื้อฮู้ดฟรีไซน์มีหลายโทนสีสามารถใส่ได้ทั้งชาย และหญิง กันลม กันฝน ใส่เดินเที่ยวก็เท่',
@@ -258,54 +273,53 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildProductCard(String img, String title, String desc, String price) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 4)],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-                child: Image.asset(img, fit: BoxFit.cover, height: 130, width: double.infinity),
-              ),
-              const Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildProductCard(BuildContext context, String img, String title, String desc, String price) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const ProductDetailPage()));
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 4)],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                const SizedBox(height: 4),
-
-                /// ✅ กล่องนี้ช่วยให้ desc เต็ม 2 บรรทัดแบบชัดเจน
-                ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minHeight: 32,
-                    maxHeight: 32, // ประมาณ 2 บรรทัดพอดี fontSize 12
-                  ),
-                  child: Text(
-                    desc,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    maxLines: 2,
-                    overflow: TextOverflow.visible,
-                    softWrap: true,
-                  ),
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                  child: Image.asset(img, fit: BoxFit.cover, height: 130, width: double.infinity),
                 ),
-
-                const SizedBox(height: 4),
-                Text(price, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black)),
+                const Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  const SizedBox(height: 4),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 32, maxHeight: 32),
+                    child: Text(
+                      desc,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      maxLines: 2,
+                      overflow: TextOverflow.visible,
+                      softWrap: true,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(price, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black)),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
