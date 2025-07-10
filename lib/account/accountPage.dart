@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/aboutUsPage.dart';
+import 'package:gcargo/account/addressListPage.dart';
+import 'package:gcargo/account/bankVerifyPage.dart';
 import 'package:gcargo/account/changeLanguagePage.dart';
 import 'package:gcargo/account/couponPage.dart';
 import 'package:gcargo/account/faqPage.dart';
@@ -59,8 +61,19 @@ class AccountPage extends StatelessWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
                     },
                   ),
-                  _buildMenuItem('ที่อยู่ของฉัน', onTap: () {}),
-                  _buildMenuItem('ยืนยันบัญชีธนาคาร', showVerified: true, onTap: () {}),
+                  _buildMenuItem(
+                    'ที่อยู่ของฉัน',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AddressListPage()));
+                    },
+                  ),
+                  _buildMenuItem(
+                    'ยืนยันบัญชีธนาคาร',
+                    showVerified: true,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
+                    },
+                  ),
                   _buildMenuItem('ความปลอดภัย', onTap: () {}),
                   _buildMenuItem(
                     'เปลี่ยนภาษา',

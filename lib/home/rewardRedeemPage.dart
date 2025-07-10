@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/home/rewardHistoryPage.dart';
+import 'package:gcargo/home/rewardSuccessPage.dart';
 
 class RewardRedeemPage extends StatefulWidget {
   const RewardRedeemPage({super.key});
@@ -79,19 +81,21 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-            const Text('แลกของรางวัล', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-            const Spacer(),
+            IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+            Text('แลกของรางวัล', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+            Spacer(),
             Container(
-              margin: const EdgeInsets.only(right: 16),
+              margin: EdgeInsets.only(right: 16),
               height: 36,
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.grey),
+                  side: BorderSide(color: Colors.grey),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                onPressed: () {},
-                child: const Text('ประวัติ', style: TextStyle(color: Colors.black54)),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const RewardHistoryPage()));
+                },
+                child: Text('ประวัติ', style: TextStyle(color: Colors.black54)),
               ),
             ),
           ],
@@ -101,14 +105,14 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
         children: [
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
               itemCount: rewards.length,
               itemBuilder: (context, index) => _buildRewardCard(index),
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -121,16 +125,18 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
                     Text('แต้มทั้งหมดของฉัน', style: TextStyle(color: Colors.black54)),
                   ],
                 ),
-                const SizedBox(width: 24),
+                SizedBox(width: 24),
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: kButtonColor,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    onPressed: () {},
-                    child: const Text('แลกของรางวัล', style: TextStyle(fontSize: 16, color: Colors.white)),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const RewardSuccessPage()));
+                    },
+                    child: Text('แลกของรางวัล', style: TextStyle(fontSize: 16, color: Colors.white)),
                   ),
                 ),
               ],

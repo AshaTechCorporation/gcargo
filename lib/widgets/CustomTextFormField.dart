@@ -1,4 +1,3 @@
-// ✅ สร้างวิดเจ็ตฟอร์ม TextFormField ที่ใช้ซ้ำได้
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 
@@ -8,6 +7,8 @@ class CustomTextFormField extends StatefulWidget {
   final TextEditingController controller;
   final bool isPassword;
   final bool isRequired;
+  final int maxLines;
+  final TextInputType keyboardType;
 
   const CustomTextFormField({
     super.key,
@@ -16,6 +17,8 @@ class CustomTextFormField extends StatefulWidget {
     required this.controller,
     this.isPassword = false,
     this.isRequired = true,
+    this.maxLines = 1,
+    this.keyboardType = TextInputType.text,
   });
 
   @override
@@ -37,6 +40,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         const SizedBox(height: 8),
         TextFormField(
           controller: widget.controller,
+          keyboardType: widget.keyboardType,
+          maxLines: widget.isPassword ? 1 : widget.maxLines,
           obscureText: widget.isPassword && _obscureText,
           style: const TextStyle(color: Colors.black),
           decoration: InputDecoration(
