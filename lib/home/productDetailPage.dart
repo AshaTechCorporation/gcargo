@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/home/cartPage.dart';
+import 'package:gcargo/home/purchaseBillPage.dart';
 
 class ProductDetailPage extends StatefulWidget {
   const ProductDetailPage({super.key});
@@ -85,7 +86,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 borderRadius: BorderRadius.circular(6), // ✅ ขอบมนเล็กน้อย
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const PurchaseBillPage()));
+            },
             child: const Text('สั่งซื้อสินค้า', style: TextStyle(fontSize: 16, color: Colors.white)),
           ),
         ),
