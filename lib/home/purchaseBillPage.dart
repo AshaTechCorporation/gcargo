@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/home/couponSelectionPage.dart';
+import 'package:gcargo/home/deliveryMethodPage.dart';
 
 class PurchaseBillPage extends StatefulWidget {
   const PurchaseBillPage({super.key});
@@ -20,7 +22,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+        leading: GestureDetector(onTap: () => Navigator.pop(context), child: Icon(Icons.arrow_back_ios_new, color: Colors.black)),
         title: const Text('บิลสั่งซื้อสินค้า', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
       body: Column(
@@ -31,7 +33,12 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
                 const SizedBox(height: 16),
-                const Text('รูปแบบการขนส่ง', style: TextStyle(fontWeight: FontWeight.bold)),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const DeliveryMethodPage()));
+                  },
+                  child: Text('รูปแบบการขนส่ง', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
                 const SizedBox(height: 4),
                 const Text('ขนส่งทางเรือ', style: TextStyle(color: Colors.grey)),
                 const Divider(height: 32),
@@ -44,12 +51,17 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                 const SizedBox(height: 8),
                 const Text('หมายเหตุ หมายเหตุ หมายเหตุ หมายเหตุ หมายเหตุ หมายเหตุ หมายเหตุ'),
                 const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('คูปองส่วนลด', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black54),
-                  ],
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CouponSelectionPage()));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('คูปองส่วนลด', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black54),
+                    ],
+                  ),
                 ),
                 const Divider(height: 24),
                 Row(
