@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
+import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
+import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/exchangeRatePage.dart';
 import 'package:gcargo/home/notificationPage.dart';
 import 'package:gcargo/home/packageDepositPage.dart';
@@ -8,9 +12,26 @@ import 'package:gcargo/home/rewardRedeemPage.dart';
 import 'package:gcargo/home/shippingRatePage.dart';
 import 'package:gcargo/home/trackingOwnerPage.dart';
 import 'package:gcargo/home/transportCalculatePage.dart';
+import 'package:image_picker/image_picker.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final TextEditingController searchController = TextEditingController();
+
+  // Initialize HomeController
+  final HomeController homeController = Get.put(HomeController());
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,24 +47,48 @@ class HomePage extends StatelessWidget {
           automaticallyImplyLeading: false,
           title: Row(
             children: [
-              const Text('A100', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black)),
-              const SizedBox(width: 12),
+              Text('A100', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black)),
+              SizedBox(width: 12),
               Expanded(
                 child: Container(
                   height: 36,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
                   child: Row(
                     children: [
-                      const Expanded(child: Text('ค้นหาสินค้า', style: TextStyle(color: Colors.grey))),
-                      Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
+                      Expanded(
+                        child: TextFormField(
+                          controller: searchController, // 👈 เพิ่ม controller ตามที่คุณกำหนดไว้
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                            hintText: 'ค้นหาสินค้า',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: InputBorder.none,
+                          ),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          showImagePickerBottomSheet(
+                            context: context,
+                            onImagePicked: (XFile image) {
+                              print('📸 ได้รูป: ${image.path}');
+                              // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
+                            },
+                          );
+                        },
+                        child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
+                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              const Icon(Icons.delete_outline, color: Colors.black),
-              const SizedBox(width: 12),
+
+              SizedBox(width: 12),
+              Icon(Icons.delete_outline, color: Colors.black),
+              SizedBox(width: 12),
               GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
@@ -64,7 +109,7 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.asset('assets/images/slidpic.png')),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // 🔹 Stack รูป + ช่องค้นหา + ข้อความ
               Stack(
@@ -85,11 +130,11 @@ class HomePage extends StatelessWidget {
                     top: 16,
                     child: Container(
                       height: 36,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                       child: Row(
                         children: [
-                          const Expanded(child: Text('ค้นหาสินค้าจากคลัง', style: TextStyle(color: Colors.grey))),
+                          Expanded(child: Text('ค้นหาสินค้าจากคลัง', style: TextStyle(color: Colors.grey))),
                           Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
                         ],
                       ),
@@ -113,12 +158,12 @@ class HomePage extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -151,7 +196,7 @@ class HomePage extends StatelessWidget {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => RewardRedeemPage()));
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                 decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
                                 child: Row(
                                   children: [
@@ -159,7 +204,7 @@ class HomePage extends StatelessWidget {
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: const [
+                                        children: [
                                           Text('100', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFFF9800))),
                                           SizedBox(height: 2),
                                           Text('แต้มของขวัญ', style: TextStyle(fontSize: 13, color: Colors.black87)),
@@ -172,8 +217,8 @@ class HomePage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            const Text('นำไปแลกของรางวัล', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            SizedBox(height: 6),
+                            Text('นำไปแลกของรางวัล', style: TextStyle(fontSize: 12, color: Colors.grey)),
                           ],
                         ),
                       ),
@@ -182,11 +227,11 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               // 🔹 เมนูบริการ
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -198,51 +243,94 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               // 🔹 สินค้าแนะนำ
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text('รายการสินค้าแนะนำ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.78, // ไม่ควรเกินนี้ ไม่งั้น desc ไม่พอ
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  children: [
-                    _buildProductCard(
-                      context,
-                      'assets/images/unsplash0.png',
-                      'เสื้อแขนสั้น',
-                      'เสื้อแขนสั้นไว้ใส่ไปเดินเล่นลายกราฟิก สำหรับผู้ชาย',
-                      '฿10',
-                    ),
-                    _buildProductCard(
-                      context,
-                      'assets/images/unsplash1.png',
-                      'รองเท้าบาส',
-                      'รองเท้าบาสไว้ใส่เล่นกีฬาบาสเก็ตบอลเหมะสำหรับพื้นไม้ปาเก้',
-                      '฿100',
-                    ),
-                    _buildProductCard(context, 'assets/images/unsplash3.png', 'นาฬิกาข้อมือ', 'นาฬิกาแฟชั่น ดีไซน์ล้ำ ทันสมัย เท่ทุกมุมมอง', '฿999'),
-                    _buildProductCard(
-                      context,
-                      'assets/images/unsplash2.png',
-                      'เสื้อคลุม',
-                      'เสื้อฮู้ดฟรีไซน์มีหลายโทนสีสามารถใส่ได้ทั้งชาย และหญิง กันลม กันฝน ใส่เดินเที่ยวก็เท่',
-                      '฿499',
-                    ),
-                  ],
-                ),
-              ),
+              SizedBox(height: 12),
 
-              const SizedBox(height: 24),
+              // ใช้ Obx เพื่อ listen การเปลี่ยนแปลงข้อมูล
+              Obx(() {
+                if (homeController.isLoading.value) {
+                  return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
+                }
+
+                if (homeController.hasError.value) {
+                  return Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.red.shade200),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(Icons.error_outline, color: Colors.red.shade600, size: 48),
+                          SizedBox(height: 12),
+                          Text(
+                            homeController.errorMessage.value,
+                            style: TextStyle(color: Colors.red.shade700, fontSize: 16, fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => homeController.refreshData(),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white),
+                            child: Text('ลองใหม่'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                if (homeController.searchItems.isEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.all(32),
+                    child: Center(child: Text('ไม่พบสินค้า', style: TextStyle(fontSize: 16, color: Colors.grey))),
+                  );
+                }
+
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.78,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                    ),
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: homeController.searchItems.length,
+                    itemBuilder: (context, index) {
+                      final item = homeController.searchItems[index];
+
+                      return ProductCardFromAPI(
+                        imageUrl: item['pic_url'] ?? '',
+                        title: item['title'] ?? 'ไม่มีชื่อสินค้า',
+                        seller: item['seller_nick'] ?? 'ไม่มีข้อมูลร้านค้า',
+                        price: '฿${item['price'] ?? 0}',
+                        detailUrl: item['detail_url'] ?? '',
+                        onTap: () {
+                          final rawNumIid = item['num_iid'];
+                          final String numIidStr = (rawNumIid is int || rawNumIid is String) ? rawNumIid.toString() : '0';
+
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: numIidStr)));
+                        },
+                      );
+                    },
+                  ),
+                );
+              }),
+
+              SizedBox(height: 24),
             ],
           ),
         ),
@@ -269,57 +357,6 @@ class HomePage extends StatelessWidget {
           const SizedBox(height: 6),
           SizedBox(width: 64, child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
         ],
-      ),
-    );
-  }
-
-  Widget _buildProductCard(BuildContext context, String img, String title, String desc, String price) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const ProductDetailPage()));
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 4)],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-                  child: Image.asset(img, fit: BoxFit.cover, height: 130, width: double.infinity),
-                ),
-                const Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                  const SizedBox(height: 4),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 32, maxHeight: 32),
-                    child: Text(
-                      desc,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                      maxLines: 2,
-                      overflow: TextOverflow.visible,
-                      softWrap: true,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(price, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black)),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

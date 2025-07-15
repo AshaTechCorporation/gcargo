@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
-import 'package:gcargo/login/welcomePage.dart';
+import 'package:get/get.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // ✅ Register HomeController ใน GetX dependency injection
+  Get.put(HomeController());
   runApp(const MyApp());
 }
 
@@ -12,8 +16,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return GetMaterialApp(
+      title: 'G-Cargo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         appBarTheme: AppBarTheme(
