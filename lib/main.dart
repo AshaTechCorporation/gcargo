@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
+import 'package:gcargo/login/loginPage.dart';
 import 'package:get/get.dart';
 
 void main() {
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'SukhumvitSet',
       ),
-      home: FirstPage(),
+      home: LoginPage(),
     );
   }
 }

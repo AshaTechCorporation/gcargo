@@ -16,7 +16,7 @@ class HomeController extends GetxController {
     super.onInit();
     log('🚀 HomeController onInit called');
     // เรียก API ทันทีเมื่อ controller ถูกสร้าง
-    searchItemsFromAPI('good');
+    searchItemsFromAPI('Shirt');
   }
 
   Future<void> searchItemsFromAPI(String query) async {

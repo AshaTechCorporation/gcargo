@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-const String publicUrl = '';
-const String publicUrl2 = '';
+const String publicUrl = 'cargo-api.dev-asha9.com';
+const String baseUrl = 'https://cargo-api.dev-asha9.com';
+const String socketUrl = 'http://185.78.166.46:50000';
 
 const kButtonColor = Color(0xFF012849);
 const kSubButtonColor = Color(0xFF3C5A9A);

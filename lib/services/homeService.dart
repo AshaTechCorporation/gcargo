@@ -39,31 +39,7 @@ class HomeService {
 
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
-
-      // 🔒 ตรวจสอบโครงสร้างเบื้องต้น
-      // if (data is! Map ||
-      //     data['status'] == 'error' ||
-      //     data['success'] == 0 ||
-      //     data['item'] == null ||
-      //     data['item']['items'] == null ||
-      //     data['item']['items']['item'] == null) {
-      //   //throw ApiException('ไม่สามารถโหลดสินค้า กรุณาลองใหม่อีกครั้ง');
-      // }
-
-      // final dynamic items = data['item']['items']['item'];
-      // // // กรณี item เป็น Map (index-keyed)
-      // // if (items is Map) {
-      // //   return items.values.toList(); // แปลงเป็น List
-      // // }
-
-      // // กรณี item เป็น List ปกติ
-      // if (items is List) {
-      //   return items;
-      // }
       return data;
-
-      // โครงสร้างไม่รู้จัก
-      //throw ApiException('รูปแบบข้อมูลสินค้าไม่ถูกต้อง');
     } else {
       try {
         final data = convert.jsonDecode(response.body);

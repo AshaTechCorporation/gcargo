@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/utils/helpers.dart';
+import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/controllers/product_detail_controller.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
 import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
@@ -19,28 +22,86 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   int selectedImage = 0;
   final TextEditingController searchController = TextEditingController();
 
+  // Initialize ProductDetailController
+  late final ProductDetailController productController;
+
+  @override
+  void initState() {
+    super.initState();
+    // สร้าง controller และเรียก API
+    productController = Get.put(ProductDetailController(), tag: widget.num_iid);
+    productController.getItemDetail(widget.num_iid);
+  }
+
+  @override
+  void dispose() {
+    // ลบ controller เมื่อออกจากหน้า
+    Get.delete<ProductDetailController>(tag: widget.num_iid);
+    super.dispose();
+  }
+
   List<String> sizes = ['S', 'M', 'L', 'XL', 'XXL'];
   List<String> images = ['assets/images/unsplash0.png', 'assets/images/unsplash1.png', 'assets/images/unsplash2.png', 'assets/images/unsplash3.png'];
 
   Widget buildImageSlider() {
-    return Column(
-      children: [
-        ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.asset(images[selectedImage], width: double.infinity, fit: BoxFit.cover)),
-        SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            images.length,
-            (index) => Container(
-              margin: EdgeInsets.symmetric(horizontal: 4),
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: selectedImage == index ? Colors.black : Colors.grey.shade300),
+    return Obx(() {
+      if (productController.isLoading.value) {
+        return Container(
+          height: 200,
+          decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(12)),
+          child: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      final picUrl = formatImageUrl(productController.picUrl);
+
+      return Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child:
+                picUrl.isNotEmpty
+                    ? Image.network(
+                      picUrl,
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: double.infinity,
+                          height: 200,
+                          color: Colors.grey.shade200,
+                          child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          width: double.infinity,
+                          height: 200,
+                          color: Colors.grey.shade200,
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                    )
+                    : Image.asset(images[selectedImage], width: double.infinity, height: 200, fit: BoxFit.cover),
+          ),
+          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              images.length,
+              (index) => Container(
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: selectedImage == index ? Colors.black : Colors.grey.shade300),
+              ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget buildSizeSelector() {
@@ -185,9 +246,68 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   buildImageSlider(),
                   SizedBox(height: 16),
 
-                  Text('เสื้อแขนสั้น', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 6),
-                  Text('¥10', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  // แสดงข้อมูลสินค้าจาก API
+                  Obx(() {
+                    if (productController.isLoading.value) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 20,
+                            width: 200,
+                            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                          ),
+                          SizedBox(height: 8),
+                          Container(
+                            height: 24,
+                            width: 100,
+                            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                          ),
+                        ],
+                      );
+                    }
+
+                    if (productController.hasError.value) {
+                      return Column(
+                        children: [
+                          Icon(Icons.error_outline, color: Colors.red, size: 48),
+                          SizedBox(height: 8),
+                          Text(productController.errorMessage.value, style: TextStyle(color: Colors.red), textAlign: TextAlign.center),
+                          SizedBox(height: 8),
+                          ElevatedButton(onPressed: () => productController.refreshData(), child: Text('ลองใหม่')),
+                        ],
+                      );
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(productController.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 6),
+                        Row(
+                          children: [
+                            if (productController.promotionPrice != productController.originalPrice) ...[
+                              Text(
+                                '¥${productController.promotionPrice.toStringAsFixed(0)}',
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                '¥${productController.originalPrice.toStringAsFixed(0)}',
+                                style: TextStyle(fontSize: 16, color: Colors.grey, decoration: TextDecoration.lineThrough),
+                              ),
+                            ] else ...[
+                              Text('¥${productController.price.toStringAsFixed(0)}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            ],
+                          ],
+                        ),
+                        if (productController.area.isNotEmpty) ...[
+                          SizedBox(height: 4),
+                          Text('จาก: ${productController.area}', style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
+                        ],
+                      ],
+                    );
+                  }),
                   SizedBox(height: 16),
 
                   Row(
@@ -217,7 +337,43 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   buildColorOptions(),
 
                   SizedBox(height: 20),
-                  Text('เสื้อแขนสั้นใช้ใส่ไปเดินเล่นสบายๆ...', style: TextStyle(color: Colors.grey)),
+
+                  // แสดงคำอธิบายสินค้า
+                  Obx(() {
+                    if (productController.isLoading.value) {
+                      return Column(
+                        children: [
+                          Container(
+                            height: 16,
+                            width: double.infinity,
+                            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                          ),
+                          SizedBox(height: 4),
+                          Container(
+                            height: 16,
+                            width: 200,
+                            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('รายละเอียดสินค้า', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        SizedBox(height: 8),
+                        Text(productController.title, style: TextStyle(color: Colors.grey.shade700)),
+                        if (productController.detailUrl.isNotEmpty) ...[
+                          SizedBox(height: 8),
+                          Text(
+                            'ลิงก์สินค้า: ${productController.detailUrl}',
+                            style: TextStyle(color: Colors.blue, fontSize: 12, decoration: TextDecoration.underline),
+                          ),
+                        ],
+                      ],
+                    );
+                  }),
 
                   // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
                   Column(

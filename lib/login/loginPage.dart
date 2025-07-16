@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/home/firstPage.dart';
+import 'package:gcargo/services/loginService.dart';
 import 'package:gcargo/widgets/CustomTextFormField.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,12 +21,47 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  String device_no = '';
+  String notify_token = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      getdeviceId();
+    });
+  }
+
+  void getdeviceId() async {
+    final deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isAndroid) {
+      // ดึงข้อมูล Android ID
+      final androidInfo = await deviceInfo.androidInfo;
+      device_no = androidInfo.id;
+      print('android: ${device_no}');
+    } else if (Platform.isIOS) {
+      // ดึงข้อมูล Identifier for Vendor (iOS)
+      final iosInfo = await deviceInfo.iosInfo;
+      device_no = iosInfo.identifierForVendor!;
+      print('iOS Identifier: ${iosInfo.identifierForVendor}');
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Form(
             key: _formKey,
             child: Column(
@@ -27,23 +69,23 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 // 🔹 โลโก้ด้านขวาบน
                 Align(alignment: Alignment.topRight, child: Image.asset('assets/icons/Logo.png', width: 80)),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // 🔹 หัวข้อ
-                const Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kButtonColor)),
-                const SizedBox(height: 4),
+                Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kButtonColor)),
+                SizedBox(height: 4),
 
                 // 🔹 คำอธิบาย
-                const Text('บริการขนส่งระหว่างประเทศรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน', style: TextStyle(fontSize: 13, color: kHintTextColor)),
-                const SizedBox(height: 24),
+                Text('บริการขนส่งระหว่างประเทศรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน', style: TextStyle(fontSize: 13, color: kHintTextColor)),
+                SizedBox(height: 24),
 
                 // 🔹 Email
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 CustomTextFormField(label: 'อีเมล', hintText: 'กรุณากรอกอีเมล', controller: _emailController),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 CustomTextFormField(label: 'รหัสผ่าน', hintText: '••••••••', controller: _passwordController, isPassword: true),
-                const SizedBox(height: 6),
-                const Text('รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร', style: TextStyle(fontSize: 12, color: kHintTextColor)),
+                SizedBox(height: 6),
+                Text('รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร', style: TextStyle(fontSize: 12, color: kHintTextColor)),
 
                 // 🔹 ลืมรหัสผ่าน
                 Align(
@@ -51,10 +93,10 @@ class _LoginPageState extends State<LoginPage> {
                   child: TextButton(
                     onPressed: () {},
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                    child: const Text('ลืมรหัสผ่าน', style: TextStyle(color: kHintTextColor)),
+                    child: Text('ลืมรหัสผ่าน', style: TextStyle(color: kHintTextColor)),
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
 
                 // 🔹 ปุ่มเข้าสู่ระบบ
                 SizedBox(
@@ -63,7 +105,103 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
-                        // ดำเนินการเข้าสู่ระบบ
+                        try {
+                          final token = await LoginService.login(_emailController.text, _passwordController.text, device_no, notify_token);
+                          if (token != null) {
+                            final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+                            final SharedPreferences prefs = await _prefs;
+                            await prefs.setString('token', token['token']);
+                            await prefs.setInt('userID', token['userID']);
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                          }
+                        } on ClientException catch (e) {
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: Text('Setting.warning'),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Payment.agree'),
+                                    ),
+                                  ],
+                                ),
+                          );
+                        } on SocketException catch (e) {
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: Text('Setting.warning'),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Payment.agree'),
+                                    ),
+                                  ],
+                                ),
+                          );
+                        } on HttpException catch (e) {
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: Text('Setting.warning'),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('$e'),
+                                    ),
+                                  ],
+                                ),
+                          );
+                        } on FormatException catch (e) {
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: Text('$e'),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Payment.agree'),
+                                    ),
+                                  ],
+                                ),
+                          );
+                        } on Exception catch (e) {
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: Text('แจ้งเตือน'),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('ตกลง'),
+                                    ),
+                                  ],
+                                ),
+                          );
+                        } catch (e) {
+                          print(e);
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -71,31 +209,31 @@ class _LoginPageState extends State<LoginPage> {
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 18)),
+                    child: Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 18)),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // 🔹 ข้อความ "หรือ"
-                const Center(child: Text('หรือ', style: TextStyle(color: kHintTextColor))),
-                const SizedBox(height: 16),
+                Center(child: Text('หรือ', style: TextStyle(color: kHintTextColor))),
+                SizedBox(height: 16),
 
                 // 🔹 ไอคอน + สร้างบัญชีใหม่ในแถวเดียวกัน
                 Row(
                   children: [
                     Image.asset('assets/icons/g.png', width: 40),
-                    const SizedBox(width: 20),
+                    SizedBox(width: 20),
                     Image.asset('assets/icons/f.png', width: 40),
-                    const SizedBox(width: 20),
+                    SizedBox(width: 20),
                     Image.asset('assets/icons/line.png', width: 40),
-                    const Spacer(),
+                    Spacer(),
                     TextButton(
                       onPressed: () {},
                       style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: kButtonColor),
                       child: Row(
                         children: [
-                          const Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: 16)),
-                          const SizedBox(width: 8),
+                          Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: 16)),
+                          SizedBox(width: 8),
                           Container(
                             width: 28,
                             height: 28,
@@ -104,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
                               shape: BoxShape.circle,
                               border: Border.all(color: kButtonColor, width: 1.6),
                             ),
-                            child: const Icon(CupertinoIcons.right_chevron, size: 18, color: Colors.white),
+                            child: Icon(CupertinoIcons.right_chevron, size: 18, color: Colors.white),
                           ),
                         ],
                       ),
