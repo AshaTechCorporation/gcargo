@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:gcargo/utils/ApiExeption.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -43,9 +44,9 @@ class HomeService {
     } else {
       try {
         final data = convert.jsonDecode(response.body);
-        //throw ApiException(data['message'] ?? 'เกิดข้อผิดพลาดจากเซิร์ฟเวอร์');
+        throw ApiException(data['message'] ?? 'เกิดข้อผิดพลาดจากเซิร์ฟเวอร์');
       } catch (_) {
-        //throw ApiException('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ (${response.statusCode})');
+        throw ApiException('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ (${response.statusCode})');
       }
     }
   }
@@ -72,22 +73,22 @@ class HomeService {
         final isPropsNameEmpty = item['props_name'] is String && (item['props_name'] as String).trim().isEmpty;
 
         if (isPropsListEmpty && isPropsNameEmpty) {
-          //throw ApiException("ไม่พบข้อมูลรายละเอียดสินค้า (props_list & props_name ว่างเปล่า)");
+          throw ApiException("ไม่พบข้อมูลรายละเอียดสินค้า (props_list & props_name ว่างเปล่า)");
         }
 
         return item;
       } else {
         // กรณีไม่มี item
-        //throw ApiException("ไม่พบข้อมูลสินค้า หรือ API ส่งข้อมูลผิดพลาด");
+        throw ApiException("ไม่พบข้อมูลสินค้า หรือ API ส่งข้อมูลผิดพลาด");
       }
     } else {
       // final data = convert.jsonDecode(response.body);
       // throw ApiException(data['message']);
       try {
         final data = convert.jsonDecode(response.body);
-        //throw ApiException(data['message'] ?? 'เกิดข้อผิดพลาดที่ไม่รู้จัก');
+        throw ApiException(data['message'] ?? 'เกิดข้อผิดพลาดที่ไม่รู้จัก');
       } catch (e) {
-        //throw ApiException('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ (${response.statusCode})');
+        throw ApiException('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ (${response.statusCode})');
       }
     }
   }
@@ -103,11 +104,11 @@ class HomeService {
       if (data['status'] == "success") {
         return data['items']['item']['name'];
       } else {
-        //throw ApiException(data['message']);
+        throw ApiException(data['message']);
       }
     } else {
       final data = convert.jsonDecode(response.body);
-      //throw ApiException(data['message']);
+      throw ApiException(data['message']);
     }
   }
 
@@ -135,7 +136,7 @@ class HomeService {
       final response = await request.close();
 
       if (response.statusCode != HttpStatus.ok) {
-        //throw ApiException('HTTP ${response.statusCode}');
+        throw ApiException('HTTP ${response.statusCode}');
       }
 
       final body = await response.transform(convert.utf8.decoder).join();
@@ -145,10 +146,10 @@ class HomeService {
       if (data is Map && data.containsKey('item') && data['item'] is Map && data['item']['items'] is Map && data['item']['items']['item'] is List) {
         return data['item']['items']['item'] as List<dynamic>;
       } else {
-        //throw ApiException('ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง');
+        throw ApiException('ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง');
       }
     } on SocketException catch (e) {
-      //throw ApiException('Network error: $e');
+      throw ApiException('Network error: $e');
     } finally {
       client.close(force: true);
     }

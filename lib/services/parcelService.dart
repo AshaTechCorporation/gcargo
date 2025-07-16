@@ -45,6 +45,22 @@ class ParcelService {
     }
   }
 
+  ///ดึงข้อมูลออเดอร์ตามไอดี
+  static Future<OrdersPageNew> getIDeliveryOrderById({required int id}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/api/delivery_orders/$id');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return OrdersPageNew.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
   //นำไปโชว์ที่หน้ารายการ สถานะ นำเข้าถูกต้อง
   static Future<List<LegalImport>> getImportLegal() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

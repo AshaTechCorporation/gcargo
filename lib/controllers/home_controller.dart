@@ -89,7 +89,7 @@ class HomeController extends GetxController {
 
   // Method สำหรับ refresh ข้อมูล
   Future<void> refreshData() async {
-    await searchItemsFromAPI('语言衬衫');
+    await searchItemsFromAPI('Shirt');
   }
 
   // Method สำหรับค้นหาใหม่

@@ -1,82 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/controllers/claim_detail_controller.dart';
 
-class ClaimDetailPage extends StatelessWidget {
-  const ClaimDetailPage({super.key});
+class ClaimDetailPage extends StatefulWidget {
+  const ClaimDetailPage({super.key, required this.deliveryOrderId});
+  final int deliveryOrderId;
 
-  Widget _buildClaimCard({
-    required String shopCode,
-    required String note,
-    required String image,
-    required String name,
-    required String price,
-    required String size,
-    required String color,
-    required int qty,
-    required List<String> previewImages,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 🔹 Header
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(shopCode, style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text(note, style: const TextStyle(color: Colors.black54, fontSize: 12)),
-          ],
-        ),
-        const SizedBox(height: 12),
+  @override
+  State<ClaimDetailPage> createState() => _ClaimDetailPageState();
+}
 
-        // 🔹 Row with Image + Info + Qty
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.asset(image, width: 80, height: 80, fit: BoxFit.cover)),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('$price x1', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(name, style: TextStyle(color: kButtonColor)),
-                  const SizedBox(height: 6),
-                  Row(children: [_buildTag(size), const SizedBox(width: 8), _buildTag(color)]),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const Text('จำนวนที่เคลม', style: TextStyle(fontSize: 12, color: Colors.black54)),
-                Text(qty.toString(), style: const TextStyle(fontSize: 16)),
-              ],
-            ),
-          ],
-        ),
+class _ClaimDetailPageState extends State<ClaimDetailPage> {
+  late ClaimDetailController claimController;
 
-        const SizedBox(height: 12),
-        const Text('หมายเหตุ', style: TextStyle(color: Colors.black54)),
-        const Text('-', style: TextStyle(fontSize: 14)),
-
-        const SizedBox(height: 12),
-        const Text('รูปภาพหลักฐานการเคลม', style: TextStyle(color: Colors.black54)),
-        const SizedBox(height: 6),
-
-        // 🔹 รูปภาพ Preview
-        Row(
-          children:
-              previewImages
-                  .map(
-                    (img) => Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.asset(img, width: 80, height: 80, fit: BoxFit.cover)),
-                    ),
-                  )
-                  .toList(),
-        ),
-      ],
-    );
+  @override
+  void initState() {
+    super.initState();
+    claimController = Get.put(ClaimDetailController());
+    // เรียก API ทันทีเมื่อเข้าหน้า
+    claimController.getDeliveryOrderById(widget.deliveryOrderId);
   }
 
   Widget _buildTag(String label) {
@@ -87,20 +30,176 @@ class ClaimDetailPage extends StatelessWidget {
     );
   }
 
+  Widget _buildOrderInfo() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.grey.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 2))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('ข้อมูลออเดอร์', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 12),
+          _buildInfoRow('รหัสออเดอร์', claimController.orderCode),
+          _buildInfoRow('PO Number', claimController.poNumber),
+          _buildInfoRow('วันที่', claimController.orderDate),
+          _buildInfoRow('สถานะ', claimController.getStatusText(claimController.status)),
+          _buildInfoRow('ผู้รับ', claimController.memberName),
+          _buildInfoRow('เบอร์โทร', claimController.memberPhone),
+          _buildInfoRow('คนขับ', claimController.driverName),
+          _buildInfoRow('เบอร์คนขับ', claimController.driverPhone),
+          _buildInfoRow('หมายเหตุ', claimController.note),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 100, child: Text(label, style: const TextStyle(color: Colors.black54))),
+          const Text(': '),
+          Expanded(child: Text(value, style: const TextStyle(fontWeight: FontWeight.w500))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductList() {
+    final orderLists = claimController.orderLists;
+
+    if (orderLists.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade300)),
+        child: const Center(child: Text('ไม่มีรายการสินค้า', style: TextStyle(color: Colors.grey, fontSize: 16))),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:
+            orderLists.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+
+              return Column(children: [if (index > 0) const Divider(), if (index > 0) const SizedBox(height: 16), _buildProductCard(item)]);
+            }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildProductCard(dynamic item) {
+    // ตรวจสอบว่า item เป็น Deilvery object หรือ Map
+    final productName = item is Map ? (item['product_name'] ?? 'ไม่มีชื่อสินค้า') : (item.product_name ?? 'ไม่มีชื่อสินค้า');
+    final productQty = item is Map ? (item['product_qty'] ?? 1) : (item.product_qty ?? 1);
+    final productShop = item is Map ? (item['product_shop'] ?? 'ไม่ระบุร้านค้า') : (item.product_shop ?? 'ไม่ระบุร้านค้า');
+    final productCategory = item is Map ? (item['product_category'] ?? 'ไม่ระบุหมวดหมู่') : (item.product_category ?? 'ไม่ระบุหมวดหมู่');
+    final productImage = item is Map ? (item['product_image'] ?? '') : (item.product_image ?? '');
+    final options = item is Map ? (item['options'] ?? []) : [];
+    final rawPrice = item is Map ? item['product_price'] : item.product_price;
+    final parsedPrice = double.tryParse(rawPrice.toString()) ?? 0.0;
+    final productPrice = parsedPrice.toStringAsFixed(2);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(productShop, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(productCategory, style: const TextStyle(color: Colors.black54, fontSize: 12)),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Product Info
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Product Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child:
+                  productImage.isNotEmpty
+                      ? Image.network(
+                        productImage.startsWith('//') ? 'https:$productImage' : productImage,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 80,
+                            height: 80,
+                            color: Colors.grey.shade200,
+                            child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                          );
+                        },
+                      )
+                      : Container(width: 80, height: 80, color: Colors.grey.shade200, child: const Icon(Icons.image, color: Colors.grey)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${productPrice}฿ x$productQty', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(productName, style: TextStyle(color: kButtonColor)),
+                  const SizedBox(height: 6),
+                  // Options
+                  if (options.isNotEmpty)
+                    Wrap(
+                      spacing: 8,
+                      children:
+                          options.map<Widget>((option) {
+                            final optionName = option is Map ? (option['option_name'] ?? '') : (option.option_name ?? '');
+                            return _buildTag(optionName);
+                          }).toList(),
+                    ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Text('จำนวน', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                Text(productQty.toString(), style: const TextStyle(fontSize: 16)),
+              ],
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+        const Text('หมายเหตุ', style: TextStyle(color: Colors.black54)),
+        Text(item is Map ? (item['product_note'] ?? '-') : '-', style: const TextStyle(fontSize: 14)),
+      ],
+    );
+  }
+
   Widget _buildPriceSummary() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text('สรุปราคาสินค้า', style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(height: 8),
-        _SummaryRow(label: 'รวมราคาสินค้า', value: '550฿'),
-        _SummaryRow(label: 'รวมค่าขนส่งเงิน', value: '0฿'),
-        _SummaryRow(label: 'ส่วนลด', value: '0฿'),
-        _SummaryRow(label: 'รวมราคา', value: '550฿'),
-        SizedBox(height: 16),
-        Divider(),
-        Text('หมายเหตุ', style: TextStyle(fontWeight: FontWeight.bold)),
-        Text('-', style: TextStyle(color: Colors.black87)),
+      children: [
+        const Text('สรุปราคาสินค้า', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        _SummaryRow(label: 'รวมราคาสินค้า', value: '${claimController.totalPrice.toStringAsFixed(2)}฿'),
+        _SummaryRow(label: 'ค่าขนส่งจีน', value: '${claimController.chinaShippingFee.toStringAsFixed(2)}฿'),
+        _SummaryRow(label: 'ค่ามัดจำ', value: '${claimController.depositFee.toStringAsFixed(2)}฿'),
+        _SummaryRow(label: 'อัตราแลกเปลี่ยน', value: '${claimController.exchangeRate.toStringAsFixed(2)}'),
+        const SizedBox(height: 16),
+        const Divider(),
+        const Text('หมายเหตุ', style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(claimController.orderNote, style: const TextStyle(color: Colors.black87)),
       ],
     );
   }
@@ -117,7 +216,14 @@ class ClaimDetailPage extends StatelessWidget {
         title: Row(
           children: [
             IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-            const Expanded(child: Text('เลขที่เอกสาร C181211003', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16))),
+            Expanded(
+              child: Obx(
+                () => Text(
+                  'เลขที่เอกสาร ${claimController.orderCode}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16),
+                ),
+              ),
+            ),
           ],
         ),
         actions: const [
@@ -127,55 +233,55 @@ class ClaimDetailPage extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('สินค้าทั้งหมด', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 16),
+      body: Obx(() {
+        if (claimController.isLoading.value) {
+          return const Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator()));
+        }
 
-            // 🔹 ✅ ครอบสินค้าทั้งหมดในกล่องเดียว
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(12)),
+        if (claimController.hasError.value) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildClaimCard(
-                    shopCode: '1688',
-                    note: 'ไม่ QC  |  ไม่ตัดไม้',
-                    image: 'assets/images/unsplash0.png',
-                    name: 'เสื้อแขนสั้น',
-                    price: '50฿',
-                    size: 'M',
-                    color: 'สีดำ',
-                    qty: 1,
-                    previewImages: const ['assets/images/unsplash0.png', 'assets/images/unsplash0.png'],
-                  ),
+                  Icon(Icons.error_outline, color: Colors.red, size: 48),
                   const SizedBox(height: 16),
-                  Divider(),
-                  _buildClaimCard(
-                    shopCode: '1688',
-                    note: 'ไม่ QC  |  ไม่ตัดไม้',
-                    image: 'assets/images/unsplash1.png',
-                    name: 'รองเท้าผ้าใบ',
-                    price: '500฿',
-                    size: 'M',
-                    color: 'สีดำ',
-                    qty: 1,
-                    previewImages: const ['assets/images/unsplash1.png', 'assets/images/unsplash1.png'],
+                  Text(claimController.errorMessage.value, style: const TextStyle(color: Colors.red, fontSize: 16), textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => claimController.refreshData(),
+                    style: ElevatedButton.styleFrom(backgroundColor: kButtonColor, foregroundColor: Colors.white),
+                    child: const Text('ลองใหม่'),
                   ),
                 ],
               ),
             ),
+          );
+        }
 
-            const SizedBox(height: 16),
-            Divider(),
-            _buildPriceSummary(),
-          ],
-        ),
-      ),
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ข้อมูลออเดอร์
+              _buildOrderInfo(),
+              const SizedBox(height: 16),
+
+              const Text('สินค้าทั้งหมด', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 16),
+
+              // แสดงรายการสินค้าจาก API
+              _buildProductList(),
+
+              const SizedBox(height: 16),
+              const Divider(),
+              _buildPriceSummary(),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
