@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/utils/ApiExeption.dart';
@@ -151,6 +154,42 @@ class RegisterService {
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);
+    }
+  }
+
+  static Future addImage({File? file, required String path}) async {
+    const apiUrl = '$baseUrl/api/upload_images';
+    // final token = prefs.getString('token');
+    final headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    var formData = FormData.fromMap({'image': await MultipartFile.fromFile(file!.path), 'path': path});
+    final response = await Dio().post(apiUrl, data: formData, options: Options(headers: headers));
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = response.data['data'];
+      return data;
+    } else {
+      throw Exception('อัพโหดลไฟล์ล้มเหลว');
+    }
+  }
+
+  static Future addFile({File? file, required String path}) async {
+    const apiUrl = '$baseUrl/api/upload_file';
+    // final token = prefs.getString('token');
+    final headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    var formData = FormData.fromMap({'file': await MultipartFile.fromFile(file!.path), 'path': path});
+    final response = await Dio().post(apiUrl, data: formData, options: Options(headers: headers));
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = response.data['path'];
+      return data;
+    } else {
+      throw Exception('อัพโหดลไฟล์ล้มเหลว');
     }
   }
 }

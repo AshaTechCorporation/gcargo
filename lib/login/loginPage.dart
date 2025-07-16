@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/home/firstPage.dart';
+import 'package:gcargo/login/registerPage.dart';
 import 'package:gcargo/services/loginService.dart';
 import 'package:gcargo/widgets/CustomTextFormField.dart';
 import 'package:http/http.dart';
@@ -59,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -228,7 +230,9 @@ class _LoginPageState extends State<LoginPage> {
                     Image.asset('assets/icons/line.png', width: 40),
                     Spacer(),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
+                      },
                       style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: kButtonColor),
                       child: Row(
                         children: [
