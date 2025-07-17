@@ -6,6 +6,7 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/exchangeStatusPage.dart';
 import 'package:gcargo/parcel/orderStatusPage.dart';
 import 'package:gcargo/parcel/parcelPage.dart';
+import 'package:gcargo/parcel/problemPackagePage.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
@@ -154,7 +155,14 @@ class _FirstPageState extends State<FirstPage> {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeStatusPage()));
                         },
                       ),
-                      _statusActionItem(icon: 'assets/icons/boxRed.png', label: 'ยกเลิก', backgroundColor: const Color(0xFFFFEBEE), onTap: () {}),
+                      _statusActionItem(
+                        icon: 'assets/icons/boxRed.png',
+                        label: 'ยกเลิก',
+                        backgroundColor: const Color(0xFFFFEBEE),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProblemPackagePage()));
+                        },
+                      ),
                     ],
                   ),
                 ),

@@ -158,62 +158,62 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         if (accepted == true) {
                           // TODO: ดำเนินการสมัครต่อ
-                          try {
-                            final _register = await RegisterService.register(
-                              member_type: '',
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                              fname: _nameController.text,
-                              phone: _phoneController.text,
-                              gender: isMale ? 'male' : 'female',
-                              birth_date: _birthdateController.text,
-                              importer_code: _pinController.text,
-                              referrer: _referralCodeController.text,
-                              frequent_importer: _saleCodeController.text,
-                              comp_name: '',
-                              comp_tax: '',
-                              comp_phone: '',
-                              cargo_name: '',
-                              cargo_website: '',
-                              cargo_image: '',
-                              order_quantity_in_thai: '',
-                            );
-                            if (_register != null) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
-                            } else {
-                              // TODO: Handle error
-                            }
-                          } on Exception catch (e) {
-                            if (!mounted) return;
-                            //LoadingDialog.close(context);
-                            // showDialog(
-                            //   context: context,
-                            //   builder:
-                            //       (context) => AlertDialogYes(
-                            //         title: 'Setting.warning'.tr(),
-                            //         description: '$e',
-                            //         pressYes: () {
-                            //           Navigator.pop(context);
-                            //         },
-                            //       ),
-                            // );
-                          } catch (e) {
-                            if (!mounted) return;
-                            //LoadingDialog.close(context);
-                            // showDialog(
-                            //   context: context,
-                            //   builder:
-                            //       (context) => AlertDialogYes(
-                            //         title: 'Setting.warning'.tr(),
-                            //         description: '$e',
-                            //         pressYes: () {
-                            //           Navigator.pop(context);
-                            //         },
-                            //       ),
-                            // );
-                          }
+                          // try {
+                          //   final _register = await RegisterService.register(
+                          //     member_type: '',
+                          //     email: _emailController.text,
+                          //     password: _passwordController.text,
+                          //     fname: _nameController.text,
+                          //     phone: _phoneController.text,
+                          //     gender: isMale ? 'male' : 'female',
+                          //     birth_date: _birthdateController.text,
+                          //     importer_code: _pinController.text,
+                          //     referrer: _referralCodeController.text,
+                          //     frequent_importer: _saleCodeController.text,
+                          //     comp_name: '',
+                          //     comp_tax: '',
+                          //     comp_phone: '',
+                          //     cargo_name: '',
+                          //     cargo_website: '',
+                          //     cargo_image: '',
+                          //     order_quantity_in_thai: '',
+                          //   );
+                          //   if (_register != null) {
+                          //     Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                          //   } else {
+                          //     // TODO: Handle error
+                          //   }
+                          // } on Exception catch (e) {
+                          //   if (!mounted) return;
+                          //   //LoadingDialog.close(context);
+                          //   // showDialog(
+                          //   //   context: context,
+                          //   //   builder:
+                          //   //       (context) => AlertDialogYes(
+                          //   //         title: 'Setting.warning'.tr(),
+                          //   //         description: '$e',
+                          //   //         pressYes: () {
+                          //   //           Navigator.pop(context);
+                          //   //         },
+                          //   //       ),
+                          //   // );
+                          // } catch (e) {
+                          //   if (!mounted) return;
+                          //   //LoadingDialog.close(context);
+                          //   // showDialog(
+                          //   //   context: context,
+                          //   //   builder:
+                          //   //       (context) => AlertDialogYes(
+                          //   //         title: 'Setting.warning'.tr(),
+                          //   //         description: '$e',
+                          //   //         pressYes: () {
+                          //   //           Navigator.pop(context);
+                          //   //         },
+                          //   //       ),
+                          //   // );
+                          // }
 
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
                         } else {
                           print('ผู้ใช้ปฏิเสธ');
                         }
