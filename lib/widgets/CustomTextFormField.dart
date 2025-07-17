@@ -36,7 +36,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: TextStyle(fontSize: 16, color: isError ? kTextRedWanningColor : kButtonColor)),
+        Text(widget.label, style: TextStyle(fontSize: 18, color: isError ? kTextRedWanningColor : kButtonColor)),
         const SizedBox(height: 8),
         TextFormField(
           controller: widget.controller,
@@ -44,9 +44,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           maxLines: widget.isPassword ? 1 : widget.maxLines,
           obscureText: widget.isPassword && _obscureText,
           style: const TextStyle(color: Colors.black),
+
           decoration: InputDecoration(
             hintText: widget.hintText,
             hintStyle: const TextStyle(color: kHintTextColor),
+            errorStyle: TextStyle(color: kTextRedWanningColor, fontSize: 18),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: isError ? kTextRedWanningColor : Colors.grey),

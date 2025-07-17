@@ -74,11 +74,11 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 16),
 
                 // 🔹 หัวข้อ
-                Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kButtonColor)),
+                Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: kButtonColor)),
                 SizedBox(height: 4),
 
                 // 🔹 คำอธิบาย
-                Text('บริการขนส่งระหว่างประเทศรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน', style: TextStyle(fontSize: 13, color: kHintTextColor)),
+                Text('บริการขนส่งระหว่างประเทศรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน', style: TextStyle(fontSize: 14, color: kHintTextColor)),
                 SizedBox(height: 24),
 
                 // 🔹 Email
@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 20),
                 CustomTextFormField(label: 'รหัสผ่าน', hintText: '••••••••', controller: _passwordController, isPassword: true),
                 SizedBox(height: 6),
-                Text('รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร', style: TextStyle(fontSize: 12, color: kHintTextColor)),
+                Text('รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร', style: TextStyle(fontSize: 14, color: kHintTextColor)),
 
                 // 🔹 ลืมรหัสผ่าน
                 Align(
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: TextButton(
                     onPressed: () {},
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                    child: Text('ลืมรหัสผ่าน', style: TextStyle(color: kHintTextColor)),
+                    child: Text('ลืมรหัสผ่าน', style: TextStyle(color: kHintTextColor, fontSize: 14)),
                   ),
                 ),
                 SizedBox(height: 4),
@@ -211,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 18)),
+                    child: Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -223,11 +223,11 @@ class _LoginPageState extends State<LoginPage> {
                 // 🔹 ไอคอน + สร้างบัญชีใหม่ในแถวเดียวกัน
                 Row(
                   children: [
-                    Image.asset('assets/icons/g.png', width: 40),
+                    Image.asset('assets/icons/g.png', width: 50, fit: BoxFit.fill),
                     SizedBox(width: 20),
-                    Image.asset('assets/icons/f.png', width: 40),
+                    Image.asset('assets/icons/f.png', width: 50, fit: BoxFit.fill),
                     SizedBox(width: 20),
-                    Image.asset('assets/icons/line.png', width: 40),
+                    Image.asset('assets/icons/line.png', width: 50, fit: BoxFit.fill),
                     Spacer(),
                     TextButton(
                       onPressed: () {
@@ -236,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: kButtonColor),
                       child: Row(
                         children: [
-                          Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: 16)),
+                          Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                           SizedBox(width: 8),
                           Container(
                             width: 28,
