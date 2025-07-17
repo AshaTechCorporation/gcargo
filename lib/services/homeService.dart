@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/utils/ApiExeption.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeService {
   const HomeService();
@@ -152,6 +155,22 @@ class HomeService {
       throw ApiException('Network error: $e');
     } finally {
       client.close(force: true);
+    }
+  }
+
+  // ดึงเรท
+  static Future getExchageRate() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/api/get_exchage_rate_setting');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data['data'];
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
     }
   }
 }

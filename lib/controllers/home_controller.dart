@@ -10,6 +10,7 @@ class HomeController extends GetxController {
   final RxList<Map<String, dynamic>> searchItems = <Map<String, dynamic>>[].obs;
   var errorMessage = ''.obs;
   var hasError = false.obs;
+  final RxMap<String, dynamic> exchangeRate = <String, dynamic>{}.obs;
 
   @override
   void onInit() {
@@ -17,6 +18,7 @@ class HomeController extends GetxController {
     log('🚀 HomeController onInit called');
     // เรียก API ทันทีเมื่อ controller ถูกสร้าง
     searchItemsFromAPI('Shirt');
+    getExchangeRateFromAPI();
   }
 
   Future<void> searchItemsFromAPI(String query) async {
@@ -95,5 +97,25 @@ class HomeController extends GetxController {
   // Method สำหรับค้นหาใหม่
   Future<void> newSearch(String query) async {
     await searchItemsFromAPI(query);
+  }
+
+  void _setErrorRate(String message) {
+    hasError.value = true;
+    errorMessage.value = message;
+    exchangeRate.clear();
+  }
+
+  Future<void> getExchangeRateFromAPI() async {
+    try {
+      final rateData = await HomeService.getExchageRate();
+      if (rateData != null && rateData is Map<String, dynamic>) {
+        exchangeRate.value = rateData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลเรท');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
   }
 }

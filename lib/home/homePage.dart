@@ -344,7 +344,7 @@ class _HomePageState extends State<HomePage> {
         if (label == 'อัตราค่าขนส่ง') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => ShippingRatePage()));
         } else if (label == 'อัตราแลกเปลี่ยน') {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangeRatePage()));
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangeRatePage(exchangeRate: homeController.exchangeRate)));
         } else if (label == 'คำนวณค่าบริการ') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => TransportCalculatePage()));
         } else if (label == 'ตามพัสดุของฉัน') {

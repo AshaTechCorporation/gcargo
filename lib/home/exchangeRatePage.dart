@@ -1,61 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 
 class ExchangeRatePage extends StatelessWidget {
-  const ExchangeRatePage({super.key});
+  ExchangeRatePage({super.key, required this.exchangeRate});
+  Map<String, dynamic> exchangeRate;
 
   @override
   Widget build(BuildContext context) {
     final List<Map<String, String>> exchangeRates = [
-      {'title': 'กรมศุลกากร', 'price': '4.80'},
-      {'title': 'กรมสรรพสามิต', 'price': '4.78'},
+      {'icon': 'assets/icons/cha2.png', 'title': 'เรทสั่งซื้อสินค้า', 'price': '${exchangeRate['product_payment_rate']}'},
+      {'icon': 'assets/icons/cha1.png', 'title': 'เรทโอนเงิน', 'price': '${exchangeRate['alipay_topup_rate']}'},
     ];
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('อัตราแลกเปลี่ยน', style: TextStyle(color: Colors.black)),
+        title: const Text('อัตราแลกเปลี่ยน', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
       ),
-      body: Column(
-        children: [
-          // 🔹 หัวตาราง
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: exchangeRates.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final item = exchangeRates[index];
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+            decoration: BoxDecoration(color: const Color(0xFFF5F8FF), borderRadius: BorderRadius.circular(12)),
             child: Row(
               children: [
-                Expanded(flex: 2, child: Text('อัตราแลกเปลี่ยน', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
-                Expanded(
-                  flex: 1,
-                  child: Align(alignment: Alignment.centerRight, child: Text('ราคา', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xFFE0E0E0)),
+                // 🔹 รูปไอคอน
+                Image.asset(item['icon']!, width: 50, height: 50),
+                const SizedBox(width: 12),
 
-          // 🔹 ข้อมูลรายการ
-          ...exchangeRates.map(
-            (item) => Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      Expanded(flex: 2, child: Text(item['title']!, style: const TextStyle(fontSize: 14))),
-                      Expanded(
-                        flex: 1,
-                        child: Align(alignment: Alignment.centerRight, child: Text(item['price']!, style: const TextStyle(fontSize: 14))),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 1, color: Color(0xFFE0E0E0)),
+                // 🔸 ข้อความด้านซ้าย
+                Expanded(child: Text(item['title']!, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: kTitleTextGridColor))),
+
+                // 🔸 ราคาด้านขวา
+                Text(item['price']!, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: kTitleTextGridColor)),
               ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
