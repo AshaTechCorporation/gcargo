@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/models/legalimport.dart';
 import 'package:gcargo/services/parcelService.dart';
@@ -24,8 +25,10 @@ class ParcelController extends GetxController {
   void onInit() {
     super.onInit();
     log('🚀 ParcelController onInit called');
-    // เรียก API ทันทีเมื่อ controller ถูกสร้าง
-    getDeliveryOrders();
+    // เรียก API หลังจาก build เสร็จแล้วเพื่อหลีกเลี่ยง setState during build error
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      getDeliveryOrders();
+    });
   }
 
   Future<void> getDeliveryOrders() async {

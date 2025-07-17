@@ -17,13 +17,16 @@ class _ParcelPageState extends State<ParcelPage> with TickerProviderStateMixin {
   int selectedTopTab = 1; // ✅ เปลี่ยนเป็น 1 (สถานะพัสดุ) เพื่อแสดงข้อมูลจาก API
 
   // Initialize ParcelController
-  final ParcelController parcelController = Get.put(ParcelController());
+  late ParcelController parcelController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _statusTabController = TabController(length: 3, vsync: this); // เปลี่ยนเป็น 3 tabs: ทั้งหมด, กำลังส่ง, เสร็จสิ้น
+
+    // Initialize ParcelController here to avoid build-time API calls
+    parcelController = Get.put(ParcelController());
 
     // Listen to tab changes
     _statusTabController.addListener(() {
@@ -208,6 +211,12 @@ class _ParcelPageState extends State<ParcelPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text('สถานะ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: Column(
           children: [

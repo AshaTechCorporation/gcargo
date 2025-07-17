@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/scheduler.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:get/get.dart';
 
@@ -16,9 +17,11 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     log('🚀 HomeController onInit called');
-    // เรียก API ทันทีเมื่อ controller ถูกสร้าง
-    searchItemsFromAPI('Shirt');
-    getExchangeRateFromAPI();
+    // เรียก API หลังจาก build เสร็จแล้วเพื่อหลีกเลี่ยง setState during build error
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      searchItemsFromAPI('Shirt');
+      getExchangeRateFromAPI();
+    });
   }
 
   Future<void> searchItemsFromAPI(String query) async {
