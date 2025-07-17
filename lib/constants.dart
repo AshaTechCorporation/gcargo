@@ -14,3 +14,5 @@ const kTextRedWanningColor = Color(0xFFD70F1C);
 const kCardLine1Color = Color(0xFF003C8D);
 const kCardLine2Color = Color(0xFF2C78C6);
 const kCardLine3Color = Color(0xFF58B3FF);
+const kTitleTextGridColor = Color(0xFF004AAD);
+const kSubTitleTextGridColor = Color(0xFF012849);

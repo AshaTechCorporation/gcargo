@@ -1,150 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 
-class ShippingRatePage extends StatefulWidget {
+class ShippingRatePage extends StatelessWidget {
   const ShippingRatePage({super.key});
-
-  @override
-  State<ShippingRatePage> createState() => _ShippingRatePageState();
-}
-
-class _ShippingRatePageState extends State<ShippingRatePage> with TickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        title: Text('อัตราค่าขนส่ง', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 24)),
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
-        title: const Text('อัตราค่าขนส่ง', style: TextStyle(color: Colors.black)),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.black,
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.grey,
-          labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          tabs: const [Tab(text: 'การรถ'), Tab(text: 'การเรือ')],
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔷 เฉพาะรูปภาพหัวข้อ
+            Image.asset('assets/images/Frame10.png', fit: BoxFit.fitWidth),
+            SizedBox(height: 12),
+            _buildGrid([
+              RateItem(image: 'assets/images/Frame12.png', label: 'ทั่วไป', kg: '38', price: '5,200'),
+              RateItem(image: 'assets/images/Frame13.png', label: 'มอก', kg: '50', price: '5,800'),
+              RateItem(image: 'assets/images/Frame14.png', label: 'อย', kg: '45', price: '8,800'),
+              RateItem(image: 'assets/images/Frame15.png', label: 'พิเศษ/แบรน', kg: '25', price: '-'),
+            ]),
+            SizedBox(height: 24),
+            Image.asset('assets/images/Frame11.png', fit: BoxFit.fitWidth),
+            SizedBox(height: 12),
+            _buildGrid([
+              RateItem(image: 'assets/images/Frame12.png', label: 'ทั่วไป', kg: '38', price: '5,200'),
+              RateItem(image: 'assets/images/Frame13.png', label: 'มอก', kg: '50', price: '5,800'),
+              RateItem(image: 'assets/images/Frame14.png', label: 'อย', kg: '45', price: '8,800'),
+              RateItem(image: 'assets/images/Frame15.png', label: 'พิเศษ/แบรน', kg: '25', price: '-'),
+            ]),
+          ],
         ),
       ),
-      body: TabBarView(controller: _tabController, children: [_buildTabContent(_mockCarData), _buildTabContent(_mockBoatData)]),
     );
   }
 
-  Widget _buildTabContent(List<Map<String, dynamic>> data) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: data.length,
+  Widget _buildGrid(List<RateItem> items) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: items.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 0.97),
       itemBuilder: (context, index) {
-        final section = data[index];
-        final title = section['title'] as String;
-        final rows = section['rows'] as List<Map<String, String>>;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 🔹 ชื่อหัวข้อ
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            ),
-
-            // 🔸 หัวตาราง
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0)))),
-              child: Row(
-                children: const [
-                  Expanded(flex: 2, child: Text('ประเภทสินค้า', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600))),
-                  Expanded(flex: 1, child: Center(child: Text('กิโลกรัม', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)))),
-                  Expanded(
-                    flex: 1,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('เปรียบเทียบ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // 🔸 รายการข้อมูล
-            ...rows.map((row) {
-              return Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0)))),
-                child: Row(
-                  children: [
-                    Expanded(flex: 2, child: Text(row['type'] ?? '', style: const TextStyle(fontSize: 14))),
-                    Expanded(flex: 1, child: Center(child: Text(row['kg'] ?? '', style: const TextStyle(fontSize: 14)))),
-                    Expanded(
-                      flex: 1,
-                      child: Align(alignment: Alignment.centerRight, child: Text(row['price'] ?? '', style: const TextStyle(fontSize: 14))),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-
-            const SizedBox(height: 24),
-          ],
-        );
+        return _buildCardItem(items[index]);
       },
     );
   }
 
-  final List<Map<String, dynamic>> _mockCarData = [
-    {
-      'title': 'ฟรีออเดอร์',
-      'rows': [
-        {'type': 'ทั่วไป', 'kg': '55', 'price': '7,900'},
-        {'type': 'มอก', 'kg': '55', 'price': '8,000'},
-        {'type': 'อย', 'kg': '45', 'price': '8,800'},
-        {'type': 'ของหนัก', 'kg': '35', 'price': '-'},
-      ],
-    },
-    {
-      'title': 'แบบออเดอร์เดียว',
-      'rows': [
-        {'type': 'ทั่วไป', 'kg': '55', 'price': '7,900'},
-        {'type': 'มอก', 'kg': '65', 'price': '8,000'},
-        {'type': 'อย', 'kg': '45', 'price': '8,800'},
-        {'type': 'ของหนัก', 'kg': '35', 'price': '-'},
-      ],
-    },
-  ];
+  Widget _buildCardItem(RateItem item) {
+    return Container(
+      height: 140, // 🔸 ควบคุมความสูงให้เท่ากันทุกใบ
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 4, offset: Offset(0, 2))],
+      ),
+      child: Column(
+        children: [
+          // 🔹 ส่วนบน: รูปภาพ + label (แบ่งซ้าย/ขวาเท่ากัน)
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(flex: 5, child: Center(child: Image.asset(item.image, width: 56, height: 56, fit: BoxFit.fill))),
+                Expanded(
+                  flex: 5,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(item.label, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kTitleTextGridColor)),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-  final List<Map<String, dynamic>> _mockBoatData = [
-    {
-      'title': 'ฟรีออเดอร์',
-      'rows': [
-        {'type': 'ทั่วไป', 'kg': '38', 'price': '5,200'},
-        {'type': 'มอก', 'kg': '50', 'price': '5,800'},
-        {'type': 'อย', 'kg': '45', 'price': '8,800'},
-        {'type': 'ของหนัก', 'kg': '25', 'price': '-'},
-      ],
-    },
-    {
-      'title': 'แบบออเดอร์เดียว',
-      'rows': [
-        {'type': 'ทั่วไป', 'kg': '38', 'price': '5,200'},
-        {'type': 'มอก', 'kg': '50', 'price': '5,800'},
-        {'type': 'อย', 'kg': '45', 'price': '8,800'},
-        {'type': 'ของหนัก', 'kg': '25', 'price': '-'},
-      ],
-    },
-  ];
+          // 🔻 ส่วนล่าง: กิโลกรัม / ประมาณ (แบ่งซ้าย/ขวาเท่ากัน)
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('กิโลกรัม', style: TextStyle(fontSize: 18, color: Colors.black54)),
+                        SizedBox(height: 4),
+                        Text(item.kg, style: TextStyle(fontSize: 24, color: kSubTitleTextGridColor)),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('ประมาณ', style: TextStyle(fontSize: 18, color: Colors.black54)),
+                        SizedBox(height: 4),
+                        Text(item.price, style: TextStyle(fontSize: 24, color: kSubTitleTextGridColor)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RateItem {
+  final String image;
+  final String label;
+  final String kg;
+  final String price;
+
+  RateItem({required this.image, required this.label, required this.kg, required this.price});
 }
