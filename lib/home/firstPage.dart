@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/accountPage.dart';
 import 'package:gcargo/bill/billPage.dart';
+import 'package:gcargo/bill/transportCostPage.dart';
 import 'package:gcargo/home/homePage.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/exchangeStatusPage.dart';
@@ -20,8 +21,9 @@ class _FirstPageState extends State<FirstPage> {
   int _uiSelectedIndex = 0;
   int _pageIndex = 0;
   bool _showStatusPanel = false;
+  bool _showBillPanel = false;
 
-  final List<Widget> pages = [HomePage(), BillPage(), AccountPage()];
+  final List<Widget> pages = [HomePage(), AccountPage()];
 
   final List<Map<String, dynamic>> navItems = [
     {'icon': 'assets/icons/home-2.png', 'label': 'หน้าแรก'},
@@ -36,19 +38,29 @@ class _FirstPageState extends State<FirstPage> {
     });
 
     if (index == 1) {
-      // Toggle status panel
+      // กดสถานะ
       setState(() {
         _showStatusPanel = !_showStatusPanel;
+        _showBillPanel = false;
       });
       return;
     }
 
-    // ปรับ index เพราะ 'สถานะ' ไม่มีหน้า
-    final adjustedPageIndex = index > 1 ? index - 1 : index;
+    if (index == 2) {
+      // กดบิล
+      setState(() {
+        _showBillPanel = !_showBillPanel;
+        _showStatusPanel = false;
+      });
+      return;
+    }
 
+    // กดหน้าอื่น
+    final adjustedPageIndex = index > 2 ? index - 1 : index;
     setState(() {
       _pageIndex = adjustedPageIndex;
-      _showStatusPanel = false; // ปิด panel ถ้ากดหน้าอื่น
+      _showStatusPanel = false;
+      _showBillPanel = false;
     });
   }
 
@@ -80,6 +92,50 @@ class _FirstPageState extends State<FirstPage> {
             ),
             const SizedBox(height: 8),
             Text(label, style: const TextStyle(fontSize: 12, color: Colors.black)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _billActionItem({required String icon, required String label, required bool isSelected, required VoidCallback onTap}) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          onTap();
+          _hideStatusPanel();
+          setState(() => _showBillPanel = false);
+        },
+        child: Column(
+          children: [
+            const SizedBox(height: 4),
+
+            // ปุ่มเต็ม (พื้น + ไอคอน + ข้อความ)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFE9F7EF) : const Color(0xFFF0F4FA),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // ไอคอนวงกลม
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                    child: Center(child: Image.asset(icon, width: 20, height: 20)),
+                  ),
+                  const SizedBox(width: 8),
+                  // ข้อความ
+                  Text(
+                    label,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: isSelected ? const Color(0xFF6BD08B) : Colors.black),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -161,6 +217,37 @@ class _FirstPageState extends State<FirstPage> {
                         backgroundColor: const Color(0xFFFFEBEE),
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const ProblemPackagePage()));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          if (_showBillPanel)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 70,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _billActionItem(icon: 'assets/icons/task-square.png', label: 'ประวัติค่าสินค้า', isSelected: false, onTap: () {}),
+                      _billActionItem(
+                        icon: 'assets/icons/menu-board.png',
+                        label: 'ประวัติค่าขนส่ง',
+                        isSelected: true,
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const TransportCostPage()));
                         },
                       ),
                     ],

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'SukhumvitSet',
       ),
-      home: LoginPage(),
+      home: FirstPage(),
     );
   }
 }

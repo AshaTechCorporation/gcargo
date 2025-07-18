@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
+import 'package:gcargo/home/widgets/ServiceImageCard.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
@@ -27,9 +30,35 @@ class _HomePageState extends State<HomePage> {
   // Initialize HomeController
   final HomeController homeController = Get.put(HomeController());
 
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  late Timer _timer;
+
+  final List<String> _images = [
+    'assets/images/slidpic.png',
+    'assets/images/slidpic.png',
+    'assets/images/slidpic.png',
+    'assets/images/slidpic.png',
+    'assets/images/slidpic.png',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (!mounted) return;
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_pageController.hasClients) {
+        int nextPage = (_currentPage + 1) % _images.length;
+        _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+      }
+    });
+  }
+
   @override
   void dispose() {
     searchController.dispose();
+    _timer.cancel();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -105,9 +134,42 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔹 Slide Image
+              // 🔹 Image Slider
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.asset('assets/images/slidpic.png')),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    height: 140,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: _images.length,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPage = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        return Image.asset(_images[index], fit: BoxFit.cover, width: double.infinity);
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // 🔹 Indicator
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(_images.length, (index) {
+                  final isActive = _currentPage == index;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: isActive ? 20 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(color: isActive ? Colors.blue.shade900 : Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                  );
+                }),
               ),
               SizedBox(height: 16),
 
@@ -159,6 +221,28 @@ class _HomePageState extends State<HomePage> {
               ),
 
               SizedBox(height: 24),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    ServiceImageCard(
+                      imagePath: 'assets/images/sand.png',
+                      onTap: () {
+                        // 👉 ไปหน้าบริการฝากส่ง
+                        //Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryPage()));
+                      },
+                    ),
+                    const SizedBox(width: 12),
+                    ServiceImageCard(
+                      imagePath: 'assets/images/bay.png',
+                      onTap: () {
+                        // 👉 ไปหน้าแลกเปลี่ยนเงิน
+                        //Navigator.push(context, MaterialPageRoute(builder: (_) => const ExchangePage()));
+                      },
+                    ),
+                  ],
+                ),
+              ),
 
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
