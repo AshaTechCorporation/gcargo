@@ -56,12 +56,14 @@ class _FirstPageState extends State<FirstPage> {
     }
 
     // กดหน้าอื่น
-    final adjustedPageIndex = index > 2 ? index - 1 : index;
-    setState(() {
-      _pageIndex = adjustedPageIndex;
-      _showStatusPanel = false;
-      _showBillPanel = false;
-    });
+    if (index == 0 || index == 3) {
+      final adjustedPageIndex = index == 3 ? 1 : 0;
+      setState(() {
+        _pageIndex = adjustedPageIndex;
+        _showStatusPanel = false;
+        _showBillPanel = false;
+      });
+    }
   }
 
   void _hideStatusPanel() {

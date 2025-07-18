@@ -8,9 +8,11 @@ import 'package:gcargo/account/faqPage.dart';
 import 'package:gcargo/account/favoritePage.dart';
 import 'package:gcargo/account/newsPromotionPage.dart';
 import 'package:gcargo/account/profilePage.dart';
+import 'package:gcargo/account/securityPage.dart';
 import 'package:gcargo/account/userManualPage.dart';
-import 'package:gcargo/account/widgets/WalletCard.dart';
+import 'package:gcargo/account/widgets/AccountHeaderWidget.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -23,17 +25,15 @@ class AccountPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
-
-            // Header Profile (ชื่อผู้ใช้ + ยอด)
-            WalletCard(),
-
-            const SizedBox(height: 24),
-
             // Menu Sections
             Expanded(
               child: ListView(
                 children: [
+                  const SizedBox(height: 20),
+
+                  // Header Profile (ชื่อผู้ใช้ + ยอด)
+                  AccountHeaderWidget(onCreditTap: () {}, onPointTap: () {}, onParcelTap: () {}, onWalletTap: () {}, onTransferTap: () {}),
+                  const SizedBox(height: 24),
                   _buildSectionTitle('โปรโมชั่น'),
                   _buildMenuItem(
                     'ข่าวสาร & โปรโมชั่น',
@@ -74,7 +74,12 @@ class AccountPage extends StatelessWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
                     },
                   ),
-                  _buildMenuItem('ความปลอดภัย', onTap: () {}),
+                  _buildMenuItem(
+                    'ความปลอดภัย',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
+                    },
+                  ),
                   _buildMenuItem(
                     'เปลี่ยนภาษา',
                     onTap: () {
@@ -115,7 +120,22 @@ class AccountPage extends StatelessWidget {
                         color: Colors.white,
                       ),
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final confirm = await showDialog(
+                            context: context,
+                            builder:
+                                (context) => LogoutConfirmationDialog(
+                                  onConfirm: () {
+                                    // TODO: ลบ token ออกจาก SharedPreferences
+                                    Navigator.pop(context, true);
+                                  },
+                                  onCancel: () => Navigator.pop(context, false),
+                                ),
+                          );
+                          if (confirm == true) {
+                            print(true);
+                          }
+                        },
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           foregroundColor: const Color(0xFF4A4A4A),

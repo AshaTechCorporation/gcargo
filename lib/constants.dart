@@ -16,3 +16,4 @@ const kCardLine2Color = Color(0xFF2C78C6);
 const kCardLine3Color = Color(0xFF58B3FF);
 const kTitleTextGridColor = Color(0xFF004AAD);
 const kSubTitleTextGridColor = Color(0xFF012849);
+const kButtonLogoutColor = Color(0xFFFFBA00);
