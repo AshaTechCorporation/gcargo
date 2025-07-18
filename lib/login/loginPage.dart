@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/home/firstPage.dart';
+import 'package:gcargo/login/pinEntryPage.dart';
 import 'package:gcargo/login/registerPage.dart';
 import 'package:gcargo/services/loginService.dart';
 import 'package:gcargo/widgets/CustomTextFormField.dart';
@@ -114,7 +115,8 @@ class _LoginPageState extends State<LoginPage> {
                             final SharedPreferences prefs = await _prefs;
                             await prefs.setString('token', token['token']);
                             await prefs.setInt('userID', token['userID']);
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                            //Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => PinEntryPage()));
                           }
                         } on ClientException catch (e) {
                           showDialog(
