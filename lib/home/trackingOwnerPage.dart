@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/home/unclaimedParcelDetailPage.dart';
 
 class TrackingOwnerPage extends StatelessWidget {
   const TrackingOwnerPage({super.key});
@@ -54,7 +55,7 @@ class TrackingOwnerPage extends StatelessWidget {
       ),
 
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         children: [
           const SizedBox(height: 4),
 
@@ -99,41 +100,44 @@ class TrackingOwnerPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 ...List.generate(section['items'].length, (index) {
                   final item = section['items'][index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(12)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Image.asset('assets/icons/box-search.png', width: 24, height: 24),
-                            const SizedBox(width: 8),
-                            const Text('เลขขนส่งวัน', style: TextStyle(fontSize: 14)),
-                            const SizedBox(width: 4),
-                            Text(item['trackingNo'], style: const TextStyle(fontSize: 14, color: kButtonColor, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        const Padding(padding: EdgeInsets.only(left: 32), child: Text('รูปภาพอ้างอิง', style: TextStyle(fontSize: 14))),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 32),
-                          child: Row(
-                            children:
-                                (item['images'] as List<String>).map((imgPath) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(6),
-                                      child: Image.asset(imgPath, width: 60, height: 60, fit: BoxFit.cover),
-                                    ),
-                                  );
-                                }).toList(),
+                  return GestureDetector(
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => UnclaimedParcelDetailPage())),
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 16),
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(12)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Image.asset('assets/icons/box-search.png', width: 24, height: 24),
+                              const SizedBox(width: 8),
+                              const Text('เลขขนส่งวัน', style: TextStyle(fontSize: 14)),
+                              const SizedBox(width: 4),
+                              Text(item['trackingNo'], style: const TextStyle(fontSize: 14, color: kButtonColor, fontWeight: FontWeight.bold)),
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          const Padding(padding: EdgeInsets.only(left: 32), child: Text('รูปภาพอ้างอิง', style: TextStyle(fontSize: 14))),
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 32),
+                            child: Row(
+                              children:
+                                  (item['images'] as List<String>).map((imgPath) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(6),
+                                        child: Image.asset(imgPath, width: 60, height: 60, fit: BoxFit.cover),
+                                      ),
+                                    );
+                                  }).toList(),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }),

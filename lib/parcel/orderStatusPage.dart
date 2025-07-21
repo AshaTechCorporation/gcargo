@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/parcel/POOrderDetailPage.dart';
+import 'package:gcargo/widgets/RemarkDialog.dart';
 import 'package:intl/intl.dart';
 
 class OrderStatusPage extends StatefulWidget {
@@ -11,6 +12,7 @@ class OrderStatusPage extends StatefulWidget {
 
 class _OrderStatusPageState extends State<OrderStatusPage> {
   String selectedStatus = 'ทั้งหมด';
+  TextEditingController _dateController = TextEditingController();
 
   final List<String> statusList = ['ทั้งหมด', 'รอตรวจสอบ', 'รอชำระเงิน', 'รอดำเนินการ', 'สำเร็จ', 'ยกเลิก'];
 
@@ -19,6 +21,12 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
     {'date': '01/07/2025', 'status': 'สำเร็จ', 'code': '00002', 'transport': 'ขนส่งทางเรือ', 'total': 550.0},
     {'date': '01/07/2025', 'status': 'รอตรวจสอบ', 'code': '00003', 'transport': 'ขนส่งทางเรือ', 'total': 550.0},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _dateController.text = '01/01/2024 - 01/07/2025'; // ค่าเริ่มต้น
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,27 +45,45 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('ออเดอร์', style: TextStyle(color: Colors.black)),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
-              child: Row(
-                children: [
-                  Image.asset('assets/icons/calendar_icon.png', width: 18),
-                  const SizedBox(width: 6),
-                  const Text('1/01/2024 - 01/07/2025', style: TextStyle(fontSize: 12)),
-                ],
+            Text('ออเดอร์', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
+            SizedBox(width: 20),
+            Expanded(
+              child: TextFormField(
+                controller: _dateController,
+                readOnly: true,
+                onTap: () async {
+                  DateTimeRange? picked = await showDateRangePicker(
+                    context: context,
+                    firstDate: DateTime(2023),
+                    lastDate: DateTime(2030),
+                    initialDateRange: DateTimeRange(start: DateTime(2024, 1, 1), end: DateTime(2025, 7, 1)),
+                  );
+                  if (picked != null) {
+                    String formatted = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
+                    setState(() {
+                      _dateController.text = formatted;
+                    });
+                  }
+                },
+                decoration: InputDecoration(
+                  prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 18)),
+                  hintText: 'เลือกช่วงวันที่',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
               ),
             ),
           ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,17 +92,17 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search),
                       hintText: 'ค้นหาเลขที่บิล',
                       filled: true,
+                      hintStyle: TextStyle(fontSize: 14),
                       fillColor: Colors.white,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
 
             // ✅ Status Tabs with proper count and background circle
             SizedBox(
@@ -189,42 +215,68 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                   children: [
                     Image.asset('assets/icons/task-square.png', width: 20),
                     const SizedBox(width: 8),
-                    Text('เลขบิลสั่งซื้อ ${order['code']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text('เลขบิลสั่งซื้อ ${order['code']}', style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
                   ],
                 ),
                 Text(status, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
 
             // 🔸 รอตรวจสอบจะมีแถวเพิ่ม
             if (isPending) ...[
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: const [Text('การสั่งซื้อ'), Text('คำสั่งซื้อของเชล')]),
-              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [Text('การสั่งซื้อ', style: TextStyle(fontSize: 16)), Text('คำสั่งซื้อของเชล', style: TextStyle(fontSize: 16))],
+              ),
+              SizedBox(height: 4),
             ],
 
             // 🔹 ปกติ
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('การขนส่ง'), Text(order['transport'])]),
-            const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [const Text('สรุปราคาสินค้า'), Text('${order['total'].toStringAsFixed(2)}฿')],
+              children: [Text('การขนส่ง', style: TextStyle(fontSize: 16)), Text(order['transport'], style: TextStyle(fontSize: 16))],
+            ),
+            SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('สรุปราคาสินค้า', style: TextStyle(fontSize: 16)),
+                Text('${order['total'].toStringAsFixed(2)}฿', style: TextStyle(fontSize: 16)),
+              ],
             ),
 
             // 🔹 ปุ่มเฉพาะสถานะรอตรวจสอบ
             if (isPending) ...[
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(foregroundColor: Colors.grey), child: const Text('ยกเลิก')),
-                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    onPressed: () async {
+                      print(55555);
+                      showDialog(
+                        context: context,
+                        builder:
+                            (_) => RemarkDialog(
+                              initialText: '', // หรือค่าที่มีอยู่
+                              onSave: (text) {
+                                print('บันทึกข้อความ: $text');
+                                // ทำอย่างอื่นต่อ เช่นส่งไปเซิร์ฟเวอร์
+                              },
+                            ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(foregroundColor: Colors.grey),
+                    child: const Text('ยกเลิก'),
+                  ),
+                  SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1E3C72), // ✅ kButtonColor
                     ),
-                    child: const Text('สั่งซื้ออีกครั้ง', style: TextStyle(color: Colors.white)),
+                    child: Text('สั่งซื้ออีกครั้ง', style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ],
               ),
