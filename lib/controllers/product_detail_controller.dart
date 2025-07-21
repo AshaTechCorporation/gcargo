@@ -50,6 +50,10 @@ class ProductDetailController extends GetxController {
         };
 
         productDetail.value = formattedData;
+
+        // Debug: Log desc_img and props_list data
+        log('🖼️ desc_img data: ${data['desc_img']}');
+        log('📋 props_list data: ${data['props_list']}');
       } else {
         _setError('ไม่สามารถเชื่อมต่อ API หรือไม่พบสินค้าที่ค้นหา');
       }
@@ -116,6 +120,191 @@ class ProductDetailController extends GetxController {
   double get originalPrice => (itemData?['orginal_price'] ?? 0).toDouble();
   String get area => itemData?['area'] ?? '';
   String get detailUrl => itemData?['detail_url'] ?? '';
+
+  // Get desc_img as a list of image URLs
+  List<String> get descImages {
+    final descImg = itemData?['desc_img'];
+    if (descImg is String && descImg.isNotEmpty) {
+      // If desc_img is a string with multiple URLs separated by commas or semicolons
+      return descImg.split(RegExp(r'[,;]')).map((url) => url.trim()).where((url) => url.isNotEmpty).toList();
+    } else if (descImg is List) {
+      // If desc_img is already a list
+      return descImg.map((url) => url.toString().trim()).where((url) => url.isNotEmpty).toList();
+    }
+    return [];
+  }
+
+  // Get all available images (main pic_url + desc_img)
+  List<String> get allImages {
+    List<String> images = [];
+
+    // Add main product image first
+    if (picUrl.isNotEmpty) {
+      images.add(picUrl);
+    }
+
+    // Add description images
+    images.addAll(descImages);
+
+    return images;
+  }
+
+  // Get props_list data
+  Map<String, dynamic> get propsList {
+    final props = itemData?['props_list'];
+    if (props is Map<String, dynamic>) {
+      return props;
+    }
+    return {};
+  }
+
+  // Get sizes from props_list
+  List<String> get availableSizes {
+    List<String> sizes = [];
+
+    propsList.forEach((key, value) {
+      if (value is String) {
+        // Check if this property is related to size (尺码)
+        if (value.contains('尺码:')) {
+          final sizeName = value.split(':').last.trim();
+          if (sizeName.isNotEmpty && !sizes.contains(sizeName)) {
+            sizes.add(sizeName);
+          }
+        }
+      }
+    });
+
+    return sizes;
+  }
+
+  // Get colors from props_list
+  List<String> get availableColors {
+    List<String> colors = [];
+
+    propsList.forEach((key, value) {
+      if (value is String) {
+        // Check if this property is related to color (颜色)
+        if (value.contains('颜色:')) {
+          final colorName = value.split(':').last.trim();
+          if (colorName.isNotEmpty && !colors.contains(colorName)) {
+            colors.add(colorName);
+          }
+        }
+      }
+    });
+
+    return colors;
+  }
+
+  // Helper method to translate complex color descriptions
+  String _translateComplexColorDescription(String text) {
+    // Handle complex patterns like "绿色衬衫+黑色短裤【两件套】"
+    String result = text;
+
+    // Replace common Chinese terms
+    final complexTranslations = {
+      '衬衫': 'เสื้อเชิ้ต',
+      '短裤': 'กางเกงขาสั้น',
+      '长裤': 'กางเกงขายาว',
+      '两件套': 'ชุด 2 ชิ้น',
+      '三件套': 'ชุด 3 ชิ้น',
+      '套装': 'ชุดเซ็ต',
+      '【': ' (',
+      '】': ')',
+      '+': ' + ',
+    };
+
+    complexTranslations.forEach((chinese, thai) {
+      result = result.replaceAll(chinese, thai);
+    });
+
+    return result;
+  }
+
+  // Translate Chinese/English to Thai
+  String translateToThai(String text) {
+    // Handle complex color descriptions first
+    String translatedText = _translateComplexColorDescription(text);
+
+    final translations = {
+      // Sizes
+      'XS': 'XS',
+      'S': 'S',
+      'M': 'M',
+      'L': 'L',
+      'XL': 'XL',
+      '2XL': '2XL',
+      '3XL': '3XL',
+      '4XL': '4XL',
+      '5XL': '5XL',
+      'XXL': 'XXL',
+      'XXXL': 'XXXL',
+      '均码': 'ไซส์เดียว',
+      '均': 'ไซส์เดียว',
+      'Free Size': 'ไซส์เดียว',
+      'One Size': 'ไซส์เดียว',
+
+      // Colors
+      'black': 'ดำ',
+      'white': 'ขาว',
+      'red': 'แดง',
+      'blue': 'น้ำเงิน',
+      'green': 'เขียว',
+      'yellow': 'เหลือง',
+      'pink': 'ชมพู',
+      'purple': 'ม่วง',
+      'orange': 'ส้ม',
+      'brown': 'น้ำตาล',
+      'gray': 'เทา',
+      'grey': 'เทา',
+
+      // Chinese colors
+      '黑色': 'ดำ',
+      '白色': 'ขาว',
+      '红色': 'แดง',
+      '蓝色': 'น้ำเงิน',
+      '绿色': 'เขียว',
+      '黄色': 'เหลือง',
+      '粉色': 'ชมพู',
+      '紫色': 'ม่วง',
+      '橙色': 'ส้ม',
+      '棕色': 'น้ำตาล',
+      '灰色': 'เทา',
+      '黑': 'ดำ',
+      '白': 'ขาว',
+      '红': 'แดง',
+      '蓝': 'น้ำเงิน',
+      '绿': 'เขียว',
+      '黄': 'เหลือง',
+      '粉': 'ชมพู',
+      '紫': 'ม่วง',
+      '橙': 'ส้ม',
+      '棕': 'น้ำตาล',
+      '灰': 'เทา',
+      '金色': 'ทอง',
+      '银色': 'เงิน',
+      '咖啡色': 'น้ำตาลเข้ม',
+      '咖啡': 'น้ำตาล',
+      '米色': 'ครีม',
+      '卡其色': 'กากี',
+      '深蓝': 'น้ำเงินเข้ม',
+      '浅蓝': 'น้ำเงินอ่อน',
+      '深灰': 'เทาเข้ม',
+      '浅灰': 'เทาอ่อน',
+      '玫瑰红': 'แดงกุหลาบ',
+      '天蓝': 'ฟ้า',
+      '草绿': 'เขียวอ่อน',
+      '深绿': 'เขียวเข้ม',
+    };
+
+    // Apply simple translations to the complex translated text
+    String finalResult = translatedText;
+    translations.forEach((original, translated) {
+      finalResult = finalResult.replaceAll(original, translated);
+    });
+
+    return finalResult;
+  }
 
   // Method สำหรับ refresh ข้อมูล
   Future<void> refreshData() async {
