@@ -69,20 +69,20 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
+        preferredSize: Size.fromHeight(60),
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           automaticallyImplyLeading: false,
           title: Row(
             children: [
-              Text('A100', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black)),
+              Text('A100', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kSubTitleTextGridColor)),
               SizedBox(width: 12),
               Expanded(
                 child: Container(
                   height: 36,
                   padding: EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
+                  decoration: BoxDecoration(color: kBackTextFiledColor, borderRadius: BorderRadius.circular(20)),
                   child: Row(
                     children: [
                       Expanded(
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                             isDense: true,
                             contentPadding: EdgeInsets.zero,
                             hintText: 'ค้นหาสินค้า',
-                            hintStyle: TextStyle(color: Colors.grey),
+                            hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
                             border: InputBorder.none,
                           ),
                           style: TextStyle(color: Colors.black),
@@ -116,13 +116,18 @@ class _HomePageState extends State<HomePage> {
               ),
 
               SizedBox(width: 12),
-              Icon(Icons.delete_outline, color: Colors.black),
+              GestureDetector(
+                onTap: () {
+                  ////go action
+                },
+                child: Image.asset('assets/icons/bag.png', width: 20, height: 20, fit: BoxFit.fill),
+              ),
               SizedBox(width: 12),
               GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
                 },
-                child: Icon(Icons.notifications_none, color: Colors.black),
+                child: Image.asset('assets/icons/notification.png', width: 20, height: 20, fit: BoxFit.fill),
               ),
             ],
           ),
@@ -136,7 +141,7 @@ class _HomePageState extends State<HomePage> {
               // 🔹 Slide Image
               // 🔹 Image Slider
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: SizedBox(
@@ -156,15 +161,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // 🔹 Indicator
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(_images.length, (index) {
                   final isActive = _currentPage == index;
                   return AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    duration: Duration(milliseconds: 300),
+                    margin: EdgeInsets.symmetric(horizontal: 4),
                     width: isActive ? 20 : 8,
                     height: 8,
                     decoration: BoxDecoration(color: isActive ? Colors.blue.shade900 : Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
@@ -178,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   // 🔸 รูป
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.asset('assets/images/pichome.png', width: double.infinity, height: 140, fit: BoxFit.cover),
@@ -205,10 +210,10 @@ class _HomePageState extends State<HomePage> {
 
                   // 🔸 ข้อความทับบนรูป (ใต้ช่องค้นหา)
                   Positioned(
-                    left: 32,
+                    left: 28,
                     top: 64,
                     child: Text(
-                      'วางสิ่งที่ของคุณที่นี่',
+                      'วางลิ้งก์์ของคุณที่นี่',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -232,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const PackageDepositPage()));
                       },
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     ServiceImageCard(
                       imagePath: 'assets/images/bay.png',
                       onTap: () {
@@ -246,7 +251,7 @@ class _HomePageState extends State<HomePage> {
 
               SizedBox(height: 10),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => RewardRedeemPage()));
@@ -258,15 +263,20 @@ class _HomePageState extends State<HomePage> {
 
               // 🔹 เมนูบริการ
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildServiceItem(context, 'assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
-                    _buildServiceItem(context, 'assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
-                    _buildServiceItem(context, 'assets/icons/cal1.png', 'คำนวณค่าบริการ'),
-                    _buildServiceItem(context, 'assets/icons/box1.png', 'ตามพัสดุของฉัน'),
-                  ],
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildServiceItem(context, 'assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
+                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                      _buildServiceItem(context, 'assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
+                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                      _buildServiceItem(context, 'assets/icons/cal1.png', 'คำนวณค่าบริการ'),
+                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                      _buildServiceItem(context, 'assets/icons/box1.png', 'ตามพัสดุของฉัน'),
+                    ],
+                  ),
                 ),
               ),
 
@@ -275,7 +285,7 @@ class _HomePageState extends State<HomePage> {
               // 🔹 สินค้าแนะนำ
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text('รายการสินค้าแนะนำ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text('รายการสินค้าแนะนำ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
               SizedBox(height: 12),
 
@@ -343,7 +353,7 @@ class _HomePageState extends State<HomePage> {
                         imageUrl: item['pic_url'] ?? '',
                         title: item['title'] ?? 'ไม่มีชื่อสินค้า',
                         seller: item['seller_nick'] ?? 'ไม่มีข้อมูลร้านค้า',
-                        price: '฿${item['price'] ?? 0}',
+                        price: '¥${item['price'] ?? 0}',
                         detailUrl: item['detail_url'] ?? '',
                         onTap: () {
                           final rawNumIid = item['num_iid'];
@@ -380,7 +390,16 @@ class _HomePageState extends State<HomePage> {
       },
       child: Column(
         children: [
-          Image.asset(iconPath, width: 36, height: 36),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: Offset(0, 2))],
+            ),
+            child: Image.asset(iconPath, width: 36, height: 36),
+          ),
           const SizedBox(height: 6),
           SizedBox(width: 64, child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
         ],

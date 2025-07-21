@@ -15,19 +15,20 @@ class NotificationPage extends StatelessWidget {
         elevation: 0,
         centerTitle: false,
         leading: IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
-        title: const Text('แจ้งเตือน', style: TextStyle(color: Colors.black)),
+        title: Text('แจ้งเตือน', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
       ),
       body: ListView(
         children: [
           _buildSectionTitle('ข่าวสาร & โปรโมชั่น', onTap: () {}),
+          Divider(height: 20),
           _buildSectionTitle('คูปองส่วนลด', onTap: () {}),
-          const Divider(height: 24),
+          Divider(height: 20),
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('เกี่ยวกับการสั่งซื้อ', style: textStyle.copyWith(fontWeight: FontWeight.bold)),
           ),
-          const SizedBox(height: 8),
+          Divider(height: 20),
           _buildOrderNotification(title: 'สั่งซื้อสินค้าสำเร็จ', orderNumber: '167304', time: '10:15', date: '14 พฤษภาคม 2568'),
           _buildOrderNotification(title: 'สั่งซื้อสินค้าสำเร็จ', orderNumber: '167304', time: '10:15', date: '14 พฤษภาคม 2568'),
         ],
@@ -48,7 +49,7 @@ class NotificationPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              Text('เลขออเดอร์ $orderNumber', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              Text('เลขออเดอร์ $orderNumber', style: const TextStyle(fontSize: 16, color: Colors.grey)),
               const SizedBox(height: 2),
               Text('$time     $date', style: const TextStyle(fontSize: 14, color: Colors.grey)),
             ],
