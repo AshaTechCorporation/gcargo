@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
+import 'package:gcargo/home/exchangePage.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 import 'package:gcargo/home/widgets/ServiceImageCard.dart';
 import 'package:get/get.dart';
@@ -234,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                       imagePath: 'assets/images/sand.png',
                       onTap: () {
                         // 👉 ไปหน้าบริการฝากส่ง
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const PackageDepositPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => PackageDepositPage()));
                       },
                     ),
                     SizedBox(width: 12),
@@ -242,7 +243,7 @@ class _HomePageState extends State<HomePage> {
                       imagePath: 'assets/images/bay.png',
                       onTap: () {
                         // 👉 ไปหน้าแลกเปลี่ยนเงิน
-                        //Navigator.push(context, MaterialPageRoute(builder: (_) => const ExchangePage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
                       },
                     ),
                   ],
