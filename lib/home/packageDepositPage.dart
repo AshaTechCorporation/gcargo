@@ -61,7 +61,19 @@ class _PackageDepositPageState extends State<PackageDepositPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black), onPressed: () => Navigator.pop(context)),
-        actions: [TextButton(onPressed: _addPackage, child: const Text('เพิ่มรายการ', style: TextStyle(color: Colors.black)))],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Container(
+              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(8)),
+              child: TextButton(
+                onPressed: _addPackage,
+                style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                child: const Text('เพิ่มรายการ', style: TextStyle(color: Colors.black)),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

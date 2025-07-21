@@ -229,7 +229,7 @@ class _HomePageState extends State<HomePage> {
                       imagePath: 'assets/images/sand.png',
                       onTap: () {
                         // 👉 ไปหน้าบริการฝากส่ง
-                        //Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const PackageDepositPage()));
                       },
                     ),
                     const SizedBox(width: 12),
@@ -244,74 +244,17 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
+              SizedBox(height: 10),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 6, offset: const Offset(0, 2))],
-                  ),
-                  child: Row(
-                    children: [
-                      // 🔹 ฝั่งซ้าย: กล่องรูปใหญ่เต็ม 50%
-                      Expanded(
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => PackageDepositPage()));
-                            },
-                            child: Image.asset('assets/images/ex1.png', fit: BoxFit.cover),
-                          ),
-                        ),
-                      ),
-
-                      // 🔸 เส้นแบ่งกลาง
-                      Container(width: 1, height: 100, margin: const EdgeInsets.symmetric(horizontal: 12), color: Colors.grey.shade300),
-
-                      // 🔹 ฝั่งขวา: การ์ดแต้มของขวัญ
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => RewardRedeemPage()));
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
-                                child: Row(
-                                  children: [
-                                    // ข้อความ
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('100', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFFF9800))),
-                                          SizedBox(height: 2),
-                                          Text('แต้มของขวัญ', style: TextStyle(fontSize: 13, color: Colors.black87)),
-                                        ],
-                                      ),
-                                    ),
-                                    // รูปของขวัญด้านขวา
-                                    Image.asset('assets/icons/gif.png', width: 30, height: 30),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 6),
-                            Text('นำไปแลกของรางวัล', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => RewardRedeemPage()));
+                  },
+                  child: Image.asset('assets/images/point1.png', fit: BoxFit.cover),
                 ),
               ),
-
-              SizedBox(height: 24),
+              SizedBox(height: 20),
 
               // 🔹 เมนูบริการ
               Padding(

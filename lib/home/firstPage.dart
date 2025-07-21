@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/accountPage.dart';
 import 'package:gcargo/bill/billPage.dart';
+import 'package:gcargo/bill/orderHistoryPage.dart';
 import 'package:gcargo/bill/transportCostPage.dart';
 import 'package:gcargo/home/homePage.dart';
 import 'package:gcargo/constants.dart';
@@ -243,7 +244,14 @@ class _FirstPageState extends State<FirstPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _billActionItem(icon: 'assets/icons/task-square.png', label: 'ประวัติค่าสินค้า', isSelected: false, onTap: () {}),
+                      _billActionItem(
+                        icon: 'assets/icons/task-square.png',
+                        label: 'ประวัติค่าสินค้า',
+                        isSelected: false,
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistoryPage()));
+                        },
+                      ),
                       _billActionItem(
                         icon: 'assets/icons/menu-board.png',
                         label: 'ประวัติค่าขนส่ง',

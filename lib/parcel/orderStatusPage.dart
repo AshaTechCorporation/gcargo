@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/parcel/POOrderDetailPage.dart';
 import 'package:intl/intl.dart';
 
 class OrderStatusPage extends StatefulWidget {
@@ -15,7 +16,8 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
 
   final List<Map<String, dynamic>> orders = [
     {'date': '02/07/2025', 'status': 'ยกเลิก', 'code': '00001', 'transport': 'ขนส่งทางเรือ', 'total': 550.0},
-    {'date': '01/07/2025', 'status': 'สำเร็จ', 'code': '00001', 'transport': 'ขนส่งทางเรือ', 'total': 550.0},
+    {'date': '01/07/2025', 'status': 'สำเร็จ', 'code': '00002', 'transport': 'ขนส่งทางเรือ', 'total': 550.0},
+    {'date': '01/07/2025', 'status': 'รอตรวจสอบ', 'code': '00003', 'transport': 'ขนส่งทางเรือ', 'total': 550.0},
   ];
 
   @override
@@ -147,49 +149,88 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
   }
 
   Widget _buildOrderCard(Map<String, dynamic> order) {
-    final isCancelled = order['status'] == 'ยกเลิก';
-    final isSuccess = order['status'] == 'สำเร็จ';
+    final status = order['status'];
+    final isCancelled = status == 'ยกเลิก';
+    final isSuccess = status == 'สำเร็จ';
+    final isPending = status == 'รอตรวจสอบ';
+
     final statusColor =
         isCancelled
             ? Colors.red
             : isSuccess
             ? Colors.green
-            : Colors.orange;
+            : isPending
+            ? Colors.orange
+            : Colors.grey;
+
     final borderColor =
         isCancelled
             ? Colors.red.shade100
             : isSuccess
             ? Colors.green.shade100
+            : isPending
+            ? Colors.orange.shade100
             : Colors.grey.shade300;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: borderColor), borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const POOrderDetailPage())),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: Colors.white, border: Border.all(color: borderColor), borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔹 Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Image.asset('assets/icons/task-square.png', width: 20),
+                    const SizedBox(width: 8),
+                    Text('เลขบิลสั่งซื้อ ${order['code']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Text(status, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // 🔸 รอตรวจสอบจะมีแถวเพิ่ม
+            if (isPending) ...[
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: const [Text('การสั่งซื้อ'), Text('คำสั่งซื้อของเชล')]),
+              const SizedBox(height: 4),
+            ],
+
+            // 🔹 ปกติ
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('การขนส่ง'), Text(order['transport'])]),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [const Text('สรุปราคาสินค้า'), Text('${order['total'].toStringAsFixed(2)}฿')],
+            ),
+
+            // 🔹 ปุ่มเฉพาะสถานะรอตรวจสอบ
+            if (isPending) ...[
+              const SizedBox(height: 12),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Image.asset('assets/icons/task-square.png', width: 20),
+                  OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(foregroundColor: Colors.grey), child: const Text('ยกเลิก')),
                   const SizedBox(width: 8),
-                  Text('เลขบิลสั่งซื้อ ${order['code']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1E3C72), // ✅ kButtonColor
+                    ),
+                    child: const Text('สั่งซื้ออีกครั้ง', style: TextStyle(color: Colors.white)),
+                  ),
                 ],
               ),
-              Text(order['status'], style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
             ],
-          ),
-          const SizedBox(height: 8),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('การขนส่ง'), Text(order['transport'])]),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [const Text('สรุปราคาสินค้า'), Text('${order['total'].toStringAsFixed(2)}฿')],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
