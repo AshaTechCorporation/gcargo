@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/scheduler.dart';
+import 'package:gcargo/models/imgbanner.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,7 @@ class HomeController extends GetxController {
   var errorMessage = ''.obs;
   var hasError = false.obs;
   final RxMap<String, dynamic> exchangeRate = <String, dynamic>{}.obs;
+  final RxList<ImgBanner> imgBanners = <ImgBanner>[].obs;
 
   @override
   void onInit() {
@@ -21,6 +23,7 @@ class HomeController extends GetxController {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       searchItemsFromAPI('Shirt');
       getExchangeRateFromAPI();
+      getImgBannerFromAPI();
     });
   }
 
@@ -115,6 +118,20 @@ class HomeController extends GetxController {
         exchangeRate.value = rateData;
       } else {
         _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลเรท');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
+  Future<void> getImgBannerFromAPI() async {
+    try {
+      final imgData = await HomeService.getImgBanner();
+      if (imgData != null && imgData is List<ImgBanner>) {
+        imgBanners.value = imgData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูล');
       }
     } catch (e) {
       log('❌ Error in searchItems: $e');

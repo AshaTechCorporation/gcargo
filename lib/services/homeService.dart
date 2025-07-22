@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/models/imgbanner.dart';
 import 'package:gcargo/utils/ApiExeption.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -168,6 +169,37 @@ class HomeService {
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
       return data['data'];
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  // get รูป banner
+  static Future<List<ImgBanner>> getImgBanner() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/api/banner_page');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "draw": 1,
+        "type": "mall",
+        "columns": [],
+        "order": [
+          {"column": 0, "dir": "asc"},
+        ],
+        "start": 0,
+        "length": 10,
+        "search": {"value": "", "regex": false},
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data']['data'] as List;
+      return list.map((e) => ImgBanner.fromJson(e)).toList();
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);

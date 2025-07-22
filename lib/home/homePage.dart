@@ -35,21 +35,13 @@ class _HomePageState extends State<HomePage> {
   int _currentPage = 0;
   late Timer _timer;
 
-  final List<String> _images = [
-    'assets/images/slidpic.png',
-    'assets/images/slidpic.png',
-    'assets/images/slidpic.png',
-    'assets/images/slidpic.png',
-    'assets/images/slidpic.png',
-  ];
-
   @override
   void initState() {
     super.initState();
     if (!mounted) return;
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_pageController.hasClients) {
-        int nextPage = (_currentPage + 1) % _images.length;
+      if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
+        int nextPage = (_currentPage + 1) % homeController.imgBanners.length;
         _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
       }
     });
@@ -139,44 +131,83 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔹 Slide Image
               // 🔹 Image Slider
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox(
-                    height: 140,
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: _images.length,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentPage = index;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        return Image.asset(_images[index], fit: BoxFit.cover, width: double.infinity);
-                      },
+              Obx(() {
+                if (homeController.isLoading.value) {
+                  return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
+                }
+
+                if (homeController.imgBanners.isEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        height: 140,
+                        color: Colors.grey.shade200,
+                        child: Center(child: Text('ไม่มีรูปภาพแบนเนอร์', style: TextStyle(color: Colors.grey))),
+                      ),
+                    ),
+                  );
+                }
+
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      height: 140,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: homeController.imgBanners.length,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentPage = index;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          final banner = homeController.imgBanners[index];
+                          return Image.network(
+                            banner.image ?? 'assets/images/placeholder.png',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey.shade200,
+                                child: Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              }),
+
               SizedBox(height: 16),
               // 🔹 Indicator
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(_images.length, (index) {
-                  final isActive = _currentPage == index;
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    margin: EdgeInsets.symmetric(horizontal: 4),
-                    width: isActive ? 20 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(color: isActive ? Colors.blue.shade900 : Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
-                  );
-                }),
-              ),
+              Obx(() {
+                if (homeController.imgBanners.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(homeController.imgBanners.length, (index) {
+                    final isActive = _currentPage == index;
+                    return AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      margin: EdgeInsets.symmetric(horizontal: 4),
+                      width: isActive ? 20 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: isActive ? Colors.blue.shade900 : Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    );
+                  }),
+                );
+              }),
               SizedBox(height: 16),
 
               // 🔹 Stack รูป + ช่องค้นหา + ข้อความ
