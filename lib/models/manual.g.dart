@@ -14,12 +14,14 @@ Manual _$ManualFromJson(Map<String, dynamic> json) => Manual(
   json['description'] as String?,
   json['image'] as String?,
   (json['No'] as num?)?.toInt(),
+  (json['category_newss_id'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$ManualToJson(Manual instance) => <String, dynamic>{
   'id': instance.id,
   'code': instance.code,
   'category_member_manual_id': instance.category_member_manual_id,
+  'category_newss_id': instance.category_newss_id,
   'name': instance.name,
   'description': instance.description,
   'image': instance.image,

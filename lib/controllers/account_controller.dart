@@ -12,6 +12,7 @@ class AccountController extends GetxController {
   var hasError = false.obs;
   var faqs = <Faq>[].obs;
   var manuals = <Manual>[].obs;
+  var news = <Manual>[].obs;
 
   @override
   void onInit() {
@@ -65,6 +66,29 @@ class AccountController extends GetxController {
     }
   }
 
+  Future<void> getNews() async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await AccountService.getNews();
+
+      if (data != null) {
+        // ไม่ต้องทำอะไร
+        news.value = data;
+        log('News: $news');
+      } else {
+        _setError('ไม่สามารถโหลดข้อมูล News ได้');
+      }
+    } catch (e) {
+      log('❌ Error in getNews: $e');
+      _setError('ไม่สามารถโหลดข้อมูล News ได้');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void _setError(String message) {
     hasError.value = true;
     errorMessage.value = message;
@@ -74,5 +98,6 @@ class AccountController extends GetxController {
   Future<void> refreshData() async {
     await getFaqs();
     await getManuals();
+    await getNews();
   }
 }
