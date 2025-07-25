@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/productDetailPage.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
-import 'package:gcargo/utils/helpers.dart';
 
 class SearchPage extends StatefulWidget {
   final List<Map<String, dynamic>> initialSearchResults;
@@ -21,6 +20,7 @@ class _SearchPageState extends State<SearchPage> {
   List<Map<String, dynamic>> currentSearchResults = [];
   String currentSearchQuery = '';
   bool isSearching = false;
+  List<String> searchHistory = [];
 
   @override
   void initState() {
@@ -29,6 +29,7 @@ class _SearchPageState extends State<SearchPage> {
     currentSearchResults = widget.initialSearchResults;
     currentSearchQuery = widget.initialSearchQuery;
     searchController.text = widget.initialSearchQuery;
+    searchHistory.add(widget.initialSearchQuery);
 
     // Get HomeController
     try {
@@ -38,7 +39,25 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  final List<String> searchTags = ['กระเป๋า', 'รองเท้าผ้าใบ', 'เสื้อฮู้ดฟรีไซส์'];
+  // Method to save search query to history
+  void _saveSearchToHistory(String query) {
+    if (query.trim().isNotEmpty && !searchHistory.contains(query.trim())) {
+      setState(() {
+        searchHistory.insert(0, query.trim()); // Add to beginning
+        // Keep only last 10 searches
+        if (searchHistory.length > 10) {
+          searchHistory = searchHistory.take(10).toList();
+        }
+      });
+    }
+  }
+
+  // Method to clear search history
+  void _clearSearchHistory() {
+    setState(() {
+      searchHistory.clear();
+    });
+  }
 
   // Method to handle search within SearchPage
   Future<void> _performSearch(String query) async {
@@ -46,6 +65,9 @@ class _SearchPageState extends State<SearchPage> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณากรอกคำค้นหา')));
       return;
     }
+
+    // Save search query to history every time user searches
+    _saveSearchToHistory(query);
 
     setState(() {
       isSearching = true;
@@ -154,13 +176,42 @@ class _SearchPageState extends State<SearchPage> {
               // 🔹 History
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text("ประวัติการค้นหา", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("ลบประวัติการค้นหาทั้งหมด", style: TextStyle(color: Colors.grey)),
+                children: [
+                  const Text("ประวัติการค้นหา", style: TextStyle(fontWeight: FontWeight.bold)),
+                  GestureDetector(onTap: _clearSearchHistory, child: const Text("ลบประวัติการค้นหาทั้งหมด", style: TextStyle(color: Colors.grey))),
                 ],
               ),
               const SizedBox(height: 8),
-              Wrap(spacing: 8, runSpacing: 8, children: searchTags.map((tag) => Chip(label: Text(tag), backgroundColor: Colors.grey[200])).toList()),
+
+              // Display search history if available, otherwise show default tags
+              if (searchHistory.isNotEmpty) ...[
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children:
+                      searchHistory
+                          .map(
+                            (query) => GestureDetector(
+                              onTap: () {
+                                searchController.text = query;
+                                _performSearch(query);
+                              },
+                              child: Chip(
+                                label: Text(query),
+                                backgroundColor: Colors.blue.shade50,
+                                deleteIcon: const Icon(Icons.close, size: 16),
+                                onDeleted: () {
+                                  setState(() {
+                                    searchHistory.remove(query);
+                                  });
+                                },
+                              ),
+                            ),
+                          )
+                          .toList(),
+                ),
+              ] else
+                ...[],
 
               const SizedBox(height: 16),
 
