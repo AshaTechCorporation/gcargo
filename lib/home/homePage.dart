@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
 import 'package:gcargo/home/exchangePage.dart';
+import 'package:gcargo/home/searchPage.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 import 'package:gcargo/home/widgets/ServiceImageCard.dart';
 import 'package:get/get.dart';
@@ -55,6 +56,59 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  // Method to handle search
+  Future<void> _handleSearch(String query) async {
+    if (query.trim().isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณากรอกคำค้นหา')));
+      }
+      return;
+    }
+
+    // Show loading indicator
+    if (mounted) {
+      showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+    }
+
+    try {
+      // Call API to search
+      await homeController.searchItemsFromAPI(query);
+
+      // Close loading dialog
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Check if we have results
+      if (homeController.hasError.value) {
+        // Show error message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(homeController.errorMessage.value)));
+        }
+      } else if (homeController.searchItems.isEmpty) {
+        // Show no results message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่พบสินค้าที่ค้นหา')));
+        }
+      } else {
+        // Navigate to SearchPage with results
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SearchPage(initialSearchResults: homeController.searchItems, initialSearchQuery: query)),
+          );
+        }
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (mounted) {
+        Navigator.of(context).pop();
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -89,6 +143,9 @@ class _HomePageState extends State<HomePage> {
                             border: InputBorder.none,
                           ),
                           style: TextStyle(color: Colors.black),
+                          onFieldSubmitted: (value) {
+                            _handleSearch(value);
+                          },
                         ),
                       ),
                       GestureDetector(
@@ -231,11 +288,17 @@ class _HomePageState extends State<HomePage> {
                       height: 36,
                       padding: EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-                      child: Row(
-                        children: [
-                          Expanded(child: Text('ค้นหาสินค้าจากคลัง', style: TextStyle(color: Colors.grey))),
-                          Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
-                        ],
+                      child: GestureDetector(
+                        onTap: () {
+                          // Navigate to SearchPage for search
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage()));
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(child: Text('ค้นหาสินค้าจากคลัง', style: TextStyle(color: Colors.grey))),
+                            Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
+                          ],
+                        ),
                       ),
                     ),
                   ),
