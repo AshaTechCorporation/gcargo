@@ -12,10 +12,47 @@ import 'package:gcargo/account/securityPage.dart';
 import 'package:gcargo/account/userManualPage.dart';
 import 'package:gcargo/account/widgets/AccountHeaderWidget.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/home/firstPage.dart';
+import 'package:gcargo/login/loginPage.dart';
 import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
+
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await fristLoad();
+    });
+  }
+
+  Future<void> fristLoad() async {
+    final _prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = _prefs;
+    final _token = prefs.getString('token');
+
+    setState(() {
+      token = _token;
+    });
+  }
+
+  Future<void> clearToken() async {
+    final _prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = _prefs;
+    prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    //context.read<HomeController>().user = null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,32 +158,39 @@ class AccountPage extends StatelessWidget {
                       ),
                       child: TextButton(
                         onPressed: () async {
-                          final confirm = await showDialog(
-                            context: context,
-                            builder:
-                                (context) => LogoutConfirmationDialog(
-                                  onConfirm: () {
-                                    // TODO: ลบ token ออกจาก SharedPreferences
-                                    Navigator.pop(context, true);
-                                  },
-                                  onCancel: () => Navigator.pop(context, false),
-                                ),
-                          );
-                          if (confirm == true) {
-                            print(true);
+                          if (token == null) {
+                            // ไปหน้า Login
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                          } else {
+                            final confirm = await showDialog(
+                              context: context,
+                              builder:
+                                  (context) => LogoutConfirmationDialog(
+                                    onConfirm: () {
+                                      // TODO: ลบ token ออกจาก SharedPreferences
+                                      Navigator.pop(context, true);
+                                    },
+                                    onCancel: () => Navigator.pop(context, false),
+                                  ),
+                            );
+                            if (confirm == true) {
+                              print(true);
+                              await clearToken();
+                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                            }
                           }
                         },
                         style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(vertical: 16),
                           foregroundColor: const Color(0xFF4A4A4A),
-                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                         ),
-                        child: const Text('ออกจากระบบ'),
+                        child: Text(token == null ? 'เข้าสู่ระบบ' : 'ออกจากระบบ'),
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40),
                 ],
               ),
             ),

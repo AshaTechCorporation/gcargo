@@ -163,7 +163,7 @@ class HomeService {
   static Future getExchageRate() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_exchage_rate_setting');
+    final url = Uri.https(publicUrl, '/public/api/get_exchage_rate_setting');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -179,7 +179,7 @@ class HomeService {
   static Future<List<ImgBanner>> getImgBanner() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/banner_page');
+    final url = Uri.https(publicUrl, '/public/api/banner_page');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.post(
       url,

@@ -7,7 +7,7 @@ class LoginService {
   const LoginService();
 
   static Future login(String username, String password, String device_no, String notify_token) async {
-    final url = Uri.https(publicUrl, '/api/login_app');
+    final url = Uri.https(publicUrl, '/public/api/login_app');
     final response = await http
         .post(url, body: {'importer_code': username, "password": password, 'device_no': device_no, 'notify_token': notify_token})
         .timeout(const Duration(minutes: 1));

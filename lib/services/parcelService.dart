@@ -15,7 +15,7 @@ class ParcelService {
   static Future<List<OrdersPage>> geTrackOrders() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_orders_by_member/$userID');
+    final url = Uri.https(publicUrl, '/public/api/get_orders_by_member/$userID');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -32,7 +32,7 @@ class ParcelService {
   static Future<List<LegalImport>> getDeliveryOrders() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_delivery_orders_by_member/$userID');
+    final url = Uri.https(publicUrl, '/public/api/get_delivery_orders_by_member/$userID');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -49,7 +49,7 @@ class ParcelService {
   static Future<OrdersPageNew> getIDeliveryOrderById({required int id}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/delivery_orders/$id');
+    final url = Uri.https(publicUrl, '/public/api/delivery_orders/$id');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -65,7 +65,7 @@ class ParcelService {
   static Future<List<LegalImport>> getImportLegal() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_import_product_order_by_member/$userID');
+    final url = Uri.https(publicUrl, '/public/api/get_import_product_order_by_member/$userID');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -82,7 +82,7 @@ class ParcelService {
   static Future<Importorders> getImportPOById({required int id}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/import_product_order/$id');
+    final url = Uri.https(publicUrl, '/public/api/import_product_order/$id');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -98,7 +98,7 @@ class ParcelService {
   static Future<List<OrdersPageNew>> getDeliveryAllOrders() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_delivery_all_orders_by_member/$userID');
+    final url = Uri.https(publicUrl, '/public/api/get_delivery_all_orders_by_member/$userID');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {

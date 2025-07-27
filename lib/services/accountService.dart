@@ -13,7 +13,7 @@ class AccountService {
   static Future<List<Faq>> getFaqs() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_faq');
+    final url = Uri.https(publicUrl, '/public/api/get_faq');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -30,7 +30,7 @@ class AccountService {
   static Future<List<Manual>> getManuals() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_manual');
+    final url = Uri.https(publicUrl, '/public/api/get_manual');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -47,7 +47,7 @@ class AccountService {
   static Future<List<Manual>> getNews() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_news');
+    final url = Uri.https(publicUrl, '/public/api/get_news');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
