@@ -73,14 +73,12 @@ class _CartPageState extends State<CartPage> {
 
   // Helper methods for price calculations
   double getExchangeRateValue(Map<String, dynamic> rateData) {
-    final exchangeRateData = homeController.exchangeRate;
-    final exchangeRate = getExchangeRateValue(exchangeRateData);
     if (rateData.isNotEmpty && rateData.containsKey('product_payment_rate')) {
       final rate = rateData['product_payment_rate'];
       if (rate is num) {
         return rate.toDouble();
       } else if (rate is String) {
-        return double.tryParse(rate) ?? exchangeRate; // Default fallback rate
+        return double.tryParse(rate) ?? 4.0; // Default fallback rate
       }
     }
     return 4.0; // Default fallback rate
@@ -275,7 +273,9 @@ class _CartPageState extends State<CartPage> {
     }
 
     // You can add exchange rate calculation here if needed
-    final totalBaht = totalYuan * 4.0; // Assuming 1 Yuan = 4 Baht
+    final exchangeRateData = homeController.exchangeRate;
+    final exchangeRate = getExchangeRateValue(exchangeRateData);
+    final totalBaht = totalYuan * exchangeRate; // Assuming 1 Yuan = 4 Baht
 
     return '¥${totalYuan.toStringAsFixed(2)} (฿ ${totalBaht.toStringAsFixed(2)})';
   }

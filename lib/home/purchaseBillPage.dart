@@ -11,6 +11,7 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/couponSelectionPage.dart';
 import 'package:gcargo/home/deliveryMethodPage.dart';
+import 'package:gcargo/services/cart_service.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:gcargo/utils/helpers.dart';
 
@@ -274,6 +275,9 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
 
                       log('✅ Order created successfully: $result');
 
+                      // Remove ordered items from cart
+                      await _removeOrderedItemsFromCart();
+
                       // Show success message
                       if (mounted) {
                         ScaffoldMessenger.of(
@@ -281,7 +285,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                         ).showSnackBar(const SnackBar(content: Text('สร้างออเดอร์สำเร็จ!'), backgroundColor: Colors.green));
 
                         // Navigate back or to order confirmation page
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                        Navigator.pushAndRemoveUntil(currentContext, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
                       }
                     } catch (e) {
                       log('❌ Error creating order: $e');
@@ -537,5 +541,58 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
             }).toList(),
       ),
     );
+  }
+
+  // Method to remove ordered items from cart
+  Future<void> _removeOrderedItemsFromCart() async {
+    try {
+      // Get all cart items
+      final cartItems = CartService.getCartItems();
+
+      // No cart items, nothing to remove
+      if (cartItems.isEmpty) return;
+
+      // Indices of cart items to remove
+      List<int> indicesToRemove = [];
+
+      // Check each product in the order
+      for (var orderProduct in products) {
+        final orderNumId = orderProduct['num_iid']?.toString() ?? '';
+
+        // Skip if no valid num_iid
+        if (orderNumId.isEmpty) continue;
+
+        // Find matching items in cart
+        for (int i = 0; i < cartItems.length; i++) {
+          final cartItem = cartItems[i];
+
+          // Check if cart item matches order item
+          if (cartItem.numIid == orderNumId) {
+            // If sizes match (or both empty)
+            final orderSize = orderProduct['selectedSize']?.toString() ?? '';
+            final cartSize = cartItem.selectedSize;
+
+            // If colors match (or both empty)
+            final orderColor = orderProduct['selectedColor']?.toString() ?? '';
+            final cartColor = cartItem.selectedColor;
+
+            // If both size and color match (or both empty)
+            if ((orderSize == cartSize) && (orderColor == cartColor)) {
+              indicesToRemove.add(i);
+              break; // Found a match, move to next order product
+            }
+          }
+        }
+      }
+
+      // Remove matched items from cart
+      if (indicesToRemove.isNotEmpty) {
+        await CartService.removeMultipleItems(indicesToRemove);
+        log('✅ Removed ${indicesToRemove.length} items from cart after successful order');
+      }
+    } catch (e) {
+      // Log error but don't interrupt the flow
+      log('❌ Error removing items from cart: $e');
+    }
   }
 }
