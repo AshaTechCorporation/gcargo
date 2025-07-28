@@ -47,12 +47,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
     // Initialize products list
     if (widget.productDataList != null && widget.productDataList!.isNotEmpty) {
       products = List.from(widget.productDataList!);
-    } else {
-      // Fallback with default product
-      // products = [
-      //   {'title': 'เสื้อแฟชั่น', 'price': 10.0, 'pic_url': 'assets/images/unsplash1.png', 'quantity': 1},
-      // ];
-    }
+    } else {}
 
     // Fetch extra services
     _loadExtraServices();
@@ -246,7 +241,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                           product['title'] ?? '', // product_name
                           product['detail_url'] ?? '', // product_url
                           product['pic_url'] ?? '', // product_image
-                          'Shirt', // product_category
+                          product['name'] ?? '', // product_category
                           'taobao', // product_store_type
                           noteController.text, // product_note
                           product['price']?.toString() ?? '0', // product_price

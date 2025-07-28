@@ -8,11 +8,13 @@ import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
 import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
+import 'package:gcargo/services/cart_service.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProductDetailPage extends StatefulWidget {
-  ProductDetailPage({super.key, required this.num_iid});
+  ProductDetailPage({super.key, required this.num_iid, required this.name});
   String num_iid;
+  String name;
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -375,6 +377,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 'quantity': quantity,
                 'selectedSize': selectedSize,
                 'selectedColor': selectedColor,
+                'name': widget.name,
               };
 
               Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData])));
@@ -393,8 +396,47 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 borderRadius: BorderRadius.circular(6), // ✅ ขอบมนเล็กน้อย
               ),
             ),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartPage()));
+            onPressed: () async {
+              // Store context before async operations
+              final currentContext = context;
+
+              // Create product data
+              final productData = {
+                'num_iid': productController.numIidValue,
+                'title': productController.title,
+                'price': productController.price,
+                'orginal_price': productController.originalPrice,
+                'nick': productController.nick,
+                'detail_url': productController.detailUrl,
+                'pic_url': productController.picUrl,
+                'brand': productController.brand,
+                'quantity': quantity,
+                'selectedSize': selectedSize,
+                'selectedColor': selectedColor,
+                'name': widget.name,
+              };
+
+              try {
+                // Add to cart
+                await CartService.addToCart(productData);
+
+                // Show success message
+                if (mounted) {
+                  ScaffoldMessenger.of(currentContext).showSnackBar(
+                    const SnackBar(content: Text('เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)),
+                  );
+
+                  // Navigate to cart page
+                  Navigator.push(currentContext, MaterialPageRoute(builder: (_) => const CartPage()));
+                }
+              } catch (e) {
+                // Show error message
+                if (mounted) {
+                  ScaffoldMessenger.of(
+                    currentContext,
+                  ).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e'), backgroundColor: Colors.red, duration: const Duration(seconds: 2)));
+                }
+              }
             },
             child: Text('เพิ่มลงตะกร้า', style: TextStyle(color: Colors.white, fontSize: 16)),
           ),

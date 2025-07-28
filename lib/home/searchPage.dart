@@ -243,7 +243,10 @@ class _SearchPageState extends State<SearchPage> {
                         onTap: () {
                           final rawNumIid = item['num_iid'];
                           final String numIidStr = (rawNumIid is int || rawNumIid is String) ? rawNumIid.toString() : '0';
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: numIidStr)));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: numIidStr, name: searchController.text)),
+                          );
                         },
                       );
                     },
