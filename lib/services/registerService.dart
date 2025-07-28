@@ -53,7 +53,7 @@ class RegisterService {
     // final SharedPreferences prefs = await SharedPreferences.getInstance();
     // final domain = prefs.getString('domain');
     var headers = {'Content-Type': 'application/json'};
-    final url = Uri.https(publicUrl, '/api/member');
+    final url = Uri.https(publicUrl, '/public/api/member');
     final response = await http.post(
       url,
       headers: headers,
@@ -125,7 +125,7 @@ class RegisterService {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
     var headers = {'Content-Type': 'application/json'};
-    final url = Uri.https(publicUrl, '/api/register_importer');
+    final url = Uri.https(publicUrl, '/public/api/register_importer');
     final response = await http.post(
       url,
       headers: headers,
@@ -158,7 +158,7 @@ class RegisterService {
   }
 
   static Future addImage({File? file, required String path}) async {
-    const apiUrl = '$baseUrl/api/upload_images';
+    const apiUrl = '$baseUrl/public/api/upload_images';
     // final token = prefs.getString('token');
     final headers = {
       // 'Authorization': 'Bearer $token',
@@ -176,7 +176,7 @@ class RegisterService {
   }
 
   static Future addFile({File? file, required String path}) async {
-    const apiUrl = '$baseUrl/api/upload_file';
+    const apiUrl = '$baseUrl/public/api/upload_file';
     // final token = prefs.getString('token');
     final headers = {
       // 'Authorization': 'Bearer $token',

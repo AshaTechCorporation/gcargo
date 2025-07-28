@@ -115,9 +115,17 @@ class ProductDetailController extends GetxController {
 
   String get title => itemData?['title'] ?? 'ไม่มีชื่อสินค้า';
   String get picUrl => itemData?['pic_url'] ?? '';
-  double get price => (itemData?['price'] ?? 0).toDouble();
-  double get promotionPrice => (itemData?['promotion_price'] ?? 0).toDouble();
-  double get originalPrice => (itemData?['orginal_price'] ?? 0).toDouble();
+  double get price => _safeToDouble(itemData?['price']);
+  double get promotionPrice => _safeToDouble(itemData?['promotion_price']);
+  double get originalPrice => _safeToDouble(itemData?['orginal_price']);
+
+  double _safeToDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
+  }
+
   String get area => itemData?['area'] ?? '';
   String get detailUrl => itemData?['detail_url'] ?? '';
   String get nick => itemData?['nick'] ?? '';

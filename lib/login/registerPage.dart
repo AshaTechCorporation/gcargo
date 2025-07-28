@@ -40,6 +40,15 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  String _formatBirthDate(String input) {
+    try {
+      final parsed = DateFormat('dd/MM/yyyy').parseStrict(input);
+      return DateFormat('yyyy-MM-dd').format(parsed);
+    } catch (e) {
+      return ''; // หรือ null ถ้า backend ยอมรับ
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -59,7 +68,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 const Text('สมัครใช้งานง่าย ส่งของข้ามประเทศได้ปลอดภัยทุกขั้นตอน', style: TextStyle(fontSize: 13, color: kHintTextColor)),
                 const SizedBox(height: 24),
 
-                CustomTextFormField(label: 'อีเมล', hintText: 'กรุณากรอกอีเมล', controller: _emailController),
+                CustomTextFormField(
+                  label: 'อีเมล',
+                  hintText: 'กรุณากรอกอีเมล',
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
                 const SizedBox(height: 20),
 
                 CustomTextFormField(label: 'รหัสผ่าน', hintText: '••••••••', controller: _passwordController, isPassword: true),
@@ -99,7 +113,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 12),
 
-                CustomTextFormField(label: 'เบอร์โทรศัพท์มือถือ', hintText: 'กรุณากรอกเบอร์โทรศัพท์มือถือ', controller: _phoneController),
+                CustomTextFormField(
+                  label: 'เบอร์โทรศัพท์มือถือ',
+                  hintText: 'กรุณากรอกเบอร์โทรศัพท์มือถือ',
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                ),
                 const SizedBox(height: 20),
 
                 CustomTextFormField(label: 'รหัสนำเข้า', hintText: 'กรุณากรอกรหัสผ่านเข้า', controller: _pinController),
@@ -158,62 +177,70 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         if (accepted == true) {
                           // TODO: ดำเนินการสมัครต่อ
-                          // try {
-                          //   final _register = await RegisterService.register(
-                          //     member_type: '',
-                          //     email: _emailController.text,
-                          //     password: _passwordController.text,
-                          //     fname: _nameController.text,
-                          //     phone: _phoneController.text,
-                          //     gender: isMale ? 'male' : 'female',
-                          //     birth_date: _birthdateController.text,
-                          //     importer_code: _pinController.text,
-                          //     referrer: _referralCodeController.text,
-                          //     frequent_importer: _saleCodeController.text,
-                          //     comp_name: '',
-                          //     comp_tax: '',
-                          //     comp_phone: '',
-                          //     cargo_name: '',
-                          //     cargo_website: '',
-                          //     cargo_image: '',
-                          //     order_quantity_in_thai: '',
-                          //   );
-                          //   if (_register != null) {
-                          //     Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
-                          //   } else {
-                          //     // TODO: Handle error
-                          //   }
-                          // } on Exception catch (e) {
-                          //   if (!mounted) return;
-                          //   //LoadingDialog.close(context);
-                          //   // showDialog(
-                          //   //   context: context,
-                          //   //   builder:
-                          //   //       (context) => AlertDialogYes(
-                          //   //         title: 'Setting.warning'.tr(),
-                          //   //         description: '$e',
-                          //   //         pressYes: () {
-                          //   //           Navigator.pop(context);
-                          //   //         },
-                          //   //       ),
-                          //   // );
-                          // } catch (e) {
-                          //   if (!mounted) return;
-                          //   //LoadingDialog.close(context);
-                          //   // showDialog(
-                          //   //   context: context,
-                          //   //   builder:
-                          //   //       (context) => AlertDialogYes(
-                          //   //         title: 'Setting.warning'.tr(),
-                          //   //         description: '$e',
-                          //   //         pressYes: () {
-                          //   //           Navigator.pop(context);
-                          //   //         },
-                          //   //       ),
-                          //   // );
-                          // }
+                          try {
+                            final currentContext = context;
+                            final _register = await RegisterService.register(
+                              member_type: 'บุคคลทั่วไป',
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                              fname: _nameController.text,
+                              phone: _phoneController.text,
+                              gender: isMale ? 'male' : 'female',
+                              birth_date: _formatBirthDate(_birthdateController.text),
+                              importer_code: _pinController.text,
+                              referrer: _referralCodeController.text,
+                              frequent_importer: _saleCodeController.text,
+                              comp_name: '',
+                              comp_tax: '',
+                              comp_phone: '',
+                              cargo_name: '',
+                              cargo_website: '',
+                              cargo_image: '',
+                              order_quantity_in_thai: '',
+                              transport_thai_master_id: 1,
+                              ever_imported_from_china: 'เคย',
+                            );
+                            if (_register != null) {
+                              //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                              ScaffoldMessenger.of(
+                                currentContext,
+                              ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.green));
+                              Navigator.pop(context);
+                            } else {
+                              // TODO: Handle error
+                            }
+                          } on Exception catch (e) {
+                            if (!mounted) return;
+                            print(e);
+                            //LoadingDialog.close(context);
+                            // showDialog(
+                            //   context: context,
+                            //   builder:
+                            //       (context) => AlertDialogYes(
+                            //         title: 'Setting.warning'.tr(),
+                            //         description: '$e',
+                            //         pressYes: () {
+                            //           Navigator.pop(context);
+                            //         },
+                            //       ),
+                            // );
+                          } catch (e) {
+                            if (!mounted) return;
+                            //LoadingDialog.close(context);
+                            // showDialog(
+                            //   context: context,
+                            //   builder:
+                            //       (context) => AlertDialogYes(
+                            //         title: 'Setting.warning'.tr(),
+                            //         description: '$e',
+                            //         pressYes: () {
+                            //           Navigator.pop(context);
+                            //         },
+                            //       ),
+                            // );
+                          }
 
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
                         } else {
                           print('ผู้ใช้ปฏิเสธ');
                         }
