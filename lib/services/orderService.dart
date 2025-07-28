@@ -1,0 +1,27 @@
+import 'package:gcargo/constants.dart';
+import 'package:gcargo/models/orders/ordersPage.dart';
+import 'package:gcargo/utils/ApiExeption.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+class OrderService {
+  const OrderService();
+
+  static Future<List<OrdersPage>> geTrackOrders() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/get_orders_by_member/$userID');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data'] as List;
+      return list.map((e) => OrdersPage.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+}
