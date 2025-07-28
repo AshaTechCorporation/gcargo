@@ -61,7 +61,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void _startAutoSlide() {
-    _autoSlideTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _autoSlideTimer = Timer.periodic(Duration(seconds: 3), (timer) {
       if (_pageController.hasClients) {
         final allImages = productController.allImages;
         final imagesToShow = allImages.isNotEmpty ? allImages : images;
@@ -91,7 +91,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         return Container(
           height: 200,
           decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(12)),
-          child: const Center(child: CircularProgressIndicator()),
+          child: Center(child: CircularProgressIndicator()),
         );
       }
 
@@ -362,7 +362,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               ),
             ),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const PurchaseBillPage()));
+              // Prepare product data to send to PurchaseBillPage
+              final productData = {
+                'num_iid': productController.numIidValue,
+                'title': productController.title,
+                'price': productController.price,
+                'orginal_price': productController.originalPrice,
+                'nick': productController.nick,
+                'detail_url': productController.detailUrl,
+                'pic_url': productController.picUrl,
+                'brand': productController.brand,
+                'quantity': quantity,
+                'selectedSize': selectedSize,
+                'selectedColor': selectedColor,
+              };
+
+              Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData])));
             },
             child: Text('สั่งซื้อสินค้า', style: TextStyle(fontSize: 16, color: Colors.white)),
           ),

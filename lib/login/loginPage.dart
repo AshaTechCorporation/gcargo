@@ -115,8 +115,8 @@ class _LoginPageState extends State<LoginPage> {
                             final SharedPreferences prefs = await _prefs;
                             await prefs.setString('token', token['token']);
                             await prefs.setInt('userID', token['userID']);
-                            //Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => PinEntryPage()));
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) => PinEntryPage()));
                           }
                         } on ClientException catch (e) {
                           showDialog(

@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/models/imgbanner.dart';
+import 'package:gcargo/models/orders/serviceTransporterById.dart';
+import 'package:gcargo/models/products.dart';
+import 'package:gcargo/models/user.dart';
 import 'package:gcargo/utils/ApiExeption.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -200,6 +203,82 @@ class HomeService {
       final data = convert.jsonDecode(response.body);
       final list = data['data']['data'] as List;
       return list.map((e) => ImgBanner.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //
+  static Future<User> getUserById() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    var headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    final url = Uri.https(publicUrl, '/public/api/member/$userID');
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return User.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //ดึงข้อมูลบริการเสริม
+  static Future<List<ServiceTransporterById>> getExtraService() async {
+    final url = Uri.https(publicUrl, '/public/api/get_add_on_services');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data'] as List;
+      return list.map((e) => ServiceTransporterById.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //สร้างออเดอร์
+  static Future createOrder({
+    String? date,
+    double? total_price,
+    String? shipping_type,
+    String? payment_term,
+    String? note,
+    String? importer_code,
+    int? member_address_id,
+    List<Products>? products,
+  }) async {
+    final url = Uri.https(publicUrl, '/public/api/orders');
+    var headers = {'Content-Type': 'application/json'};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        'date': date,
+        'total_price': total_price,
+        'member_id': userID.toString(),
+        'member_address_id': member_address_id.toString(),
+        'shipping_type': shipping_type,
+        'payment_term': payment_term,
+        'note': note,
+        'track_ecommerce_no': '',
+        "importer_code": importer_code,
+        "bill_vat": "N",
+        'products': products,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data['data'];
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);

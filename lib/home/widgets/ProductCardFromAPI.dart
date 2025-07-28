@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/utils/helpers.dart';
 
 class ProductCardFromAPI extends StatelessWidget {
   final String imageUrl;
@@ -38,7 +39,7 @@ class ProductCardFromAPI extends StatelessWidget {
                   child:
                       imageUrl.isNotEmpty
                           ? Image.network(
-                            imageUrl,
+                            formatImageUrl(imageUrl),
                             fit: BoxFit.cover,
                             height: 130,
                             width: double.infinity,

@@ -1,6 +1,9 @@
 import 'dart:developer';
 import 'package:flutter/scheduler.dart';
 import 'package:gcargo/models/imgbanner.dart';
+import 'package:gcargo/models/orders/serviceTransporterById.dart';
+import 'package:gcargo/models/shipping.dart';
+import 'package:gcargo/models/user.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +17,9 @@ class HomeController extends GetxController {
   var hasError = false.obs;
   final RxMap<String, dynamic> exchangeRate = <String, dynamic>{}.obs;
   final RxList<ImgBanner> imgBanners = <ImgBanner>[].obs;
+  List<Shipping> ship_address = [];
+  Shipping? select_ship_address;
+  var extraServices = <ServiceTransporterById>[].obs;
 
   @override
   void onInit() {
@@ -24,6 +30,8 @@ class HomeController extends GetxController {
       searchItemsFromAPI('Shirt');
       getExchangeRateFromAPI();
       getImgBannerFromAPI();
+      getUserDataAndShippingAddresses();
+      getExtraServicesFromAPI();
     });
   }
 
@@ -136,6 +144,41 @@ class HomeController extends GetxController {
     } catch (e) {
       log('❌ Error in searchItems: $e');
       _setErrorRate('$e');
+    }
+  }
+
+  // Method to fetch user data and populate shipping addresses
+  Future<void> getUserDataAndShippingAddresses() async {
+    try {
+      final userData = await HomeService.getUserById();
+      if (userData.ship_address != null && userData.ship_address!.isNotEmpty) {
+        ship_address = userData.ship_address!;
+        // Set first address as default selection
+        select_ship_address = ship_address.first;
+      } else {
+        ship_address = [];
+        select_ship_address = null;
+      }
+    } catch (e) {
+      log('❌ Error fetching user data: $e');
+      ship_address = [];
+      select_ship_address = null;
+    }
+  }
+
+  // Method to update selected shipping address
+  void updateSelectedShippingAddress(Shipping address) {
+    select_ship_address = address;
+  }
+
+  // Method to fetch extra services
+  Future<void> getExtraServicesFromAPI() async {
+    try {
+      final services = await HomeService.getExtraService();
+      extraServices.value = services;
+    } catch (e) {
+      log('❌ Error fetching extra services: $e');
+      extraServices.clear();
     }
   }
 }

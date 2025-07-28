@@ -120,6 +120,9 @@ class ProductDetailController extends GetxController {
   double get originalPrice => (itemData?['orginal_price'] ?? 0).toDouble();
   String get area => itemData?['area'] ?? '';
   String get detailUrl => itemData?['detail_url'] ?? '';
+  String get nick => itemData?['nick'] ?? '';
+  String get brand => itemData?['brand'] ?? '';
+  String get numIidValue => itemData?['num_iid']?.toString() ?? '';
 
   // Get desc_img as a list of image URLs
   List<String> get descImages {
