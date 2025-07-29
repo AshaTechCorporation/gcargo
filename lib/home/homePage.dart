@@ -359,18 +359,26 @@ class _HomePageState extends State<HomePage> {
               // 🔹 เมนูบริการ
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildServiceItem(context, 'assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
-                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                      _buildServiceItem(context, 'assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
-                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                      _buildServiceItem(context, 'assets/icons/cal1.png', 'คำนวณค่าบริการ'),
-                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                      _buildServiceItem(context, 'assets/icons/box1.png', 'ตามพัสดุของฉัน'),
-                    ],
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildServiceItem(context, 'assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
+                        VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                        _buildServiceItem(context, 'assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
+                        VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                        _buildServiceItem(context, 'assets/icons/cal1.png', 'คำนวณค่าบริการ'),
+                        VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                        _buildServiceItem(context, 'assets/icons/box1.png', 'ตามพัสดุของฉัน'),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -486,7 +494,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(5),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
@@ -496,7 +504,7 @@ class _HomePageState extends State<HomePage> {
             child: Image.asset(iconPath, width: 36, height: 36),
           ),
           const SizedBox(height: 6),
-          SizedBox(width: 64, child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
+          SizedBox(child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
         ],
       ),
     );

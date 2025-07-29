@@ -2,8 +2,10 @@ import 'dart:developer';
 import 'package:flutter/scheduler.dart';
 import 'package:gcargo/models/imgbanner.dart';
 import 'package:gcargo/models/orders/serviceTransporterById.dart';
+import 'package:gcargo/models/rateExchange.dart';
 import 'package:gcargo/models/rateShip.dart';
 import 'package:gcargo/models/shipping.dart';
+import 'package:gcargo/models/transferFee.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:get/get.dart';
@@ -22,6 +24,8 @@ class HomeController extends GetxController {
   Shipping? select_ship_address;
   var extraServices = <ServiceTransporterById>[].obs;
   var rateShip = <RateShip>[].obs;
+  var rateExchange = Rxn<RateExchange>();
+  var transferFee = Rxn<TransferFee>();
 
   @override
   void onInit() {
@@ -34,6 +38,8 @@ class HomeController extends GetxController {
       getImgBannerFromAPI();
       getUserDataAndShippingAddresses();
       getExtraServicesFromAPI();
+      getServiceRateFromAPI();
+      getServiceFeeFromAPI();
     });
   }
 
@@ -126,6 +132,34 @@ class HomeController extends GetxController {
       final rateData = await HomeService.getExchageRate();
       if (rateData != null && rateData is Map<String, dynamic>) {
         exchangeRate.value = rateData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลเรท');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
+  Future<void> getServiceRateFromAPI() async {
+    try {
+      final rateData = await HomeService.getServiceRate();
+      if (rateData != null) {
+        rateExchange.value = rateData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลเรท');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
+  Future<void> getServiceFeeFromAPI() async {
+    try {
+      final feeData = await HomeService.getServiceFee();
+      if (feeData != null) {
+        transferFee.value = feeData;
       } else {
         _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลเรท');
       }

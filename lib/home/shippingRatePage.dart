@@ -170,7 +170,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('ประมาณ', style: TextStyle(fontSize: 18, color: Colors.black54)),
+                        Text('ปริมาณ', style: TextStyle(fontSize: 18, color: Colors.black54)),
                         SizedBox(height: 4),
                         Text(item.price, style: TextStyle(fontSize: 24, color: kSubTitleTextGridColor)),
                       ],

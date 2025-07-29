@@ -4,7 +4,9 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/models/imgbanner.dart';
 import 'package:gcargo/models/orders/serviceTransporterById.dart';
 import 'package:gcargo/models/products.dart';
+import 'package:gcargo/models/rateExchange.dart';
 import 'package:gcargo/models/rateShip.dart';
+import 'package:gcargo/models/transferFee.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/utils/ApiExeption.dart';
 import 'package:http/http.dart' as http;
@@ -179,6 +181,36 @@ class HomeService {
     }
   }
 
+  //ดึงข้อมูล เรท เงินหยวน
+  static Future<RateExchange> getServiceRate() async {
+    final url = Uri.https(publicUrl, '/public/api/exchange-rate');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return RateExchange.fromJson(data);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //
+  static Future<TransferFee> getServiceFee() async {
+    final url = Uri.https(publicUrl, '/public/api/get_fee_setting');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return TransferFee.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
   // get รูป banner
   static Future<List<ImgBanner>> getImgBanner() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -310,6 +342,49 @@ class HomeService {
       final data = convert.jsonDecode(response.body);
       final list = data['data']['data'] as List;
       return list.map((e) => RateShip.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //บริการเติม อะลีเปย์
+  static Future productPaymentAlipayService({
+    required String transaction,
+    required double amount,
+    required double fee,
+    required String phone,
+    required String image_qr_code,
+    required String image,
+    required String image_url,
+    required String image_slip,
+    required String image_slip_url,
+  }) async {
+    final url = Uri.https(publicUrl, '/public/api/alipay_payment');
+    var headers = {'Content-Type': 'application/json'};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "member_id": userID,
+        "transaction": transaction,
+        "amount": amount,
+        "fee": fee,
+        "phone": phone,
+        "transfer_at": DateTime.now().toString(),
+        "image_qr_code": image_qr_code,
+        "image": image,
+        "image_url": image_url,
+        "image_slip": image_slip,
+        "image_slip_url": image_slip_url,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data;
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);
