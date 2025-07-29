@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:gcargo/parcel/walletPaymentPage.dart';
 
 class PaymentMethodPage extends StatelessWidget {
-  const PaymentMethodPage({super.key});
+  PaymentMethodPage({super.key, required this.totalPrice, required this.ref_no, required this.orderType});
+  double totalPrice;
+  String ref_no;
+  String orderType;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +23,12 @@ class PaymentMethodPage extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => WalletPaymentPage()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => WalletPaymentPage(totalPrice: totalPrice, ref_no: ref_no, orderType: orderType)),
+                );
               },
-              child: _buildPaymentOption('Wallet (00.00฿)'),
+              child: _buildPaymentOption('Wallet (${totalPrice.toStringAsFixed(2)}฿)'),
             ),
             const SizedBox(height: 12),
             _buildPaymentOption('QR พร้อมเพย์'),

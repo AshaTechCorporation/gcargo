@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/scheduler.dart';
 import 'package:gcargo/models/legalimport.dart';
+import 'package:gcargo/models/wallettrans.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/models/orders/ordersPage.dart';
 import 'package:gcargo/services/orderService.dart';
@@ -12,6 +13,8 @@ class OrderController extends GetxController {
   var errorMessage = ''.obs;
   var hasError = false.obs;
   var deilveryOrders = <LegalImport>[].obs;
+  var order = Rxn<OrdersPage>();
+  var walletTrans = <WalletTrans>[].obs;
 
   @override
   void onInit() {
@@ -60,6 +63,50 @@ class OrderController extends GetxController {
     } catch (e) {
       log('❌ Error in getOrders: $e');
       _setError('ไม่สามารถโหลดข้อมูลออเดอร์ได้ ลองใหม่ครั้ง');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getOrderById(int id) async {
+    if (id <= 0) return;
+
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await OrderService.getOrderById(order_id: id);
+
+      if (data != null) {
+        order.value = data;
+      } else {
+        _setError('ไม่พบข้อมูลออเดอร์');
+      }
+    } catch (e) {
+      log('❌ Error in getOrderById: $e');
+      _setError('ไม่สามารถโหลดข้อมูลออเดอร์ได้ ลองใหม่ครั้ง');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getWalletTrans() async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await OrderService.getWalletTrans();
+
+      if (data.isNotEmpty) {
+        walletTrans.value = data;
+      } else {
+        walletTrans.clear();
+      }
+    } catch (e) {
+      log('❌ Error in getWalletTrans: $e');
+      _setError('ไม่สามารถโหลดข้อมูล Wallet ได้ ลองใหม่ครั้ง');
     } finally {
       isLoading.value = false;
     }

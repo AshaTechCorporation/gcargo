@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/controllers/home_controller.dart';
+import 'package:get/get.dart';
 
 class TransportCalculatePage extends StatefulWidget {
   const TransportCalculatePage({super.key});
@@ -9,6 +11,7 @@ class TransportCalculatePage extends StatefulWidget {
 
 class _TransportCalculatePageState extends State<TransportCalculatePage> with TickerProviderStateMixin {
   late final TabController _tabController;
+  final HomeController homeController = Get.put(HomeController());
 
   final List<String> productTypes = ['ทั่วไป', 'มอก', 'อย', 'แบรน', 'พิเศษ'];
   String? selectedProductType;
@@ -28,6 +31,10 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
+    // Call getRateShipFromAPI when page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.getRateShipFromAPI();
+    });
   }
 
   @override
@@ -73,74 +80,94 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
 
   Widget _buildNormalTab(BuildContext context, bool isBlocked) {
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child: ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Column(
         children: [
-          const SizedBox(height: 12),
-          const Text('ประเภทสินค้า', style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            value: selectedProductType,
-            decoration: InputDecoration(
-              hintText: 'เลือกประเภทสินค้า',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            ),
-            items:
-                productTypes.map((type) {
-                  return DropdownMenuItem(value: type, child: Text(type));
-                }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedProductType = value;
-                showError = !isAllowedProductType();
+          Row(children: [const Text('ประเภทสินค้า', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))]),
+          const SizedBox(height: 6),
+          Obx(() {
+            List<String> availableProductTypes = _getProductTypesByMethod(selectedMethod);
+            if (selectedProductType != null && !availableProductTypes.contains(selectedProductType)) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() {
+                  selectedProductType = null;
+                });
               });
-            },
-          ),
-          const SizedBox(height: 16),
+            }
 
-          const Text('เลือกรูปแบบขนส่ง', style: TextStyle(fontWeight: FontWeight.bold)),
+            return DropdownButtonFormField<String>(
+              value: selectedProductType,
+              decoration: InputDecoration(
+                hintText: 'เลือกประเภทสินค้า',
+                hintStyle: const TextStyle(fontSize: 14),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              ),
+              style: const TextStyle(fontSize: 14, color: Colors.black),
+              items: availableProductTypes.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedProductType = value;
+                  showError = !isAllowedProductType();
+                });
+              },
+            );
+          }),
+          const SizedBox(height: 14),
+          Row(children: [const Text('เลือกรูปแบบขนส่ง', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))]),
+          const SizedBox(height: 6),
           Row(
             children: [
               Expanded(
                 child: RadioListTile(
-                  title: const Text('การรถ'),
+                  title: const Text('การรถ', style: TextStyle(fontSize: 14)),
                   value: 'การรถ',
                   groupValue: selectedMethod,
-                  onChanged: (val) => setState(() => selectedMethod = val!),
+                  onChanged: (val) {
+                    setState(() {
+                      selectedMethod = val!;
+                      selectedProductType = null;
+                    });
+                  },
                   dense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
               Expanded(
                 child: RadioListTile(
-                  title: const Text('ทางเรือ'),
+                  title: const Text('ทางเรือ', style: TextStyle(fontSize: 14)),
                   value: 'ทางเรือ',
                   groupValue: selectedMethod,
-                  onChanged: (val) => setState(() => selectedMethod = val!),
+                  onChanged: (val) {
+                    setState(() {
+                      selectedMethod = val!;
+                      selectedProductType = null;
+                    });
+                  },
                   dense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-
           Row(
             children: [
-              Expanded(child: _buildInputField(widthCtrl, 'ความกว้าง', 'cm')),
+              Expanded(child: _buildInputField(widthCtrl, 'กรอกความกว้าง', 'cm')),
               const SizedBox(width: 12),
-              Expanded(child: _buildInputField(lengthCtrl, 'ความยาว', 'cm')),
+              Expanded(child: _buildInputField(lengthCtrl, 'กรอกความยาว', 'cm')),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildInputField(heightCtrl, 'ความสูง', 'cm')),
+              Expanded(child: _buildInputField(heightCtrl, 'กรอกความสูง', 'cm')),
               const SizedBox(width: 12),
-              Expanded(child: _buildInputField(weightCtrl, 'น้ำหนัก', 'kg')),
+              Expanded(child: _buildInputField(weightCtrl, 'กรอกน้ำหนัก', 'kg')),
             ],
           ),
           const SizedBox(height: 16),
-
           if (isBlocked)
             Container(
               padding: const EdgeInsets.all(12),
@@ -159,7 +186,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                 ],
               ),
             ),
-
+          Spacer(),
           Row(
             children: [
               Expanded(
@@ -173,8 +200,12 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                       showError = false;
                     });
                   },
-                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: Colors.grey)),
-                  child: const Text('ล้างข้อมูล'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: const BorderSide(color: Color(0xFFD0D0D0)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 14)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -184,8 +215,9 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isBlocked ? Colors.grey.shade300 : const Color(0xFF002A5B),
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white)),
+                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 14)),
                 ),
               ),
             ],
@@ -198,7 +230,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   Widget _buildWoodBoxTab() {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: ListView(
+      child: Column(
         children: [
           const SizedBox(height: 12),
           Row(
@@ -228,25 +260,36 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
           ),
 
           const SizedBox(height: 24),
+          Spacer(),
           Row(
             children: [
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    woodWidthCtrl.clear();
-                    woodLengthCtrl.clear();
-                    woodHeightCtrl.clear();
+                    setState(() {
+                      woodWidthCtrl.clear();
+                      woodLengthCtrl.clear();
+                      woodHeightCtrl.clear();
+                    });
                   },
-                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: Colors.grey)),
-                  child: const Text('ล้างข้อมูล'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: const BorderSide(color: Color(0xFFD0D0D0)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 14)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {},
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF002A5B), padding: const EdgeInsets.symmetric(vertical: 16)),
-                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF002A5B),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 14)),
                 ),
               ),
             ],
@@ -286,5 +329,31 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
         ),
       ],
     );
+  }
+
+  // Get product types based on selected transport method and API data
+  List<String> _getProductTypesByMethod(String method) {
+    // Determine vehicle type based on method
+    String vehicleType = '';
+    if (method == 'การรถ') {
+      vehicleType = 'car';
+    } else if (method == 'ทางเรือ') {
+      vehicleType = 'ship';
+    }
+
+    // Get product types from API data for the selected vehicle
+    List<String> apiProductTypes =
+        homeController.rateShip
+            .where(
+              (rateShip) =>
+                  rateShip.vehicle?.toLowerCase() == vehicleType || rateShip.vehicle?.toLowerCase() == (vehicleType == 'truck' ? 'รถ' : 'เรือ'),
+            )
+            .map((rateShip) => rateShip.name ?? '')
+            .where((name) => name.isNotEmpty)
+            .toSet() // Remove duplicates
+            .toList();
+
+    // Use API data if available, otherwise use default product types
+    return apiProductTypes.isNotEmpty ? apiProductTypes : productTypes;
   }
 }

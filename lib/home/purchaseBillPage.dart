@@ -237,7 +237,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                       for (var i = 0; i < products.length; i++) {
                         final product = products[i];
                         final orderProduct = Products(
-                          product['seller_nick'] ?? '', // product_shop
+                          product['nick'] ?? '', // product_shop
                           product['num_iid'] ?? '', // product_code
                           product['title'] ?? '', // product_name
                           product['detail_url'] ?? '', // product_url

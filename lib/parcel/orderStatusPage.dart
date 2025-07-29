@@ -354,10 +354,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
     return GestureDetector(
       onTap: () {
         // Navigate to DetailOrderPage with order data
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => DetailOrderPage(orderData: order, originalOrder: order['originalOrder'] as OrdersPage?)),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => DetailOrderPage(orderId: order['originalOrder'].id ?? 0)));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -432,10 +429,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                   SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => DetailOrderPage(orderData: order, originalOrder: order['originalOrder'] as OrdersPage?)),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => DetailOrderPage(orderId: order['originalOrder'].id ?? 0)));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1E3C72), // ✅ kButtonColor
