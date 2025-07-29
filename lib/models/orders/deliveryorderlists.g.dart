@@ -30,13 +30,11 @@ DeliveryOrderLists _$DeliveryOrderListsFromJson(Map<String, dynamic> json) =>
       json['delivery_order'] == null
           ? null
           : OrdersPageNew.fromJson(
-            json['delivery_order'] as Map<String, dynamic>,
-          ),
+              json['delivery_order'] as Map<String, dynamic>),
       json['product_type'] == null
           ? null
           : ServiceTransporter.fromJson(
-            json['product_type'] as Map<String, dynamic>,
-          ),
+              json['product_type'] as Map<String, dynamic>),
       selected: json['selected'] as bool? ?? false,
       selected2: json['selected2'] as bool? ?? false,
     );

@@ -7,38 +7,38 @@ part of 'ordersPage.dart';
 // **************************************************************************
 
 OrdersPage _$OrdersPageFromJson(Map<String, dynamic> json) => OrdersPage(
-  json['date'] as String?,
-  json['total_price'] as String?,
-  (json['member_id'] as num?)?.toInt(),
-  json['shipping_type'] as String?,
-  json['payment_term'] as String?,
-  json['note'] as String?,
-  (json['member_address_id'] as num?)?.toInt(),
-  json['status'] as String?,
-  json['deposit_fee'] as String?,
-  json['exchange_rate'] as String?,
-  json['china_shipping_fee'] as String?,
-  json['created_at'] == null
-      ? null
-      : DateTime.parse(json['created_at'] as String),
-  json['member'] == null
-      ? null
-      : User.fromJson(json['member'] as Map<String, dynamic>),
-  (json['order_lists'] as List<dynamic>?)
-      ?.map((e) => ProductsTrack.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  (json['orders'] as List<dynamic>?)
-      ?.map((e) => OrdersPage.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  (json['delivery_order_lists'] as List<dynamic>?)
-      ?.map((e) => DeliveryOrderLists.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  json['code'] as String?,
-  (json['id'] as num?)?.toInt(),
-  (json['delivery_orders'] as List<dynamic>?)
-      ?.map((e) => OrdersPageNew.fromJson(e as Map<String, dynamic>))
-      .toList(),
-);
+      json['date'] as String?,
+      json['total_price'] as String?,
+      (json['member_id'] as num?)?.toInt(),
+      json['shipping_type'] as String?,
+      json['payment_term'] as String?,
+      json['note'] as String?,
+      (json['member_address_id'] as num?)?.toInt(),
+      json['status'] as String?,
+      json['deposit_fee'] as String?,
+      json['exchange_rate'] as String?,
+      json['china_shipping_fee'] as String?,
+      json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      json['member'] == null
+          ? null
+          : User.fromJson(json['member'] as Map<String, dynamic>),
+      (json['order_lists'] as List<dynamic>?)
+          ?.map((e) => ProductsTrack.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['orders'] as List<dynamic>?)
+          ?.map((e) => OrdersPage.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['delivery_order_lists'] as List<dynamic>?)
+          ?.map((e) => DeliveryOrderLists.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['code'] as String?,
+      (json['id'] as num?)?.toInt(),
+      (json['delivery_orders'] as List<dynamic>?)
+          ?.map((e) => OrdersPageNew.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$OrdersPageToJson(OrdersPage instance) =>
     <String, dynamic>{

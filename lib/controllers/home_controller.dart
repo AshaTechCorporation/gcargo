@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/scheduler.dart';
 import 'package:gcargo/models/imgbanner.dart';
 import 'package:gcargo/models/orders/serviceTransporterById.dart';
+import 'package:gcargo/models/rateShip.dart';
 import 'package:gcargo/models/shipping.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/services/homeService.dart';
@@ -20,6 +21,7 @@ class HomeController extends GetxController {
   List<Shipping> ship_address = [];
   Shipping? select_ship_address;
   var extraServices = <ServiceTransporterById>[].obs;
+  var rateShip = <RateShip>[].obs;
 
   @override
   void onInit() {
@@ -179,6 +181,16 @@ class HomeController extends GetxController {
     } catch (e) {
       log('❌ Error fetching extra services: $e');
       extraServices.clear();
+    }
+  }
+
+  Future<void> getRateShipFromAPI() async {
+    try {
+      final rates = await HomeService.getRateShip();
+      rateShip.value = rates;
+    } catch (e) {
+      log('❌ Error fetching rate ship: $e');
+      rateShip.clear();
     }
   }
 }

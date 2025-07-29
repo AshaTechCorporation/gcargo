@@ -7,10 +7,10 @@ part of 'optionsItem.dart';
 // **************************************************************************
 
 OptionsItem _$OptionsItemFromJson(Map<String, dynamic> json) => OptionsItem(
-  json['option_name'] as String?,
-  json['option_image'] as String?,
-  json['option_note'] as String?,
-);
+      json['option_name'] as String?,
+      json['option_image'] as String?,
+      json['option_note'] as String?,
+    );
 
 Map<String, dynamic> _$OptionsItemToJson(OptionsItem instance) =>
     <String, dynamic>{

@@ -4,6 +4,7 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/models/imgbanner.dart';
 import 'package:gcargo/models/orders/serviceTransporterById.dart';
 import 'package:gcargo/models/products.dart';
+import 'package:gcargo/models/rateShip.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/utils/ApiExeption.dart';
 import 'package:http/http.dart' as http;
@@ -279,6 +280,36 @@ class HomeService {
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
       return data['data'];
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  ///ข้อมูลอัตราค่าขนส่ง
+  static Future<List<RateShip>> getRateShip({int? page = 0, int? length = 10, String? search}) async {
+    final url = Uri.https(publicUrl, '/public/api/rate_page');
+    var headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "draw": 1,
+        "order": [
+          {"column": 0, "dir": "asc"},
+        ],
+        "start": page,
+        "length": length,
+        "search": {"value": search, "regex": false},
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data']['data'] as List;
+      return list.map((e) => RateShip.fromJson(e)).toList();
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);

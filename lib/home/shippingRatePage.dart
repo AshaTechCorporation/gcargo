@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/controllers/home_controller.dart';
+import 'package:get/get.dart';
 
-class ShippingRatePage extends StatelessWidget {
+class ShippingRatePage extends StatefulWidget {
   const ShippingRatePage({super.key});
+
+  @override
+  State<ShippingRatePage> createState() => _ShippingRatePageState();
+}
+
+class _ShippingRatePageState extends State<ShippingRatePage> {
+  final HomeController homeController = Get.put(HomeController());
+
+  @override
+  void initState() {
+    super.initState();
+    // Call getRateShipFromAPI when page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.getRateShipFromAPI();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,33 +32,77 @@ class ShippingRatePage extends StatelessWidget {
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 🔷 เฉพาะรูปภาพหัวข้อ
-            Image.asset('assets/images/Frame10.png', fit: BoxFit.fitWidth),
-            SizedBox(height: 12),
-            _buildGrid([
-              RateItem(image: 'assets/images/Frame12.png', label: 'ทั่วไป', kg: '38', price: '5,200'),
-              RateItem(image: 'assets/images/Frame13.png', label: 'มอก', kg: '50', price: '5,800'),
-              RateItem(image: 'assets/images/Frame14.png', label: 'อย', kg: '45', price: '8,800'),
-              RateItem(image: 'assets/images/Frame15.png', label: 'พิเศษ/แบรน', kg: '25', price: '-'),
-            ]),
-            SizedBox(height: 24),
-            Image.asset('assets/images/Frame11.png', fit: BoxFit.fitWidth),
-            SizedBox(height: 12),
-            _buildGrid([
-              RateItem(image: 'assets/images/Frame12.png', label: 'ทั่วไป', kg: '38', price: '5,200'),
-              RateItem(image: 'assets/images/Frame13.png', label: 'มอก', kg: '50', price: '5,800'),
-              RateItem(image: 'assets/images/Frame14.png', label: 'อย', kg: '45', price: '8,800'),
-              RateItem(image: 'assets/images/Frame15.png', label: 'พิเศษ/แบรน', kg: '25', price: '-'),
-            ]),
-          ],
-        ),
-      ),
+      body: Obx(() {
+        // Separate data by vehicle type
+        List<RateItem> truckRateItems =
+            homeController.rateShip.where((rateShip) => rateShip.vehicle?.toLowerCase() == 'car' || rateShip.vehicle?.toLowerCase() == 'รถ').map((
+              rateShip,
+            ) {
+              return RateItem(
+                image: _getImageByType(rateShip.type ?? ''),
+                label: rateShip.name ?? '',
+                kg: rateShip.kg ?? '',
+                price: rateShip.cbm ?? '-',
+              );
+            }).toList();
+
+        List<RateItem> shipRateItems =
+            homeController.rateShip.where((rateShip) => rateShip.vehicle?.toLowerCase() == 'ship' || rateShip.vehicle?.toLowerCase() == 'เรือ').map((
+              rateShip,
+            ) {
+              return RateItem(
+                image: _getImageByType(rateShip.type ?? ''),
+                label: rateShip.name ?? '',
+                kg: rateShip.kg ?? '',
+                price: rateShip.cbm ?? '-',
+              );
+            }).toList();
+
+        // Use API data if available, otherwise use mock data
+        List<RateItem> firstSectionItems = truckRateItems.isNotEmpty ? truckRateItems : [];
+
+        List<RateItem> secondSectionItems = shipRateItems.isNotEmpty ? shipRateItems : [];
+
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 🔷 รูปภาพหัวข้อ section แรก (รถ)
+              Image.asset('assets/images/Frame10.png', fit: BoxFit.fitWidth),
+              SizedBox(height: 12),
+              _buildGrid(firstSectionItems),
+              SizedBox(height: 24),
+              // 🔷 รูปภาพหัวข้อ section สอง (เรือ)
+              Image.asset('assets/images/Frame11.png', fit: BoxFit.fitWidth),
+              SizedBox(height: 12),
+              _buildGrid(secondSectionItems),
+            ],
+          ),
+        );
+      }),
     );
+  }
+
+  // Helper method to map API type to image
+  String _getImageByType(String type) {
+    switch (type.toLowerCase()) {
+      case 'general':
+      case 'ทั่วไป':
+        return 'assets/images/Frame12.png';
+      case 'mog':
+      case 'มอก':
+        return 'assets/images/Frame13.png';
+      case 'fda':
+      case 'อย':
+        return 'assets/images/Frame14.png';
+      case 'special':
+      case 'พิเศษ':
+      case 'แบรนด์':
+        return 'assets/images/Frame15.png';
+      default:
+        return 'assets/images/Frame12.png';
+    }
   }
 
   Widget _buildGrid(List<RateItem> items) {
