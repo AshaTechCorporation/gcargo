@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/scheduler.dart';
 import 'package:gcargo/models/imgbanner.dart';
 import 'package:gcargo/models/orders/serviceTransporterById.dart';
+import 'package:gcargo/models/payment.dart';
 import 'package:gcargo/models/rateExchange.dart';
 import 'package:gcargo/models/rateShip.dart';
 import 'package:gcargo/models/shipping.dart';
@@ -26,6 +27,7 @@ class HomeController extends GetxController {
   var rateShip = <RateShip>[].obs;
   var rateExchange = Rxn<RateExchange>();
   var transferFee = Rxn<TransferFee>();
+  var alipayPayment = <Payment>[].obs;
 
   @override
   void onInit() {
@@ -162,6 +164,20 @@ class HomeController extends GetxController {
         transferFee.value = feeData;
       } else {
         _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลเรท');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
+  Future<void> getAlipayPaymentFromAPI() async {
+    try {
+      final paymentData = await HomeService.getAlipayPayment();
+      if (paymentData != null) {
+        alipayPayment.value = paymentData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูล');
       }
     } catch (e) {
       log('❌ Error in searchItems: $e');

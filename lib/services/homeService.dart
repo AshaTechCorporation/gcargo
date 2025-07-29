@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/models/imgbanner.dart';
 import 'package:gcargo/models/orders/serviceTransporterById.dart';
+import 'package:gcargo/models/payment.dart';
 import 'package:gcargo/models/products.dart';
 import 'package:gcargo/models/rateExchange.dart';
 import 'package:gcargo/models/rateShip.dart';
@@ -385,6 +386,36 @@ class HomeService {
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
       return data;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  // get ข้อมูลการเติมเงิน
+  static Future<List<Payment>> getAlipayPayment() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/alipay_payment_page');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "draw": 1,
+        "member_id": userID,
+        "order": [
+          {"column": 0, "dir": "asc"},
+        ],
+        "start": 0,
+        "length": 10,
+        "search": {"value": "", "regex": false},
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data']['data'] as List;
+      return list.map((e) => Payment.fromJson(e)).toList();
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);
