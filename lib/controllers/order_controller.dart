@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/scheduler.dart';
+import 'package:gcargo/models/legalimport.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/models/orders/ordersPage.dart';
 import 'package:gcargo/services/orderService.dart';
@@ -10,6 +11,7 @@ class OrderController extends GetxController {
   var orders = <OrdersPage>[].obs;
   var errorMessage = ''.obs;
   var hasError = false.obs;
+  var deilveryOrders = <LegalImport>[].obs;
 
   @override
   void onInit() {
@@ -33,6 +35,27 @@ class OrderController extends GetxController {
         orders.value = data;
       } else {
         orders.clear();
+      }
+    } catch (e) {
+      log('❌ Error in getOrders: $e');
+      _setError('ไม่สามารถโหลดข้อมูลออเดอร์ได้ ลองใหม่ครั้ง');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getDeliveryOrders() async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await OrderService.getDeliveryOrders();
+
+      if (data.isNotEmpty) {
+        deilveryOrders.value = data;
+      } else {
+        deilveryOrders.clear();
       }
     } catch (e) {
       log('❌ Error in getOrders: $e');

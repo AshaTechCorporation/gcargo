@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/bill/transportCostDetailPage.dart';
+import 'package:gcargo/controllers/order_controller.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class TransportCostPage extends StatefulWidget {
   const TransportCostPage({super.key});
@@ -10,105 +13,170 @@ class TransportCostPage extends StatefulWidget {
 
 class _TransportCostPageState extends State<TransportCostPage> {
   String selectedStatus = 'ทั้งหมด';
+  final OrderController orderController = Get.put(OrderController());
 
-  final List<Map<String, dynamic>> transportData = [
-    {"date": "01/07/2025", "docNo": "X2504290002", "status": "สำเร็จ", "amount": 1060.0},
-    {"date": "30/06/2025", "docNo": "X2504290003", "status": "ยกเลิก", "amount": 800.0},
-    {"date": "01/07/2025", "docNo": "X2504290004", "status": "สำเร็จ", "amount": 920.0},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Call getDeliveryOrders when page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      orderController.getDeliveryOrders();
+    });
+  }
+
+  // Status mapping from API to Thai
+  String _getStatusInThai(String? apiStatus) {
+    switch (apiStatus) {
+      case 'arrived_china_warehouse':
+        return 'ถึงคลังจีน';
+      case 'in_transit':
+        return 'กำลังขนส่ง';
+      case 'arrived_thailand_warehouse':
+        return 'ถึงคลังไทย';
+      case 'awaiting_payment':
+        return 'รอชำระเงิน';
+      case 'delivered':
+        return 'สำเร็จ';
+      default:
+        return 'ไม่ทราบสถานะ';
+    }
+  }
+
+  // Format date from API
+  String _formatDate(String? dateString) {
+    if (dateString == null) return '';
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('dd/MM/yyyy').format(date);
+    } catch (e) {
+      return dateString;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // ✅ กรองตามสถานะ
-    final filteredData = selectedStatus == 'ทั้งหมด' ? transportData : transportData.where((e) => e['status'] == selectedStatus).toList();
+    return Obx(() {
+      // Extract delivery_orders from API data only
+      final displayOrders = <Map<String, dynamic>>[];
 
-    // ✅ นับแต่ละสถานะ
-    final int totalCount = transportData.length;
-    final int successCount = transportData.where((e) => e['status'] == 'สำเร็จ').length;
-    final int cancelCount = transportData.where((e) => e['status'] == 'ยกเลิก').length;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 🔹 Header Row: ค่าขนส่ง + ช่องเลือกวันที่
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
-                children: [
-                  // 🔙 ปุ่มกลับ
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
-                      child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
-                    ),
-                  ),
-                  const Expanded(child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset('assets/icons/calendar_icon.png', width: 18, height: 18),
-                        const SizedBox(width: 8),
-                        const Text('01/01/2024 - 01/07/2025', style: TextStyle(fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      for (var legalImport in orderController.deilveryOrders) {
+        // Only process if delivery_orders exists and is not empty
+        if (legalImport.delivery_orders != null && legalImport.delivery_orders!.isNotEmpty) {
+          for (var deliveryOrder in legalImport.delivery_orders!) {
+            displayOrders.add({
+              'date': _formatDate(deliveryOrder.date),
+              'docNo': deliveryOrder.code ?? '',
+              'status': _getStatusInThai(deliveryOrder.status),
+              'amount': 0.0, // OrdersPageNew doesn't have amount field
+            });
+          }
+        }
+      }
 
-            // 🔹 Body
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      // ✅ กรองตามสถานะ
+      final filteredData = selectedStatus == 'ทั้งหมด' ? displayOrders : displayOrders.where((e) => e['status'] == selectedStatus).toList();
+
+      // ✅ นับแต่ละสถานะ
+      final int totalCount = displayOrders.length;
+      final int arrivedChinaCount = displayOrders.where((e) => e['status'] == 'ถึงคลังจีน').length;
+      final int inTransitCount = displayOrders.where((e) => e['status'] == 'กำลังขนส่ง').length;
+      final int arrivedThailandCount = displayOrders.where((e) => e['status'] == 'ถึงคลังไทย').length;
+      final int awaitingPaymentCount = displayOrders.where((e) => e['status'] == 'รอชำระเงิน').length;
+      final int deliveredCount = displayOrders.where((e) => e['status'] == 'สำเร็จ').length;
+
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // 🔹 Header Row: ค่าขนส่ง + ช่องเลือกวันที่
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Row(
                   children: [
-                    // 🔹 Search Field
-                    TextFormField(
-                      enabled: false,
-                      decoration: InputDecoration(
-                        hintText: 'ค้นหาเลขที่เอกสาร',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                    // 🔙 ปุ่มกลับ
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
+                        child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
                       ),
                     ),
-                    const SizedBox(height: 12),
-
-                    // 🔹 Filter Chips
-                    Row(
-                      children: [
-                        _buildChip('ทั้งหมด'),
-                        const SizedBox(width: 8),
-                        _buildChip('สำเร็จ', count: 1),
-                        const SizedBox(width: 8),
-                        _buildChip('ยกเลิก', count: 1),
-                      ],
+                    const Expanded(child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset('assets/icons/calendar_icon.png', width: 18, height: 18),
+                          const SizedBox(width: 8),
+                          const Text('01/01/2024 - 01/07/2025', style: TextStyle(fontSize: 13)),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 20),
-                    // 🔹 Group by date
-                    ..._buildGroupedList(filteredData),
                   ],
                 ),
               ),
-            ),
-          ],
+
+              // 🔹 Body
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 🔹 Search Field
+                      TextFormField(
+                        enabled: false,
+                        decoration: InputDecoration(
+                          hintText: 'ค้นหาเลขที่เอกสาร',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // 🔹 Filter Chips
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildChip('ทั้งหมด', count: totalCount),
+                            const SizedBox(width: 8),
+                            _buildChip('ถึงคลังจีน', count: arrivedChinaCount),
+                            const SizedBox(width: 8),
+                            _buildChip('กำลังขนส่ง', count: inTransitCount),
+                            const SizedBox(width: 8),
+                            _buildChip('ถึงคลังไทย', count: arrivedThailandCount),
+                            const SizedBox(width: 8),
+                            _buildChip('รอชำระเงิน', count: awaitingPaymentCount),
+                            const SizedBox(width: 8),
+                            _buildChip('สำเร็จ', count: deliveredCount),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // 🔹 Group by date
+                      ..._buildGroupedList(filteredData),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }); // Close Obx
   }
 
   Widget _buildChip(String label, {int? count}) {
@@ -159,7 +227,7 @@ class _TransportCostPageState extends State<TransportCostPage> {
         children: [
           Text(entry.key, style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
-          ...entry.value.map((e) => _buildDocumentCard(e)).toList(),
+          ...entry.value.map((e) => _buildDocumentCard(e)),
           const SizedBox(height: 16),
         ],
       );
@@ -178,7 +246,7 @@ class _TransportCostPageState extends State<TransportCostPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [BoxShadow(color: Colors.black12.withOpacity(0.03), blurRadius: 4, offset: const Offset(0, 2))],
+          boxShadow: [BoxShadow(color: Colors.black12.withValues(alpha: 0.03), blurRadius: 4, offset: const Offset(0, 2))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

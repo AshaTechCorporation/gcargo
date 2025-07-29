@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/models/orders/ordersPage.dart';
 import 'package:gcargo/models/orders/productsTrack.dart';
+import 'package:gcargo/parcel/paymentMethodPage.dart';
+import 'package:gcargo/utils/helpers.dart';
 import 'package:intl/intl.dart';
 
 class DetailOrderPage extends StatelessWidget {
@@ -25,17 +27,24 @@ class DetailOrderPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
-        title: Text('เลขบิลสั่งซื้อ $orderCode', style: const TextStyle(color: Colors.black)),
+        title: GestureDetector(
+          onTap: () {
+            // TODO: ไปหน้า PO
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentMethodPage()));
+          },
+          child: Text('เลขบิลสั่งซื้อ $orderCode', style: const TextStyle(color: Colors.black)),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20)),
       ),
       body: SafeArea(
         child: Column(
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 children: [
                   _buildInfoRow('ติดต่อ', '($memberCode)'),
                   _buildInfoRow('รูปแบบการขนส่ง', transportType),
@@ -44,11 +53,11 @@ class DetailOrderPage extends StatelessWidget {
                   _buildInfoRow('วันที่สั่งซื้อ', orderDate),
                   _buildInfoRow('สถานะ', orderStatus),
                   _buildInfoRow('ราคารวม', '¥${orderTotal.toStringAsFixed(2)}'),
-                  const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  const Text('สินค้าทั้งหมด', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 16),
+                  Divider(),
+                  SizedBox(height: 12),
+                  Text('สินค้าทั้งหมด', style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 12),
 
                   // 🔹 การ์ดสินค้า
                   if (productList.isNotEmpty) ...[
@@ -151,7 +160,8 @@ class DetailOrderPage extends StatelessWidget {
     final productPrice = product.product_price ?? '0';
     final productQty = product.product_qty ?? 1;
     final productName = product.product_name ?? 'ไม่ระบุชื่อสินค้า';
-    final productImage = product.product_image;
+    //final productImage = product.product_image;
+    final productImage = formatImageUrl(product.product_image ?? '');
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
