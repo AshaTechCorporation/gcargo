@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/login/otpVerificationPage.dart';
 import 'package:gcargo/login/widgets/TermsDialog.dart';
+import 'package:gcargo/models/provice.dart';
 import 'package:gcargo/services/registerService.dart';
+import 'package:gcargo/widgets/CustomDropdownFormField.dart';
 import 'package:gcargo/widgets/CustomTextFormField.dart';
 import 'package:gcargo/widgets/DatePickerTextFormField.dart';
 import 'package:intl/intl.dart';
@@ -27,9 +31,118 @@ class _RegisterPageState extends State<RegisterPage> {
   final _pinController = TextEditingController();
   final _referralCodeController = TextEditingController();
   final _saleCodeController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _taxIdController = TextEditingController();
+  final _postalCodeController = TextEditingController();
 
   bool isMale = true;
   bool agree = false;
+
+  // Province data
+  List<Provice> provinces = [];
+  List<Provice> districts = [];
+  List<Provice> subdistricts = [];
+
+  // Selected values
+  Provice? selectedProvince;
+  Provice? selectedDistrict;
+  Provice? selectedSubdistrict;
+
+  // Filtered lists
+  List<Provice> filteredDistricts = [];
+  List<Provice> filteredSubdistricts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProvinceData();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _nameController.dispose();
+    _lineController.dispose();
+    _birthdateController.dispose();
+    _phoneController.dispose();
+    _pinController.dispose();
+    _referralCodeController.dispose();
+    _saleCodeController.dispose();
+    _addressController.dispose();
+    _taxIdController.dispose();
+    _postalCodeController.dispose();
+    super.dispose();
+  }
+
+  // Load province data from JSON files
+  Future<void> _loadProvinceData() async {
+    try {
+      // Load provinces
+      final provincesJson = await rootBundle.loadString('assets/provice/provinces.json');
+      final provincesData = json.decode(provincesJson) as List;
+      provinces = provincesData.map((json) => Provice.fromJson(json)).toList();
+
+      // Load districts
+      final districtsJson = await rootBundle.loadString('assets/provice/districts.json');
+      final districtsData = json.decode(districtsJson) as List;
+      districts = districtsData.map((json) => Provice.fromJson(json)).toList();
+
+      // Load subdistricts
+      final subdistrictsJson = await rootBundle.loadString('assets/provice/subdistricts.json');
+      final subdistrictsData = json.decode(subdistrictsJson) as List;
+      subdistricts = subdistrictsData.map((json) => Provice.fromJson(json)).toList();
+
+      setState(() {});
+    } catch (e) {
+      print('Error loading province data: $e');
+    }
+  }
+
+  // Filter districts based on selected province
+  void _onProvinceChanged(Provice? province) {
+    setState(() {
+      selectedProvince = province;
+      selectedDistrict = null;
+      selectedSubdistrict = null;
+
+      if (province != null) {
+        filteredDistricts = districts.where((district) => district.provinceCode == province.provinceCode).toList();
+      } else {
+        filteredDistricts = [];
+      }
+      filteredSubdistricts = [];
+      _postalCodeController.clear();
+    });
+  }
+
+  // Filter subdistricts based on selected district
+  void _onDistrictChanged(Provice? district) {
+    setState(() {
+      selectedDistrict = district;
+      selectedSubdistrict = null;
+
+      if (district != null) {
+        filteredSubdistricts = subdistricts.where((subdistrict) => subdistrict.districtCode == district.districtCode).toList();
+      } else {
+        filteredSubdistricts = [];
+      }
+      _postalCodeController.clear();
+    });
+  }
+
+  // Update postal code when subdistrict is selected
+  void _onSubdistrictChanged(Provice? subdistrict) {
+    setState(() {
+      selectedSubdistrict = subdistrict;
+      if (subdistrict != null && subdistrict.postalCode != null) {
+        _postalCodeController.text = subdistrict.postalCode.toString();
+      } else {
+        _postalCodeController.clear();
+      }
+    });
+  }
 
   Future<void> _selectBirthDate() async {
     final DateTime? picked = await showDatePicker(context: context, initialDate: DateTime(2000), firstDate: DateTime(1900), lastDate: DateTime.now());
@@ -130,6 +243,68 @@ class _RegisterPageState extends State<RegisterPage> {
                 CustomTextFormField(label: 'รหัสเซลล์', hintText: 'กรุณากรอกรหัสเซลล์', controller: _saleCodeController, isRequired: false),
                 const SizedBox(height: 20),
 
+                CustomTextFormField(label: 'รายละเอียดที่อยู่ในเสร็จรับเงิน', hintText: '-', controller: _addressController, maxLines: 3),
+                const SizedBox(height: 20),
+
+                CustomTextFormField(label: 'เลขที่ภาษี', hintText: '-', controller: _taxIdController),
+                const SizedBox(height: 20),
+
+                // 🔹 จังหวัด + อำเภอ
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomDropdownFormField<Provice>(
+                        label: 'จังหวัด',
+                        hintText: 'กรุณาเลือกจังหวัด',
+                        value: selectedProvince,
+                        items: provinces.map((province) => DropdownMenuItem<Provice>(value: province, child: Text(province.nameTH ?? ''))).toList(),
+                        onChanged: _onProvinceChanged,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomDropdownFormField<Provice>(
+                        label: 'อำเภอ',
+                        hintText: 'กรุณาเลือกอำเภอ',
+                        value: selectedDistrict,
+                        items:
+                            filteredDistricts
+                                .map((district) => DropdownMenuItem<Provice>(value: district, child: Text(district.nameTH ?? '')))
+                                .toList(),
+                        onChanged: _onDistrictChanged,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomDropdownFormField<Provice>(
+                        label: 'ตำบล',
+                        hintText: 'กรุณาเลือกตำบล',
+                        value: selectedSubdistrict,
+                        items:
+                            filteredSubdistricts
+                                .map((subdistrict) => DropdownMenuItem<Provice>(value: subdistrict, child: Text(subdistrict.nameTH ?? '')))
+                                .toList(),
+                        onChanged: _onSubdistrictChanged,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomTextFormField(
+                        label: 'รหัสไปรษณีย์',
+                        hintText: '-',
+                        controller: _postalCodeController,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
                 // 🔹 Checkbox
                 CheckboxTheme(
                   data: CheckboxThemeData(
@@ -199,6 +374,10 @@ class _RegisterPageState extends State<RegisterPage> {
                               order_quantity_in_thai: '',
                               transport_thai_master_id: 1,
                               ever_imported_from_china: 'เคย',
+                              province: selectedProvince?.nameTH ?? '',
+                              district: selectedDistrict?.nameTH ?? '',
+                              sub_district: selectedSubdistrict?.nameTH ?? '',
+                              postal_code: _postalCodeController.text,
                             );
                             if (_register != null) {
                               //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
