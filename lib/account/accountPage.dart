@@ -229,7 +229,7 @@ class _AccountPageState extends State<AccountPage> {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
     );
   }

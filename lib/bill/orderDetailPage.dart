@@ -15,7 +15,7 @@ class OrderDetailPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  IconButton(icon: const Icon(Icons.arrow_back, color: Colors.black), onPressed: () => Navigator.pop(context)),
+                  IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
                   const Text('เลขบิลสั่งซื้อ 00001', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const Spacer(),
                   Container(
