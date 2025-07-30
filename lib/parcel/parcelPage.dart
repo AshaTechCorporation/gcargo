@@ -216,6 +216,7 @@ class _ParcelPageState extends State<ParcelPage> with TickerProviderStateMixin {
         elevation: 0,
         title: const Text('สถานะ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         centerTitle: false,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
       ),
       body: SafeArea(
         child: Column(

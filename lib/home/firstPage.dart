@@ -8,6 +8,7 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/exchangeStatusPage.dart';
 import 'package:gcargo/parcel/orderStatusPage.dart';
 import 'package:gcargo/parcel/parcelPage.dart';
+import 'package:gcargo/parcel/parcelStatusPage.dart';
 import 'package:gcargo/parcel/problemPackagePage.dart';
 
 class FirstPage extends StatefulWidget {
@@ -213,7 +214,8 @@ class _FirstPageState extends State<FirstPage> {
                         backgroundColor: const Color(0xFFE9F7EF),
                         iconBackground: const Color(0xFFC8E6C9),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelPage()));
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
                         },
                       ),
                       _statusActionItem(
