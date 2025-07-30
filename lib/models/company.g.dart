@@ -29,6 +29,7 @@ Company _$CompanyFromJson(Map<String, dynamic> json) => Company(
       json['additional_requests'] as String?,
       json['address'] as String?,
       (json['registered'] as num?)?.toInt(),
+      json['frequent_importer'] as String?,
     );
 
 Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
@@ -54,4 +55,5 @@ Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
       'order_quantity': instance.order_quantity,
       'have_any_customers': instance.have_any_customers,
       'additional_requests': instance.additional_requests,
+      'frequent_importer': instance.frequent_importer,
     };

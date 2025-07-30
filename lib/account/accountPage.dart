@@ -16,6 +16,7 @@ import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
 import 'package:gcargo/login/loginPage.dart';
 import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountPage extends StatefulWidget {
@@ -37,13 +38,16 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> fristLoad() async {
-    final _prefs = await SharedPreferences.getInstance();
-    SharedPreferences prefs = _prefs;
-    final _token = prefs.getString('token');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userToken = prefs.getString('token');
 
-    setState(() {
-      token = _token;
-    });
+      setState(() {
+        token = userToken;
+      });
+    } catch (e) {
+      print('Error in fristLoad: $e');
+    }
   }
 
   Future<void> clearToken() async {
@@ -69,7 +73,18 @@ class _AccountPageState extends State<AccountPage> {
                   const SizedBox(height: 20),
 
                   // Header Profile (ชื่อผู้ใช้ + ยอด)
-                  AccountHeaderWidget(onCreditTap: () {}, onPointTap: () {}, onParcelTap: () {}, onWalletTap: () {}, onTransferTap: () {}),
+                  GetBuilder<HomeController>(
+                    builder:
+                        (homeController) => AccountHeaderWidget(
+                          onCreditTap: () {},
+                          onPointTap: () {},
+                          onParcelTap: () {},
+                          onWalletTap: () {},
+                          onTransferTap: () {},
+                          user: homeController.currentUser.value,
+                          isLoading: homeController.isLoading.value,
+                        ),
+                  ),
                   const SizedBox(height: 24),
                   _buildSectionTitle('โปรโมชั่น'),
                   _buildMenuItem(
@@ -94,8 +109,20 @@ class _AccountPageState extends State<AccountPage> {
                   _buildSectionTitle('ทั่วไป'),
                   _buildMenuItem(
                     'โปรไฟล์',
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+                    onTap: () async {
+                      final homeController = Get.find<HomeController>();
+                      if (homeController.currentUser.value != null) {
+                        final _edit = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)),
+                        );
+                        if (_edit == true) {}
+                      } else {
+                        // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่'), backgroundColor: Colors.orange));
+                      }
                     },
                   ),
                   _buildMenuItem(

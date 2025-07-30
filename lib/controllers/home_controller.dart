@@ -10,6 +10,7 @@ import 'package:gcargo/models/transferFee.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends GetxController {
   final HomeService _homeService = HomeService();
@@ -28,6 +29,7 @@ class HomeController extends GetxController {
   var rateExchange = Rxn<RateExchange>();
   var transferFee = Rxn<TransferFee>();
   var alipayPayment = <Payment>[].obs;
+  var currentUser = Rxn<User>();
 
   @override
   void onInit() {
@@ -202,17 +204,34 @@ class HomeController extends GetxController {
   // Method to fetch user data and populate shipping addresses
   Future<void> getUserDataAndShippingAddresses() async {
     try {
-      final userData = await HomeService.getUserById();
-      if (userData.ship_address != null && userData.ship_address!.isNotEmpty) {
-        ship_address = userData.ship_address!;
-        // Set first address as default selection
-        select_ship_address = ship_address.first;
+      // เช็ค userID ก่อนเรียก API
+      final prefs = await SharedPreferences.getInstance();
+      final userID = prefs.getInt('userID');
+
+      if (userID != null) {
+        final userData = await HomeService.getUserById();
+
+        // เก็บข้อมูล user
+        currentUser.value = userData;
+
+        // จัดการ shipping addresses
+        if (userData.ship_address != null && userData.ship_address!.isNotEmpty) {
+          ship_address = userData.ship_address!;
+          // Set first address as default selection
+          select_ship_address = ship_address.first;
+        } else {
+          ship_address = [];
+          select_ship_address = null;
+        }
       } else {
+        log('⚠️ No userID found, skipping getUserById API call');
+        currentUser.value = null;
         ship_address = [];
         select_ship_address = null;
       }
     } catch (e) {
       log('❌ Error fetching user data: $e');
+      currentUser.value = null;
       ship_address = [];
       select_ship_address = null;
     }

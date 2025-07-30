@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/models/user.dart';
 
 class AccountHeaderWidget extends StatelessWidget {
   final VoidCallback onCreditTap;
@@ -6,6 +7,8 @@ class AccountHeaderWidget extends StatelessWidget {
   final VoidCallback onParcelTap;
   final VoidCallback onWalletTap;
   final VoidCallback onTransferTap;
+  final User? user;
+  final bool isLoading;
 
   const AccountHeaderWidget({
     super.key,
@@ -14,6 +17,8 @@ class AccountHeaderWidget extends StatelessWidget {
     required this.onParcelTap,
     required this.onWalletTap,
     required this.onTransferTap,
+    this.user,
+    this.isLoading = false,
   });
 
   @override
@@ -31,10 +36,18 @@ class AccountHeaderWidget extends StatelessWidget {
                 children: [
                   ClipOval(child: Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover)),
                   const SizedBox(width: 12),
-                  const Text('Thanaporn', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black)),
+                  isLoading
+                      ? Container(
+                        width: 100,
+                        height: 16,
+                        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                      )
+                      : Text(user?.fname ?? 'ผู้ใช้', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black)),
                 ],
               ),
-              const Text('A100', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500)),
+              isLoading
+                  ? Container(width: 50, height: 14, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)))
+                  : Text(user?.code ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500)),
             ],
           ),
 
