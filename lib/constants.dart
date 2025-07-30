@@ -19,3 +19,4 @@ const kSubTitleTextGridColor = Color(0xFF012849);
 const kButtonLogoutColor = Color(0xFFFFBA00);
 const kBackTextFiledColor = Color(0xFFF6F6F6);
 const kBackgroundTextColor = Color(0xFF004AAD);
+const kTextgreyColor = Color(0xFF333333);

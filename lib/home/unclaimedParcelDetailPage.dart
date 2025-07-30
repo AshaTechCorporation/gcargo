@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/home/confirmOwnershipPage.dart';
 
 class UnclaimedParcelDetailPage extends StatelessWidget {
@@ -15,7 +16,7 @@ class UnclaimedParcelDetailPage extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
-        title: Text('เลขขนส่งจีน  $trackingNumber', style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
+        title: Text('เลขขนส่งจีน  $trackingNumber', style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,14 +65,14 @@ class UnclaimedParcelDetailPage extends StatelessWidget {
               height: 48,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E3C72), // kButtonColor
+                  backgroundColor: kButtonColor, // kButtonColor
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 onPressed: () {
                   // TODO: handle confirmation
                   Navigator.push(context, MaterialPageRoute(builder: (_) => ConfirmOwnershipPage()));
                 },
-                child: const Text('ยืนยันความเป็นเจ้าของ', style: TextStyle(fontSize: 16, color: Colors.white)),
+                child: Text('ยืนยันความเป็นเจ้าของ', style: TextStyle(fontSize: 20, color: Colors.white)),
               ),
             ),
           ),

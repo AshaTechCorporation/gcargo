@@ -45,7 +45,7 @@ class NumberFormatter {
   }
 
   // ฟอร์แมทน้ำหนัก
-  static String formatWeight(dynamic value, {String unit = 'kg', int decimalPlaces = 2}) {
+  static String formatWeight(dynamic value, {String unit = 'kg', int decimalPlaces = 1}) {
     final formattedNumber = formatNumber(value, decimalPlaces: decimalPlaces);
     return '$formattedNumber $unit';
   }

@@ -42,7 +42,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
               return RateItem(
                 image: _getImageByType(rateShip.type ?? ''),
                 label: rateShip.name ?? '',
-                kg: NumberFormatter.formatNumber(rateShip.kg),
+                kg: NumberFormatter.formatNumber(rateShip.kg, decimalPlaces: 0),
                 price: NumberFormatter.formatNumber(rateShip.cbm, decimalPlaces: 0),
               );
             }).toList();
@@ -54,7 +54,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
               return RateItem(
                 image: _getImageByType(rateShip.type ?? ''),
                 label: rateShip.name ?? '',
-                kg: NumberFormatter.formatNumber(rateShip.kg),
+                kg: NumberFormatter.formatNumber(rateShip.kg, decimalPlaces: 0),
                 price: NumberFormatter.formatNumber(rateShip.cbm, decimalPlaces: 0),
               );
             }).toList();
@@ -163,7 +163,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
                       padding: EdgeInsets.only(left: 8),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text('กิโลกรัม', style: TextStyle(fontSize: 16, color: Colors.black54)),
                           SizedBox(height: 2),
