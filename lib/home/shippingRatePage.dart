@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
 
 class ShippingRatePage extends StatefulWidget {
@@ -41,8 +42,8 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
               return RateItem(
                 image: _getImageByType(rateShip.type ?? ''),
                 label: rateShip.name ?? '',
-                kg: rateShip.kg ?? '',
-                price: rateShip.cbm ?? '-',
+                kg: NumberFormatter.formatNumber(rateShip.kg),
+                price: NumberFormatter.formatNumber(rateShip.cbm, decimalPlaces: 0),
               );
             }).toList();
 
@@ -53,8 +54,8 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
               return RateItem(
                 image: _getImageByType(rateShip.type ?? ''),
                 label: rateShip.name ?? '',
-                kg: rateShip.kg ?? '',
-                price: rateShip.cbm ?? '-',
+                kg: NumberFormatter.formatNumber(rateShip.kg),
+                price: NumberFormatter.formatNumber(rateShip.cbm, decimalPlaces: 0),
               );
             }).toList();
 
@@ -119,68 +120,88 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
 
   Widget _buildCardItem(RateItem item) {
     return Container(
-      height: 140, // 🔸 ควบคุมความสูงให้เท่ากันทุกใบ
+      height: 140, // 🔸 เพิ่มความสูงเพื่อป้องกัน overflow
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 4, offset: Offset(0, 2))],
       ),
-      child: Column(
-        children: [
-          // 🔹 ส่วนบน: รูปภาพ + label (แบ่งซ้าย/ขวาเท่ากัน)
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(flex: 5, child: Center(child: Image.asset(item.image, width: 56, height: 56, fit: BoxFit.fill))),
-                Expanded(
-                  flex: 5,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(item.label, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kTitleTextGridColor)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔹 ส่วนบน: รูปภาพ + label (แบ่งซ้าย/ขวาเท่ากัน)
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(flex: 5, child: Center(child: Image.asset(item.image, width: 50, height: 50, fit: BoxFit.fill))),
+                  Expanded(
+                    flex: 5,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item.label,
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: kTitleTextGridColor),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          // 🔻 ส่วนล่าง: กิโลกรัม / ประมาณ (แบ่งซ้าย/ขวาเท่ากัน)
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 12),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('กิโลกรัม', style: TextStyle(fontSize: 18, color: Colors.black54)),
-                        SizedBox(height: 4),
-                        Text(item.kg, style: TextStyle(fontSize: 24, color: kSubTitleTextGridColor)),
-                      ],
+            // 🔻 ส่วนล่าง: กิโลกรัม / ประมาณ (แบ่งซ้าย/ขวาเท่ากัน)
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('กิโลกรัม', style: TextStyle(fontSize: 16, color: Colors.black54)),
+                          SizedBox(height: 2),
+                          Text(
+                            item.kg,
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: kSubTitleTextGridColor),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 5,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 4),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('ปริมาณ', style: TextStyle(fontSize: 18, color: Colors.black54)),
-                        SizedBox(height: 4),
-                        Text(item.price, style: TextStyle(fontSize: 24, color: kSubTitleTextGridColor)),
-                      ],
+                  Expanded(
+                    flex: 5,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('ปริมาณ', style: TextStyle(fontSize: 16, color: Colors.black54)),
+                          SizedBox(height: 2),
+                          Text(
+                            item.price,
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: kSubTitleTextGridColor),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
 
 class ExchangeDetailPage extends StatefulWidget {
@@ -77,7 +78,7 @@ class _ExchangeDetailPageState extends State<ExchangeDetailPage> {
           _buildRow('เลขที่บัญชี', payment?.id?.toString() ?? widget.reference),
           _buildRow('ชื่อบัญชี', 'xxxxxx xxxxxxx'),
           _buildRow('ชื่อธนาคาร', 'xxxxxxxxxxxxxxxxxxxx'),
-          _buildRow('ยอดเงินหยวนที่ต้องการโอน', '${cnyAmount.toStringAsFixed(2)} ¥', bold: true),
+          _buildRow('ยอดเงินหยวนที่ต้องการโอน', NumberFormatter.formatCNY(cnyAmount), bold: true),
         ],
       ),
     );
@@ -112,7 +113,7 @@ class _ExchangeDetailPageState extends State<ExchangeDetailPage> {
             ),
           ),
           const SizedBox(height: 12),
-          _buildRow('ยอดเงินหยวนที่ต้องการโอน', '${cnyAmount.toStringAsFixed(2)} ¥', bold: true),
+          _buildRow('ยอดเงินหยวนที่ต้องการโอน', NumberFormatter.formatCNY(cnyAmount), bold: true),
         ],
       ),
     );
@@ -131,9 +132,9 @@ class _ExchangeDetailPageState extends State<ExchangeDetailPage> {
         children: [
           _buildIconTitle('assets/icons/dollar-circle.png', 'ค่าใช้จ่าย'),
           const SizedBox(height: 12),
-          _buildRow('ยอดเงินหยวนที่ต้องการโอน', '(${cnyAmount.toStringAsFixed(2)} ¥) ${thbAmount.toStringAsFixed(2)} ฿'),
-          _buildRow('ค่าบริการ', '${serviceFeeAmount.toStringAsFixed(2)} ฿'),
-          _buildRow('รวมราคา', '${totalAmount.toStringAsFixed(2)} ฿', bold: true),
+          _buildRow('ยอดเงินหยวนที่ต้องการโอน', '(${NumberFormatter.formatCNY(cnyAmount)}) ${NumberFormatter.formatTHB(thbAmount)}'),
+          _buildRow('ค่าบริการ', NumberFormatter.formatTHB(serviceFeeAmount)),
+          _buildRow('รวมราคา', NumberFormatter.formatTHB(totalAmount), bold: true),
         ],
       ),
     );

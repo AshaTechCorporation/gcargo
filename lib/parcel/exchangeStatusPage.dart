@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/parcel/exchangeDetailPage.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
 
 class ExchangeStatusPage extends StatefulWidget {
@@ -202,7 +203,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                   method: methodName,
                   iconPath: iconPath,
                   reference: payment.id?.toString() ?? '0',
-                  cny: cnyAmount.toStringAsFixed(2),
+                  cny: NumberFormatter.formatNumber(cnyAmount),
                   thb: payment.amount?.toString() ?? '0',
                 ),
           ),
@@ -256,7 +257,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                     children: [
                       const Text('ยอดเงินหยวนที่ต้องการโอน', style: TextStyle(fontSize: 13, color: Colors.grey)),
                       const SizedBox(height: 4),
-                      Text('${cnyAmount.toStringAsFixed(2)} ¥', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text(NumberFormatter.formatCNY(cnyAmount), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                     ],
                   ),
                 ),
@@ -267,7 +268,10 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                     children: [
                       const Text('ยอดเงินที่ต้องชำระ:', style: TextStyle(fontSize: 13, color: Colors.grey)),
                       const SizedBox(height: 4),
-                      Text('${thbAmount.toStringAsFixed(2)} ฿', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text(
+                        NumberFormatter.formatTHB(thbAmount),
+                        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
                     ],
                   ),
                 ),
