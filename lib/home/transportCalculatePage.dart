@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
 
 class TransportCalculatePage extends StatefulWidget {
@@ -13,7 +14,6 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   late final TabController _tabController;
   final HomeController homeController = Get.put(HomeController());
 
-  final List<String> productTypes = ['ทั่วไป', 'มอก', 'อย', 'แบรน', 'พิเศษ'];
   String? selectedProductType;
   String selectedMethod = 'การรถ';
   final TextEditingController widthCtrl = TextEditingController();
@@ -26,6 +26,8 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   final TextEditingController woodHeightCtrl = TextEditingController();
 
   bool showError = false;
+  double calculatedCost = 0.0;
+  double woodBoxCost = 0.0;
 
   @override
   void initState() {
@@ -51,7 +53,96 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   }
 
   bool isAllowedProductType() {
-    return selectedProductType == 'ทั่วไป' || selectedProductType == 'มอก';
+    return selectedProductType == 'สินค้าทั่วไป' || selectedProductType == 'มอก.';
+  }
+
+  // คำนวณค่าขนส่งตามสูตรปริมาตร
+  void calculateShippingCost() {
+    if (!isAllowedProductType()) {
+      setState(() {
+        showError = true;
+        calculatedCost = 0.0;
+      });
+      return;
+    }
+
+    // ตรวจสอบว่ากรอกข้อมูลครบหรือไม่
+    if (widthCtrl.text.isEmpty || lengthCtrl.text.isEmpty || heightCtrl.text.isEmpty || weightCtrl.text.isEmpty) {
+      setState(() {
+        showError = true;
+        calculatedCost = 0.0;
+      });
+      return;
+    }
+
+    try {
+      // แปลงค่าจาก cm เป็น m และคำนวณปริมาตร
+      double width = double.parse(widthCtrl.text) / 100; // cm to m
+      double length = double.parse(lengthCtrl.text) / 100; // cm to m
+      double height = double.parse(heightCtrl.text) / 100; // cm to m
+      double weight = double.parse(weightCtrl.text); // kg
+
+      // คำนวณปริมาตร (CBM)
+      double volume = width * length * height;
+
+      // หาอัตราค่าขนส่งจาก API ตาม selectedProductType และ selectedMethod
+      String vehicleType = selectedMethod == 'การรถ' ? 'car' : 'ship';
+
+      // ค้นหา rate ที่ตรงกับประเภทสินค้าและวิธีขนส่ง
+      var matchingRate = homeController.rateShip.firstWhere(
+        (rate) =>
+            (rate.vehicle?.toLowerCase() == vehicleType || rate.vehicle?.toLowerCase() == (vehicleType == 'car' ? 'รถ' : 'เรือ')) &&
+            rate.name == selectedProductType,
+        orElse: () => homeController.rateShip.first,
+      );
+
+      // ดึงอัตราค่าขนส่งต่อ CBM
+      double ratePerCBM = NumberFormatter.toDouble(matchingRate.cbm);
+
+      // คำนวณค่าขนส่ง = ปริมาตร × อัตราค่าขนส่งต่อ CBM
+      double shippingCost = volume * ratePerCBM;
+
+      setState(() {
+        calculatedCost = shippingCost;
+        showError = false;
+      });
+    } catch (e) {
+      setState(() {
+        showError = true;
+        calculatedCost = 0.0;
+      });
+    }
+  }
+
+  // คำนวณค่าตีลังไม้
+  void calculateWoodBoxCost() {
+    if (woodWidthCtrl.text.isEmpty || woodLengthCtrl.text.isEmpty || woodHeightCtrl.text.isEmpty) {
+      setState(() {
+        woodBoxCost = 0.0;
+      });
+      return;
+    }
+
+    try {
+      // แปลงค่าจาก cm เป็น m และคำนวณปริมาตร
+      double width = double.parse(woodWidthCtrl.text) / 100; // cm to m
+      double length = double.parse(woodLengthCtrl.text) / 100; // cm to m
+      double height = double.parse(woodHeightCtrl.text) / 100; // cm to m
+
+      // คำนวณปริมาตร (CBM)
+      double volume = width * length * height;
+
+      // คำนวณค่าตีลังไม้ = ปริมาตร × 1,500
+      double cost = volume * 1500;
+
+      setState(() {
+        woodBoxCost = cost;
+      });
+    } catch (e) {
+      setState(() {
+        woodBoxCost = 0.0;
+      });
+    }
   }
 
   @override
@@ -109,6 +200,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               onChanged: (value) {
                 setState(() {
                   selectedProductType = value;
+                  calculatedCost = 0.0; // เคลียร์ผลการคำนวณเมื่อเปลี่ยนประเภทสินค้า
                   showError = !isAllowedProductType();
                 });
               },
@@ -128,6 +220,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                     setState(() {
                       selectedMethod = val!;
                       selectedProductType = null;
+                      calculatedCost = 0.0; // เคลียร์ผลการคำนวณเมื่อเปลี่ยนรูปแบบขนส่ง
                     });
                   },
                   dense: true,
@@ -143,6 +236,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                     setState(() {
                       selectedMethod = val!;
                       selectedProductType = null;
+                      calculatedCost = 0.0; // เคลียร์ผลการคำนวณเมื่อเปลี่ยนรูปแบบขนส่ง
                     });
                   },
                   dense: true,
@@ -186,6 +280,28 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                 ],
               ),
             ),
+
+          // แสดงผลการคำนวณ
+          if (calculatedCost > 0)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('ผลการคำนวณ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 8),
+                  Text('ค่าขนส่ง: ${NumberFormatter.formatTHB(calculatedCost)}', style: const TextStyle(fontSize: 14)),
+                ],
+              ),
+            ),
+
           Spacer(),
           Row(
             children: [
@@ -198,6 +314,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                       heightCtrl.clear();
                       weightCtrl.clear();
                       showError = false;
+                      calculatedCost = 0.0;
                     });
                   },
                   style: OutlinedButton.styleFrom(
@@ -211,7 +328,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: isBlocked ? null : () {},
+                  onPressed: isBlocked ? null : calculateShippingCost,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isBlocked ? Colors.grey.shade300 : const Color(0xFF002A5B),
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -256,7 +373,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
-            child: const Text('0.00 บาท', style: TextStyle(fontSize: 16)),
+            child: Text(NumberFormatter.formatTHB(woodBoxCost), style: const TextStyle(fontSize: 16)),
           ),
 
           const SizedBox(height: 24),
@@ -270,6 +387,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                       woodWidthCtrl.clear();
                       woodLengthCtrl.clear();
                       woodHeightCtrl.clear();
+                      woodBoxCost = 0.0;
                     });
                   },
                   style: OutlinedButton.styleFrom(
@@ -283,7 +401,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: calculateWoodBoxCost,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF002A5B),
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -354,6 +472,6 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
             .toList();
 
     // Use API data if available, otherwise use default product types
-    return apiProductTypes.isNotEmpty ? apiProductTypes : productTypes;
+    return apiProductTypes.isNotEmpty ? apiProductTypes : [];
   }
 }
