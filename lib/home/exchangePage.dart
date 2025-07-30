@@ -432,7 +432,7 @@ class _ExchangePageState extends State<ExchangePage> {
             SizedBox(height: 16),
             _buildInputField('เบอร์โทรศัพท์', controller: _phoneController, keyboardType: TextInputType.phone),
             SizedBox(height: 12),
-            _buildInputField('เลขบัญชี', controller: _accountController),
+            _buildInputField('เลขบัญชี', controller: _accountController, keyboardType: TextInputType.number),
             SizedBox(height: 12),
             _buildInputField('ชื่อบัญชี', controller: _nameController),
 
@@ -636,7 +636,7 @@ class _ExchangePageState extends State<ExchangePage> {
                       if (deposit != null) {
                         Get.snackbar('สำเร็จ', 'ส่งข้อมูลสำเร็จ', backgroundColor: Colors.green, colorText: Colors.white);
                         // ย้อนกลับหน้าก่อนหน้า
-                        Get.back();
+                        Navigator.pop(context);
                       } else {
                         Get.snackbar('ข้อผิดพลาด', 'ไม่สามารถส่งข้อมูลได้', backgroundColor: Colors.red, colorText: Colors.white);
                       }

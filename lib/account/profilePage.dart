@@ -106,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
       phoneController.text = user.phone ?? '';
       referCodeController.text = user.referrer ?? '';
       _addressController.text = user.address ?? '';
-      agentCodeController.text = user.detail?.frequent_importer ?? '';
+      agentCodeController.text = user.detail?.frequent_importer ?? '123654';
 
       // Format birth date if available
       if (user.birth_date != null && user.birth_date!.isNotEmpty) {

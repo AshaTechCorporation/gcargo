@@ -30,6 +30,7 @@ class HomeController extends GetxController {
   var transferFee = Rxn<TransferFee>();
   var alipayPayment = <Payment>[].obs;
   var currentUser = Rxn<User>();
+  var alipayPaymentById = Rxn<Payment>();
 
   @override
   void onInit() {
@@ -234,6 +235,20 @@ class HomeController extends GetxController {
       currentUser.value = null;
       ship_address = [];
       select_ship_address = null;
+    }
+  }
+
+  Future<void> getAlipayPaymentById(int id) async {
+    try {
+      final paymentData = await HomeService.getAlipayPaymentById(id: id);
+      if (paymentData != null) {
+        alipayPaymentById.value = paymentData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูล');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
     }
   }
 

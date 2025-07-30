@@ -23,6 +23,8 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
     // เรียก API เมื่อเข้าหน้า
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.getAlipayPaymentFromAPI();
+      homeController.getExchangeRateFromAPI();
+      homeController.getServiceFeeFromAPI();
     });
   }
 
@@ -143,18 +145,32 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(16),
-                children:
-                    grouped.entries.map((e) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
-                          ...e.value.map((payment) => _buildPaymentCard(payment)),
-                          const SizedBox(height: 12),
-                        ],
-                      );
-                    }).toList(),
+                children: () {
+                  // เรียงวันที่ล่าสุดขึ้นก่อน (descending order)
+                  final sortedEntries = grouped.entries.toList();
+                  sortedEntries.sort((a, b) {
+                    try {
+                      final dateA = DateTime.parse(a.key);
+                      final dateB = DateTime.parse(b.key);
+                      return dateB.compareTo(dateA); // วันที่ล่าสุดก่อน
+                    } catch (e) {
+                      // ถ้า parse วันที่ไม่ได้ ให้เรียงตาม string
+                      return b.key.compareTo(a.key);
+                    }
+                  });
+
+                  return sortedEntries.map((e) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        ...e.value.map((payment) => _buildPaymentCard(payment)),
+                        const SizedBox(height: 12),
+                      ],
+                    );
+                  }).toList();
+                }(),
               ),
             ),
           ],
@@ -169,6 +185,13 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
     final iconPath = method == 'alipay' ? 'assets/icons/alipay_icon.png' : 'assets/icons/wechat_icon.png';
     final methodName = method == 'alipay' ? 'Alipay' : 'WeChat Pay';
 
+    // คำนวณจำนวนเงินตามอัตราแลกเปลี่ยน
+    // payment.amount เป็นเงินบาท ต้องแปลงเป็นหยวน
+    final thbAmount = double.tryParse(payment.amount?.toString() ?? '0') ?? 0.0;
+    final alipayRate = homeController.exchangeRate['alipay_topup_rate'];
+    final exchangeRate = double.tryParse(alipayRate?.toString() ?? '5.0') ?? 5.0; // default rate
+    final cnyAmount = thbAmount / exchangeRate; // บาท ÷ อัตราแลกเปลี่ยน = หยวน
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -179,7 +202,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                   method: methodName,
                   iconPath: iconPath,
                   reference: payment.id?.toString() ?? '0',
-                  cny: payment.amount?.toString() ?? '0',
+                  cny: cnyAmount.toStringAsFixed(2),
                   thb: payment.amount?.toString() ?? '0',
                 ),
           ),
@@ -233,7 +256,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                     children: [
                       const Text('ยอดเงินหยวนที่ต้องการโอน', style: TextStyle(fontSize: 13, color: Colors.grey)),
                       const SizedBox(height: 4),
-                      Text('${payment.amount ?? 0} ¥', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text('${cnyAmount.toStringAsFixed(2)} ¥', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                     ],
                   ),
                 ),
@@ -244,7 +267,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                     children: [
                       const Text('ยอดเงินที่ต้องชำระ:', style: TextStyle(fontSize: 13, color: Colors.grey)),
                       const SizedBox(height: 4),
-                      Text('${payment.amount ?? 0} ฿', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text('${thbAmount.toStringAsFixed(2)} ฿', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
                     ],
                   ),
                 ),

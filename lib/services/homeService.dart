@@ -421,4 +421,20 @@ class HomeService {
       throw ApiException(data['message']);
     }
   }
+
+  //get ข้อมูลการเติมเงินตามไอดีด
+  static Future<Payment> getAlipayPaymentById({required int id}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/alipay_payment/$id');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return Payment.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
 }
