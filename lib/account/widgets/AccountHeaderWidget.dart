@@ -63,8 +63,8 @@ class AccountHeaderWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _quickItem('100', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap),
-              _quickItem('฿100.00', 'Wallet ของฉัน', 'assets/icons/empty-wallet.png', onWalletTap),
+              _quickItem('100', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap, 'สถานะ'),
+              _quickItem('฿100.00', 'Wallet ของฉัน', 'assets/icons/empty-wallet.png', onWalletTap, 'โอนเงิน'),
             ],
           ),
         ],
@@ -72,7 +72,7 @@ class AccountHeaderWidget extends StatelessWidget {
     );
   }
 
-  Widget _quickItem(String value, String label, String iconPath, VoidCallback onTap) {
+  Widget _quickItem(String value, String label, String iconPath, VoidCallback onTap, String transferLabel) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -106,7 +106,7 @@ class AccountHeaderWidget extends StatelessWidget {
                   child: Center(child: Image.asset(iconPath, width: 20)),
                 ),
                 const SizedBox(height: 4),
-                const Text('ดูรายละเอียด', style: TextStyle(fontSize: 12)), // หรือข้อความอื่นตามรูป
+                Text('$transferLabel', style: TextStyle(fontSize: 12)), // หรือข้อความอื่นตามรูป
               ],
             ),
           ],

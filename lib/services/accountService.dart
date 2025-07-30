@@ -1,5 +1,6 @@
 import 'package:gcargo/models/faq.dart';
 import 'package:gcargo/models/manual.dart';
+import 'package:gcargo/models/tegaboutus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:gcargo/utils/ApiExeption.dart';
@@ -54,6 +55,20 @@ class AccountService {
       final data = convert.jsonDecode(response.body);
       final list = data['data'] as List;
       return list.map((e) => Manual.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //เกี่ยวกับ
+  static Future<Tegaboutus> getTegAboutUs() async {
+    var headers = {'Content-Type': 'application/json'};
+    final url = Uri.https(publicUrl, '/public/api/get_about_us');
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return Tegaboutus.fromJson(data['data']);
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);
