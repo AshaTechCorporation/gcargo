@@ -20,3 +20,6 @@ const kButtonLogoutColor = Color(0xFFFFBA00);
 const kBackTextFiledColor = Color(0xFFF6F6F6);
 const kBackgroundTextColor = Color(0xFF004AAD);
 const kTextgreyColor = Color(0xFF333333);
+const kCicleColor = Color(0xFF23547D);
+const kCicleSelectedColor = Color(0xFFE5EBFC);
+const kTextTitleHeadColor = Color(0xFF202020);

@@ -74,7 +74,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
-        title: Obx(() => Text('เลขบิลสั่งซื้อ $orderCode', style: const TextStyle(color: Colors.black))),
+        title: Obx(() => Text('เลขบิลสั่งซื้อ $orderCode', style: const TextStyle(color: Colors.black, fontSize: 24))),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -137,7 +137,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                     SizedBox(height: 16),
                     Divider(),
                     SizedBox(height: 12),
-                    Text('สินค้าทั้งหมด', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('สินค้าทั้งหมด', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: kTextTitleHeadColor)),
                     SizedBox(height: 12),
 
                     // 🔹 การ์ดสินค้า
@@ -151,12 +151,18 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(productList.first.product_store_type ?? '1688', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                const Text('ไม่ QC | ไม่สั่งไป', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                Text(
+                                  productList.first.product_store_type ?? '1688',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kTextTitleHeadColor),
+                                ),
+                                const Text('ไม่ QC | ไม่สั่งไป', style: TextStyle(fontSize: 14, color: kTextgreyColor)),
                               ],
                             ),
                             const SizedBox(height: 4),
-                            const Text('ค่าส่งต่อจีน 0.00¥ / 0.00฿', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [const Text('ค่าส่งต่อจีน 0.00¥ / 0.00฿', style: TextStyle(fontSize: 14, color: kTextgreyColor))],
+                            ),
                             const SizedBox(height: 12),
 
                             // 🔻 รายการสินค้าจาก ProductsTrack
@@ -200,8 +206,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: [
-          Expanded(flex: 3, child: Text(label, style: const TextStyle(color: Colors.black))),
-          Expanded(flex: 5, child: Text(value, style: const TextStyle(color: Colors.grey))),
+          Expanded(flex: 3, child: Text(label, style: const TextStyle(color: kHintTextColor, fontSize: 14))),
+          Expanded(flex: 5, child: Text(value, style: const TextStyle(color: Colors.black, fontSize: 14))),
         ],
       ),
     );
@@ -224,10 +230,10 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('¥$productPrice x$productQty', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text('¥$productPrice x$productQty', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               Text('(${_calculateBahtPrice(productPrice)} ฿)', style: const TextStyle(fontSize: 12, color: Colors.grey)),
               const SizedBox(height: 4),
-              Text(productName, maxLines: 2, overflow: TextOverflow.ellipsis),
+              Text(productName, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14)),
               const SizedBox(height: 4),
               // แสดง options ถ้ามี
               if (product.options != null && product.options!.isNotEmpty)
@@ -290,11 +296,11 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: filled ? const Color(0xFFEDF6FF) : Colors.transparent,
-        border: Border.all(color: Colors.blue),
+        color: filled ? kCicleSelectedColor : Colors.transparent,
+        border: Border.all(color: kCicleSelectedColor),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Text(text, style: const TextStyle(fontSize: 12, color: Colors.blue)),
+      child: Text(text, style: const TextStyle(fontSize: 14, color: Colors.black)),
     );
   }
 
@@ -373,7 +379,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Divider(),
-        const Text('ข้อมูลเพิ่มเติม', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        const Text('ข้อมูลเพิ่มเติม', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
 
         if (order?.shipping_type != null) _buildPriceRow('ประเภทการขนส่ง', order!.shipping_type!),
@@ -411,8 +417,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-          Text(value, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+          Text(label, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal, fontSize: 16)),
+          Text(value, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal, fontSize: 16)),
         ],
       ),
     );
@@ -434,6 +440,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
               child: OutlinedButton(
                 onPressed: () {
                   // TODO: Implement cancel order
+                  Navigator.pop(context);
                 },
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -465,7 +472,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       // For "รอตรวจสอบ" - show "ซื้ออีกครั้ง" button
       return ElevatedButton(
         onPressed: () {
-          // TODO: Implement reorder
+          // แสดงข้อความว่าฟังก์ชันยังไม่พร้อมใช้งาน
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ฟังก์ชันนี้ยังไม่พร้อมใช้งาน'), backgroundColor: Colors.orange));
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: kButtonColor,

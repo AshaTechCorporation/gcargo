@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/models/orders/ordersPage.dart';
 import 'package:gcargo/parcel/POOrderDetailPage.dart';
@@ -259,24 +260,24 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: isSelected ? Colors.blue.shade50 : Colors.white,
+                            color: isSelected ? kBackgroundTextColor.withOpacity(0.1) : Colors.white,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: isSelected ? Colors.blue : Colors.grey.shade300),
+                            border: Border.all(color: isSelected ? kBackgroundTextColor : Colors.grey.shade300),
                           ),
                           child: Row(
                             children: [
                               Text(
                                 status,
                                 style: TextStyle(
-                                  color: isSelected ? Colors.blue : Colors.black,
+                                  color: isSelected ? kBackgroundTextColor : Colors.black,
                                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Container(
-                                width: 20,
-                                height: 20,
-                                decoration: BoxDecoration(color: isSelected ? Colors.blue : Colors.grey.shade300, shape: BoxShape.circle),
+                                width: 25,
+                                height: 25,
+                                decoration: BoxDecoration(color: isSelected ? kCicleColor : Colors.grey.shade300, shape: BoxShape.circle),
                                 child: Center(child: Text('$count', style: TextStyle(fontSize: 12, color: isSelected ? Colors.white : Colors.black))),
                               ),
                             ],
@@ -405,39 +406,39 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
             // 🔹 ปุ่มเฉพาะสถานะรอตรวจสอบ
             if (isPending) ...[
               SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  OutlinedButton(
-                    onPressed: () async {
-                      print(55555);
-                      showDialog(
-                        context: context,
-                        builder:
-                            (_) => RemarkDialog(
-                              initialText: '', // หรือค่าที่มีอยู่
-                              onSave: (text) {
-                                print('บันทึกข้อความ: $text');
-                                // ทำอย่างอื่นต่อ เช่นส่งไปเซิร์ฟเวอร์
-                              },
-                            ),
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(foregroundColor: Colors.grey),
-                    child: const Text('ยกเลิก'),
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => DetailOrderPage(orderId: order['originalOrder'].id ?? 0)));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E3C72), // ✅ kButtonColor
-                    ),
-                    child: Text('สั่งซื้ออีกครั้ง', style: TextStyle(color: Colors.white, fontSize: 16)),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     OutlinedButton(
+              //       onPressed: () async {
+              //         print(55555);
+              //         showDialog(
+              //           context: context,
+              //           builder:
+              //               (_) => RemarkDialog(
+              //                 initialText: '', // หรือค่าที่มีอยู่
+              //                 onSave: (text) {
+              //                   print('บันทึกข้อความ: $text');
+              //                   // ทำอย่างอื่นต่อ เช่นส่งไปเซิร์ฟเวอร์
+              //                 },
+              //               ),
+              //         );
+              //       },
+              //       style: OutlinedButton.styleFrom(foregroundColor: Colors.grey),
+              //       child: const Text('ยกเลิก'),
+              //     ),
+              //     SizedBox(width: 8),
+              //     ElevatedButton(
+              //       onPressed: () {
+              //         Navigator.push(context, MaterialPageRoute(builder: (_) => DetailOrderPage(orderId: order['originalOrder'].id ?? 0)));
+              //       },
+              //       style: ElevatedButton.styleFrom(
+              //         backgroundColor: const Color(0xFF1E3C72), // ✅ kButtonColor
+              //       ),
+              //       child: Text('สั่งซื้ออีกครั้ง', style: TextStyle(color: Colors.white, fontSize: 16)),
+              //     ),
+              //   ],
+              // ),
             ],
           ],
         ),
