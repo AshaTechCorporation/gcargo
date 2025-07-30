@@ -34,7 +34,31 @@ class AccountHeaderWidget extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  ClipOval(child: Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover)),
+                  ClipOval(
+                    child:
+                        (user?.image != null && user!.image!.isNotEmpty)
+                            ? Image.network(
+                              user!.image!,
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                // ถ้าโหลดรูปจาก network ไม่ได้ ให้แสดง Avatar default
+                                return Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover);
+                              },
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                // แสดง loading indicator ขณะโหลดรูป
+                                return Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
+                                  child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                );
+                              },
+                            )
+                            : Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover),
+                  ),
                   const SizedBox(width: 12),
                   isLoading
                       ? Container(

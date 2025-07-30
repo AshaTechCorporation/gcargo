@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/claimDetailPage.dart';
 import 'package:gcargo/parcel/claimRefundDetailPage.dart';
 
@@ -67,45 +68,53 @@ class _ProblemPackagePageState extends State<ProblemPackagePage> {
       ),
       body: Column(
         children: [
-          // 🔹 แถบสถานะ
-          SizedBox(
-            height: 52,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              scrollDirection: Axis.horizontal,
-              itemCount: statusList.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (_, i) {
-                final status = statusList[i];
-                final isSelected = status == selectedStatus;
-                final count = statusCounts[status] ?? 0;
+          // 🔹 แถบสถานะ (ดีไซน์เหมือน OrderStatusPage)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: 36,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: statusList.length,
+                itemBuilder: (_, index) {
+                  final status = statusList[index];
+                  final isSelected = status == selectedStatus;
+                  final count = statusCounts[status] ?? 0;
 
-                return GestureDetector(
-                  onTap: () => setState(() => selectedStatus = status),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF246BFD) : Colors.white,
-                      border: Border.all(color: const Color(0xFF246BFD)),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(status, style: TextStyle(color: isSelected ? Colors.white : const Color(0xFF246BFD), fontWeight: FontWeight.w500)),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isSelected ? Colors.white : const Color(0xFFF5F5F5),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text('$count', style: TextStyle(fontSize: 12, color: isSelected ? const Color(0xFF246BFD) : Colors.black)),
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () => setState(() => selectedStatus = status),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isSelected ? kBackgroundTextColor.withOpacity(0.1) : Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: isSelected ? kBackgroundTextColor : Colors.grey.shade300),
                         ),
-                      ],
+                        child: Row(
+                          children: [
+                            Text(
+                              status,
+                              style: TextStyle(
+                                color: isSelected ? kBackgroundTextColor : Colors.black,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              width: 25,
+                              height: 25,
+                              decoration: BoxDecoration(color: isSelected ? kCicleColor : Colors.grey.shade300, shape: BoxShape.circle),
+                              child: Center(child: Text('$count', style: TextStyle(fontSize: 12, color: isSelected ? Colors.white : Colors.black))),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
 

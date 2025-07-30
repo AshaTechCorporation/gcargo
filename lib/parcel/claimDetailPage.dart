@@ -114,21 +114,24 @@ class ClaimDetailPage extends StatelessWidget {
       ),
 
       // 🔘 ปุ่มยกเลิก
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Color(0xFF002A5D)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-            child: const Text('ยกเลิก', style: TextStyle(color: Color(0xFF002A5D))),
-          ),
-        ),
-      ),
+      bottomNavigationBar:
+          status == 'ยกเลิก'
+              ? null
+              : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: SizedBox(
+                  height: 48,
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFF002A5D)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('ยกเลิก', style: TextStyle(color: Color(0xFF002A5D))),
+                  ),
+                ),
+              ),
     );
   }
 
