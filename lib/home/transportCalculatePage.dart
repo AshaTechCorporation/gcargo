@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   final HomeController homeController = Get.put(HomeController());
 
   String? selectedProductType;
-  String selectedMethod = 'การรถ';
+  String selectedMethod = 'ทางรถ';
   final TextEditingController widthCtrl = TextEditingController();
   final TextEditingController lengthCtrl = TextEditingController();
   final TextEditingController heightCtrl = TextEditingController();
@@ -152,17 +153,18 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('คำนวณ', style: TextStyle(color: Colors.black)),
+        title: const Text('คำนวณ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black), onPressed: () => Navigator.pop(context)),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.black,
-          labelColor: Colors.black,
+          indicatorWeight: 3,
+          labelColor: kButtonColor,
           unselectedLabelColor: Colors.grey,
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          tabs: const [Tab(text: 'วิธีคำนวณค่าขนส่ง'), Tab(text: 'วิธีคำนวณตู้ลังไม้')],
+          labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+          tabs: [Tab(text: 'วิธีคำนวณค่าขนส่ง'), Tab(text: 'วิธีคำนวณตู้ลังไม้')],
         ),
       ),
       body: TabBarView(controller: _tabController, children: [_buildNormalTab(context, isBlocked), _buildWoodBoxTab()]),
@@ -175,7 +177,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
       child: Column(
         children: [
           const SizedBox(height: 8),
-          Row(children: [const Text('ประเภทสินค้า', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))]),
+          Row(children: [const Text('ประเภทสินค้า', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
           const SizedBox(height: 6),
           Obx(() {
             List<String> availableProductTypes = _getProductTypesByMethod(selectedMethod);
@@ -195,7 +197,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               ),
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
               items: availableProductTypes.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
               onChanged: (value) {
                 setState(() {
@@ -207,13 +209,13 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
             );
           }),
           const SizedBox(height: 14),
-          Row(children: [const Text('เลือกรูปแบบขนส่ง', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))]),
+          Row(children: [const Text('เลือกรูปแบบขนส่ง', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
           const SizedBox(height: 6),
           Row(
             children: [
               Expanded(
                 child: RadioListTile(
-                  title: const Text('การรถ', style: TextStyle(fontSize: 14)),
+                  title: const Text('ทางรถ', style: TextStyle(fontSize: 16)),
                   value: 'การรถ',
                   groupValue: selectedMethod,
                   onChanged: (val) {
@@ -229,7 +231,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               ),
               Expanded(
                 child: RadioListTile(
-                  title: const Text('ทางเรือ', style: TextStyle(fontSize: 14)),
+                  title: const Text('ทางเรือ', style: TextStyle(fontSize: 16)),
                   value: 'ทางเรือ',
                   groupValue: selectedMethod,
                   onChanged: (val) {
@@ -306,6 +308,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
           Row(
             children: [
               Expanded(
+                flex: 3,
                 child: OutlinedButton(
                   onPressed: () {
                     setState(() {
@@ -322,11 +325,12 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                     side: const BorderSide(color: Color(0xFFD0D0D0)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 14)),
+                  child: Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
+                flex: 7,
                 child: ElevatedButton(
                   onPressed: isBlocked ? null : calculateShippingCost,
                   style: ElevatedButton.styleFrom(
@@ -334,7 +338,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 14)),
+                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 20)),
                 ),
               ),
             ],
@@ -381,6 +385,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
           Row(
             children: [
               Expanded(
+                flex: 3,
                 child: OutlinedButton(
                   onPressed: () {
                     setState(() {
@@ -395,11 +400,12 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                     side: const BorderSide(color: Color(0xFFD0D0D0)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 14)),
+                  child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
+                flex: 7,
                 child: ElevatedButton(
                   onPressed: calculateWoodBoxCost,
                   style: ElevatedButton.styleFrom(
@@ -407,7 +413,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 14)),
+                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 20)),
                 ),
               ),
             ],
@@ -434,7 +440,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         const SizedBox(height: 6),
         TextField(
           controller: controller,
