@@ -74,7 +74,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-          title: const Text('แลกเปลี่ยนเงินบาทเป็นหยวน', style: TextStyle(color: Colors.black)),
+          title: const Text('แลกเปลี่ยนเงินบาทเป็นหยวน', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         body: Column(
           children: [
@@ -116,24 +116,34 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                   return GestureDetector(
                     onTap: () => setState(() => selectedStatus = status),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF246BFD) : Colors.white,
-                        border: Border.all(color: const Color(0xFF246BFD)),
-                        borderRadius: BorderRadius.circular(5), // มุมลดลง
+                        color: isSelected ? const Color(0xFF427D9D) : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFF427D9D)),
                       ),
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(status, style: TextStyle(color: isSelected ? Colors.white : const Color(0xFF246BFD), fontWeight: FontWeight.w500)),
-                          const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isSelected ? Colors.white : const Color(0xFFF5F5F5),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text('$count', style: TextStyle(fontSize: 12, color: isSelected ? const Color(0xFF246BFD) : Colors.black)),
+                          Text(
+                            status,
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: isSelected ? Colors.white : const Color(0xFF427D9D)),
                           ),
+                          if (count > 0) ...[
+                            const SizedBox(width: 6),
+                            CircleAvatar(
+                              radius: 10,
+                              backgroundColor: isSelected ? Colors.white : const Color(0xFF427D9D),
+                              child: Text(
+                                '$count',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected ? const Color(0xFF427D9D) : Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -164,7 +174,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                         const SizedBox(height: 8),
                         ...e.value.map((payment) => _buildPaymentCard(payment)),
                         const SizedBox(height: 12),
@@ -236,15 +246,15 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                     Text(methodName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ],
                 ),
-                Text(displayStatus, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                Text(displayStatus, style: const TextStyle(fontSize: 16, color: Colors.grey)),
               ],
             ),
             const SizedBox(height: 12),
 
             // 🔹 Ref
-            Text('เบอร์โทรศัพท์', style: const TextStyle(fontSize: 13, color: Colors.grey)),
+            Text('เบอร์โทรศัพท์', style: const TextStyle(fontSize: 16, color: Colors.grey)),
             const SizedBox(height: 2),
-            Text(payment.phone ?? 'ไม่ระบุ', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(payment.phone ?? 'ไม่ระบุ', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
 
             const SizedBox(height: 12),
 
@@ -255,9 +265,9 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('ยอดเงินหยวนที่ต้องการโอน', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                      const Text('ยอดเงินหยวนที่ต้องการโอน', style: TextStyle(fontSize: 14, color: Colors.grey)),
                       const SizedBox(height: 4),
-                      Text(NumberFormatter.formatCNY(cnyAmount), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text(NumberFormatter.formatCNY(cnyAmount), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     ],
                   ),
                 ),
@@ -266,7 +276,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text('ยอดเงินที่ต้องชำระ:', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                      const Text('ยอดเงินที่ต้องชำระ:', style: TextStyle(fontSize: 14, color: Colors.grey)),
                       const SizedBox(height: 4),
                       Text(
                         NumberFormatter.formatTHB(thbAmount),

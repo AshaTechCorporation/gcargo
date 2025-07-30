@@ -39,7 +39,7 @@ class _ExchangeDetailPageState extends State<ExchangeDetailPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-        title: const Text('แลกเปลี่ยนเงินบาทเป็นหยวน', style: TextStyle(color: Colors.black)),
+        title: const Text('แลกเปลี่ยนเงินบาทเป็นหยวน', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
       ),
       body: Obx(() {
         final payment = homeController.alipayPaymentById.value;
@@ -94,7 +94,7 @@ class _ExchangeDetailPageState extends State<ExchangeDetailPage> {
           _buildIconTitle(widget.iconPath, widget.method),
           const SizedBox(height: 12),
           _buildRow('เบอร์โทรศัพท์', payment?.phone ?? widget.reference),
-          const Text('รูปภาพช่องจ่าย', style: TextStyle(fontSize: 14)),
+          const Text('รูปภาพช่องจ่าย', style: TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
           Container(
             width: 120,
@@ -146,10 +146,10 @@ class _ExchangeDetailPageState extends State<ExchangeDetailPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 14, color: Colors.black)),
+          Text(label, style: const TextStyle(fontSize: 16, color: Colors.black)),
           Text(
             value,
-            style: TextStyle(fontSize: 14, fontWeight: bold ? FontWeight.bold : FontWeight.normal, color: bold ? Colors.black : Colors.grey[800]),
+            style: TextStyle(fontSize: 16, fontWeight: bold ? FontWeight.bold : FontWeight.normal, color: bold ? Colors.black : Colors.grey[800]),
           ),
         ],
       ),

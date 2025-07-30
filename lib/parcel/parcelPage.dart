@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/parcel_controller.dart';
-import 'package:gcargo/parcel/claimDetailPage.dart';
+import 'package:gcargo/parcel/claimDetailPage_copy.dart';
 
 class ParcelPage extends StatefulWidget {
   const ParcelPage({super.key});
