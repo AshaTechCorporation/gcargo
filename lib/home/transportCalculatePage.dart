@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/home/widgets/QrCodeDialog.dart';
 import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
 
@@ -289,21 +290,27 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
           ),
           const SizedBox(height: 16),
           if (isBlocked)
-            Container(
-              padding: const EdgeInsets.all(12),
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(color: const Color(0xFFFFE5E5), borderRadius: BorderRadius.circular(8)),
-              child: Row(
-                children: const [
-                  Icon(Icons.error, color: Colors.red),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'หากต้องการคำนวณค่าขนส่งของสินค้าประเภท อย / แบรน / พิเศษ กรุณาดูที่ตู้ลังไม้',
-                      style: TextStyle(color: Colors.red, fontSize: 13),
+            GestureDetector(
+              onTap: () {
+                // TODO: ต้องการให้ไปที่หน้าไหน
+                showDialog(context: context, builder: (_) => const QrCodeDialog());
+              },
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(color: const Color(0xFFFFE5E5), borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  children: const [
+                    Icon(Icons.error, color: Colors.red),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'หากต้องการคำนวณค่าขนส่งของสินค้าประเภท อย / แบรน / พิเศษ กรุณาดูที่ตู้ลังไม้',
+                        style: TextStyle(color: Colors.red, fontSize: 13),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 

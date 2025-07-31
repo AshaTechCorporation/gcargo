@@ -60,7 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   bool _validateAllFields() {
-    // เช็คอีเมล
+    // ✅ เช็คอีเมล (จำเป็น)
     if (_emailController.text.trim().isEmpty) {
       _showErrorSnackBar('กรุณากรอกอีเมล');
       return false;
@@ -73,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return false;
     }
 
-    // เช็ครหัสผ่าน
+    // ✅ เช็ครหัสผ่าน (จำเป็น)
     if (_passwordController.text.trim().isEmpty) {
       _showErrorSnackBar('กรุณากรอกรหัสผ่าน');
       return false;
@@ -85,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return false;
     }
 
-    // เช็คยืนยันรหัสผ่าน
+    // ✅ เช็คยืนยันรหัสผ่าน (จำเป็น)
     if (_confirmPasswordController.text.trim().isEmpty) {
       _showErrorSnackBar('กรุณายืนยันรหัสผ่าน');
       return false;
@@ -97,25 +97,25 @@ class _RegisterPageState extends State<RegisterPage> {
       return false;
     }
 
-    // เช็คชื่อ
+    // ✅ เช็คชื่อ (จำเป็น)
     if (_nameController.text.trim().isEmpty) {
       _showErrorSnackBar('กรุณากรอกชื่อ');
       return false;
     }
 
-    // เช็คนามสกุล
+    // ✅ เช็คนามสกุล (จำเป็น)
     if (_lastnameController.text.trim().isEmpty) {
       _showErrorSnackBar('กรุณากรอกนามสกุล');
       return false;
     }
 
-    // เช็ควันเกิด
+    // ✅ เช็ควันเกิด (จำเป็น)
     if (_birthdateController.text.trim().isEmpty) {
       _showErrorSnackBar('กรุณาเลือกวันเกิด');
       return false;
     }
 
-    // เช็คเบอร์โทร
+    // ✅ เช็คเบอร์โทร (จำเป็น)
     if (_phoneController.text.trim().isEmpty) {
       _showErrorSnackBar('กรุณากรอกเบอร์โทรศัพท์');
       return false;
@@ -128,17 +128,25 @@ class _RegisterPageState extends State<RegisterPage> {
       return false;
     }
 
-    // เช็คชื่อผู้ใช้สำหรับล็อกอิน
+    // ✅ เช็คชื่อผู้ใช้สำหรับล็อกอิน (จำเป็น)
     if (_pinController.text.trim().isEmpty) {
       _showErrorSnackBar('กรุณากรอกชื่อผู้ใช้งาน (สำหรับล็อกอิน)');
       return false;
     }
 
-    // เช็คยินยอมข้อตกลง
+    // ✅ เช็คยินยอมข้อตกลง (จำเป็น)
     if (!agree) {
       _showErrorSnackBar('กรุณายินยอมในข้อตกลงการใช้งาน');
       return false;
     }
+
+    // ❌ ไม่เช็คช่องเสริม (Optional):
+    // - รหัสแนะนำ (_referralCodeController)
+    // - รหัสเซล (_saleCodeController)
+    // - รายละเอียดที่อยู่ (_addressController)
+    // - เลขที่ภาษี (_taxIdController)
+    // - รหัสไปรษณีย์ (_postalCodeController)
+    // - จังหวัด/อำเภอ/ตำบล (selectedProvince, selectedDistrict, selectedSubdistrict)
 
     return true;
   }
@@ -318,11 +326,33 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 12),
 
-                CustomTextFormField(
-                  label: 'เบอร์โทรศัพท์มือถือ',
-                  hintText: 'กรุณากรอกเบอร์โทรศัพท์มือถือ',
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
+                // เบอร์โทรศัพท์มือถือ (จำกัดไม่เกิน 10 ตัว)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('เบอร์โทรศัพท์มือถือ', style: TextStyle(fontSize: 18, color: kButtonColor)),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      maxLength: 10,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly, // เฉพาะตัวเลข
+                      ],
+                      decoration: InputDecoration(
+                        hintText: 'กรุณากรอกเบอร์โทรศัพท์มือถือ',
+                        hintStyle: const TextStyle(color: kHintTextColor),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey)),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: kButtonColor, width: 1.5),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        counterText: '', // ซ่อน counter text
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
 
@@ -440,89 +470,91 @@ class _RegisterPageState extends State<RegisterPage> {
                         return;
                       }
 
-                      if (_formKey.currentState?.validate() ?? false) {
-                        final accepted = await showDialog<bool>(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => const TermsDialog(),
-                        );
+                      // ไม่ใช้ Form validation แล้ว เพราะเราเช็คเองแล้ว
+                      final accepted = await showDialog<bool>(context: context, barrierDismissible: false, builder: (context) => const TermsDialog());
 
-                        if (accepted == true) {
-                          // TODO: ดำเนินการสมัครต่อ
-                          try {
-                            final currentContext = context;
-                            final _register = await RegisterService.register(
-                              member_type: 'บุคคลทั่วไป',
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                              fname: _nameController.text,
-                              lname: _lastnameController.text,
-                              phone: _phoneController.text,
-                              gender: isMale ? 'male' : 'female',
-                              birth_date: _formatBirthDate(_birthdateController.text),
-                              importer_code: _pinController.text,
-                              referrer: _referralCodeController.text,
-                              frequent_importer: _saleCodeController.text,
-                              comp_name: '',
-                              comp_tax: '',
-                              comp_phone: '',
-                              cargo_name: '',
-                              cargo_website: '',
-                              cargo_image: '',
-                              order_quantity_in_thai: '',
-                              transport_thai_master_id: 1,
-                              ever_imported_from_china: 'เคย',
-                              province: selectedProvince?.nameTH ?? '',
-                              district: selectedDistrict?.nameTH ?? '',
-                              sub_district: selectedSubdistrict?.nameTH ?? '',
-                              postal_code: _postalCodeController.text,
-                            );
-                            if (_register != null) {
-                              //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
-                              ScaffoldMessenger.of(
-                                currentContext,
-                              ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.green));
-                              Navigator.pop(context);
-                            } else {
-                              // TODO: Handle error
-                            }
-                          } on Exception catch (e) {
-                            if (!mounted) return;
-                            print(e);
-                            //LoadingDialog.close(context);
-                            // showDialog(
-                            //   context: context,
-                            //   builder:
-                            //       (context) => AlertDialogYes(
-                            //         title: 'Setting.warning'.tr(),
-                            //         description: '$e',
-                            //         pressYes: () {
-                            //           Navigator.pop(context);
-                            //         },
-                            //       ),
-                            // );
-                          } catch (e) {
-                            if (!mounted) return;
-                            //LoadingDialog.close(context);
-                            // showDialog(
-                            //   context: context,
-                            //   builder:
-                            //       (context) => AlertDialogYes(
-                            //         title: 'Setting.warning'.tr(),
-                            //         description: '$e',
-                            //         pressYes: () {
-                            //           Navigator.pop(context);
-                            //         },
-                            //       ),
-                            // );
+                      if (accepted == true) {
+                        // TODO: ดำเนินการสมัครต่อ
+                        try {
+                          final currentContext = context;
+                          final _register = await RegisterService.register(
+                            member_type: 'บุคคลทั่วไป',
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            fname: _nameController.text,
+                            lname: _lastnameController.text,
+                            phone: _phoneController.text,
+                            gender: isMale ? 'male' : 'female',
+                            birth_date: _formatBirthDate(_birthdateController.text),
+                            importer_code: _pinController.text,
+                            referrer: _referralCodeController.text,
+                            frequent_importer: _saleCodeController.text,
+                            comp_name: '',
+                            comp_tax: '',
+                            comp_phone: '',
+                            cargo_name: '',
+                            cargo_website: '',
+                            cargo_image: '',
+                            order_quantity_in_thai: '',
+                            transport_thai_master_id: 1,
+                            ever_imported_from_china: 'เคย',
+                            province: selectedProvince?.nameTH ?? '',
+                            district: selectedDistrict?.nameTH ?? '',
+                            sub_district: selectedSubdistrict?.nameTH ?? '',
+                            postal_code: _postalCodeController.text,
+                          );
+                          if (_register != null) {
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                            ScaffoldMessenger.of(
+                              currentContext,
+                            ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.green));
+                            Navigator.pop(context);
+                          } else {
+                            // TODO: Handle error
                           }
-
-                          //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
-                        } else {
-                          print('ผู้ใช้ปฏิเสธ');
+                        } on Exception catch (e) {
+                          if (!mounted) return;
+                          print(e);
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.yellowAccent));
+                          //LoadingDialog.close(context);
+                          // showDialog(
+                          //   context: context,
+                          //   builder:
+                          //       (context) => AlertDialogYes(
+                          //         title: 'Setting.warning'.tr(),
+                          //         description: '$e',
+                          //         pressYes: () {
+                          //           Navigator.pop(context);
+                          //         },
+                          //       ),
+                          // );
+                        } catch (e) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.yellowAccent));
+                          //LoadingDialog.close(context);
+                          // showDialog(
+                          //   context: context,
+                          //   builder:
+                          //       (context) => AlertDialogYes(
+                          //         title: 'Setting.warning'.tr(),
+                          //         description: '$e',
+                          //         pressYes: () {
+                          //           Navigator.pop(context);
+                          //         },
+                          //       ),
+                          // );
                         }
+
+                        //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                      } else {
+                        print('ผู้ใช้ปฏิเสธ');
                       }
-                    },
+                    }, // ปิด if (accepted == true)
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: kButtonColor,
                       foregroundColor: Colors.white,

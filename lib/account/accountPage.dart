@@ -15,6 +15,7 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
 import 'package:gcargo/login/loginPage.dart';
+import 'package:gcargo/login/welcomePage.dart';
 import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -191,7 +192,8 @@ class _AccountPageState extends State<AccountPage> {
                         onPressed: () async {
                           if (token == null) {
                             // ไปหน้า Login
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage()));
                           } else {
                             final confirm = await showDialog(
                               context: context,
