@@ -31,6 +31,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
   List<Map<String, dynamic>> products = [];
   Map<String, dynamic> deliveryOptions = {'id': 1, 'name': 'ขนส่งทางรถ', 'nameEng': 'car'};
   bool isLoadingServices = true;
+  bool isOrdering = false; // เพิ่ม loading state สำหรับการสั่งซื้อ
   TextEditingController noteController = TextEditingController();
   ServiceTransporterById? serviceSelected;
 
@@ -199,126 +200,156 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: GestureDetector(
-                  onTap: () async {
-                    // Store context before async operations
-                    final currentContext = context;
+                  onTap:
+                      isOrdering
+                          ? null
+                          : () async {
+                            // ป้องกันการกดซ้ำ
+                            if (isOrdering) return;
 
-                    try {
-                      List<OptionsItem> optionsItems = [];
-                      List<PartService> addOnServices = [];
-                      List<Products> orderProducts = [];
+                            setState(() {
+                              isOrdering = true;
+                            });
 
-                      // Create options for each product
-                      if (products.isNotEmpty) {
-                        for (var i = 0; i < products.length; i++) {
-                          final product = products[i];
+                            // Store context before async operations
+                            final currentContext = context;
 
-                          // Add selectedSize if available
-                          if (product['selectedSize'] != null && product['selectedSize'].toString().isNotEmpty) {
-                            final sizeOption = OptionsItem(product['selectedSize'], '', 'size');
-                            optionsItems.add(sizeOption);
-                          }
+                            try {
+                              List<OptionsItem> optionsItems = [];
+                              List<PartService> addOnServices = [];
+                              List<Products> orderProducts = [];
 
-                          // Add selectedColor if available
-                          if (product['selectedColor'] != null && product['selectedColor'].toString().isNotEmpty) {
-                            final colorOption = OptionsItem(product['selectedColor'], '', 'color');
-                            optionsItems.add(colorOption);
-                          }
-                        }
-                      }
+                              // Create options for each product
+                              if (products.isNotEmpty) {
+                                for (var i = 0; i < products.length; i++) {
+                                  final product = products[i];
 
-                      // Add selected extra service
-                      if (serviceSelected != null) {
-                        final addOnService = PartService(serviceSelected!.id, serviceSelected!.standard_price);
-                        addOnServices.add(addOnService);
-                      }
+                                  // Add selectedSize if available
+                                  if (product['selectedSize'] != null && product['selectedSize'].toString().isNotEmpty) {
+                                    final sizeOption = OptionsItem(product['selectedSize'], '', 'size');
+                                    optionsItems.add(sizeOption);
+                                  }
 
-                      // Create products for order
-                      for (var i = 0; i < products.length; i++) {
-                        final product = products[i];
-                        final orderProduct = Products(
-                          product['nick'] ?? '', // product_shop
-                          product['num_iid'] ?? '', // product_code
-                          product['title'] ?? '', // product_name
-                          product['detail_url'] ?? '', // product_url
-                          product['pic_url'] ?? '', // product_image
-                          product['name'] ?? '', // product_category
-                          'taobao', // product_store_type
-                          noteController.text, // product_note
-                          product['price']?.toString() ?? '0', // product_price
-                          product['quantity']?.toString() ?? '1', // product_qty
-                          addOnServices, // add_on_services
-                          optionsItems, // options
-                        );
-                        orderProducts.add(orderProduct);
-                      }
-                      inspect(orderProducts);
+                                  // Add selectedColor if available
+                                  if (product['selectedColor'] != null && product['selectedColor'].toString().isNotEmpty) {
+                                    final colorOption = OptionsItem(product['selectedColor'], '', 'color');
+                                    optionsItems.add(colorOption);
+                                  }
+                                }
+                              }
 
-                      // Calculate total price
-                      final totalYuan = calculateTotalYuan();
+                              // Add selected extra service
+                              if (serviceSelected != null) {
+                                final addOnService = PartService(serviceSelected!.id, serviceSelected!.standard_price);
+                                addOnServices.add(addOnService);
+                              }
 
-                      // Get selected shipping address ID
-                      final selectedAddressId = homeController.select_ship_address?.id;
-                      print(selectedAddressId);
+                              // Create products for order
+                              for (var i = 0; i < products.length; i++) {
+                                final product = products[i];
+                                final orderProduct = Products(
+                                  product['nick'] ?? '', // product_shop
+                                  product['num_iid'] ?? '', // product_code
+                                  product['title'] ?? '', // product_name
+                                  product['detail_url'] ?? '', // product_url
+                                  product['pic_url'] ?? '', // product_image
+                                  product['name'] ?? '', // product_category
+                                  'taobao', // product_store_type
+                                  noteController.text, // product_note
+                                  product['price']?.toString() ?? '0', // product_price
+                                  product['quantity']?.toString() ?? '1', // product_qty
+                                  addOnServices, // add_on_services
+                                  optionsItems, // options
+                                );
+                                orderProducts.add(orderProduct);
+                              }
+                              inspect(orderProducts);
 
-                      //Create order via API
-                      final result = await HomeService.createOrder(
-                        date: DateTime.now().toIso8601String(),
-                        total_price: totalYuan,
-                        shipping_type: deliveryOptions['nameEng'] ?? 'car',
-                        payment_term: 'prepaid',
-                        note: noteController.text,
-                        importer_code: '',
-                        member_address_id: selectedAddressId,
-                        products: orderProducts,
-                      );
+                              // Calculate total price
+                              final totalYuan = calculateTotalYuan();
 
-                      log('✅ Order created successfully: $result');
+                              // Get selected shipping address ID
+                              final selectedAddressId = homeController.select_ship_address?.id;
+                              print(selectedAddressId);
 
-                      // Remove ordered items from cart
-                      await _removeOrderedItemsFromCart();
+                              //Create order via API
+                              final result = await HomeService.createOrder(
+                                date: DateTime.now().toIso8601String(),
+                                total_price: totalYuan,
+                                shipping_type: deliveryOptions['nameEng'] ?? 'car',
+                                payment_term: 'prepaid',
+                                note: noteController.text,
+                                importer_code: '',
+                                member_address_id: selectedAddressId,
+                                products: orderProducts,
+                              );
 
-                      // Show success message
-                      if (mounted) {
-                        ScaffoldMessenger.of(
-                          currentContext,
-                        ).showSnackBar(const SnackBar(content: Text('สร้างออเดอร์สำเร็จ!'), backgroundColor: Colors.green));
+                              log('✅ Order created successfully: $result');
 
-                        // Navigate back or to order confirmation page
-                        Navigator.pushAndRemoveUntil(currentContext, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
-                      }
-                    } catch (e) {
-                      log('❌ Error creating order: $e');
+                              // Remove ordered items from cart
+                              await _removeOrderedItemsFromCart();
 
-                      if (mounted) {
-                        ScaffoldMessenger.of(currentContext).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e'), backgroundColor: Colors.red));
-                      }
-                    }
-                  },
+                              // Show success message
+                              if (mounted) {
+                                ScaffoldMessenger.of(
+                                  currentContext,
+                                ).showSnackBar(const SnackBar(content: Text('สร้างออเดอร์สำเร็จ!'), backgroundColor: Colors.green));
+
+                                // Navigate back or to order confirmation page
+                                Navigator.pushAndRemoveUntil(currentContext, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                              }
+                            } catch (e) {
+                              log('❌ Error creating order: $e');
+
+                              if (mounted) {
+                                ScaffoldMessenger.of(
+                                  currentContext,
+                                ).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e'), backgroundColor: Colors.red));
+                              }
+                            } finally {
+                              // รีเซ็ต loading state
+                              if (mounted) {
+                                setState(() {
+                                  isOrdering = false;
+                                });
+                              }
+                            }
+                          },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(color: kButtonColor, borderRadius: BorderRadius.circular(12)),
+                    decoration: BoxDecoration(color: isOrdering ? Colors.grey : kButtonColor, borderRadius: BorderRadius.circular(12)),
                     child: Row(
                       children: [
-                        // 🔵 วงกลมมีเลข
+                        // 🔵 วงกลมมีเลข หรือ loading spinner
                         Container(
                           padding: EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF2E73B9), // ฟ้าอ่อน
+                          decoration: BoxDecoration(
+                            color: isOrdering ? Colors.grey.shade600 : Color(0xFF2E73B9), // ฟ้าอ่อน
                             shape: BoxShape.circle,
                           ),
-                          child: Text(
-                            '${widget.productDataList!.length}',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
+                          child:
+                              isOrdering
+                                  ? SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                                  )
+                                  : Text(
+                                    '${widget.productDataList!.length}',
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                                  ),
                         ),
                         const SizedBox(width: 12),
-                        const Text('สินค้าทั้งหมด', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                        const Spacer(),
                         Text(
-                          '¥${totalYuan.toStringAsFixed(2)} (฿ ${totalBaht.toStringAsFixed(2)})',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                          isOrdering ? 'กำลังสั่งซื้อ...' : 'สินค้าทั้งหมด',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
+                        const Spacer(),
+                        if (!isOrdering)
+                          Text(
+                            '¥${totalYuan.toStringAsFixed(2)} (฿ ${totalBaht.toStringAsFixed(2)})',
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
                       ],
                     ),
                   ),
