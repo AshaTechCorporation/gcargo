@@ -59,7 +59,10 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
 
   // คำนวณค่าขนส่งตามสูตรปริมาตร
   void calculateShippingCost() {
+    print('🧮 Calculate called - selectedMethod: $selectedMethod, selectedProductType: $selectedProductType');
+
     if (!isAllowedProductType()) {
+      print('❌ Product type not allowed');
       setState(() {
         showError = true;
         calculatedCost = 0.0;
@@ -69,6 +72,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
 
     // ตรวจสอบว่ากรอกข้อมูลครบหรือไม่
     if (widthCtrl.text.isEmpty || lengthCtrl.text.isEmpty || heightCtrl.text.isEmpty || weightCtrl.text.isEmpty) {
+      print('❌ Missing input data');
       setState(() {
         showError = true;
         calculatedCost = 0.0;
@@ -87,7 +91,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
       double volume = width * length * height;
 
       // หาอัตราค่าขนส่งจาก API ตาม selectedProductType และ selectedMethod
-      String vehicleType = selectedMethod == 'การรถ' ? 'car' : 'ship';
+      String vehicleType = selectedMethod == 'ทางรถ' ? 'car' : 'ship';
 
       // ค้นหา rate ที่ตรงกับประเภทสินค้าและวิธีขนส่ง
       var matchingRate = homeController.rateShip.firstWhere(
@@ -149,6 +153,9 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   @override
   Widget build(BuildContext context) {
     final isBlocked = selectedProductType != null && !isAllowedProductType();
+
+    // Debug log
+    print('🔧 Build - selectedMethod: $selectedMethod, selectedProductType: $selectedProductType, isBlocked: $isBlocked');
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -216,7 +223,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               Expanded(
                 child: RadioListTile(
                   title: const Text('ทางรถ', style: TextStyle(fontSize: 16)),
-                  value: 'การรถ',
+                  value: 'ทางรถ',
                   groupValue: selectedMethod,
                   onChanged: (val) {
                     setState(() {
@@ -332,7 +339,13 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               Expanded(
                 flex: 7,
                 child: ElevatedButton(
-                  onPressed: isBlocked ? null : calculateShippingCost,
+                  onPressed:
+                      isBlocked
+                          ? null
+                          : () {
+                            print('🔘 Button pressed!');
+                            calculateShippingCost();
+                          },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isBlocked ? Colors.grey.shade300 : const Color(0xFF002A5B),
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -459,7 +472,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   List<String> _getProductTypesByMethod(String method) {
     // Determine vehicle type based on method
     String vehicleType = '';
-    if (method == 'การรถ') {
+    if (method == 'ทางรถ') {
       vehicleType = 'car';
     } else if (method == 'ทางเรือ') {
       vehicleType = 'ship';
@@ -470,12 +483,17 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
         homeController.rateShip
             .where(
               (rateShip) =>
-                  rateShip.vehicle?.toLowerCase() == vehicleType || rateShip.vehicle?.toLowerCase() == (vehicleType == 'truck' ? 'รถ' : 'เรือ'),
+                  rateShip.vehicle?.toLowerCase() == vehicleType || rateShip.vehicle?.toLowerCase() == (vehicleType == 'car' ? 'รถ' : 'เรือ'),
             )
             .map((rateShip) => rateShip.name ?? '')
             .where((name) => name.isNotEmpty)
             .toSet() // Remove duplicates
             .toList();
+
+    // Debug log
+    print('🚗 Method: $method, VehicleType: $vehicleType');
+    print('📦 API Product Types: $apiProductTypes');
+    print('🔢 Total rateShip items: ${homeController.rateShip.length}');
 
     // Use API data if available, otherwise use default product types
     return apiProductTypes.isNotEmpty ? apiProductTypes : [];
