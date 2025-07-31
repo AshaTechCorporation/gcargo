@@ -100,15 +100,34 @@ class _ExchangePageState extends State<ExchangePage> {
       return false;
     }
 
+    // เช็คจำนวนเงินขั้นต่ำ (ถ้ามี)
+    if (bahtAmount < 100) {
+      Get.snackbar('ข้อผิดพลาด', 'จำนวนเงินขั้นต่ำ 100 บาท', backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    }
+
     // เช็คเบอร์โทรศัพท์
     if (_phoneController.text.trim().isEmpty) {
       Get.snackbar('ข้อผิดพลาด', 'กรุณากรอกเบอร์โทรศัพท์', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
 
-    // เช็คไฟล์ที่อัปโหลด
+    // เช็ครูปแบบเบอร์โทรศัพท์
+    final phonePattern = RegExp(r'^[0-9]{9,10}$');
+    if (!phonePattern.hasMatch(_phoneController.text.trim())) {
+      Get.snackbar('ข้อผิดพลาด', 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (9-10 หลัก)', backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    }
+
+    // เช็คไฟล์ที่อัปโหลด (รูปภาพหรือ PDF)
     if (selectedFile == null) {
-      Get.snackbar('ข้อผิดพลาด', 'กรุณาเลือกไฟล์รูปภาพหรือ PDF', backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('ข้อผิดพลาด', 'กรุณาแนบรูปภาพหรือไฟล์ PDF สลิปการโอนเงิน', backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    }
+
+    // เช็คว่าไฟล์มีอยู่จริงและสามารถอ่านได้
+    if (!selectedFile!.existsSync()) {
+      Get.snackbar('ข้อผิดพลาด', 'ไฟล์ที่เลือกไม่พบหรือเสียหาย กรุณาเลือกไฟล์ใหม่', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
 
@@ -119,7 +138,38 @@ class _ExchangePageState extends State<ExchangePage> {
     } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg') || filePath.endsWith('.png')) {
       extensionfileQR = 'image';
     } else {
-      Get.snackbar('ข้อผิดพลาด', 'รองรับเฉพาะไฟล์ JPG, PNG, PDF เท่านั้น', backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('ข้อผิดพลาด', 'รองรับเฉพาะไฟล์ JPG, JPEG, PNG, PDF เท่านั้น', backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    }
+
+    // เช็คขนาดไฟล์ (ไม่เกิน 5MB)
+    try {
+      final fileSizeInBytes = selectedFile!.lengthSync();
+      final fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+      if (fileSizeInMB > 5) {
+        Get.snackbar(
+          'ข้อผิดพลาด',
+          'ขนาดไฟล์ต้องไม่เกิน 5MB (ปัจจุบัน ${fileSizeInMB.toStringAsFixed(1)}MB)',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+
+      // เช็คขนาดไฟล์ขั้นต่ำ (ไม่น้อยกว่า 1KB)
+      if (fileSizeInBytes < 1024) {
+        Get.snackbar('ข้อผิดพลาด', 'ไฟล์มีขนาดเล็กเกินไป กรุณาเลือกไฟล์ที่มีเนื้อหา', backgroundColor: Colors.red, colorText: Colors.white);
+        return false;
+      }
+    } catch (e) {
+      Get.snackbar('ข้อผิดพลาด', 'ไม่สามารถอ่านข้อมูลไฟล์ได้ กรุณาเลือกไฟล์ใหม่', backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    }
+
+    // เช็คว่ามี transfer fee หรือไม่
+    final transferFee = homeController.transferFee.value;
+    if (transferFee == null) {
+      Get.snackbar('ข้อผิดพลาด', 'ไม่สามารถโหลดข้อมูลค่าธรรมเนียมได้', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
 
@@ -579,12 +629,19 @@ class _ExchangePageState extends State<ExchangePage> {
             ),
 
             SizedBox(height: 24),
-            Row(
-              children: [
-                Text('อัตราแลกเปลี่ยน ', style: TextStyle(color: Colors.black54)),
-                Text('5 บาทต่อหยวน', style: TextStyle(color: Colors.blue.shade700)),
-              ],
-            ),
+            Obx(() {
+              final alipayRate = homeController.exchangeRate['alipay_topup_rate'];
+              final rate = double.tryParse(alipayRate?.toString() ?? '0') ?? 0.0;
+              return Row(
+                children: [
+                  Text('อัตราแลกเปลี่ยน ', style: TextStyle(color: Colors.black54)),
+                  Text(
+                    rate > 0 ? '${rate.toStringAsFixed(2)} บาทต่อหยวน' : 'กำลังโหลด...',
+                    style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              );
+            }),
             SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
@@ -597,49 +654,50 @@ class _ExchangePageState extends State<ExchangePage> {
                       return;
                     }
 
-                    final out = await checkTimeAndShowDialog(context);
-                    if (out == true) {
-                      // แสดง loading
-                      Get.dialog(Center(child: CircularProgressIndicator()), barrierDismissible: false);
+                    // final out = await checkTimeAndShowDialog(context);
+                    // if (out == true) {
 
-                      // เตรียมข้อมูลสำหรับ API
-                      final bahtAmount = double.tryParse(_bahtController.text) ?? 0.0;
-                      final transferFee = homeController.transferFee.value;
-                      final feeAmount = double.tryParse(transferFee?.alipay_fee ?? '0') ?? 0.0;
+                    // }
+                    // แสดง loading
+                    Get.dialog(Center(child: CircularProgressIndicator()), barrierDismissible: false);
 
-                      // อัปโหลดไฟล์ก่อน
-                      if (selectedFile != null) {
-                        if (extensionfileQR == 'pdf') {
-                          imageQR = await UoloadService.addFile(file: selectedFile, path: 'uploads/alipay/');
-                        } else {
-                          imageQR = await UoloadService.addImage(file: selectedFile, path: 'uploads/alipay/');
-                        }
-                      }
+                    // เตรียมข้อมูลสำหรับ API
+                    final bahtAmount = double.tryParse(_bahtController.text) ?? 0.0;
+                    final transferFee = homeController.transferFee.value;
+                    final feeAmount = double.tryParse(transferFee?.alipay_fee ?? '0') ?? 0.0;
 
-                      // เรียก API
-                      final deposit = await HomeService.productPaymentAlipayService(
-                        transaction: selectedMethod == 1 ? 'alipay' : 'wechat',
-                        amount: bahtAmount,
-                        fee: feeAmount,
-                        phone: _phoneController.text,
-                        image_qr_code: imageQR ?? '',
-                        image: imageQR ?? '',
-                        image_url: imageQR ?? '',
-                        image_slip: imageQR ?? '',
-                        image_slip_url: imageQR ?? '',
-                      );
-
-                      // ปิด loading
-                      Get.back();
-
-                      // แสดงผลลัพธ์
-                      if (deposit != null) {
-                        Get.snackbar('สำเร็จ', 'ส่งข้อมูลสำเร็จ', backgroundColor: Colors.green, colorText: Colors.white);
-                        // ย้อนกลับหน้าก่อนหน้า
-                        Navigator.pop(context);
+                    // อัปโหลดไฟล์ก่อน
+                    if (selectedFile != null) {
+                      if (extensionfileQR == 'pdf') {
+                        imageQR = await UoloadService.addFile(file: selectedFile, path: 'uploads/alipay/');
                       } else {
-                        Get.snackbar('ข้อผิดพลาด', 'ไม่สามารถส่งข้อมูลได้', backgroundColor: Colors.red, colorText: Colors.white);
+                        imageQR = await UoloadService.addImage(file: selectedFile, path: 'uploads/alipay/');
                       }
+                    }
+
+                    // เรียก API
+                    final deposit = await HomeService.productPaymentAlipayService(
+                      transaction: selectedMethod == 1 ? 'alipay' : 'wechat',
+                      amount: bahtAmount,
+                      fee: feeAmount,
+                      phone: _phoneController.text,
+                      image_qr_code: imageQR ?? '',
+                      image: imageQR ?? '',
+                      image_url: imageQR ?? '',
+                      image_slip: imageQR ?? '',
+                      image_slip_url: imageQR ?? '',
+                    );
+
+                    // ปิด loading
+                    Get.back();
+
+                    // แสดงผลลัพธ์
+                    if (deposit != null) {
+                      Get.snackbar('สำเร็จ', 'ส่งข้อมูลสำเร็จ', backgroundColor: Colors.green, colorText: Colors.white);
+                      // ย้อนกลับหน้าก่อนหน้า
+                      Navigator.pop(context);
+                    } else {
+                      Get.snackbar('ข้อผิดพลาด', 'ไม่สามารถส่งข้อมูลได้', backgroundColor: Colors.red, colorText: Colors.white);
                     }
                   } catch (e) {
                     // ปิด loading ถ้ามี

@@ -61,11 +61,11 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
         grouped.putIfAbsent(date, () => []).add(payment);
       }
 
-      // นับจำนวนตามสถานะ
+      // นับจำนวนตามสถานะ (ใช้ _getDisplayStatus เหมือนกับการกรอง)
       final Map<String, int> statusCounts = {
         'ทั้งหมด': payments.length,
-        'รอชำระเงิน': payments.where((p) => p.status == 'awaiting_payment').length,
-        'สำเร็จ': payments.where((p) => p.status == 'completed').length,
+        'รอชำระเงิน': payments.where((p) => _getDisplayStatus(p.status ?? '') == 'รอชำระเงิน').length,
+        'สำเร็จ': payments.where((p) => _getDisplayStatus(p.status ?? '') == 'สำเร็จ').length,
       };
 
       return Scaffold(
