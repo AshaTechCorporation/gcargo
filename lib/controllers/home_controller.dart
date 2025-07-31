@@ -224,6 +224,9 @@ class HomeController extends GetxController {
           ship_address = [];
           select_ship_address = null;
         }
+
+        // อัปเดต UI
+        update();
       } else {
         log('⚠️ No userID found, skipping getUserById API call');
         currentUser.value = null;

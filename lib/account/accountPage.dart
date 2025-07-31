@@ -55,7 +55,11 @@ class _AccountPageState extends State<AccountPage> {
     SharedPreferences prefs = _prefs;
     prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    //context.read<HomeController>().user = null;
+
+    // เคลียร์ข้อมูลผู้ใช้ใน HomeController
+    final homeController = Get.find<HomeController>();
+    homeController.currentUser.value = null;
+    homeController.update(); // อัปเดต UI
   }
 
   @override
@@ -201,9 +205,10 @@ class _AccountPageState extends State<AccountPage> {
                                   ),
                             );
                             if (confirm == true) {
-                              print(true);
                               await clearToken();
-                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                              if (mounted) {
+                                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                              }
                             }
                           }
                         },

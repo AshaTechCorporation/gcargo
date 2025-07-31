@@ -534,10 +534,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
                       // เรียก getUserById ใหม่ใน HomeController
                       final homeController = Get.find<HomeController>();
+                      print('🔄 กำลังอัปเดตข้อมูลผู้ใช้ใน HomeController...');
                       await homeController.getUserDataAndShippingAddresses();
+                      print('✅ อัปเดตข้อมูลผู้ใช้สำเร็จ: ${homeController.currentUser.value?.fname}');
 
                       // กลับไปหน้าก่อนหน้า
-                      Navigator.pop(context, true);
+                      if (mounted) {
+                        Navigator.pop(context, true);
+                      }
                     } catch (e) {
                       if (!mounted) return;
                       print(e);
