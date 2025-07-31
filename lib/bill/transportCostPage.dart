@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/bill/transportCostDetailPage.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -152,15 +153,10 @@ class _TransportCostPageState extends State<TransportCostPage> {
                         child: Row(
                           children: [
                             _buildChip('ทั้งหมด', count: totalCount),
-                            const SizedBox(width: 8),
                             _buildChip('ถึงคลังจีน', count: arrivedChinaCount),
-                            const SizedBox(width: 8),
                             _buildChip('กำลังขนส่ง', count: inTransitCount),
-                            const SizedBox(width: 8),
                             _buildChip('ถึงคลังไทย', count: arrivedThailandCount),
-                            const SizedBox(width: 8),
                             _buildChip('รอชำระเงิน', count: awaitingPaymentCount),
-                            const SizedBox(width: 8),
                             _buildChip('สำเร็จ', count: deliveredCount),
                           ],
                         ),
@@ -190,23 +186,27 @@ class _TransportCostPageState extends State<TransportCostPage> {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        margin: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFEDF6FF) : Colors.white,
-          border: Border.all(color: selected ? const Color(0xFF0066CC) : Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(20),
+          color: selected ? kBackgroundTextColor.withOpacity(0.1) : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: selected ? kBackgroundTextColor : Colors.grey.shade300),
         ),
         child: Row(
           children: [
-            Text(label, style: TextStyle(fontSize: 14, color: selected ? const Color(0xFF0066CC) : Colors.black, fontWeight: FontWeight.w500)),
-            if (count != null)
+            Text(
+              label,
+              style: TextStyle(color: selected ? kBackgroundTextColor : Colors.black, fontWeight: selected ? FontWeight.bold : FontWeight.normal),
+            ),
+            if (count != null) ...[
+              const SizedBox(width: 6),
               Container(
-                margin: const EdgeInsets.only(left: 6),
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(color: selected ? const Color(0xFF0066CC) : Colors.grey, shape: BoxShape.circle),
-                alignment: Alignment.center,
-                child: Text('$count', style: const TextStyle(fontSize: 12, color: Colors.white)),
+                width: 25,
+                height: 25,
+                decoration: BoxDecoration(color: selected ? kCicleColor : Colors.grey.shade300, shape: BoxShape.circle),
+                child: Center(child: Text('$count', style: TextStyle(fontSize: 12, color: selected ? Colors.white : Colors.black))),
               ),
+            ],
           ],
         ),
       ),
