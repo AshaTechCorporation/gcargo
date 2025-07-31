@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/bill/documentDetailPage.dart';
 import 'package:gcargo/bill/transportCostDetailPage.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
@@ -16,13 +17,27 @@ class _TransportCostPageState extends State<TransportCostPage> {
   String selectedStatus = 'ทั้งหมด';
   final OrderController orderController = Get.put(OrderController());
 
+  // Mock data สำหรับแสดงผล
+  final List<Map<String, dynamic>> mockTransportData = [
+    {'date': '2025-01-31', 'docNo': 'TC001', 'status': 'สำเร็จ', 'amount': 1250.00},
+    {'date': '2025-01-31', 'docNo': 'TC002', 'status': 'กำลังตรวจสอบ', 'amount': 890.50},
+    {'date': '2025-01-30', 'docNo': 'TC003', 'status': 'ยกเลิก', 'amount': 0.00},
+    {'date': '2025-01-30', 'docNo': 'TC004', 'status': 'สำเร็จ', 'amount': 2100.75},
+    {'date': '2025-01-29', 'docNo': 'TC005', 'status': 'กำลังตรวจสอบ', 'amount': 675.25},
+    {'date': '2025-01-29', 'docNo': 'TC006', 'status': 'สำเร็จ', 'amount': 1450.00},
+    {'date': '2025-01-28', 'docNo': 'TC007', 'status': 'กำลังตรวจสอบ', 'amount': 980.00},
+    {'date': '2025-01-28', 'docNo': 'TC008', 'status': 'ยกเลิก', 'amount': 0.00},
+    {'date': '2025-01-27', 'docNo': 'TC009', 'status': 'สำเร็จ', 'amount': 1800.50},
+    {'date': '2025-01-27', 'docNo': 'TC010', 'status': 'กำลังตรวจสอบ', 'amount': 1125.75},
+  ];
+
   @override
   void initState() {
     super.initState();
     // Call getDeliveryOrders when page loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      orderController.getDeliveryOrders();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   orderController.getDeliveryOrders();
+    // });
   }
 
   // Status mapping from API to Thai
@@ -56,57 +71,60 @@ class _TransportCostPageState extends State<TransportCostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      // Extract delivery_orders from API data only
-      final displayOrders = <Map<String, dynamic>>[];
+    // ใช้ mock data แทน API data (ยังคงฟังก์ชัน API ไว้)
+    final displayOrders = List<Map<String, dynamic>>.from(mockTransportData);
 
-      for (var legalImport in orderController.deilveryOrders) {
-        // Only process if delivery_orders exists and is not empty
-        if (legalImport.delivery_orders != null && legalImport.delivery_orders!.isNotEmpty) {
-          for (var deliveryOrder in legalImport.delivery_orders!) {
-            displayOrders.add({
-              'date': _formatDate(deliveryOrder.date),
-              'docNo': deliveryOrder.code ?? '',
-              'status': _getStatusInThai(deliveryOrder.status),
-              'amount': 0.0, // OrdersPageNew doesn't have amount field
-            });
-          }
-        }
-      }
+    // TODO: ใช้ API data แทน mock data
+    // final displayOrders = <Map<String, dynamic>>[];
+    // for (var legalImport in orderController.deilveryOrders) {
+    //   if (legalImport.delivery_orders != null && legalImport.delivery_orders!.isNotEmpty) {
+    //     for (var deliveryOrder in legalImport.delivery_orders!) {
+    //       displayOrders.add({
+    //         'date': _formatDate(deliveryOrder.date),
+    //         'docNo': deliveryOrder.code ?? '',
+    //         'status': _getStatusInThai(deliveryOrder.status),
+    //         'amount': 0.0,
+    //       });
+    //     }
+    //   }
+    // }
 
-      // ✅ กรองตามสถานะ
-      final filteredData = selectedStatus == 'ทั้งหมด' ? displayOrders : displayOrders.where((e) => e['status'] == selectedStatus).toList();
+    // ✅ กรองตามสถานะ
+    final filteredData = selectedStatus == 'ทั้งหมด' ? displayOrders : displayOrders.where((e) => e['status'] == selectedStatus).toList();
 
-      // ✅ นับแต่ละสถานะ
-      final int totalCount = displayOrders.length;
-      final int arrivedChinaCount = displayOrders.where((e) => e['status'] == 'ถึงคลังจีน').length;
-      final int inTransitCount = displayOrders.where((e) => e['status'] == 'กำลังขนส่ง').length;
-      final int arrivedThailandCount = displayOrders.where((e) => e['status'] == 'ถึงคลังไทย').length;
-      final int awaitingPaymentCount = displayOrders.where((e) => e['status'] == 'รอชำระเงิน').length;
-      final int deliveredCount = displayOrders.where((e) => e['status'] == 'สำเร็จ').length;
+    // ✅ นับแต่ละสถานะ
+    final int totalCount = displayOrders.length;
+    final int pendingCount = displayOrders.where((e) => e['status'] == 'กำลังตรวจสอบ').length;
+    final int successCount = displayOrders.where((e) => e['status'] == 'สำเร็จ').length;
+    final int cancelledCount = displayOrders.where((e) => e['status'] == 'ยกเลิก').length;
 
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // 🔹 Header Row: ค่าขนส่ง + ช่องเลือกวันที่
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Row(
-                  children: [
-                    // 🔙 ปุ่มกลับ
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
-                        child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
-                      ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 🔹 Header Row: ค่าขนส่ง + ช่องเลือกวันที่
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Row(
+                children: [
+                  // 🔙 ปุ่มกลับ
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
+                      child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
                     ),
-                    const Expanded(child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                    Container(
+                  ),
+                  const Expanded(child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Add date range picker
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentDetailPage()));
+                    },
+                    child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -121,58 +139,56 @@ class _TransportCostPageState extends State<TransportCostPage> {
                         ],
                       ),
                     ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 🔹 Body
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 🔹 Search Field
+                    TextFormField(
+                      enabled: false,
+                      decoration: InputDecoration(
+                        hintText: 'ค้นหาเลขที่เอกสาร',
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // 🔹 Filter Chips
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildChip('ทั้งหมด', count: totalCount),
+                          _buildChip('กำลังตรวจสอบ', count: pendingCount),
+                          _buildChip('สำเร็จ', count: successCount),
+                          _buildChip('ยกเลิก', count: cancelledCount),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // 🔹 Group by date
+                    ..._buildGroupedList(filteredData),
                   ],
                 ),
               ),
-
-              // 🔹 Body
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 🔹 Search Field
-                      TextFormField(
-                        enabled: false,
-                        decoration: InputDecoration(
-                          hintText: 'ค้นหาเลขที่เอกสาร',
-                          hintStyle: const TextStyle(color: Colors.grey),
-                          prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // 🔹 Filter Chips
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _buildChip('ทั้งหมด', count: totalCount),
-                            _buildChip('ถึงคลังจีน', count: arrivedChinaCount),
-                            _buildChip('กำลังขนส่ง', count: inTransitCount),
-                            _buildChip('ถึงคลังไทย', count: arrivedThailandCount),
-                            _buildChip('รอชำระเงิน', count: awaitingPaymentCount),
-                            _buildChip('สำเร็จ', count: deliveredCount),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // 🔹 Group by date
-                      ..._buildGroupedList(filteredData),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    }); // Close Obx
+      ),
+    );
   }
 
   Widget _buildChip(String label, {int? count}) {
@@ -236,7 +252,14 @@ class _TransportCostPageState extends State<TransportCostPage> {
 
   Widget _buildDocumentCard(Map<String, dynamic> item) {
     final String status = item['status'];
-    final String statusColor = status == 'สำเร็จ' ? 'green' : (status == 'ยกเลิก' ? 'red' : 'black');
+    final String statusColor =
+        status == 'สำเร็จ'
+            ? 'green'
+            : status == 'ยกเลิก'
+            ? 'red'
+            : status == 'กำลังตรวจสอบ'
+            ? 'orange'
+            : 'black';
 
     return InkWell(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TransportCostDetailPage(paper_number: item['docNo']))),
@@ -264,6 +287,8 @@ class _TransportCostPageState extends State<TransportCostPage> {
                             ? Colors.green
                             : statusColor == 'red'
                             ? Colors.red
+                            : statusColor == 'orange'
+                            ? Colors.orange
                             : Colors.black,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,

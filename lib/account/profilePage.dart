@@ -38,6 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _taxIdController = TextEditingController();
   final TextEditingController _postalCodeController = TextEditingController();
+  String import_code = '';
 
   String gender = 'male';
   bool isLoading = false;
@@ -107,6 +108,9 @@ class _ProfilePageState extends State<ProfilePage> {
       referCodeController.text = user.referrer ?? '';
       _addressController.text = user.address ?? '';
       agentCodeController.text = user.detail?.frequent_importer ?? '123654';
+      setState(() {
+        import_code = user.importer_code ?? '';
+      });
 
       // Format birth date if available
       if (user.birth_date != null && user.birth_date!.isNotEmpty) {
@@ -503,7 +507,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         phone: phoneController.text,
                         gender: gender,
                         birth_date: _formatBirthDate(birthDateController.text),
-                        importer_code: '',
+                        importer_code: import_code,
                         referrer: referCodeController.text.isNotEmpty ? referCodeController.text : '',
                         frequent_importer: agentCodeController.text.isNotEmpty ? agentCodeController.text : '',
                         address: _addressController.text.isNotEmpty ? _addressController.text : '',

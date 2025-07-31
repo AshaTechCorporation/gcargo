@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 // 🔹 Email
                 SizedBox(height: 8),
-                CustomTextFormField(label: 'อีเมล', hintText: 'กรุณากรอกอีเมล', controller: _emailController),
+                CustomTextFormField(label: 'ชื่อผู้ใช้งาน', hintText: 'กรุณากรอกอีเมล', controller: _emailController),
                 SizedBox(height: 20),
                 CustomTextFormField(label: 'รหัสผ่าน', hintText: '••••••••', controller: _passwordController, isPassword: true),
                 SizedBox(height: 6),

@@ -188,13 +188,29 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                   productList.first.product_store_type ?? '1688',
                                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kTextTitleHeadColor),
                                 ),
-                                const Text('ไม่ QC | ไม่สั่งไป', style: TextStyle(fontSize: 14, color: kTextgreyColor)),
+                                Text(
+                                  'ไม่ QC | ${orderController.order.value?.order_lists?.first.add_on_services?.first.add_on_service?.name ?? ''}',
+                                  style: TextStyle(fontSize: 14, color: kTextgreyColor),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 4),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
-                              children: [const Text('ค่าส่งต่อจีน 0.00¥ / 0.00฿', style: TextStyle(fontSize: 14, color: kTextgreyColor))],
+                              children: [
+                                Builder(
+                                  builder: (context) {
+                                    final exchangeRate = double.tryParse(orderController.order.value?.exchange_rate ?? '4.00') ?? 4.00;
+                                    final chinaShippingFee = double.tryParse(orderController.order.value?.china_shipping_fee ?? '0') ?? 0.0;
+                                    final chinaShippingBaht = chinaShippingFee * exchangeRate;
+
+                                    return Text(
+                                      'ค่าส่งต่อจีน ${chinaShippingFee.toStringAsFixed(2)}¥ / ${chinaShippingBaht.toStringAsFixed(2)}฿',
+                                      style: TextStyle(fontSize: 14, color: kTextgreyColor),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 12),
 
@@ -326,14 +342,17 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   }
 
   Widget _buildTag(String text, {bool filled = false}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: filled ? kCicleSelectedColor : Colors.transparent,
-        border: Border.all(color: kCicleSelectedColor),
-        borderRadius: BorderRadius.circular(16),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 3),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: filled ? kCicleSelectedColor : Colors.transparent,
+          border: Border.all(color: kCicleSelectedColor),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(text, style: const TextStyle(fontSize: 14, color: Colors.black)),
       ),
-      child: Text(text, style: const TextStyle(fontSize: 14, color: Colors.black)),
     );
   }
 
@@ -347,6 +366,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     final chinaShippingFee = double.tryParse(order?.china_shipping_fee ?? '0') ?? 0.0;
     final depositFee = double.tryParse(order?.deposit_fee ?? '0') ?? 0.0;
     final totalPriceFromAPI = double.tryParse(order?.total_price ?? '0') ?? 0.0;
+    final china_shipping_fee = order?.china_shipping_fee ?? '0';
 
     // Calculate additional fees
     final chinaShippingBaht = chinaShippingFee * exchangeRate;
@@ -384,15 +404,15 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           // Payment term
           if (order?.payment_term != null && order!.payment_term!.isNotEmpty) _buildPriceRow('เงื่อนไขการชำระ', order.payment_term!),
 
+          _buildPriceRow('ค่าบริการอื่น ๆ', '0.00฿'),
+          _buildPriceRow('ส่วนลด', '0.00฿'),
+          _buildPriceRow('การชำระเงิน ', '-'),
+
           const Divider(),
 
           // Total from API vs calculated
           if (totalPriceFromAPI > 0)
-            _buildPriceRow(
-              'ราคารวม (จาก API)',
-              '¥${totalPriceFromAPI.toStringAsFixed(2)} (${(totalPriceFromAPI * exchangeRate).toStringAsFixed(2)}฿)',
-              isBold: true,
-            )
+            _buildPriceRow('ราคารวม (จาก API)', '${totalPriceFromAPI.toStringAsFixed(2)}}฿)', isBold: true)
           else
             _buildPriceRow('ราคารวม (คำนวณ)', '${totalWithFees.toStringAsFixed(2)}฿', isBold: true),
 

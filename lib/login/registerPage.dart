@@ -234,7 +234,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 20),
 
-                CustomTextFormField(label: 'รหัสนำเข้า', hintText: 'กรุณากรอกรหัสผ่านเข้า', controller: _pinController),
+                CustomTextFormField(label: 'ชื่อผู้ใช้งาน (สำหรับล็อกอิน)', hintText: 'กรุณากรอกรชื่อผู้ใช้งาน', controller: _pinController),
                 const SizedBox(height: 20),
 
                 CustomTextFormField(label: 'รหัสแนะนำ', hintText: 'กรุณากรอกรหัสแนะนำ', controller: _referralCodeController, isRequired: false),
