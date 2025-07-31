@@ -34,10 +34,22 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
+
+    // เพิ่ม listener สำหรับ real-time calculation
+    woodWidthCtrl.addListener(_calculateWoodBoxRealTime);
+    woodLengthCtrl.addListener(_calculateWoodBoxRealTime);
+    woodHeightCtrl.addListener(_calculateWoodBoxRealTime);
+
     // Call getRateShipFromAPI when page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.getRateShipFromAPI();
     });
+  }
+
+  void _calculateWoodBoxRealTime() {
+    if (woodWidthCtrl.text.isNotEmpty && woodLengthCtrl.text.isNotEmpty && woodHeightCtrl.text.isNotEmpty) {
+      calculateWoodBoxCost();
+    }
   }
 
   @override
@@ -121,7 +133,10 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
 
   // คำนวณค่าตีลังไม้
   void calculateWoodBoxCost() {
+    print('🪵 Wood box calculate called');
+
     if (woodWidthCtrl.text.isEmpty || woodLengthCtrl.text.isEmpty || woodHeightCtrl.text.isEmpty) {
+      print('❌ Wood box missing input data');
       setState(() {
         woodBoxCost = 0.0;
       });
@@ -129,16 +144,18 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
     }
 
     try {
-      // แปลงค่าจาก cm เป็น m และคำนวณปริมาตร
-      double width = double.parse(woodWidthCtrl.text) / 100; // cm to m
-      double length = double.parse(woodLengthCtrl.text) / 100; // cm to m
-      double height = double.parse(woodHeightCtrl.text) / 100; // cm to m
+      // ใช้ค่าเป็น cm โดยตรง
+      double width = double.parse(woodWidthCtrl.text); // cm
+      double length = double.parse(woodLengthCtrl.text); // cm
+      double height = double.parse(woodHeightCtrl.text); // cm
 
-      // คำนวณปริมาตร (CBM)
-      double volume = width * length * height;
+      // คำนวณ CBM = (กว้าง × ยาว × สูง) ÷ 1,000,000
+      double cbm = (width * length * height) / 1000000;
 
-      // คำนวณค่าตีลังไม้ = ปริมาตร × 1,500
-      double cost = volume * 1500;
+      // คำนวณค่าตีลังไม้ = CBM × 1,500
+      double cost = cbm * 1500;
+
+      print('✅ Wood box calculated: $width×$length×$height cm³ = $cbm CBM, cost=$cost THB');
 
       setState(() {
         woodBoxCost = cost;
