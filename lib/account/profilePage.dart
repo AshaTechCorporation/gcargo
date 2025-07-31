@@ -30,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController lastnameController = TextEditingController();
   final TextEditingController lineIdController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController referCodeController = TextEditingController();
@@ -103,6 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
       // Populate form fields with user data
       emailController.text = user.email ?? '';
       nameController.text = user.fname ?? '';
+      lastnameController.text = user.lname ?? '';
       lineIdController.text = user.line_id ?? '';
       phoneController.text = user.phone ?? '';
       referCodeController.text = user.referrer ?? '';
@@ -301,6 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
     passwordController.dispose();
     confirmPasswordController.dispose();
     nameController.dispose();
+    lastnameController.dispose();
     lineIdController.dispose();
     phoneController.dispose();
     referCodeController.dispose();
@@ -378,9 +381,11 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 14),
               CustomTextFormField(label: 'ยืนยันรหัสผ่าน', hintText: 'ยืนยันรหัสผ่าน', controller: confirmPasswordController, isPassword: true),
               const SizedBox(height: 14),
-              CustomTextFormField(label: 'ชื่อ-นามสกุล', hintText: 'ชื่อผู้ใช้ ชื่อผู้ใช้', controller: nameController),
+              CustomTextFormField(label: 'ชื่อ', hintText: 'ชื่อผู้ใช้', controller: nameController),
               const SizedBox(height: 14),
-              CustomTextFormField(label: 'ไอดีไลน์', hintText: '090-999-9599', controller: lineIdController),
+              CustomTextFormField(label: 'นามสกุล', hintText: 'นามสกุล', controller: lastnameController),
+              const SizedBox(height: 14),
+              CustomTextFormField(label: 'ไอดีไลน์', hintText: '-', controller: lineIdController),
               const SizedBox(height: 14),
 
               // 🔹 เพศ
@@ -408,7 +413,7 @@ class _ProfilePageState extends State<ProfilePage> {
               DatePickerTextFormField(label: 'วันเดือนปีเกิด', controller: birthDateController, hintText: ''),
               const SizedBox(height: 14),
 
-              CustomTextFormField(label: 'เบอร์โทรศัพท์มือถือ', hintText: '090-999-9599', controller: phoneController),
+              CustomTextFormField(label: 'เบอร์โทรศัพท์มือถือ', hintText: '090-***-****', controller: phoneController),
               const SizedBox(height: 14),
               CustomTextFormField(label: 'รหัสแนะนำ', hintText: '-', controller: referCodeController),
               const SizedBox(height: 14),

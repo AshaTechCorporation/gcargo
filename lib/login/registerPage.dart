@@ -25,6 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _nameController = TextEditingController();
+  final _lastnameController = TextEditingController();
   final _lineController = TextEditingController();
   final _birthdateController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -58,12 +59,101 @@ class _RegisterPageState extends State<RegisterPage> {
     _loadProvinceData();
   }
 
+  bool _validateAllFields() {
+    // เช็คอีเมล
+    if (_emailController.text.trim().isEmpty) {
+      _showErrorSnackBar('กรุณากรอกอีเมล');
+      return false;
+    }
+
+    // เช็ครูปแบบอีเมล
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(_emailController.text.trim())) {
+      _showErrorSnackBar('รูปแบบอีเมลไม่ถูกต้อง');
+      return false;
+    }
+
+    // เช็ครหัสผ่าน
+    if (_passwordController.text.trim().isEmpty) {
+      _showErrorSnackBar('กรุณากรอกรหัสผ่าน');
+      return false;
+    }
+
+    // เช็ครหัสผ่านขั้นต่ำ 6 ตัวอักษร
+    if (_passwordController.text.length < 6) {
+      _showErrorSnackBar('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+      return false;
+    }
+
+    // เช็คยืนยันรหัสผ่าน
+    if (_confirmPasswordController.text.trim().isEmpty) {
+      _showErrorSnackBar('กรุณายืนยันรหัสผ่าน');
+      return false;
+    }
+
+    // เช็ครหัสผ่านตรงกัน
+    if (_passwordController.text != _confirmPasswordController.text) {
+      _showErrorSnackBar('รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน');
+      return false;
+    }
+
+    // เช็คชื่อ
+    if (_nameController.text.trim().isEmpty) {
+      _showErrorSnackBar('กรุณากรอกชื่อ');
+      return false;
+    }
+
+    // เช็คนามสกุล
+    if (_lastnameController.text.trim().isEmpty) {
+      _showErrorSnackBar('กรุณากรอกนามสกุล');
+      return false;
+    }
+
+    // เช็ควันเกิด
+    if (_birthdateController.text.trim().isEmpty) {
+      _showErrorSnackBar('กรุณาเลือกวันเกิด');
+      return false;
+    }
+
+    // เช็คเบอร์โทร
+    if (_phoneController.text.trim().isEmpty) {
+      _showErrorSnackBar('กรุณากรอกเบอร์โทรศัพท์');
+      return false;
+    }
+
+    // เช็ครูปแบบเบอร์โทร
+    final phoneRegex = RegExp(r'^[0-9]{9,10}$');
+    if (!phoneRegex.hasMatch(_phoneController.text.trim())) {
+      _showErrorSnackBar('เบอร์โทรศัพท์ต้องเป็นตัวเลข 9-10 หลัก');
+      return false;
+    }
+
+    // เช็คชื่อผู้ใช้สำหรับล็อกอิน
+    if (_pinController.text.trim().isEmpty) {
+      _showErrorSnackBar('กรุณากรอกชื่อผู้ใช้งาน (สำหรับล็อกอิน)');
+      return false;
+    }
+
+    // เช็คยินยอมข้อตกลง
+    if (!agree) {
+      _showErrorSnackBar('กรุณายินยอมในข้อตกลงการใช้งาน');
+      return false;
+    }
+
+    return true;
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.red, duration: const Duration(seconds: 3)));
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _nameController.dispose();
+    _lastnameController.dispose();
     _lineController.dispose();
     _birthdateController.dispose();
     _phoneController.dispose();
@@ -195,7 +285,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 CustomTextFormField(label: 'ยืนยันรหัสผ่าน', hintText: '••••••••', controller: _confirmPasswordController, isPassword: true),
                 const SizedBox(height: 20),
 
-                CustomTextFormField(label: 'ชื่อ-นามสกุล', hintText: 'กรุณากรอกชื่อ-นามสกุล', controller: _nameController),
+                CustomTextFormField(label: 'ชื่อ', hintText: 'กรุณากรอกชื่อ', controller: _nameController),
+                const SizedBox(height: 20),
+                CustomTextFormField(label: 'นามสกุล', hintText: 'กรุณากรอกนามสกุล', controller: _lastnameController),
                 const SizedBox(height: 20),
 
                 CustomTextFormField(label: 'ไอดีไลน์', hintText: 'กรุณากรอกไอดีไลน์', controller: _lineController),
@@ -343,6 +435,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () async {
+                      // เช็คข้อมูลก่อนแสดง TermsDialog
+                      if (!_validateAllFields()) {
+                        return;
+                      }
+
                       if (_formKey.currentState?.validate() ?? false) {
                         final accepted = await showDialog<bool>(
                           context: context,
@@ -359,6 +456,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               email: _emailController.text,
                               password: _passwordController.text,
                               fname: _nameController.text,
+                              lname: _lastnameController.text,
                               phone: _phoneController.text,
                               gender: isMale ? 'male' : 'female',
                               birth_date: _formatBirthDate(_birthdateController.text),
