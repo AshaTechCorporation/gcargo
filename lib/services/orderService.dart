@@ -1,4 +1,5 @@
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/models/bill.dart';
 import 'package:gcargo/models/legalimport.dart';
 import 'package:gcargo/models/orders/ordersPage.dart';
 import 'package:gcargo/models/wallettrans.dart';
@@ -157,6 +158,39 @@ class OrderService {
       final data = convert.jsonDecode(response.body);
       final list = data['data'] as List;
       return list.map((e) => LegalImport.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //รายการเปิดบิล
+  static Future<List<Bill>> getBills() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/get_bill_by_member/$userID');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data'] as List;
+      return list.map((e) => Bill.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //บิลตามไอดี
+  static Future<Bill> getBillById({required int id}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/bills/$id');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return Bill.fromJson(data['data']);
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);

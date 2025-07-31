@@ -110,6 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
       referCodeController.text = user.referrer ?? '';
       _addressController.text = user.address ?? '';
       agentCodeController.text = user.detail?.frequent_importer ?? '123654';
+      passwordController.text = user.password ?? '';
       setState(() {
         import_code = user.importer_code ?? '';
       });
@@ -377,9 +378,9 @@ class _ProfilePageState extends State<ProfilePage> {
               // 🔹 ช่องกรอกข้อมูล
               CustomTextFormField(label: 'อีเมล', hintText: 'Gcargo@gmail.com', controller: emailController),
               const SizedBox(height: 14),
-              CustomTextFormField(label: 'รหัสผ่าน', hintText: 'กรอกรหัสผ่าน', controller: passwordController, isPassword: true),
-              const SizedBox(height: 14),
-              CustomTextFormField(label: 'ยืนยันรหัสผ่าน', hintText: 'ยืนยันรหัสผ่าน', controller: confirmPasswordController, isPassword: true),
+              // CustomTextFormField(label: 'รหัสผ่าน', hintText: 'กรอกรหัสผ่าน', controller: passwordController, isPassword: true),
+              // const SizedBox(height: 14),
+              // CustomTextFormField(label: 'ยืนยันรหัสผ่าน', hintText: 'ยืนยันรหัสผ่าน', controller: confirmPasswordController, isPassword: true),
               const SizedBox(height: 14),
               CustomTextFormField(label: 'ชื่อ', hintText: 'ชื่อผู้ใช้', controller: nameController),
               const SizedBox(height: 14),
@@ -507,7 +508,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       final registerEditResult = await RegisterService.registerEdit(
                         member_type: 'บุคคลทั่วไป',
                         email: emailController.text,
-                        password: passwordController.text.isNotEmpty ? passwordController.text : '',
                         fname: nameController.text,
                         phone: phoneController.text,
                         gender: gender,
