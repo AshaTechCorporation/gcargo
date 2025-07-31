@@ -128,6 +128,38 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
+                    orderStatus == 'สำเร็จ'
+                        ? Container(
+                          width: double.infinity,
+                          color: const Color(0xFFFFF7D8),
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: const [
+                              Icon(Icons.warning_amber_rounded, color: Color(0xFFFFC107)),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ',
+                                  style: TextStyle(fontSize: 13, color: Colors.black87),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        : orderStatus == 'ยกเลิก'
+                        ? Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(color: kTextRedWanningColor.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                          child: Row(
+                            children: [
+                              Image.asset('assets/icons/info-circle.png', width: 20, height: 20),
+                              const SizedBox(width: 8),
+                              const Text('ร้านค้าไม่มีสีตามที่สั่งซื้อจึงต้องยกเลิกรายการสินค้านี้', style: TextStyle(fontWeight: FontWeight.w500)),
+                            ],
+                          ),
+                        )
+                        : SizedBox(),
+                    SizedBox(height: 12),
                     _buildInfoRow('ติดต่อ', '($memberCode)'),
                     _buildInfoRow('รูปแบบการขนส่ง', transportType),
                     _buildInfoRow('หมายเหตุของลูกค้า', customerNote),
