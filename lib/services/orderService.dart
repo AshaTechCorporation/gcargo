@@ -43,6 +43,31 @@ class OrderService {
     }
   }
 
+  //ยกเลิกออเดอร์ เปลี่ยนสถานะ
+  static Future updateStatusOrder({String? status, String? remark_cancel, List<int>? orders}) async {
+    final url = Uri.https(publicUrl, '/public/api/update_status_order');
+    var headers = {'Content-Type': 'application/json'};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "status": status,
+        "remark_cancel": remark_cancel, //ระบุเหตุผลกรณียกเลิก
+        "orders": orders,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
   //ชำระเงิน
   static Future paymentOrder({
     String? payment_type,

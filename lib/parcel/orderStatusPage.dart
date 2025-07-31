@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
-import 'package:gcargo/models/orders/ordersPage.dart';
-import 'package:gcargo/parcel/POOrderDetailPage.dart';
 import 'package:gcargo/parcel/detailOrderPage.dart';
-import 'package:gcargo/widgets/RemarkDialog.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -22,6 +19,11 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
   TextEditingController _dateController = TextEditingController();
 
   final List<String> statusList = ['ทั้งหมด', 'รอตรวจสอบ', 'รอชำระเงิน', 'รอดำเนินการ', 'เตรียมจัดส่ง', 'จัดส่งแล้ว', 'ยกเลิก'];
+
+  // State variables
+  bool needVatReceipt = false;
+  bool selectAll = false;
+  Set<String> selectedOrders = {};
 
   // Status mapping from API to Thai
   String _getStatusInThai(String? apiStatus) {
@@ -309,8 +311,109 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
             ],
           ),
         ),
+        bottomNavigationBar: selectedStatus == 'รอชำระเงิน' ? _buildBottomBar() : null,
       );
     }); // Close Obx
+  }
+
+  Widget _buildBottomBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Color(0xFFE0E0E0)))),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔸 บรรทัด VAT
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                needVatReceipt = !needVatReceipt;
+              });
+            },
+            child: Row(
+              children: [
+                Icon(
+                  needVatReceipt ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                  size: 20,
+                  color: needVatReceipt ? Colors.blue : Colors.grey,
+                ),
+                const SizedBox(width: 8),
+                const Text('ต้องการใบกำกับภาษี (VAT 7%)'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Padding(
+            padding: EdgeInsets.only(left: 28),
+            child: Text('หากต้องการใบกำกับภาษีกรุณายืนยันก่อนชำระเงิน', style: TextStyle(color: Colors.red, fontSize: 12)),
+          ),
+          const SizedBox(height: 12),
+
+          // 🔸 แถวล่างสุด
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Checkbox(
+                    value: selectAll,
+                    onChanged: (value) {
+                      setState(() {
+                        selectAll = value ?? false;
+                        if (selectAll) {
+                          // เลือกทั้งหมด - เพิ่ม order IDs ที่มีสถานะ "รอชำระเงิน"
+                          selectedOrders.clear(); // เคลียร์ก่อน
+
+                          // หา orders ที่มีสถานะ "รอชำระเงิน" จาก orderController
+                          for (var parentOrder in orderController.orders) {
+                            if (parentOrder.orders != null) {
+                              for (var nestedOrder in parentOrder.orders!) {
+                                if (_getStatusInThai(nestedOrder.status) == 'รอชำระเงิน') {
+                                  final orderId = nestedOrder.id?.toString() ?? '';
+                                  if (orderId.isNotEmpty) {
+                                    selectedOrders.add(orderId);
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        } else {
+                          // ยกเลิกเลือกทั้งหมด
+                          selectedOrders.clear();
+                        }
+                      });
+                    },
+                  ),
+                  const Text('เลือกทั้งหมด', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              Container(
+                decoration: BoxDecoration(color: const Color(0xFF1E3C72), borderRadius: BorderRadius.circular(16)),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    Text('${selectedOrders.length}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 8),
+                    const Text('ค่าสินค้า', style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 12),
+                    Text('${_calculateTotalPrice()}฿', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _calculateTotalPrice() {
+    // ใช้ราคาเฉลี่ย 550 บาทต่อรายการ (mock data)
+    double pricePerOrder = 550.0;
+    double total = selectedOrders.length * pricePerOrder;
+
+    return total.toStringAsFixed(2);
   }
 
   Widget _buildOrderCard(Map<String, dynamic> order) {
@@ -353,9 +456,17 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
             : Colors.grey.shade300;
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         // Navigate to DetailOrderPage with order data
-        Navigator.push(context, MaterialPageRoute(builder: (_) => DetailOrderPage(orderId: order['originalOrder'].id ?? 0)));
+        final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => DetailOrderPage(orderId: order['originalOrder'].id ?? 0)));
+
+        // ถ้ายกเลิกออเดอร์สำเร็จ ให้รีเฟรชข้อมูล
+        if (result == true) {
+          print('🔄 ยกเลิกออเดอร์สำเร็จ รีเฟรชข้อมูล OrderStatusPage');
+          setState(() {
+            orderController.getOrders();
+          });
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -379,15 +490,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
               ],
             ),
             SizedBox(height: 8),
-
-            // 🔸 รอตรวจสอบจะมีแถวเพิ่ม
-            if (isPending) ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text('การสั่งซื้อ', style: TextStyle(fontSize: 16)), Text('คำสั่งซื้อของเชล', style: TextStyle(fontSize: 16))],
-              ),
-              SizedBox(height: 4),
-            ],
+            Divider(),
 
             // 🔹 ปกติ
             Row(
@@ -403,42 +506,40 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
               ],
             ),
 
-            // 🔹 ปุ่มเฉพาะสถานะรอตรวจสอบ
-            if (isPending) ...[
-              SizedBox(height: 12),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     OutlinedButton(
-              //       onPressed: () async {
-              //         print(55555);
-              //         showDialog(
-              //           context: context,
-              //           builder:
-              //               (_) => RemarkDialog(
-              //                 initialText: '', // หรือค่าที่มีอยู่
-              //                 onSave: (text) {
-              //                   print('บันทึกข้อความ: $text');
-              //                   // ทำอย่างอื่นต่อ เช่นส่งไปเซิร์ฟเวอร์
-              //                 },
-              //               ),
-              //         );
-              //       },
-              //       style: OutlinedButton.styleFrom(foregroundColor: Colors.grey),
-              //       child: const Text('ยกเลิก'),
-              //     ),
-              //     SizedBox(width: 8),
-              //     ElevatedButton(
-              //       onPressed: () {
-              //         Navigator.push(context, MaterialPageRoute(builder: (_) => DetailOrderPage(orderId: order['originalOrder'].id ?? 0)));
-              //       },
-              //       style: ElevatedButton.styleFrom(
-              //         backgroundColor: const Color(0xFF1E3C72), // ✅ kButtonColor
-              //       ),
-              //       child: Text('สั่งซื้ออีกครั้ง', style: TextStyle(color: Colors.white, fontSize: 16)),
-              //     ),
-              //   ],
-              // ),
+            // 🔹 Checkbox สำหรับสถานะรอชำระเงิน
+            if (isAwaitingPayment) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Checkbox(
+                    value: selectedOrders.contains(order['originalOrder']?.id?.toString() ?? ''),
+                    onChanged: (value) {
+                      setState(() {
+                        final orderId = order['originalOrder']?.id?.toString() ?? '';
+                        if (value == true) {
+                          selectedOrders.add(orderId);
+                        } else {
+                          selectedOrders.remove(orderId);
+                        }
+
+                        // อัปเดต selectAll checkbox ตามจำนวนที่เลือก
+                        int totalAwaitingPaymentOrders = 0;
+                        for (var parentOrder in orderController.orders) {
+                          if (parentOrder.orders != null) {
+                            for (var nestedOrder in parentOrder.orders!) {
+                              if (_getStatusInThai(nestedOrder.status) == 'รอชำระเงิน') {
+                                totalAwaitingPaymentOrders++;
+                              }
+                            }
+                          }
+                        }
+                        selectAll = selectedOrders.length == totalAwaitingPaymentOrders && totalAwaitingPaymentOrders > 0;
+                      });
+                    },
+                  ),
+                  const Text('เลือกรายการนี้', style: TextStyle(fontSize: 14)),
+                ],
+              ),
             ],
           ],
         ),

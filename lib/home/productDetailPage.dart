@@ -456,6 +456,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
           title: Row(
             children: [
               Expanded(

@@ -3,6 +3,7 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/models/orders/productsTrack.dart';
 import 'package:gcargo/parcel/paymentMethodPage.dart';
+import 'package:gcargo/services/orderService.dart';
 import 'package:gcargo/utils/helpers.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -429,7 +430,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     final status = orderController.order.value?.status;
 
     // Only show buttons for specific statuses
-    if (status == 'shipped' || status == 'awaiting_payment') {
+    print('🔍 Order status: $status');
+    if (status == 'pending' || status == 'รอตรวจสอบ' || status == 'awaiting_payment' || status == 'รอชำระเงิน') {
       return Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -438,9 +440,16 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
             Expanded(
               flex: 2, // Smaller flex ratio
               child: OutlinedButton(
-                onPressed: () {
-                  // TODO: Implement cancel order
-                  Navigator.pop(context);
+                onPressed: () async {
+                  print('🔘 กดปุ่มยกเลิก');
+                  final cancelReason = await _showCancelReasonSheet(context);
+                  print('📝 เหตุผล: $cancelReason');
+                  if (cancelReason != null && cancelReason.isNotEmpty) {
+                    print('✅ เรียก _cancelOrder');
+                    await _cancelOrder(cancelReason);
+                  } else {
+                    print('❌ ไม่มีเหตุผล ไม่ยิง API');
+                  }
                 },
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -520,5 +529,131 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
     // Default fallback (shouldn't reach here)
     return const SizedBox.shrink();
+  }
+
+  Future<void> _cancelOrder(String cancelReason) async {
+    try {
+      print('🚀 เริ่มยกเลิกออเดอร์ ID: ${widget.orderId}');
+      print('📝 เหตุผล: $cancelReason');
+
+      // แสดง loading
+      showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+
+      // เรียก API ยกเลิกออเดอร์
+      print('🌐 เรียก API updateStatusOrder...');
+      final result = await OrderService.updateStatusOrder(status: 'cancelled', remark_cancel: cancelReason, orders: [widget.orderId]);
+      print('✅ API Response: $result');
+
+      // ปิด loading
+      if (mounted) {
+        Navigator.pop(context);
+
+        // แสดงข้อความสำเร็จ
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ยกเลิกคำสั่งซื้อสำเร็จ'), backgroundColor: Colors.green));
+
+        // รีเฟรชข้อมูล orders
+        await orderController.getOrders();
+        print('🔄 รีเฟรชข้อมูลออเดอร์แล้ว');
+
+        // กลับไปหน้า OrderStatusPage
+        if (mounted) {
+          print('📋 กำลังกลับไปหน้า OrderStatusPage พร้อมส่งค่า true');
+          Navigator.pop(context, true); // ส่ง true เพื่อบอกว่ายกเลิกสำเร็จ
+          print('📋 กลับไปหน้า OrderStatusPage แล้ว');
+        }
+      }
+    } catch (e) {
+      print('❌ Error: $e');
+      // ปิด loading
+      if (mounted) {
+        Navigator.pop(context);
+
+        // แสดงข้อความผิดพลาด
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e'), backgroundColor: Colors.red));
+      }
+    }
+  }
+
+  Future<String?> _showCancelReasonSheet(BuildContext context) async {
+    final TextEditingController _reasonController = TextEditingController();
+
+    return await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 🔺 หัวข้อ + ปิด
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('หมายเหตุ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            print('❌ ปิด bottom sheet โดยไม่บันทึก');
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // 🔹 กล่องข้อความ
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade300)),
+                      child: TextField(
+                        controller: _reasonController,
+                        maxLines: 4,
+                        maxLength: 200,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'หมายเหตุ',
+                          counterText: '', // ซ่อนตัวนับเดิม
+                        ),
+                        onChanged: (_) => setState(() {}),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text('${_reasonController.text.length}/200', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 🔹 ปุ่มบันทึก
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          print('💾 บันทึกเหตุผล: "${_reasonController.text}"');
+                          Navigator.pop(context, _reasonController.text);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1E3C72),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: const Text('บันทึก', style: TextStyle(fontSize: 16, color: Colors.white)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }
