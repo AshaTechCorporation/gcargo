@@ -1,37 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 
 class OrderDetailPage extends StatelessWidget {
-  const OrderDetailPage({super.key});
+  OrderDetailPage({super.key, required this.status});
+  String status;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text('เลขบิลสั่งซื้อ 00001', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
+              child: Image.asset('assets/icons/print-icon.png', height: 20),
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // 🔹 Header
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-                  const Text('เลขบิลสั่งซื้อ 00001', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Image.asset('assets/icons/print-icon.png', height: 20),
+            // 🔸 กล่องเตือน
+            status == 'สำเร็จ'
+                ? Container(
+                  width: double.infinity,
+                  color: const Color(0xFFFFF7D8),
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.warning_amber_rounded, color: Color(0xFFFFC107)),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ',
+                          style: TextStyle(fontSize: 13, color: Colors.black87),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                )
+                : Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: kTextRedWanningColor.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    children: [
+                      Image.asset('assets/icons/info-circle.png', width: 20, height: 20),
+                      const SizedBox(width: 8),
+                      const Text('ร้านค้าไม่มีสีตามที่สั่งซื้อจึงต้องยกเลิกรายการสินค้านี้', style: TextStyle(fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                ),
 
-            const Divider(),
+            const Divider(height: 1),
 
             // 🔹 รายละเอียดจัดส่ง
             Padding(
@@ -122,8 +151,8 @@ class OrderDetailPage extends StatelessWidget {
                     _buildSummaryRow('รวมค่าขนส่งไปจีน', '0.00฿'),
                     _buildSummaryRow('ส่วนลด', '0.00฿'),
                     _buildSummaryRow('รวมราคา', '550.00฿', bold: true),
-                    _buildSummaryRow('การชำระเงิน', 'QR พร้อมเพย์', showIcon: true),
-                    _buildSummaryRow('ใบกำกับภาษี (VAT 7%)', '', showCheck: true),
+                    status == 'สำเร็จ' ? _buildSummaryRow('การชำระเงิน', 'QR พร้อมเพย์', showIcon: true) : SizedBox(),
+                    status == 'สำเร็จ' ? _buildSummaryRow('ใบกำกับภาษี (VAT 7%)', '', showCheck: true) : SizedBox(),
 
                     const SizedBox(height: 16),
                   ],
@@ -136,7 +165,6 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  // 🔹 แสดงข้อมูลซ้าย-ขวา
   static Widget _infoRow(String title, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
@@ -149,7 +177,6 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  // 🔹 กล่องสินค้าเดี่ยว
   Widget _buildProductItem({
     required String image,
     required String name,
@@ -186,16 +213,14 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  // 🔹 ป้ายไซส์/สี
   static Widget _labelBox(String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(color: const Color(0xFFF1F1F1), borderRadius: BorderRadius.circular(6)),
+      decoration: BoxDecoration(color: Color(0xFFF1F1F1), borderRadius: BorderRadius.circular(6)),
       child: Text(label, style: const TextStyle(fontSize: 12)),
     );
   }
 
-  // 🔹 แถวสรุป
   Widget _buildSummaryRow(String title, String value, {bool isNote = false, bool bold = false, bool showIcon = false, bool showCheck = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

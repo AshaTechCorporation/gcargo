@@ -147,7 +147,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
 
   Widget _buildOrderCard(Map<String, dynamic> order) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderDetailPage())),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OrderDetailPage(status: order['status']))),
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 12),
