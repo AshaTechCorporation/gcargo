@@ -12,15 +12,18 @@ class ParcelStatusPage extends StatefulWidget {
 }
 
 class _ParcelStatusPageState extends State<ParcelStatusPage> {
-  final List<String> statuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดถุง', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอตัดส่ง', 'สำเร็จ'];
+  final List<String> statuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดตู้', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอตัดส่ง', 'สำเร็จ'];
   TextEditingController _dateController = TextEditingController();
+
+  // เพิ่ม state สำหรับ checkbox ของสถานะ "ถึงโกดังไทย"
+  Set<String> selectedParcels = {};
 
   final Map<String, int> statusCounts = {
     'ทั้งหมด': 0,
     'รอส่งไปโกดังจีน': 1,
     'ถึงโกดังจีน': 1,
-    'ปิดถุง': 1,
-    'ถึงโกดังไทย': 1,
+    'ปิดตู้': 1,
+    'ถึงโกดังไทย': 3, // เพิ่มจำนวนเป็น 3
     'กำลังตรวจสอบ': 1,
     'รอตัดส่ง': 1,
     'สำเร็จ': 1,
@@ -34,6 +37,29 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
   void initState() {
     super.initState();
     _dateController.text = '01/01/2024 - 01/07/2025'; // ค่าเริ่มต้น
+  }
+
+  // Method สำหรับอัปเดต selection ของพัสดุทั้งหมดในสถานะ "ถึงโกดังไทย"
+  void _updateAllParcelsSelection() {
+    // รายการพัสดุทั้งหมดในสถานะ "ถึงโกดังไทย"
+    final allThailandParcels = ['00044', '00051', '00052'];
+
+    if (isSelectAll) {
+      // เลือกทั้งหมด
+      selectedParcels.addAll(allThailandParcels);
+    } else {
+      // ยกเลิกการเลือกทั้งหมด
+      selectedParcels.removeAll(allThailandParcels);
+    }
+  }
+
+  // Method สำหรับอัปเดตสถานะ "เลือกทั้งหมด" ตามการเลือกของแต่ละการ์ด
+  void _updateSelectAllState() {
+    final allThailandParcels = ['00044', '00051', '00052'];
+
+    // ถ้าเลือกครบทุกตัว ให้ติ๊ก "เลือกทั้งหมด"
+    // ถ้าไม่เลือกครบ ให้ยกเลิกการติ๊ก "เลือกทั้งหมด"
+    isSelectAll = allThailandParcels.every((parcel) => selectedParcels.contains(parcel));
   }
 
   Widget _buildStatusChip(String label, int count, bool isActive, int index) {
@@ -96,11 +122,43 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
             const SizedBox(height: 12),
             const Divider(),
             const SizedBox(height: 8),
-            const Text('เลขบิลสั่งซื้อ'),
-            const Text('167304', style: TextStyle(fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [const Text('เลขบิลสั่งซื้อ'), const Text('167304', style: TextStyle(fontWeight: FontWeight.bold))],
+            ),
+
             const SizedBox(height: 8),
-            const Text('เลขบิลหน้าโกดัง'),
-            const Text('000000', style: TextStyle(fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('เลขบิลหน้าโกดัง'),
+                status == 'รอส่งไปโกดังจีน' ? SizedBox() : Text('000000', style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            // เพิ่ม checkbox เฉพาะสถานะ "ถึงโกดังไทย"
+            Row(
+              children: [
+                if (status == 'ถึงโกดังไทย') ...[
+                  Checkbox(
+                    value: selectedParcels.contains(parcelNo),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        if (value == true) {
+                          selectedParcels.add(parcelNo);
+                        } else {
+                          selectedParcels.remove(parcelNo);
+                        }
+                        _updateSelectAllState();
+                      });
+                    },
+                    activeColor: const Color(0xFF427D9D),
+                  ),
+                  const SizedBox(width: 8),
+                  Text('8,516.00฿'),
+                ],
+              ],
+            ),
+
             if (showActionButton) ...[
               const SizedBox(height: 8),
               const Text('เลขที่เอกสาร'),
@@ -148,9 +206,11 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         return [
           _buildDateGroup('02/07/2025', [
             _buildParcelCard(parcelNo: '00044', status: 'ถึงโกดังไทย', showActionButton: false),
+            _buildParcelCard(parcelNo: '00051', status: 'ถึงโกดังไทย', showActionButton: false),
             _buildParcelCard(parcelNo: '00045', status: 'รอส่งไปโกดังจีน', showActionButton: false),
           ]),
           _buildDateGroup('01/07/2025', [
+            _buildParcelCard(parcelNo: '00052', status: 'ถึงโกดังไทย', showActionButton: false),
             _buildParcelCard(parcelNo: '00046', status: 'สำเร็จ', showActionButton: true),
             _buildParcelCard(parcelNo: '00047', status: 'กำลังตรวจสอบ', showActionButton: false),
           ]),
@@ -169,7 +229,11 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         ];
       case 'ถึงโกดังไทย':
         return [
-          _buildDateGroup('02/07/2025', [_buildParcelCard(parcelNo: '00044', status: 'ถึงโกดังไทย', showActionButton: false)]),
+          _buildDateGroup('02/07/2025', [
+            _buildParcelCard(parcelNo: '00044', status: 'ถึงโกดังไทย', showActionButton: false),
+            _buildParcelCard(parcelNo: '00051', status: 'ถึงโกดังไทย', showActionButton: false),
+          ]),
+          _buildDateGroup('01/07/2025', [_buildParcelCard(parcelNo: '00052', status: 'ถึงโกดังไทย', showActionButton: false)]),
         ];
       case 'กำลังตรวจสอบ':
         return [
@@ -368,6 +432,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                 onChanged: (val) {
                   setState(() {
                     isSelectAll = val ?? false;
+                    _updateAllParcelsSelection();
                   });
                 },
                 activeColor: const Color(0xFF427D9D),
@@ -377,6 +442,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                 onTap: () {
                   setState(() {
                     isSelectAll = !isSelectAll;
+                    _updateAllParcelsSelection();
                   });
                 },
                 child: const Text('เลือกทั้งหมด'),
@@ -404,7 +470,12 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                         width: 22,
                         height: 22,
                         decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                        child: const Center(child: Text('1', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF002A5D)))),
+                        child: Center(
+                          child: Text(
+                            '${selectedParcels.length}',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF002A5D)),
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 8),
                       const Text('สินค้าทั้งหมด', style: TextStyle(fontSize: 16, color: Colors.white)),

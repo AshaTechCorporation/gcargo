@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/parcel/shippingAddressPage.dart';
 
 class ShippingMethodPage extends StatefulWidget {
   const ShippingMethodPage({super.key});
@@ -59,18 +60,21 @@ class _ShippingMethodPageState extends State<ShippingMethodPage> {
                   children: [
                     const Text('ที่อยู่จัดส่ง', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                     const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: const [
-                          Expanded(child: Text('Girati Sukapat  097 123 4567')),
-                          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-                        ],
+                    GestureDetector(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ShippingAddressPage())),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: const [
+                            Expanded(child: Text('Girati Sukapat  097 123 4567')),
+                            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                          ],
+                        ),
                       ),
                     ),
                     _buildRadioList('ขนส่งบริษัท', pickupOptions),
