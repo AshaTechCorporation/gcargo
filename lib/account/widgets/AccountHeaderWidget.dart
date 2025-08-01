@@ -66,7 +66,10 @@ class AccountHeaderWidget extends StatelessWidget {
                         height: 16,
                         decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
                       )
-                      : Text(user?.fname ?? 'ผู้ใช้', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black)),
+                      : Text(
+                        user?.fname ?? 'ผู้ใช้ยังไม่เข้าสู่ระบบ',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                      ),
                 ],
               ),
               isLoading

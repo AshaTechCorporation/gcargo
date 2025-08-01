@@ -152,12 +152,30 @@ class _AccountPageState extends State<AccountPage> {
                   _buildMenuItem(
                     'เปลี่ยนภาษา',
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
+                      Get.snackbar(
+                        'แจ้งเตือน',
+                        'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                        backgroundColor: Colors.yellowAccent,
+                        colorText: Colors.black,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
                     },
                   ),
 
                   _buildSectionTitle('ความช่วยเหลือ'),
-                  _buildMenuItem('ติดต่อเจ้าหน้าที่', onTap: () {}),
+                  _buildMenuItem(
+                    'ติดต่อเจ้าหน้าที่',
+                    onTap: () {
+                      Get.snackbar(
+                        'แจ้งเตือน',
+                        'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                        backgroundColor: Colors.yellowAccent,
+                        colorText: Colors.black,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
+                  ),
                   _buildMenuItem(
                     'คู่มือการใช้งาน',
                     onTap: () {

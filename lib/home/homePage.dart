@@ -150,13 +150,20 @@ class _HomePageState extends State<HomePage> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          showImagePickerBottomSheet(
-                            context: context,
-                            onImagePicked: (XFile image) {
-                              print('📸 ได้รูป: ${image.path}');
-                              // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
-                            },
+                          Get.snackbar(
+                            'แจ้งเตือน',
+                            'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                            backgroundColor: Colors.yellowAccent,
+                            colorText: Colors.black,
+                            snackPosition: SnackPosition.BOTTOM,
                           );
+                          // showImagePickerBottomSheet(
+                          //   context: context,
+                          //   onImagePicked: (XFile image) {
+                          //     print('📸 ได้รูป: ${image.path}');
+                          //     // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
+                          //   },
+                          // );
                         },
                         child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
                       ),
@@ -169,6 +176,13 @@ class _HomePageState extends State<HomePage> {
               GestureDetector(
                 onTap: () {
                   ////go action
+                  Get.snackbar(
+                    'แจ้งเตือน',
+                    'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                    backgroundColor: Colors.yellowAccent,
+                    colorText: Colors.black,
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
                 },
                 child: Image.asset('assets/icons/bag.png', width: 20, height: 20, fit: BoxFit.fill),
               ),
@@ -291,7 +305,14 @@ class _HomePageState extends State<HomePage> {
                       child: GestureDetector(
                         onTap: () {
                           // Navigate to SearchPage for search
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage()));
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage()));
+                          Get.snackbar(
+                            'แจ้งเตือน',
+                            'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                            backgroundColor: Colors.yellowAccent,
+                            colorText: Colors.black,
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
                         },
                         child: Row(
                           children: [
