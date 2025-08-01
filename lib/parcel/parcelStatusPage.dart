@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/account/couponPage.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/parcel/claimPackagePage.dart';
 import 'package:gcargo/parcel/parcelDetailPage.dart';
 import 'package:gcargo/parcel/shippingMethodPage.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +14,7 @@ class ParcelStatusPage extends StatefulWidget {
 }
 
 class _ParcelStatusPageState extends State<ParcelStatusPage> {
-  final List<String> statuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดตู้', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอตัดส่ง', 'สำเร็จ'];
+  final List<String> statuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดตู้', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอจัดส่ง', 'สำเร็จ'];
   TextEditingController _dateController = TextEditingController();
 
   // เพิ่ม state สำหรับ checkbox ของสถานะ "ถึงโกดังไทย"
@@ -25,7 +27,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
     'ปิดตู้': 1,
     'ถึงโกดังไทย': 3, // เพิ่มจำนวนเป็น 3
     'กำลังตรวจสอบ': 1,
-    'รอตัดส่ง': 1,
+    'รอจัดส่ง': 1,
     'สำเร็จ': 1,
   };
 
@@ -135,6 +137,14 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                 status == 'รอส่งไปโกดังจีน' ? SizedBox() : Text('000000', style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
+            const SizedBox(height: 8),
+            status == 'กำลังตรวจสอบ' || status == 'รอจัดส่ง'
+                ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [const Text('เลขที่เอกสาร'), const Text(' X2504290002', style: TextStyle(fontWeight: FontWeight.bold))],
+                )
+                : SizedBox(),
+
             // เพิ่ม checkbox เฉพาะสถานะ "ถึงโกดังไทย"
             Row(
               children: [
@@ -161,21 +171,32 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
 
             if (showActionButton) ...[
               const SizedBox(height: 8),
-              const Text('เลขที่เอกสาร'),
-              const Text('X2504290002', style: TextStyle(fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [const Text('เลขที่เอกสาร'), const Text('X2504290002', style: TextStyle(fontWeight: FontWeight.bold))],
+              ),
+
               const SizedBox(height: 8),
-              const Text('บริษัทขนส่งในไทย'),
-              const Text('-', style: TextStyle(fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [const Text('บริษัทขนส่งในไทย'), const Text('-', style: TextStyle(fontWeight: FontWeight.bold))],
+              ),
+
               const SizedBox(height: 8),
-              const Text('หมายเลขขนส่งในไทย'),
-              const Text('-', style: TextStyle(fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [const Text('หมายเลขขนส่งในไทย'), const Text('-', style: TextStyle(fontWeight: FontWeight.bold))],
+              ),
+
               const SizedBox(height: 12),
               const Divider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => ClaimPackagePage()));
+                    },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Color(0xFF427D9D)),
                       foregroundColor: const Color(0xFF427D9D),
@@ -223,9 +244,9 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         return [
           _buildDateGroup('01/07/2025', [_buildParcelCard(parcelNo: '00048', status: 'ถึงโกดังจีน', showActionButton: false)]),
         ];
-      case 'ปิดถุง':
+      case 'ปิดตู้':
         return [
-          _buildDateGroup('30/06/2025', [_buildParcelCard(parcelNo: '00049', status: 'ปิดถุง', showActionButton: false)]),
+          _buildDateGroup('30/06/2025', [_buildParcelCard(parcelNo: '00049', status: 'ปิดตู้', showActionButton: false)]),
         ];
       case 'ถึงโกดังไทย':
         return [
@@ -239,9 +260,9 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         return [
           _buildDateGroup('01/07/2025', [_buildParcelCard(parcelNo: '00047', status: 'กำลังตรวจสอบ', showActionButton: false)]),
         ];
-      case 'รอตัดส่ง':
+      case 'รอจัดส่ง':
         return [
-          _buildDateGroup('29/06/2025', [_buildParcelCard(parcelNo: '00050', status: 'รอตัดส่ง', showActionButton: false)]),
+          _buildDateGroup('29/06/2025', [_buildParcelCard(parcelNo: '00050', status: 'รอจัดส่ง', showActionButton: false)]),
         ];
       case 'สำเร็จ':
         return [
@@ -356,12 +377,18 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 🎟 คูปองส่วนลด
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('คูปองส่วนลด', style: TextStyle(fontWeight: FontWeight.bold)),
-              Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF999999)),
-            ],
+          GestureDetector(
+            onTap: () {
+              // ไปหน้าคูปองส่วนลด
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const CouponPage()));
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('คูปองส่วนลด', style: TextStyle(fontWeight: FontWeight.bold)),
+                Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF999999)),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
 

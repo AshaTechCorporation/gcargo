@@ -16,7 +16,7 @@ class CouponPage extends StatelessWidget {
         title: const Text('คูปองส่วนลด', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         centerTitle: false,
         elevation: 0.5,
-        leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.black), onPressed: () => Navigator.pop(context)),
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
       ),
       backgroundColor: Colors.white,
       body: ListView.separated(
