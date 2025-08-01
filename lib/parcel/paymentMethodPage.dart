@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/parcel/QRPaymentPage.dart';
 import 'package:gcargo/parcel/walletPaymentPage.dart';
 
 class PaymentMethodPage extends StatelessWidget {
@@ -31,7 +32,15 @@ class PaymentMethodPage extends StatelessWidget {
               child: _buildPaymentOption('Wallet (${totalPrice.toStringAsFixed(2)}฿)'),
             ),
             const SizedBox(height: 12),
-            _buildPaymentOption('QR พร้อมเพย์'),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => QRPaymentPage(totalPrice: totalPrice, ref_no: ref_no, orderType: orderType)),
+                );
+              },
+              child: _buildPaymentOption('QR พร้อมเพย์'),
+            ),
             const SizedBox(height: 12),
             _buildPaymentOption('เครดิต'),
           ],

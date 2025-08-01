@@ -106,6 +106,7 @@ class _WalletPaymentPageState extends State<WalletPaymentPage> {
               child: ElevatedButton(
                 onPressed: () async {
                   try {
+                    //
                     // Show loading
                     showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
 
