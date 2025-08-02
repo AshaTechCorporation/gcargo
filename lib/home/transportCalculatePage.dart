@@ -177,6 +177,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
 
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false, // ป้องกัน overflow เมื่อ keyboard ขึ้น
       appBar: AppBar(
         title: const Text('คำนวณ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
         backgroundColor: Colors.white,
@@ -193,11 +194,109 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
         ),
       ),
       body: TabBarView(controller: _tabController, children: [_buildNormalTab(context, isBlocked), _buildWoodBoxTab()]),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, -2))],
+        ),
+        child: SafeArea(child: _buildCalculateButton()),
+      ),
     );
   }
 
+  // สร้างปุ่มคำนวนตามแท็บที่เลือก
+  Widget _buildCalculateButton() {
+    final currentIndex = _tabController.index;
+    final isBlocked = false; // ใช้ false ชั่วคราว หรือเช็คจาก SharedPreferences
+
+    if (currentIndex == 0) {
+      // แท็บแรก - คำนวณค่าขนส่ง
+      return Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: OutlinedButton(
+              onPressed: () {
+                setState(() {
+                  selectedMethod = '';
+                  weightCtrl.clear();
+                  showError = false;
+                  calculatedCost = 0.0;
+                });
+              },
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                side: const BorderSide(color: Color(0xFFD0D0D0)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 7,
+            child: ElevatedButton(
+              onPressed:
+                  isBlocked
+                      ? null
+                      : () {
+                        print('🔘 Button pressed!');
+                        calculateShippingCost();
+                      },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isBlocked ? Colors.grey.shade300 : const Color(0xFF002A5B),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 20)),
+            ),
+          ),
+        ],
+      );
+    } else {
+      // แท็บที่สอง - คำนวณตู้ลังไม้
+      return Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: OutlinedButton(
+              onPressed: () {
+                setState(() {
+                  woodWidthCtrl.clear();
+                  woodLengthCtrl.clear();
+                  woodHeightCtrl.clear();
+                  woodBoxCost = 0.0;
+                });
+              },
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                side: const BorderSide(color: Color(0xFFD0D0D0)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 7,
+            child: ElevatedButton(
+              onPressed: calculateWoodBoxCost,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF002A5B),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 20)),
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
   Widget _buildNormalTab(BuildContext context, bool isBlocked) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Column(
         children: [
@@ -335,58 +434,40 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               ),
             ),
 
-          Spacer(),
-          Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      widthCtrl.clear();
-                      lengthCtrl.clear();
-                      heightCtrl.clear();
-                      weightCtrl.clear();
-                      showError = false;
-                      calculatedCost = 0.0;
-                    });
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: const BorderSide(color: Color(0xFFD0D0D0)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 7,
-                child: ElevatedButton(
-                  onPressed:
-                      isBlocked
-                          ? null
-                          : () {
-                            print('🔘 Button pressed!');
-                            calculateShippingCost();
-                          },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isBlocked ? Colors.grey.shade300 : const Color(0xFF002A5B),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 20)),
-                ),
-              ),
-            ],
-          ),
+          // Spacer(),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       flex: 3,
+          //       child: OutlinedButton(
+          //         onPressed: () {
+          //           setState(() {
+          //             widthCtrl.clear();
+          //             lengthCtrl.clear();
+          //             heightCtrl.clear();
+          //             weightCtrl.clear();
+          //             showError = false;
+          //             calculatedCost = 0.0;
+          //           });
+          //         },
+          //         style: OutlinedButton.styleFrom(
+          //           padding: const EdgeInsets.symmetric(vertical: 16),
+          //           side: const BorderSide(color: Color(0xFFD0D0D0)),
+          //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          //         ),
+          //         child: Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
+          //       ),
+          //     ),
+          //     // ปุ่มคำนวนย้ายไป bottomNavigationBar แล้ว
+          //   ],
+          // ),
         ],
       ),
     );
   }
 
   Widget _buildWoodBoxTab() {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
@@ -417,44 +498,32 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
             child: Text(NumberFormatter.formatTHB(woodBoxCost), style: const TextStyle(fontSize: 16)),
           ),
 
-          const SizedBox(height: 24),
-          Spacer(),
-          Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      woodWidthCtrl.clear();
-                      woodLengthCtrl.clear();
-                      woodHeightCtrl.clear();
-                      woodBoxCost = 0.0;
-                    });
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: const BorderSide(color: Color(0xFFD0D0D0)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 7,
-                child: ElevatedButton(
-                  onPressed: calculateWoodBoxCost,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF002A5B),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 20)),
-                ),
-              ),
-            ],
-          ),
+          // const SizedBox(height: 24),
+          // Spacer(),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       flex: 3,
+          //       child: OutlinedButton(
+          //         onPressed: () {
+          //           setState(() {
+          //             woodWidthCtrl.clear();
+          //             woodLengthCtrl.clear();
+          //             woodHeightCtrl.clear();
+          //             woodBoxCost = 0.0;
+          //           });
+          //         },
+          //         style: OutlinedButton.styleFrom(
+          //           padding: const EdgeInsets.symmetric(vertical: 16),
+          //           side: const BorderSide(color: Color(0xFFD0D0D0)),
+          //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          //         ),
+          //         child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
+          //       ),
+          //     ),
+          //     // ปุ่มคำนวนย้ายไป bottomNavigationBar แล้ว
+          //   ],
+          // ),
         ],
       ),
     );
