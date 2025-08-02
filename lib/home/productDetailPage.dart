@@ -10,6 +10,7 @@ import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
 import 'package:gcargo/services/cart_service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetailPage extends StatefulWidget {
   ProductDetailPage({super.key, required this.num_iid, required this.name});
@@ -60,6 +61,31 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     // ลบ controller เมื่อออกจากหน้า
     Get.delete<ProductDetailController>(tag: widget.num_iid);
     super.dispose();
+  }
+
+  // เช็ค userID ว่าเข้าสู่ระบบแล้วหรือไม่
+  Future<bool> _checkUserLogin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+
+    if (userID == null) {
+      // แสดงแจ้งเตือนให้เข้าสู่ระบบ
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('ยังไม่ได้เข้าสู่ระบบ'),
+              content: const Text('กรุณาเข้าสู่ระบบก่อนสั่งซื้อสินค้า'),
+              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))],
+            );
+          },
+        );
+      }
+      return false;
+    }
+
+    return true;
   }
 
   void _startAutoSlide() {
@@ -363,7 +389,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 borderRadius: BorderRadius.circular(6), // ✅ ขอบมนเล็กน้อย
               ),
             ),
-            onPressed: () {
+            onPressed: () async {
+              // เช็ค userID ก่อนสั่งซื้อ
+              final isLoggedIn = await _checkUserLogin();
+              if (!isLoggedIn) return;
+
               // Prepare product data to send to PurchaseBillPage
               final productData = {
                 'num_iid': productController.numIidValue,
@@ -380,7 +410,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 'name': widget.name,
               };
 
-              Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData])));
+              if (mounted) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData])));
+              }
             },
             child: Text('สั่งซื้อสินค้า', style: TextStyle(fontSize: 16, color: Colors.white)),
           ),
@@ -397,6 +429,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               ),
             ),
             onPressed: () async {
+              // เช็ค userID ก่อนเพิ่มลงตะกร้า
+              final isLoggedIn = await _checkUserLogin();
+              if (!isLoggedIn) return;
+
               // Store context before async operations
               final currentContext = context;
 
