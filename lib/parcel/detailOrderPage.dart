@@ -188,10 +188,19 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                   productList.first.product_store_type ?? '1688',
                                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kTextTitleHeadColor),
                                 ),
-                                Text(
-                                  'ไม่ QC | ${orderController.order.value?.order_lists?.first.add_on_services?.first.add_on_service?.name ?? ''}',
-                                  style: TextStyle(fontSize: 14, color: kTextgreyColor),
-                                ),
+                                Text(() {
+                                  // เช็คข้อมูล add_on_service อย่างปลอดภัย
+                                  final orderLists = orderController.order.value?.order_lists;
+                                  if (orderLists == null || orderLists.isEmpty) return 'ไม่ QC | -';
+
+                                  final addOnServices = orderLists.first.add_on_services;
+                                  if (addOnServices == null || addOnServices.isEmpty) return 'ไม่ QC | -';
+
+                                  final addOnService = addOnServices.first.add_on_service;
+                                  final serviceName = addOnService?.name;
+
+                                  return 'ไม่ QC | ${serviceName ?? '-'}';
+                                }(), style: TextStyle(fontSize: 14, color: kTextgreyColor)),
                               ],
                             ),
                             const SizedBox(height: 4),

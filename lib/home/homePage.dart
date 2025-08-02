@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  late Timer _timer;
+  //late Timer _timer;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     searchController.dispose();
-    _timer.cancel();
+    //_timer.cancel();
     _pageController.dispose();
     super.dispose();
   }
