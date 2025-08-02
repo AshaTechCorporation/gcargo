@@ -39,6 +39,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    // คอมเม้น Timer สำหรับ auto-slide เพราะใช้แบนเนอร์เดียว
+    /*
     if (!mounted) return;
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
@@ -46,6 +48,7 @@ class _HomePageState extends State<HomePage> {
         _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
       }
     });
+    */
   }
 
   @override
@@ -203,6 +206,8 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔹 Image Slider
+              // คอมเม้นส่วน API Banner ไว้ก่อน
+              /*
               Obx(() {
                 if (homeController.isLoading.value) {
                   return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
@@ -255,9 +260,33 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }),
+              */
+
+              // แบนเนอร์จาก Assets
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    height: 140,
+                    width: double.infinity,
+                    child: Image.asset(
+                      'assets/images/slidpic.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey.shade200,
+                          child: const Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
 
               SizedBox(height: 16),
-              // 🔹 Indicator
+              // 🔹 Indicator (คอมเม้นไว้เพราะใช้แบนเนอร์เดียว)
+              /*
               Obx(() {
                 if (homeController.imgBanners.isEmpty) {
                   return const SizedBox.shrink();
@@ -279,6 +308,7 @@ class _HomePageState extends State<HomePage> {
                   }),
                 );
               }),
+              */
               SizedBox(height: 16),
 
               // 🔹 Stack รูป + ช่องค้นหา + ข้อความ
