@@ -1,4 +1,4 @@
-package com.example.gcargo
+package com.asha.gcargo.app
 
 import io.flutter.embedding.android.FlutterActivity
 
