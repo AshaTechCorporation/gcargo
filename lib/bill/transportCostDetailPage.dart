@@ -9,35 +9,27 @@ class TransportCostDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+        title: Text('เลขที่เอกสาร $paper_number', style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600)),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(color: Color(0xFFF3F3F3), shape: BoxShape.circle),
+              child: Center(child: Image.asset('assets/icons/print-icon.png', width: 20)),
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // 🔹 Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: const BoxDecoration(color: Color(0xFFF3F3F3), shape: BoxShape.circle),
-                      child: const Center(child: Icon(Icons.arrow_back_ios_new, size: 18)),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text('เลขที่เอกสาร ${paper_number}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
-                    child: Center(child: Image.asset('assets/icons/print-icon.png', width: 20)),
-                  ),
-                ],
-              ),
-            ),
-
             // 🔹 Section: ข้อมูลรวม
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -47,13 +39,20 @@ class TransportCostDetailPage extends StatelessWidget {
                 child: Column(
                   children: [
                     _rowItem('รวมค่าขนส่งจีนไทย', '1,060.00฿'),
+                    _rowItem('ค่าบริการ QC', '0฿'),
+                    _rowItem('ค่าตัดไม้', '0฿'),
+                    _rowItem('ค่าบริการ', '50฿'),
+                    _rowItem('ค่าขนส่งในไทย', '0฿'),
+                    _rowItem('ส่วนลด', '0฿'),
+                    const Divider(height: 24),
+                    _rowItem('รวมราคาทั้งสิ้น', '1,110.00฿', bold: true),
                     _rowItem('การชำระเงิน', 'QR พร้อมเพย์'),
                     Row(
                       children: [
                         Expanded(
                           child: Row(
                             children: [
-                              Text('หักภาษี ณ ที่จ่าย 1%', style: TextStyle(fontSize: 14)),
+                              const Text('หักภาษี ณ ที่จ่าย 1%', style: TextStyle(fontSize: 14)),
                               const SizedBox(width: 8),
                               Image.asset('assets/icons/green-success.png', width: 18),
                             ],
@@ -61,13 +60,11 @@ class TransportCostDetailPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    _rowItem('บริษัทขนส่งในไทย', '-'),
-                    _rowItem('หมายเลขขนส่งในประเทศไทย', '-'),
                   ],
                 ),
               ),
             ),
+
             const SizedBox(height: 16),
 
             // 🔹 Section: รายการขนส่งจีน
@@ -99,14 +96,14 @@ class TransportCostDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _rowItem(String title, String value) {
+  Widget _rowItem(String title, String value, {bool bold = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title, style: const TextStyle(fontSize: 14, color: Colors.black)),
-          Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+          Text(value, style: TextStyle(fontSize: 14, fontWeight: bold ? FontWeight.bold : FontWeight.w600)),
         ],
       ),
     );

@@ -26,6 +26,7 @@ class Company {
   String? order_quantity;
   String? have_any_customers;
   String? additional_requests;
+  String? frequent_importer;
 
   Company(
     this.id,
@@ -50,6 +51,7 @@ class Company {
     this.additional_requests,
     this.address,
     this.registered,
+    this.frequent_importer,
   );
 
   factory Company.fromJson(Map<String, dynamic> json) => _$CompanyFromJson(json);

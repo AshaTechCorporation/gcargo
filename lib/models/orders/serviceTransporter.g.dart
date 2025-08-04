@@ -6,35 +6,37 @@ part of 'serviceTransporter.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ServiceTransporter _$ServiceTransporterFromJson(
-  Map<String, dynamic> json,
-) => ServiceTransporter(
-  (json['id'] as num?)?.toInt(),
-  json['code'] as String?,
-  json['name'] as String?,
-  json['description'] as String?,
-  json['image'] as String?,
-  json['type'] as String?,
-  json['remark'] as String?,
-  json['line'] as String?,
-  json['phone'] as String?,
-  json['address'] as String?,
-  (json['images'] as List<dynamic>?)
-      ?.map((e) => ServiceTransporterById.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  (json['icons'] as List<dynamic>?)
-      ?.map((e) => ServiceTransporterById.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  (json['icon_boxs'] as List<dynamic>?)
-      ?.map((e) => ServiceTransporterById.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  json['one_six_eight_eight'] as String?,
-  json['prefix'] as String?,
-  json['taobao'] as String?,
-  json['icon'] as String?,
-  json['url'] as String?,
-  checkClose: json['checkClose'] as bool? ?? false,
-);
+ServiceTransporter _$ServiceTransporterFromJson(Map<String, dynamic> json) =>
+    ServiceTransporter(
+      (json['id'] as num?)?.toInt(),
+      json['code'] as String?,
+      json['name'] as String?,
+      json['description'] as String?,
+      json['image'] as String?,
+      json['type'] as String?,
+      json['remark'] as String?,
+      json['line'] as String?,
+      json['phone'] as String?,
+      json['address'] as String?,
+      (json['images'] as List<dynamic>?)
+          ?.map(
+              (e) => ServiceTransporterById.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['icons'] as List<dynamic>?)
+          ?.map(
+              (e) => ServiceTransporterById.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['icon_boxs'] as List<dynamic>?)
+          ?.map(
+              (e) => ServiceTransporterById.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['one_six_eight_eight'] as String?,
+      json['prefix'] as String?,
+      json['taobao'] as String?,
+      json['icon'] as String?,
+      json['url'] as String?,
+      checkClose: json['checkClose'] as bool? ?? false,
+    );
 
 Map<String, dynamic> _$ServiceTransporterToJson(ServiceTransporter instance) =>
     <String, dynamic>{

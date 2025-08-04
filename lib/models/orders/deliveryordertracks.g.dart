@@ -15,10 +15,10 @@ DeliveryOrderTracks _$DeliveryOrderTracksFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DeliveryOrderTracksToJson(
-  DeliveryOrderTracks instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'delivery_order_id': instance.delivery_order_id,
-  'track_id': instance.track_id,
-  'track_no': instance.track_no,
-};
+        DeliveryOrderTracks instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'delivery_order_id': instance.delivery_order_id,
+      'track_id': instance.track_id,
+      'track_no': instance.track_no,
+    };

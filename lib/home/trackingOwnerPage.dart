@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/home/trackingHistoryPage.dart';
 import 'package:gcargo/home/unclaimedParcelDetailPage.dart';
 
 class TrackingOwnerPage extends StatelessWidget {
@@ -38,17 +39,20 @@ class TrackingOwnerPage extends StatelessWidget {
         title: Row(
           children: [
             IconButton(icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black), onPressed: () => Navigator.pop(context)),
-            const Text('ตามหาเจ้าของ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+            const Text('ตามหาเจ้าของ', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
             const Spacer(),
-            Container(
-              height: 36,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(20),
+            GestureDetector(
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TrackingHistoryPage())),
+              child: Container(
+                height: 36,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(child: Text('ประวัติ', style: TextStyle(color: kButtonColor, fontSize: 16, fontWeight: FontWeight.w500))),
               ),
-              child: Center(child: Text('ประวัติ', style: TextStyle(color: kButtonColor, fontSize: 16, fontWeight: FontWeight.w500))),
             ),
           ],
         ),
@@ -68,7 +72,11 @@ class TrackingOwnerPage extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(hintText: 'ค้นหาเลขขนส่งฉัน', hintStyle: TextStyle(color: Colors.grey), border: InputBorder.none),
+                    decoration: InputDecoration(
+                      hintText: 'ค้นหาเลขขนส่งฉัน',
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
               ],
@@ -87,7 +95,7 @@ class TrackingOwnerPage extends StatelessWidget {
             ),
             child: const Text(
               'บริษัทจะจัดเก็บสินค้าที่ไม่มีผู้แสดงความเป็นเจ้าของไว้ไม่เกิน 30 วัน หากพ้นกำหนดโดยไม่มีการยืนยัน บริษัทขอสงวนสิทธิ์ในการดำเนินการตามดุลยพินิจ\nและไม่รับผิดชอบต่อความเสียหายที่อาจเกิดขึ้น',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: kTextRedWanningColor, fontSize: 14),
             ),
           ),
 
@@ -96,7 +104,7 @@ class TrackingOwnerPage extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(section['date'], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                Text(section['date'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextgreyColor)),
                 const SizedBox(height: 8),
                 ...List.generate(section['items'].length, (index) {
                   final item = section['items'][index];
@@ -111,15 +119,24 @@ class TrackingOwnerPage extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Image.asset('assets/icons/box-search.png', width: 24, height: 24),
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey[200], // หรือใช้สีอื่นที่ต้องการ
+                                ),
+                                child: Center(child: Image.asset('assets/icons/box-search.png', width: 24, height: 24)),
+                              ),
+
                               const SizedBox(width: 8),
-                              const Text('เลขขนส่งวัน', style: TextStyle(fontSize: 14)),
+                              const Text('เลขขนส่งวัน', style: TextStyle(fontSize: 16)),
                               const SizedBox(width: 4),
-                              Text(item['trackingNo'], style: const TextStyle(fontSize: 14, color: kButtonColor, fontWeight: FontWeight.bold)),
+                              Text(item['trackingNo'], style: const TextStyle(fontSize: 16, color: kButtonColor, fontWeight: FontWeight.bold)),
                             ],
                           ),
                           const SizedBox(height: 4),
-                          const Padding(padding: EdgeInsets.only(left: 32), child: Text('รูปภาพอ้างอิง', style: TextStyle(fontSize: 14))),
+                          const Padding(padding: EdgeInsets.only(left: 32), child: Text('รูปภาพอ้างอิง', style: TextStyle(fontSize: 16))),
                           const SizedBox(height: 8),
                           Padding(
                             padding: const EdgeInsets.only(left: 32),

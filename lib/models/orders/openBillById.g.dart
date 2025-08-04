@@ -7,16 +7,16 @@ part of 'openBillById.dart';
 // **************************************************************************
 
 OpenBillById _$OpenBillByIdFromJson(Map<String, dynamic> json) => OpenBillById(
-  (json['id'] as num?)?.toInt(),
-  (json['billing_id'] as num?)?.toInt(),
-  (json['delivery_order_thai_list_id'] as num?)?.toInt(),
-  (json['delivery_order_thai_id'] as num?)?.toInt(),
-  json['amount'] as String?,
-  json['status'] as String?,
-  (json['delivery_order_list'] as List<dynamic>?)
-      ?.map((e) => DeliveryOrderLists.fromJson(e as Map<String, dynamic>))
-      .toList(),
-);
+      (json['id'] as num?)?.toInt(),
+      (json['billing_id'] as num?)?.toInt(),
+      (json['delivery_order_thai_list_id'] as num?)?.toInt(),
+      (json['delivery_order_thai_id'] as num?)?.toInt(),
+      json['amount'] as String?,
+      json['status'] as String?,
+      (json['delivery_order_list'] as List<dynamic>?)
+          ?.map((e) => DeliveryOrderLists.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$OpenBillByIdToJson(OpenBillById instance) =>
     <String, dynamic>{

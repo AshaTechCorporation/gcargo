@@ -3,36 +3,22 @@ import 'package:gcargo/bill/boxShippingDetailPage.dart';
 
 class ChinaShippingDetailPage extends StatelessWidget {
   ChinaShippingDetailPage({super.key, required this.transportNo});
-  String transportNo;
+  final String transportNo;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+        title: Text('เลขขนส่งจีน $transportNo', style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600)),
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // 🔹 Header with Back and Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: const BoxDecoration(color: Color(0xFFF3F3F3), shape: BoxShape.circle),
-                      child: const Icon(Icons.arrow_back_ios_new, size: 18),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text('เลขขนส่งจีน ${transportNo}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
-                ],
-              ),
-            ),
-
-            // 🔹 Body
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -51,29 +37,41 @@ class ChinaShippingDetailPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
+
                     _buildCard(
                       icon: 'assets/icons/book.png',
                       title: 'รายละเอียดสินค้า',
                       content: Column(
+                        children: const [_DetailRow(label: 'ประเภทสินค้า', value: 'ทั่วไป'), _DetailRow(label: 'หมายเหตุของลูกค้า', value: '-')],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    _buildCard(
+                      icon: 'assets/icons/box.png',
+                      title: 'ค่าใช้จ่าย',
+                      content: Column(
                         children: const [
-                          _DetailRow(label: 'ประเภทสินค้า', value: 'ทั่วไป'),
-                          _DetailRow(label: 'ล็อต', value: 'LOT2641-1'),
-                          _DetailRow(label: 'หมายเหตุของลูกค้า', value: '-'),
+                          _DetailRow(label: 'ค่าขนส่งจีนไทย', value: '660.00฿'),
+                          _DetailRow(label: 'ค่าบริการ QC', value: '0฿'),
+                          _DetailRow(label: 'ค่าตัดไม้', value: '0฿'),
+                          _DetailRow(label: 'รวมราคา', value: '660.00฿'),
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
+
                     _buildCard(
                       icon: 'assets/icons/box.png',
                       title: 'พัสดุทั้งหมด',
                       suffix: const Text('5 ลัง', style: TextStyle(fontWeight: FontWeight.w600)),
                       content: Column(
                         children: [
-                          _buildBoxItem(context, 'เลขขนส่งจีน 00045-1'),
-                          _buildBoxItem(context, 'เลขขนส่งจีน 00045-2'),
-                          _buildBoxItem(context, 'เลขขนส่งจีน 00045-3'),
-                          _buildBoxItem(context, 'เลขขนส่งจีน 00045-4'),
-                          _buildBoxItem(context, 'เลขขนส่งจีน 00045-5'),
+                          _buildBoxItem(context, '00045-1'),
+                          _buildBoxItem(context, '00045-2'),
+                          _buildBoxItem(context, '00045-3'),
+                          _buildBoxItem(context, '00045-4'),
+                          _buildBoxItem(context, '00045-5'),
                         ],
                       ),
                     ),
@@ -119,7 +117,7 @@ class ChinaShippingDetailPage extends StatelessWidget {
   Widget _buildBoxItem(BuildContext context, String label) {
     return InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => BoxShippingDetailPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => BoxShippingDetailPage(transportNo: label)));
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),

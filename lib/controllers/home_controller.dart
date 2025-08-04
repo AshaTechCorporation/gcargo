@@ -1,8 +1,16 @@
 import 'dart:developer';
 import 'package:flutter/scheduler.dart';
 import 'package:gcargo/models/imgbanner.dart';
+import 'package:gcargo/models/orders/serviceTransporterById.dart';
+import 'package:gcargo/models/payment.dart';
+import 'package:gcargo/models/rateExchange.dart';
+import 'package:gcargo/models/rateShip.dart';
+import 'package:gcargo/models/shipping.dart';
+import 'package:gcargo/models/transferFee.dart';
+import 'package:gcargo/models/user.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends GetxController {
   final HomeService _homeService = HomeService();
@@ -14,6 +22,15 @@ class HomeController extends GetxController {
   var hasError = false.obs;
   final RxMap<String, dynamic> exchangeRate = <String, dynamic>{}.obs;
   final RxList<ImgBanner> imgBanners = <ImgBanner>[].obs;
+  List<Shipping> ship_address = [];
+  Shipping? select_ship_address;
+  var extraServices = <ServiceTransporterById>[].obs;
+  var rateShip = <RateShip>[].obs;
+  var rateExchange = Rxn<RateExchange>();
+  var transferFee = Rxn<TransferFee>();
+  var alipayPayment = <Payment>[].obs;
+  var currentUser = Rxn<User>();
+  var alipayPaymentById = Rxn<Payment>();
 
   @override
   void onInit() {
@@ -24,6 +41,10 @@ class HomeController extends GetxController {
       searchItemsFromAPI('Shirt');
       getExchangeRateFromAPI();
       getImgBannerFromAPI();
+      getUserDataAndShippingAddresses();
+      getExtraServicesFromAPI();
+      getServiceRateFromAPI();
+      getServiceFeeFromAPI();
     });
   }
 
@@ -125,6 +146,48 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> getServiceRateFromAPI() async {
+    try {
+      final rateData = await HomeService.getServiceRate();
+      if (rateData != null) {
+        rateExchange.value = rateData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลเรท');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
+  Future<void> getServiceFeeFromAPI() async {
+    try {
+      final feeData = await HomeService.getServiceFee();
+      if (feeData != null) {
+        transferFee.value = feeData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลเรท');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
+  Future<void> getAlipayPaymentFromAPI() async {
+    try {
+      final paymentData = await HomeService.getAlipayPayment();
+      if (paymentData != null) {
+        alipayPayment.value = paymentData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูล');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
   Future<void> getImgBannerFromAPI() async {
     try {
       final imgData = await HomeService.getImgBanner();
@@ -136,6 +199,85 @@ class HomeController extends GetxController {
     } catch (e) {
       log('❌ Error in searchItems: $e');
       _setErrorRate('$e');
+    }
+  }
+
+  // Method to fetch user data and populate shipping addresses
+  Future<void> getUserDataAndShippingAddresses() async {
+    try {
+      // เช็ค userID ก่อนเรียก API
+      final prefs = await SharedPreferences.getInstance();
+      final userID = prefs.getInt('userID');
+
+      if (userID != null) {
+        final userData = await HomeService.getUserById();
+
+        // เก็บข้อมูล user
+        currentUser.value = userData;
+
+        // จัดการ shipping addresses
+        if (userData.ship_address != null && userData.ship_address!.isNotEmpty) {
+          ship_address = userData.ship_address!;
+          // Set first address as default selection
+          select_ship_address = ship_address.first;
+        } else {
+          ship_address = [];
+          select_ship_address = null;
+        }
+
+        // อัปเดต UI
+        update();
+      } else {
+        log('⚠️ No userID found, skipping getUserById API call');
+        currentUser.value = null;
+        ship_address = [];
+        select_ship_address = null;
+      }
+    } catch (e) {
+      log('❌ Error fetching user data: $e');
+      currentUser.value = null;
+      ship_address = [];
+      select_ship_address = null;
+    }
+  }
+
+  Future<void> getAlipayPaymentById(int id) async {
+    try {
+      final paymentData = await HomeService.getAlipayPaymentById(id: id);
+      if (paymentData != null) {
+        alipayPaymentById.value = paymentData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูล');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
+  // Method to update selected shipping address
+  void updateSelectedShippingAddress(Shipping address) {
+    select_ship_address = address;
+  }
+
+  // Method to fetch extra services
+  Future<void> getExtraServicesFromAPI() async {
+    try {
+      final services = await HomeService.getExtraService();
+      extraServices.value = services;
+    } catch (e) {
+      log('❌ Error fetching extra services: $e');
+      extraServices.clear();
+    }
+  }
+
+  Future<void> getRateShipFromAPI() async {
+    try {
+      final rates = await HomeService.getRateShip();
+      rateShip.value = rates;
+    } catch (e) {
+      log('❌ Error fetching rate ship: $e');
+      rateShip.clear();
     }
   }
 }

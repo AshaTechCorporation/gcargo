@@ -8,6 +8,7 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/exchangeStatusPage.dart';
 import 'package:gcargo/parcel/orderStatusPage.dart';
 import 'package:gcargo/parcel/parcelPage.dart';
+import 'package:gcargo/parcel/parcelStatusPage.dart';
 import 'package:gcargo/parcel/problemPackagePage.dart';
 
 class FirstPage extends StatefulWidget {
@@ -36,6 +37,9 @@ class _FirstPageState extends State<FirstPage> {
   void onItemSelect(int index) {
     setState(() {
       _uiSelectedIndex = index;
+      // ปิด panels เมื่อเปลี่ยนแท็บ
+      _showStatusPanel = false;
+      _showBillPanel = false;
     });
 
     if (index == 1) {
@@ -73,29 +77,33 @@ class _FirstPageState extends State<FirstPage> {
     });
   }
 
-  void _showStatusBottomSheet() {
-    // ไม่ใช้แล้ว เพราะเราแสดงผ่าน Stack
-  }
-
-  Widget _statusActionItem({required String icon, required String label, required Color backgroundColor, required VoidCallback onTap}) {
+  Widget _statusActionItem({
+    required String icon,
+    required String label,
+    required Color backgroundColor,
+    required Color iconBackground,
+    required VoidCallback onTap,
+  }) {
     return Expanded(
       child: GestureDetector(
-        onTap: () {
-          onTap();
-          _hideStatusPanel();
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
-              child: Center(child: Image.asset(icon, width: 24, height: 24)),
-            ),
-            const SizedBox(height: 8),
-            Text(label, style: const TextStyle(fontSize: 12, color: Colors.black)),
-          ],
+        onTap: onTap,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: iconBackground),
+                child: Center(child: Image.asset(icon, width: 20, height: 20)),
+              ),
+              const SizedBox(height: 8),
+              Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+            ],
+          ),
         ),
       ),
     );
@@ -177,7 +185,7 @@ class _FirstPageState extends State<FirstPage> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: 70, // เหนือ BottomNavBar
+              bottom: 64, // เหนือ BottomNavBar
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
@@ -192,33 +200,50 @@ class _FirstPageState extends State<FirstPage> {
                     children: [
                       _statusActionItem(
                         icon: 'assets/icons/task-square.png',
-                        label: 'เตรียมสั่งซื้อ',
+                        label: 'ออเดอร์',
                         backgroundColor: const Color(0xFFE6F2FF),
+                        iconBackground: const Color(0xFFD0E7FF),
                         onTap: () {
+                          setState(() {
+                            _showStatusPanel = false;
+                          });
                           Navigator.push(context, MaterialPageRoute(builder: (context) => OrderStatusPage()));
                         },
                       ),
                       _statusActionItem(
                         icon: 'assets/icons/boxGreen.png',
-                        label: 'ดำเนินการแล้ว',
+                        label: 'พัสดุ',
                         backgroundColor: const Color(0xFFE9F7EF),
+                        iconBackground: const Color(0xFFC8E6C9),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelPage()));
+                          setState(() {
+                            _showStatusPanel = false;
+                          });
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
                         },
                       ),
                       _statusActionItem(
                         icon: 'assets/icons/bitcoin-convert.png',
-                        label: 'รอชำระเงิน',
+                        label: 'แลกเงิน',
                         backgroundColor: const Color(0xFFFFF9E6),
+                        iconBackground: const Color(0xFFFFF3CD),
                         onTap: () {
+                          setState(() {
+                            _showStatusPanel = false;
+                          });
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeStatusPage()));
                         },
                       ),
                       _statusActionItem(
                         icon: 'assets/icons/boxRed.png',
-                        label: 'ยกเลิก',
+                        label: 'แจ้งเคลม',
                         backgroundColor: const Color(0xFFFFEBEE),
+                        iconBackground: const Color(0xFFFFCDD2),
                         onTap: () {
+                          setState(() {
+                            _showStatusPanel = false;
+                          });
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const ProblemPackagePage()));
                         },
                       ),
@@ -227,6 +252,7 @@ class _FirstPageState extends State<FirstPage> {
                 ),
               ),
             ),
+
           if (_showBillPanel)
             Positioned(
               left: 0,
@@ -249,6 +275,9 @@ class _FirstPageState extends State<FirstPage> {
                         label: 'ประวัติค่าสินค้า',
                         isSelected: false,
                         onTap: () {
+                          setState(() {
+                            _showBillPanel = false;
+                          });
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistoryPage()));
                         },
                       ),
@@ -257,6 +286,9 @@ class _FirstPageState extends State<FirstPage> {
                         label: 'ประวัติค่าขนส่ง',
                         isSelected: true,
                         onTap: () {
+                          setState(() {
+                            _showBillPanel = false;
+                          });
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const TransportCostPage()));
                         },
                       ),

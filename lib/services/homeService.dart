@@ -2,6 +2,13 @@ import 'dart:io';
 
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/models/imgbanner.dart';
+import 'package:gcargo/models/orders/serviceTransporterById.dart';
+import 'package:gcargo/models/payment.dart';
+import 'package:gcargo/models/products.dart';
+import 'package:gcargo/models/rateExchange.dart';
+import 'package:gcargo/models/rateShip.dart';
+import 'package:gcargo/models/transferFee.dart';
+import 'package:gcargo/models/user.dart';
 import 'package:gcargo/utils/ApiExeption.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -163,7 +170,7 @@ class HomeService {
   static Future getExchageRate() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/get_exchage_rate_setting');
+    final url = Uri.https(publicUrl, '/public/api/get_exchage_rate_setting');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -175,11 +182,41 @@ class HomeService {
     }
   }
 
+  //ดึงข้อมูล เรท เงินหยวน
+  static Future<RateExchange> getServiceRate() async {
+    final url = Uri.https(publicUrl, '/public/api/exchange-rate');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return RateExchange.fromJson(data);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //
+  static Future<TransferFee> getServiceFee() async {
+    final url = Uri.https(publicUrl, '/public/api/get_fee_setting');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return TransferFee.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
   // get รูป banner
   static Future<List<ImgBanner>> getImgBanner() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/api/banner_page');
+    final url = Uri.https(publicUrl, '/public/api/banner_page');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.post(
       url,
@@ -200,6 +237,201 @@ class HomeService {
       final data = convert.jsonDecode(response.body);
       final list = data['data']['data'] as List;
       return list.map((e) => ImgBanner.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //
+  static Future<User> getUserById() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    var headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    final url = Uri.https(publicUrl, '/public/api/member/$userID');
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return User.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //ดึงข้อมูลบริการเสริม
+  static Future<List<ServiceTransporterById>> getExtraService() async {
+    final url = Uri.https(publicUrl, '/public/api/get_add_on_services');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data'] as List;
+      return list.map((e) => ServiceTransporterById.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //สร้างออเดอร์
+  static Future createOrder({
+    String? date,
+    double? total_price,
+    String? shipping_type,
+    String? payment_term,
+    String? note,
+    String? importer_code,
+    int? member_address_id,
+    List<Products>? products,
+  }) async {
+    final url = Uri.https(publicUrl, '/public/api/orders');
+    var headers = {'Content-Type': 'application/json'};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        'date': date,
+        'total_price': total_price,
+        'member_id': userID.toString(),
+        'member_address_id': member_address_id.toString(),
+        'shipping_type': shipping_type,
+        'payment_term': payment_term,
+        'note': note,
+        'track_ecommerce_no': '',
+        "importer_code": importer_code,
+        "bill_vat": "N",
+        'products': products,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data['data'];
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  ///ข้อมูลอัตราค่าขนส่ง
+  static Future<List<RateShip>> getRateShip({int? page = 0, int? length = 10, String? search}) async {
+    final url = Uri.https(publicUrl, '/public/api/rate_page');
+    var headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "draw": 1,
+        "order": [
+          {"column": 0, "dir": "asc"},
+        ],
+        "start": page,
+        "length": length,
+        "search": {"value": search, "regex": false},
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data']['data'] as List;
+      return list.map((e) => RateShip.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //บริการเติม อะลีเปย์
+  static Future productPaymentAlipayService({
+    required String transaction,
+    required double amount,
+    required double fee,
+    required String phone,
+    required String image_qr_code,
+    required String image,
+    required String image_url,
+    required String image_slip,
+    required String image_slip_url,
+  }) async {
+    final url = Uri.https(publicUrl, '/public/api/alipay_payment');
+    var headers = {'Content-Type': 'application/json'};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "member_id": userID,
+        "transaction": transaction,
+        "amount": amount,
+        "fee": fee,
+        "phone": phone,
+        "transfer_at": DateTime.now().toString(),
+        "image_qr_code": image_qr_code,
+        "image": image,
+        "image_url": image_url,
+        "image_slip": image_slip,
+        "image_slip_url": image_slip_url,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  // get ข้อมูลการเติมเงิน
+  static Future<List<Payment>> getAlipayPayment() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/alipay_payment_page');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "draw": 1,
+        "member_id": userID,
+        "order": [
+          {"column": 0, "dir": "asc"},
+        ],
+        "start": 0,
+        "length": 10,
+        "search": {"value": "", "regex": false},
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data']['data'] as List;
+      return list.map((e) => Payment.fromJson(e)).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //get ข้อมูลการเติมเงินตามไอดีด
+  static Future<Payment> getAlipayPaymentById({required int id}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/alipay_payment/$id');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return Payment.fromJson(data['data']);
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);

@@ -2,12 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
 import 'package:gcargo/login/loginPage.dart';
+import 'package:gcargo/services/cart_service.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Initialize Cart Service
+  await CartService.init();
+
   // ✅ Register HomeController ใน GetX dependency injection
   Get.put(HomeController());
+
   runApp(const MyApp());
 }
 
@@ -19,6 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'G-Cargo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         appBarTheme: AppBarTheme(

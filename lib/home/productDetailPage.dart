@@ -8,11 +8,14 @@ import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
 import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
+import 'package:gcargo/services/cart_service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetailPage extends StatefulWidget {
-  ProductDetailPage({super.key, required this.num_iid});
+  ProductDetailPage({super.key, required this.num_iid, required this.name});
   String num_iid;
+  String name;
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -60,8 +63,33 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     super.dispose();
   }
 
+  // เช็ค userID ว่าเข้าสู่ระบบแล้วหรือไม่
+  Future<bool> _checkUserLogin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+
+    if (userID == null) {
+      // แสดงแจ้งเตือนให้เข้าสู่ระบบ
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('ยังไม่ได้เข้าสู่ระบบ'),
+              content: const Text('กรุณาเข้าสู่ระบบก่อนสั่งซื้อสินค้า'),
+              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))],
+            );
+          },
+        );
+      }
+      return false;
+    }
+
+    return true;
+  }
+
   void _startAutoSlide() {
-    _autoSlideTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _autoSlideTimer = Timer.periodic(Duration(seconds: 3), (timer) {
       if (_pageController.hasClients) {
         final allImages = productController.allImages;
         final imagesToShow = allImages.isNotEmpty ? allImages : images;
@@ -91,7 +119,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         return Container(
           height: 200,
           decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(12)),
-          child: const Center(child: CircularProgressIndicator()),
+          child: Center(child: CircularProgressIndicator()),
         );
       }
 
@@ -361,8 +389,30 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 borderRadius: BorderRadius.circular(6), // ✅ ขอบมนเล็กน้อย
               ),
             ),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const PurchaseBillPage()));
+            onPressed: () async {
+              // เช็ค userID ก่อนสั่งซื้อ
+              final isLoggedIn = await _checkUserLogin();
+              if (!isLoggedIn) return;
+
+              // Prepare product data to send to PurchaseBillPage
+              final productData = {
+                'num_iid': productController.numIidValue,
+                'title': productController.title,
+                'price': productController.price,
+                'orginal_price': productController.originalPrice,
+                'nick': productController.nick,
+                'detail_url': productController.detailUrl,
+                'pic_url': productController.picUrl,
+                'brand': productController.brand,
+                'quantity': quantity,
+                'selectedSize': selectedSize,
+                'selectedColor': selectedColor,
+                'name': widget.name,
+              };
+
+              if (mounted) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData])));
+              }
             },
             child: Text('สั่งซื้อสินค้า', style: TextStyle(fontSize: 16, color: Colors.white)),
           ),
@@ -378,8 +428,51 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 borderRadius: BorderRadius.circular(6), // ✅ ขอบมนเล็กน้อย
               ),
             ),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartPage()));
+            onPressed: () async {
+              // เช็ค userID ก่อนเพิ่มลงตะกร้า
+              final isLoggedIn = await _checkUserLogin();
+              if (!isLoggedIn) return;
+
+              // Store context before async operations
+              final currentContext = context;
+
+              // Create product data
+              final productData = {
+                'num_iid': productController.numIidValue,
+                'title': productController.title,
+                'price': productController.price,
+                'orginal_price': productController.originalPrice,
+                'nick': productController.nick,
+                'detail_url': productController.detailUrl,
+                'pic_url': productController.picUrl,
+                'brand': productController.brand,
+                'quantity': quantity,
+                'selectedSize': selectedSize,
+                'selectedColor': selectedColor,
+                'name': widget.name,
+              };
+
+              try {
+                // Add to cart
+                await CartService.addToCart(productData);
+
+                // Show success message
+                if (mounted) {
+                  ScaffoldMessenger.of(currentContext).showSnackBar(
+                    const SnackBar(content: Text('เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)),
+                  );
+
+                  // Navigate to cart page
+                  Navigator.push(currentContext, MaterialPageRoute(builder: (_) => const CartPage()));
+                }
+              } catch (e) {
+                // Show error message
+                if (mounted) {
+                  ScaffoldMessenger.of(
+                    currentContext,
+                  ).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e'), backgroundColor: Colors.red, duration: const Duration(seconds: 2)));
+                }
+              }
             },
             child: Text('เพิ่มลงตะกร้า', style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
@@ -399,6 +492,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
           title: Row(
             children: [
               Expanded(

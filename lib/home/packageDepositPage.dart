@@ -192,13 +192,14 @@ class _PackageDialogState extends State<_PackageDialog> {
   Widget build(BuildContext context) {
     return Dialog.fullscreen(
       child: Scaffold(
+        resizeToAvoidBottomInset: false, // ป้องกัน overflow เมื่อ keyboard ขึ้น
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           elevation: 0,
           actions: [IconButton(icon: const Icon(Icons.close, color: Colors.black), onPressed: () => Navigator.pop(context))],
         ),
-        body: Padding(
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,21 +277,23 @@ class _PackageDialogState extends State<_PackageDialog> {
                 decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'กรุณากรอกหมายเหตุ'),
               ),
 
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, {
-                      'tracking': trackingCtrl.text,
-                      'service': service,
-                      'qty': qtyCtrl.text,
-                      'type': selectedType,
-                      'note': noteCtrl.text,
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF002A5B), padding: const EdgeInsets.symmetric(vertical: 16)),
-                  child: const Text('บันทึก', style: TextStyle(color: Colors.white)),
+              const SizedBox(height: 32), // เปลี่ยนจาก Spacer เป็น SizedBox
+              SafeArea(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, {
+                        'tracking': trackingCtrl.text,
+                        'service': service,
+                        'qty': qtyCtrl.text,
+                        'type': selectedType,
+                        'note': noteCtrl.text,
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF002A5B), padding: const EdgeInsets.symmetric(vertical: 16)),
+                    child: const Text('บันทึก', style: TextStyle(color: Colors.white)),
+                  ),
                 ),
               ),
             ],

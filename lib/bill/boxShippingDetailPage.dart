@@ -1,66 +1,55 @@
 import 'package:flutter/material.dart';
 
 class BoxShippingDetailPage extends StatelessWidget {
-  const BoxShippingDetailPage({super.key});
+  BoxShippingDetailPage({super.key, required this.transportNo});
+  final String transportNo;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+        title: Text('เลขขนส่งจีน ${transportNo}', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600)),
+      ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // 🔹 Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: const BoxDecoration(color: Color(0xFFF3F3F3), shape: BoxShape.circle),
-                      child: const Center(child: Icon(Icons.arrow_back_ios_new, size: 18)),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(child: Text('เลขขนส่งจีน 00045', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
-                ],
-              ),
-            ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
 
-            // 🔹 Body
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('รายละเอียดรายการ', style: TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 12),
-                    _rowItem('เลขพัสดุอ้างอิง', '167304'),
-                    _rowItem('ประเภทสินค้า', 'ทั่วไป'),
-                    _rowItem('ล็อต', 'LOT2641-1'),
-                    const SizedBox(height: 20),
+              // 🔹 รายละเอียดรายการ
+              const Text('รายละเอียดรายการ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              const SizedBox(height: 12),
+              _rowItem('เลขพัสดุอ้างอิง', '167304'),
+              _rowItem('ประเภทสินค้า', 'ทั่วไป'),
+              _rowItem('ล็อต', 'LOT0001'),
 
-                    const Text('ขนาดพัสดุ', style: TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 12),
-                    _rowItem('น้ำหนัก', '52.00 kg'),
-                    _rowItem('กว้าง×ยาว×สูง', '110 x 110 x 55 cm'),
-                    _rowItem('ปริมาตร', '0.6655 cbm'),
-                    _rowItem('จำนวน', '1'),
-                    const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                    const Text('รูปภาพพัสดุจริง', style: TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 12),
-                    Row(children: [_buildImage('assets/images/image14.png'), const SizedBox(width: 12), _buildImage('assets/images/image11.png')]),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ),
-          ],
+              // 🔹 ขนาดพัสดุ
+              const Text('ขนาดพัสดุ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              const SizedBox(height: 12),
+              _rowItem('น้ำหนัก', '52.00 kg'),
+              _rowItem('กว้าง×ยาว×สูง', '110 x 110 x 55 cm'),
+              _rowItem('ปริมาตร', '0.6655 cbm'),
+              _rowItem('จำนวน', '1'),
+
+              const SizedBox(height: 20),
+
+              // 🔹 รูปภาพ
+              const Text('รูปภาพพัสดุจริง', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              const SizedBox(height: 12),
+              Row(children: [_buildImage('assets/images/image14.png'), const SizedBox(width: 12), _buildImage('assets/images/image11.png')]),
+
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

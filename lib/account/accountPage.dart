@@ -12,10 +12,56 @@ import 'package:gcargo/account/securityPage.dart';
 import 'package:gcargo/account/userManualPage.dart';
 import 'package:gcargo/account/widgets/AccountHeaderWidget.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/home/firstPage.dart';
+import 'package:gcargo/login/loginPage.dart';
+import 'package:gcargo/login/welcomePage.dart';
 import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
+
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await fristLoad();
+    });
+  }
+
+  Future<void> fristLoad() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userToken = prefs.getString('token');
+
+      setState(() {
+        token = userToken;
+      });
+    } catch (e) {
+      print('Error in fristLoad: $e');
+    }
+  }
+
+  Future<void> clearToken() async {
+    final _prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = _prefs;
+    prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    // เคลียร์ข้อมูลผู้ใช้ใน HomeController
+    final homeController = Get.find<HomeController>();
+    homeController.currentUser.value = null;
+    homeController.update(); // อัปเดต UI
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +78,18 @@ class AccountPage extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // Header Profile (ชื่อผู้ใช้ + ยอด)
-                  AccountHeaderWidget(onCreditTap: () {}, onPointTap: () {}, onParcelTap: () {}, onWalletTap: () {}, onTransferTap: () {}),
+                  GetBuilder<HomeController>(
+                    builder:
+                        (homeController) => AccountHeaderWidget(
+                          onCreditTap: () {},
+                          onPointTap: () {},
+                          onParcelTap: () {},
+                          onWalletTap: () {},
+                          onTransferTap: () {},
+                          user: homeController.currentUser.value,
+                          isLoading: homeController.isLoading.value,
+                        ),
+                  ),
                   const SizedBox(height: 24),
                   _buildSectionTitle('โปรโมชั่น'),
                   _buildMenuItem(
@@ -57,8 +114,20 @@ class AccountPage extends StatelessWidget {
                   _buildSectionTitle('ทั่วไป'),
                   _buildMenuItem(
                     'โปรไฟล์',
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+                    onTap: () async {
+                      final homeController = Get.find<HomeController>();
+                      if (homeController.currentUser.value != null) {
+                        final _edit = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)),
+                        );
+                        if (_edit == true) {}
+                      } else {
+                        // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่'), backgroundColor: Colors.orange));
+                      }
                     },
                   ),
                   _buildMenuItem(
@@ -83,12 +152,30 @@ class AccountPage extends StatelessWidget {
                   _buildMenuItem(
                     'เปลี่ยนภาษา',
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
+                      Get.snackbar(
+                        'แจ้งเตือน',
+                        'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                        backgroundColor: Colors.yellowAccent,
+                        colorText: Colors.black,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
                     },
                   ),
 
                   _buildSectionTitle('ความช่วยเหลือ'),
-                  _buildMenuItem('ติดต่อเจ้าหน้าที่', onTap: () {}),
+                  _buildMenuItem(
+                    'ติดต่อเจ้าหน้าที่',
+                    onTap: () {
+                      Get.snackbar(
+                        'แจ้งเตือน',
+                        'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                        backgroundColor: Colors.yellowAccent,
+                        colorText: Colors.black,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
+                  ),
                   _buildMenuItem(
                     'คู่มือการใช้งาน',
                     onTap: () {
@@ -121,32 +208,41 @@ class AccountPage extends StatelessWidget {
                       ),
                       child: TextButton(
                         onPressed: () async {
-                          final confirm = await showDialog(
-                            context: context,
-                            builder:
-                                (context) => LogoutConfirmationDialog(
-                                  onConfirm: () {
-                                    // TODO: ลบ token ออกจาก SharedPreferences
-                                    Navigator.pop(context, true);
-                                  },
-                                  onCancel: () => Navigator.pop(context, false),
-                                ),
-                          );
-                          if (confirm == true) {
-                            print(true);
+                          if (token == null) {
+                            // ไปหน้า Login
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage()));
+                          } else {
+                            final confirm = await showDialog(
+                              context: context,
+                              builder:
+                                  (context) => LogoutConfirmationDialog(
+                                    onConfirm: () {
+                                      // TODO: ลบ token ออกจาก SharedPreferences
+                                      Navigator.pop(context, true);
+                                    },
+                                    onCancel: () => Navigator.pop(context, false),
+                                  ),
+                            );
+                            if (confirm == true) {
+                              await clearToken();
+                              if (mounted) {
+                                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                              }
+                            }
                           }
                         },
                         style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(vertical: 16),
                           foregroundColor: const Color(0xFF4A4A4A),
-                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                         ),
-                        child: const Text('ออกจากระบบ'),
+                        child: Text(token == null ? 'เข้าสู่ระบบ' : 'ออกจากระบบ'),
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40),
                 ],
               ),
             ),
@@ -158,7 +254,7 @@ class AccountPage extends StatelessWidget {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
     );
   }

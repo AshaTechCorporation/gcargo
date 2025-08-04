@@ -7,56 +7,55 @@ part of 'importorders.dart';
 // **************************************************************************
 
 Importorders _$ImportordersFromJson(Map<String, dynamic> json) => Importorders(
-  (json['id'] as num?)?.toInt(),
-  json['code'] as String?,
-  (json['member_id'] as num?)?.toInt(),
-  (json['delivery_order_id'] as num?)?.toInt(),
-  (json['import_po_id'] as num?)?.toInt(),
-  (json['register_importer_id'] as num?)?.toInt(),
-  (json['store_id'] as num?)?.toInt(),
-  json['note'] as String?,
-  json['status'] as String?,
-  json['invoice_file'] as String?,
-  json['packinglist_file'] as String?,
-  json['license_file'] as String?,
-  json['total_expenses'] as String?,
-  json['file'] as String?,
-  json['draft_file'] as String?,
-  json['member'] == null
-      ? null
-      : User.fromJson(json['member'] as Map<String, dynamic>),
-  (json['import_order_lists'] as List<dynamic>?)
-      ?.map((e) => ImportOrderLists.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  json['created_at'] == null
-      ? null
-      : DateTime.parse(json['created_at'] as String),
-  json['updated_at'] == null
-      ? null
-      : DateTime.parse(json['updated_at'] as String),
-  json['delivery_order'] == null
-      ? null
-      : DeliveryOrder.fromJson(json['delivery_order'] as Map<String, dynamic>),
-  (json['delivery_order_tracks'] as List<dynamic>?)
-      ?.map((e) => DeliveryOrderTracks.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  (json['deliverty_order_lists'] as List<dynamic>?)
-      ?.map((e) => DeliveryOrderLists.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  (json['import_product_order_list_fees'] as List<dynamic>?)
-      ?.map(
-        (e) => ImportProductOrderlistFees.fromJson(e as Map<String, dynamic>),
-      )
-      .toList(),
-  json['store'] == null
-      ? null
-      : Store.fromJson(json['store'] as Map<String, dynamic>),
-  json['register_importer'] == null
-      ? null
-      : RegisterImporter.fromJson(
-        json['register_importer'] as Map<String, dynamic>,
-      ),
-);
+      (json['id'] as num?)?.toInt(),
+      json['code'] as String?,
+      (json['member_id'] as num?)?.toInt(),
+      (json['delivery_order_id'] as num?)?.toInt(),
+      (json['import_po_id'] as num?)?.toInt(),
+      (json['register_importer_id'] as num?)?.toInt(),
+      (json['store_id'] as num?)?.toInt(),
+      json['note'] as String?,
+      json['status'] as String?,
+      json['invoice_file'] as String?,
+      json['packinglist_file'] as String?,
+      json['license_file'] as String?,
+      json['total_expenses'] as String?,
+      json['file'] as String?,
+      json['draft_file'] as String?,
+      json['member'] == null
+          ? null
+          : User.fromJson(json['member'] as Map<String, dynamic>),
+      (json['import_order_lists'] as List<dynamic>?)
+          ?.map((e) => ImportOrderLists.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
+      json['delivery_order'] == null
+          ? null
+          : DeliveryOrder.fromJson(
+              json['delivery_order'] as Map<String, dynamic>),
+      (json['delivery_order_tracks'] as List<dynamic>?)
+          ?.map((e) => DeliveryOrderTracks.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['deliverty_order_lists'] as List<dynamic>?)
+          ?.map((e) => DeliveryOrderLists.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['import_product_order_list_fees'] as List<dynamic>?)
+          ?.map((e) =>
+              ImportProductOrderlistFees.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['store'] == null
+          ? null
+          : Store.fromJson(json['store'] as Map<String, dynamic>),
+      json['register_importer'] == null
+          ? null
+          : RegisterImporter.fromJson(
+              json['register_importer'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$ImportordersToJson(Importorders instance) =>
     <String, dynamic>{

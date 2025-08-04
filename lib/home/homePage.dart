@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
 import 'package:gcargo/home/exchangePage.dart';
+import 'package:gcargo/home/searchPage.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 import 'package:gcargo/home/widgets/ServiceImageCard.dart';
 import 'package:get/get.dart';
@@ -33,11 +34,13 @@ class _HomePageState extends State<HomePage> {
 
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  late Timer _timer;
+  //late Timer _timer;
 
   @override
   void initState() {
     super.initState();
+    // คอมเม้น Timer สำหรับ auto-slide เพราะใช้แบนเนอร์เดียว
+    /*
     if (!mounted) return;
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
@@ -45,14 +48,68 @@ class _HomePageState extends State<HomePage> {
         _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
       }
     });
+    */
   }
 
   @override
   void dispose() {
     searchController.dispose();
-    _timer.cancel();
+    //_timer.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  // Method to handle search
+  Future<void> _handleSearch(String query) async {
+    if (query.trim().isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณากรอกคำค้นหา')));
+      }
+      return;
+    }
+
+    // Show loading indicator
+    if (mounted) {
+      showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+    }
+
+    try {
+      // Call API to search
+      await homeController.searchItemsFromAPI(query);
+
+      // Close loading dialog
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Check if we have results
+      if (homeController.hasError.value) {
+        // Show error message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(homeController.errorMessage.value)));
+        }
+      } else if (homeController.searchItems.isEmpty) {
+        // Show no results message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่พบสินค้าที่ค้นหา')));
+        }
+      } else {
+        // Navigate to SearchPage with results
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SearchPage(initialSearchResults: homeController.searchItems, initialSearchQuery: query)),
+          );
+        }
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (mounted) {
+        Navigator.of(context).pop();
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e')));
+      }
+    }
   }
 
   @override
@@ -89,17 +146,27 @@ class _HomePageState extends State<HomePage> {
                             border: InputBorder.none,
                           ),
                           style: TextStyle(color: Colors.black),
+                          onFieldSubmitted: (value) {
+                            _handleSearch(value);
+                          },
                         ),
                       ),
                       GestureDetector(
                         onTap: () async {
-                          showImagePickerBottomSheet(
-                            context: context,
-                            onImagePicked: (XFile image) {
-                              print('📸 ได้รูป: ${image.path}');
-                              // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
-                            },
+                          Get.snackbar(
+                            'แจ้งเตือน',
+                            'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                            backgroundColor: Colors.yellowAccent,
+                            colorText: Colors.black,
+                            snackPosition: SnackPosition.BOTTOM,
                           );
+                          // showImagePickerBottomSheet(
+                          //   context: context,
+                          //   onImagePicked: (XFile image) {
+                          //     print('📸 ได้รูป: ${image.path}');
+                          //     // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
+                          //   },
+                          // );
                         },
                         child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
                       ),
@@ -112,6 +179,13 @@ class _HomePageState extends State<HomePage> {
               GestureDetector(
                 onTap: () {
                   ////go action
+                  Get.snackbar(
+                    'แจ้งเตือน',
+                    'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                    backgroundColor: Colors.yellowAccent,
+                    colorText: Colors.black,
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
                 },
                 child: Image.asset('assets/icons/bag.png', width: 20, height: 20, fit: BoxFit.fill),
               ),
@@ -132,6 +206,8 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔹 Image Slider
+              // คอมเม้นส่วน API Banner ไว้ก่อน
+              /*
               Obx(() {
                 if (homeController.isLoading.value) {
                   return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
@@ -184,9 +260,33 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }),
+              */
+
+              // แบนเนอร์จาก Assets
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    height: 140,
+                    width: double.infinity,
+                    child: Image.asset(
+                      'assets/images/slidpic.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey.shade200,
+                          child: const Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
 
               SizedBox(height: 16),
-              // 🔹 Indicator
+              // 🔹 Indicator (คอมเม้นไว้เพราะใช้แบนเนอร์เดียว)
+              /*
               Obx(() {
                 if (homeController.imgBanners.isEmpty) {
                   return const SizedBox.shrink();
@@ -208,6 +308,7 @@ class _HomePageState extends State<HomePage> {
                   }),
                 );
               }),
+              */
               SizedBox(height: 16),
 
               // 🔹 Stack รูป + ช่องค้นหา + ข้อความ
@@ -231,11 +332,24 @@ class _HomePageState extends State<HomePage> {
                       height: 36,
                       padding: EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-                      child: Row(
-                        children: [
-                          Expanded(child: Text('ค้นหาสินค้าจากคลัง', style: TextStyle(color: Colors.grey))),
-                          Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
-                        ],
+                      child: GestureDetector(
+                        onTap: () {
+                          // Navigate to SearchPage for search
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage()));
+                          Get.snackbar(
+                            'แจ้งเตือน',
+                            'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                            backgroundColor: Colors.yellowAccent,
+                            colorText: Colors.black,
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(child: Text('ค้นหาสินค้าจากคลัง', style: TextStyle(color: Colors.grey))),
+                            Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -296,18 +410,26 @@ class _HomePageState extends State<HomePage> {
               // 🔹 เมนูบริการ
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildServiceItem(context, 'assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
-                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                      _buildServiceItem(context, 'assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
-                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                      _buildServiceItem(context, 'assets/icons/cal1.png', 'คำนวณค่าบริการ'),
-                      VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                      _buildServiceItem(context, 'assets/icons/box1.png', 'ตามพัสดุของฉัน'),
-                    ],
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildServiceItem(context, 'assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
+                        VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                        _buildServiceItem(context, 'assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
+                        VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                        _buildServiceItem(context, 'assets/icons/cal1.png', 'คำนวณค่าบริการ'),
+                        VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
+                        _buildServiceItem(context, 'assets/icons/box1.png', 'ตามพัสดุของฉัน'),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -391,7 +513,7 @@ class _HomePageState extends State<HomePage> {
                           final rawNumIid = item['num_iid'];
                           final String numIidStr = (rawNumIid is int || rawNumIid is String) ? rawNumIid.toString() : '0';
 
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: numIidStr)));
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: numIidStr, name: 'Shirt')));
                         },
                       );
                     },
@@ -423,7 +545,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(5),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
@@ -433,7 +555,7 @@ class _HomePageState extends State<HomePage> {
             child: Image.asset(iconPath, width: 36, height: 36),
           ),
           const SizedBox(height: 6),
-          SizedBox(width: 64, child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
+          SizedBox(child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
         ],
       ),
     );

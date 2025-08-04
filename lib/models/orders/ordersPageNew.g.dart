@@ -36,8 +36,7 @@ OrdersPageNew _$OrdersPageNewFromJson(Map<String, dynamic> json) =>
       json['product_type'] == null
           ? null
           : ServiceTransporter.fromJson(
-            json['product_type'] as Map<String, dynamic>,
-          ),
+              json['product_type'] as Map<String, dynamic>),
       json['import_po'] == null
           ? null
           : ImportPo.fromJson(json['import_po'] as Map<String, dynamic>),

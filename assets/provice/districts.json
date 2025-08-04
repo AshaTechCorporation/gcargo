@@ -1,0 +1,7426 @@
+[
+  {
+    "id": 1,
+    "provinceCode": 10,
+    "districtCode": 1001,
+    "nameEn": "Phra Nakhon",
+    "nameTH": "พระนคร",
+    "postalCode": 10200
+  },
+  {
+    "id": 2,
+    "provinceCode": 10,
+    "districtCode": 1002,
+    "nameEn": "Dusit",
+    "nameTH": "ดุสิต",
+    "postalCode": 10300
+  },
+  {
+    "id": 3,
+    "provinceCode": 10,
+    "districtCode": 1003,
+    "nameEn": "Nong Chok",
+    "nameTH": "หนองจอก",
+    "postalCode": 10530
+  },
+  {
+    "id": 4,
+    "provinceCode": 10,
+    "districtCode": 1004,
+    "nameEn": "Bang Rak",
+    "nameTH": "บางรัก",
+    "postalCode": 10500
+  },
+  {
+    "id": 5,
+    "provinceCode": 10,
+    "districtCode": 1005,
+    "nameEn": "Bang Khen",
+    "nameTH": "บางเขน",
+    "postalCode": 10220
+  },
+  {
+    "id": 6,
+    "provinceCode": 10,
+    "districtCode": 1006,
+    "nameEn": "Bang Kapi",
+    "nameTH": "บางกะปิ",
+    "postalCode": 10240
+  },
+  {
+    "id": 7,
+    "provinceCode": 10,
+    "districtCode": 1007,
+    "nameEn": "Pathum Wan",
+    "nameTH": "ปทุมวัน",
+    "postalCode": 10330
+  },
+  {
+    "id": 8,
+    "provinceCode": 10,
+    "districtCode": 1008,
+    "nameEn": "Pom Prap Sattruphai",
+    "nameTH": "ป้อมปราบศัตรูพ่าย",
+    "postalCode": 10100
+  },
+  {
+    "id": 9,
+    "provinceCode": 10,
+    "districtCode": 1009,
+    "nameEn": "Phra Khanong",
+    "nameTH": "พระโขนง",
+    "postalCode": 10260
+  },
+  {
+    "id": 10,
+    "provinceCode": 10,
+    "districtCode": 1010,
+    "nameEn": "Min Buri",
+    "nameTH": "มีนบุรี",
+    "postalCode": 10510
+  },
+  {
+    "id": 11,
+    "provinceCode": 10,
+    "districtCode": 1011,
+    "nameEn": "Lat Krabang",
+    "nameTH": "ลาดกระบัง",
+    "postalCode": 10520
+  },
+  {
+    "id": 12,
+    "provinceCode": 10,
+    "districtCode": 1012,
+    "nameEn": "Yannawa",
+    "nameTH": "ยานนาวา",
+    "postalCode": 10120
+  },
+  {
+    "id": 13,
+    "provinceCode": 10,
+    "districtCode": 1013,
+    "nameEn": "Samphanthawong",
+    "nameTH": "สัมพันธวงศ์",
+    "postalCode": 10100
+  },
+  {
+    "id": 14,
+    "provinceCode": 10,
+    "districtCode": 1014,
+    "nameEn": "Phaya Thai",
+    "nameTH": "พญาไท",
+    "postalCode": 10400
+  },
+  {
+    "id": 15,
+    "provinceCode": 10,
+    "districtCode": 1015,
+    "nameEn": "Thon Buri",
+    "nameTH": "ธนบุรี",
+    "postalCode": 10600
+  },
+  {
+    "id": 16,
+    "provinceCode": 10,
+    "districtCode": 1016,
+    "nameEn": "Bangkok Yai",
+    "nameTH": "บางกอกใหญ่",
+    "postalCode": 10600
+  },
+  {
+    "id": 17,
+    "provinceCode": 10,
+    "districtCode": 1017,
+    "nameEn": "Huai Khwang",
+    "nameTH": "ห้วยขวาง",
+    "postalCode": 10310
+  },
+  {
+    "id": 18,
+    "provinceCode": 10,
+    "districtCode": 1018,
+    "nameEn": "Khlong San",
+    "nameTH": "คลองสาน",
+    "postalCode": 10600
+  },
+  {
+    "id": 19,
+    "provinceCode": 10,
+    "districtCode": 1019,
+    "nameEn": "Taling Chan",
+    "nameTH": "ตลิ่งชัน",
+    "postalCode": 10170
+  },
+  {
+    "id": 20,
+    "provinceCode": 10,
+    "districtCode": 1020,
+    "nameEn": "Bangkok Noi",
+    "nameTH": "บางกอกน้อย",
+    "postalCode": 10700
+  },
+  {
+    "id": 21,
+    "provinceCode": 10,
+    "districtCode": 1021,
+    "nameEn": "Bang Khun Thian",
+    "nameTH": "บางขุนเทียน",
+    "postalCode": 10150
+  },
+  {
+    "id": 22,
+    "provinceCode": 10,
+    "districtCode": 1022,
+    "nameEn": "Phasi Charoen",
+    "nameTH": "ภาษีเจริญ",
+    "postalCode": 10160
+  },
+  {
+    "id": 23,
+    "provinceCode": 10,
+    "districtCode": 1023,
+    "nameEn": "Nong Khaem",
+    "nameTH": "หนองแขม",
+    "postalCode": 10160
+  },
+  {
+    "id": 24,
+    "provinceCode": 10,
+    "districtCode": 1024,
+    "nameEn": "Rat Burana",
+    "nameTH": "ราษฎร์บูรณะ",
+    "postalCode": 10140
+  },
+  {
+    "id": 25,
+    "provinceCode": 10,
+    "districtCode": 1025,
+    "nameEn": "Bang Phlat",
+    "nameTH": "บางพลัด",
+    "postalCode": 10700
+  },
+  {
+    "id": 26,
+    "provinceCode": 10,
+    "districtCode": 1026,
+    "nameEn": "Din Daeng",
+    "nameTH": "ดินแดง",
+    "postalCode": 10400
+  },
+  {
+    "id": 27,
+    "provinceCode": 10,
+    "districtCode": 1027,
+    "nameEn": "Bung Kum",
+    "nameTH": "บึงกุ่ม",
+    "postalCode": 10240
+  },
+  {
+    "id": 28,
+    "provinceCode": 10,
+    "districtCode": 1028,
+    "nameEn": "Sa Thon",
+    "nameTH": "สาทร",
+    "postalCode": 10120
+  },
+  {
+    "id": 29,
+    "provinceCode": 10,
+    "districtCode": 1029,
+    "nameEn": "Bang Su",
+    "nameTH": "บางซื่อ",
+    "postalCode": 10800
+  },
+  {
+    "id": 30,
+    "provinceCode": 10,
+    "districtCode": 1030,
+    "nameEn": "Chatuchak",
+    "nameTH": "จตุจักร",
+    "postalCode": 10900
+  },
+  {
+    "id": 31,
+    "provinceCode": 10,
+    "districtCode": 1031,
+    "nameEn": "Bang Kho Laem",
+    "nameTH": "บางคอแหลม",
+    "postalCode": 10120
+  },
+  {
+    "id": 32,
+    "provinceCode": 10,
+    "districtCode": 1032,
+    "nameEn": "Prawet",
+    "nameTH": "ประเวศ",
+    "postalCode": 10250
+  },
+  {
+    "id": 33,
+    "provinceCode": 10,
+    "districtCode": 1033,
+    "nameEn": "Khlong Toei",
+    "nameTH": "คลองเตย",
+    "postalCode": 10110
+  },
+  {
+    "id": 34,
+    "provinceCode": 10,
+    "districtCode": 1034,
+    "nameEn": "Suan Luang",
+    "nameTH": "สวนหลวง",
+    "postalCode": 10250
+  },
+  {
+    "id": 35,
+    "provinceCode": 10,
+    "districtCode": 1035,
+    "nameEn": "Chom Thong",
+    "nameTH": "จอมทอง",
+    "postalCode": 10150
+  },
+  {
+    "id": 36,
+    "provinceCode": 10,
+    "districtCode": 1036,
+    "nameEn": "Don Mueang",
+    "nameTH": "ดอนเมือง",
+    "postalCode": 10210
+  },
+  {
+    "id": 37,
+    "provinceCode": 10,
+    "districtCode": 1037,
+    "nameEn": "Rat Thewi",
+    "nameTH": "ราชเทวี",
+    "postalCode": 10400
+  },
+  {
+    "id": 38,
+    "provinceCode": 10,
+    "districtCode": 1038,
+    "nameEn": "Lat Phrao",
+    "nameTH": "ลาดพร้าว",
+    "postalCode": 10230
+  },
+  {
+    "id": 39,
+    "provinceCode": 10,
+    "districtCode": 1039,
+    "nameEn": "Watthana",
+    "nameTH": "วัฒนา",
+    "postalCode": 10110
+  },
+  {
+    "id": 40,
+    "provinceCode": 10,
+    "districtCode": 1040,
+    "nameEn": "Bang Khae",
+    "nameTH": "บางแค",
+    "postalCode": 10160
+  },
+  {
+    "id": 41,
+    "provinceCode": 10,
+    "districtCode": 1041,
+    "nameEn": "Lak Si",
+    "nameTH": "หลักสี่",
+    "postalCode": 10210
+  },
+  {
+    "id": 42,
+    "provinceCode": 10,
+    "districtCode": 1042,
+    "nameEn": "Sai Mai",
+    "nameTH": "สายไหม",
+    "postalCode": 10220
+  },
+  {
+    "id": 43,
+    "provinceCode": 10,
+    "districtCode": 1043,
+    "nameEn": "Khanna Yao",
+    "nameTH": "คันนายาว",
+    "postalCode": 10230
+  },
+  {
+    "id": 44,
+    "provinceCode": 10,
+    "districtCode": 1044,
+    "nameEn": "Saphan Sung",
+    "nameTH": "สะพานสูง",
+    "postalCode": 10240
+  },
+  {
+    "id": 45,
+    "provinceCode": 10,
+    "districtCode": 1045,
+    "nameEn": "Wang Thong Lang",
+    "nameTH": "วังทองหลาง",
+    "postalCode": 10310
+  },
+  {
+    "id": 46,
+    "provinceCode": 10,
+    "districtCode": 1046,
+    "nameEn": "Khlong Sam Wa",
+    "nameTH": "คลองสามวา",
+    "postalCode": 10510
+  },
+  {
+    "id": 47,
+    "provinceCode": 10,
+    "districtCode": 1047,
+    "nameEn": "Bang Na",
+    "nameTH": "บางนา",
+    "postalCode": 10260
+  },
+  {
+    "id": 48,
+    "provinceCode": 10,
+    "districtCode": 1048,
+    "nameEn": "Thawi Watthana",
+    "nameTH": "ทวีวัฒนา",
+    "postalCode": 10170
+  },
+  {
+    "id": 49,
+    "provinceCode": 10,
+    "districtCode": 1049,
+    "nameEn": "Thung Khu",
+    "nameTH": "ทุ่งครุ",
+    "postalCode": 10140
+  },
+  {
+    "id": 50,
+    "provinceCode": 10,
+    "districtCode": 1050,
+    "nameEn": "Bang Bon",
+    "nameTH": "บางบอน",
+    "postalCode": 10150
+  },
+  {
+    "id": 51,
+    "provinceCode": 11,
+    "districtCode": 1101,
+    "nameEn": "Mueang Samut Prakan",
+    "nameTH": "เมืองสมุทรปราการ",
+    "postalCode": 10270
+  },
+  {
+    "id": 52,
+    "provinceCode": 11,
+    "districtCode": 1102,
+    "nameEn": "Bang Bo",
+    "nameTH": "บางบ่อ",
+    "postalCode": 10560
+  },
+  {
+    "id": 53,
+    "provinceCode": 11,
+    "districtCode": 1103,
+    "nameEn": "Bang Phli",
+    "nameTH": "บางพลี",
+    "postalCode": 10540
+  },
+  {
+    "id": 54,
+    "provinceCode": 11,
+    "districtCode": 1104,
+    "nameEn": "Phra Pradaeng",
+    "nameTH": "พระประแดง",
+    "postalCode": 10130
+  },
+  {
+    "id": 55,
+    "provinceCode": 11,
+    "districtCode": 1105,
+    "nameEn": "Phra Samut Chedi",
+    "nameTH": "พระสมุทรเจดีย์",
+    "postalCode": 10290
+  },
+  {
+    "id": 56,
+    "provinceCode": 11,
+    "districtCode": 1106,
+    "nameEn": "Bang Sao Thong",
+    "nameTH": "บางเสาธง",
+    "postalCode": 10570
+  },
+  {
+    "id": 57,
+    "provinceCode": 12,
+    "districtCode": 1201,
+    "nameEn": "Mueang Nonthaburi",
+    "nameTH": "เมืองนนทบุรี",
+    "postalCode": 11000
+  },
+  {
+    "id": 58,
+    "provinceCode": 12,
+    "districtCode": 1202,
+    "nameEn": "Bang Kruai",
+    "nameTH": "บางกรวย",
+    "postalCode": 11130
+  },
+  {
+    "id": 59,
+    "provinceCode": 12,
+    "districtCode": 1203,
+    "nameEn": "Bang Yai",
+    "nameTH": "บางใหญ่",
+    "postalCode": 11140
+  },
+  {
+    "id": 60,
+    "provinceCode": 12,
+    "districtCode": 1204,
+    "nameEn": "Bang Bua Thong",
+    "nameTH": "บางบัวทอง",
+    "postalCode": 11110
+  },
+  {
+    "id": 61,
+    "provinceCode": 12,
+    "districtCode": 1205,
+    "nameEn": "Sai Noi",
+    "nameTH": "ไทรน้อย",
+    "postalCode": 11150
+  },
+  {
+    "id": 62,
+    "provinceCode": 12,
+    "districtCode": 1206,
+    "nameEn": "Pak Kret",
+    "nameTH": "ปากเกร็ด",
+    "postalCode": 11120
+  },
+  {
+    "id": 63,
+    "provinceCode": 13,
+    "districtCode": 1301,
+    "nameEn": "Mueang Pathum Thani",
+    "nameTH": "เมืองปทุมธานี",
+    "postalCode": 12000
+  },
+  {
+    "id": 64,
+    "provinceCode": 13,
+    "districtCode": 1302,
+    "nameEn": "Khlong Luang",
+    "nameTH": "คลองหลวง",
+    "postalCode": 12120
+  },
+  {
+    "id": 65,
+    "provinceCode": 13,
+    "districtCode": 1303,
+    "nameEn": "Thanyaburi",
+    "nameTH": "ธัญบุรี",
+    "postalCode": 12130
+  },
+  {
+    "id": 66,
+    "provinceCode": 13,
+    "districtCode": 1304,
+    "nameEn": "Nong Suea",
+    "nameTH": "หนองเสือ",
+    "postalCode": 12170
+  },
+  {
+    "id": 67,
+    "provinceCode": 13,
+    "districtCode": 1305,
+    "nameEn": "Lat Lum Kaeo",
+    "nameTH": "ลาดหลุมแก้ว",
+    "postalCode": 12140
+  },
+  {
+    "id": 68,
+    "provinceCode": 13,
+    "districtCode": 1306,
+    "nameEn": "Lam Luk Ka",
+    "nameTH": "ลำลูกกา",
+    "postalCode": 12130
+  },
+  {
+    "id": 69,
+    "provinceCode": 13,
+    "districtCode": 1307,
+    "nameEn": "Sam Khok",
+    "nameTH": "สามโคก",
+    "postalCode": 12160
+  },
+  {
+    "id": 70,
+    "provinceCode": 14,
+    "districtCode": 1401,
+    "nameEn": "Phra Nakhon Si Ayutthaya",
+    "nameTH": "พระนครศรีอยุธยา",
+    "postalCode": 13000
+  },
+  {
+    "id": 71,
+    "provinceCode": 14,
+    "districtCode": 1402,
+    "nameEn": "Tha Ruea",
+    "nameTH": "ท่าเรือ",
+    "postalCode": 13130
+  },
+  {
+    "id": 72,
+    "provinceCode": 14,
+    "districtCode": 1403,
+    "nameEn": "Nakhon Luang",
+    "nameTH": "นครหลวง",
+    "postalCode": 13260
+  },
+  {
+    "id": 73,
+    "provinceCode": 14,
+    "districtCode": 1404,
+    "nameEn": "Bang Sai",
+    "nameTH": "บางไทร",
+    "postalCode": 13190
+  },
+  {
+    "id": 74,
+    "provinceCode": 14,
+    "districtCode": 1405,
+    "nameEn": "Bang Ban",
+    "nameTH": "บางบาล",
+    "postalCode": 13250
+  },
+  {
+    "id": 75,
+    "provinceCode": 14,
+    "districtCode": 1406,
+    "nameEn": "Bang Pa-In",
+    "nameTH": "บางปะอิน",
+    "postalCode": 13160
+  },
+  {
+    "id": 76,
+    "provinceCode": 14,
+    "districtCode": 1407,
+    "nameEn": "Bang Pahan",
+    "nameTH": "บางปะหัน",
+    "postalCode": 13220
+  },
+  {
+    "id": 77,
+    "provinceCode": 14,
+    "districtCode": 1408,
+    "nameEn": "Phak Hai",
+    "nameTH": "ผักไห่",
+    "postalCode": 13120
+  },
+  {
+    "id": 78,
+    "provinceCode": 14,
+    "districtCode": 1409,
+    "nameEn": "Phachi",
+    "nameTH": "ภาชี",
+    "postalCode": 13140
+  },
+  {
+    "id": 79,
+    "provinceCode": 14,
+    "districtCode": 1410,
+    "nameEn": "Lat Bua Luang",
+    "nameTH": "ลาดบัวหลวง",
+    "postalCode": 13230
+  },
+  {
+    "id": 80,
+    "provinceCode": 14,
+    "districtCode": 1411,
+    "nameEn": "Wang Noi",
+    "nameTH": "วังน้อย",
+    "postalCode": 13170
+  },
+  {
+    "id": 81,
+    "provinceCode": 14,
+    "districtCode": 1412,
+    "nameEn": "Sena",
+    "nameTH": "เสนา",
+    "postalCode": 13110
+  },
+  {
+    "id": 82,
+    "provinceCode": 14,
+    "districtCode": 1413,
+    "nameEn": "Bang Sai",
+    "nameTH": "บางซ้าย",
+    "postalCode": 13270
+  },
+  {
+    "id": 83,
+    "provinceCode": 14,
+    "districtCode": 1414,
+    "nameEn": "Uthai",
+    "nameTH": "อุทัย",
+    "postalCode": 13210
+  },
+  {
+    "id": 84,
+    "provinceCode": 14,
+    "districtCode": 1415,
+    "nameEn": "Maha Rat",
+    "nameTH": "มหาราช",
+    "postalCode": 13150
+  },
+  {
+    "id": 85,
+    "provinceCode": 14,
+    "districtCode": 1416,
+    "nameEn": "Ban Phraek",
+    "nameTH": "บ้านแพรก",
+    "postalCode": 13240
+  },
+  {
+    "id": 86,
+    "provinceCode": 15,
+    "districtCode": 1501,
+    "nameEn": "Mueang Ang Thong",
+    "nameTH": "เมืองอ่างทอง",
+    "postalCode": 14000
+  },
+  {
+    "id": 87,
+    "provinceCode": 15,
+    "districtCode": 1502,
+    "nameEn": "Chaiyo",
+    "nameTH": "ไชโย",
+    "postalCode": 14140
+  },
+  {
+    "id": 88,
+    "provinceCode": 15,
+    "districtCode": 1503,
+    "nameEn": "Pa Mok",
+    "nameTH": "ป่าโมก",
+    "postalCode": 14130
+  },
+  {
+    "id": 89,
+    "provinceCode": 15,
+    "districtCode": 1504,
+    "nameEn": "Pho Thong",
+    "nameTH": "โพธิ์ทอง",
+    "postalCode": 14120
+  },
+  {
+    "id": 90,
+    "provinceCode": 15,
+    "districtCode": 1505,
+    "nameEn": "Sawaeng Ha",
+    "nameTH": "แสวงหา",
+    "postalCode": 14150
+  },
+  {
+    "id": 91,
+    "provinceCode": 15,
+    "districtCode": 1506,
+    "nameEn": "Wiset Chai Chan",
+    "nameTH": "วิเศษชัยชาญ",
+    "postalCode": 14110
+  },
+  {
+    "id": 92,
+    "provinceCode": 15,
+    "districtCode": 1507,
+    "nameEn": "Samko",
+    "nameTH": "สามโก้",
+    "postalCode": 14160
+  },
+  {
+    "id": 93,
+    "provinceCode": 16,
+    "districtCode": 1601,
+    "nameEn": "Mueang Lop Buri",
+    "nameTH": "เมืองลพบุรี",
+    "postalCode": 15000
+  },
+  {
+    "id": 94,
+    "provinceCode": 16,
+    "districtCode": 1602,
+    "nameEn": "Phatthana Nikhom",
+    "nameTH": "พัฒนานิคม",
+    "postalCode": 15140
+  },
+  {
+    "id": 95,
+    "provinceCode": 16,
+    "districtCode": 1603,
+    "nameEn": "Khok Samrong",
+    "nameTH": "โคกสำโรง",
+    "postalCode": 15120
+  },
+  {
+    "id": 96,
+    "provinceCode": 16,
+    "districtCode": 1604,
+    "nameEn": "Chai Badan",
+    "nameTH": "ชัยบาดาล",
+    "postalCode": 15130
+  },
+  {
+    "id": 97,
+    "provinceCode": 16,
+    "districtCode": 1605,
+    "nameEn": "Tha Wung",
+    "nameTH": "ท่าวุ้ง",
+    "postalCode": 15150
+  },
+  {
+    "id": 98,
+    "provinceCode": 16,
+    "districtCode": 1606,
+    "nameEn": "Ban Mi",
+    "nameTH": "บ้านหมี่",
+    "postalCode": 15110
+  },
+  {
+    "id": 99,
+    "provinceCode": 16,
+    "districtCode": 1607,
+    "nameEn": "Tha Luang",
+    "nameTH": "ท่าหลวง",
+    "postalCode": 15230
+  },
+  {
+    "id": 100,
+    "provinceCode": 16,
+    "districtCode": 1608,
+    "nameEn": "Sa Bot",
+    "nameTH": "สระโบสถ์",
+    "postalCode": 15240
+  },
+  {
+    "id": 101,
+    "provinceCode": 16,
+    "districtCode": 1609,
+    "nameEn": "Khok Charoen",
+    "nameTH": "โคกเจริญ",
+    "postalCode": 15250
+  },
+  {
+    "id": 102,
+    "provinceCode": 16,
+    "districtCode": 1610,
+    "nameEn": "Lam Sonthi",
+    "nameTH": "ลำสนธิ",
+    "postalCode": 15190
+  },
+  {
+    "id": 103,
+    "provinceCode": 16,
+    "districtCode": 1611,
+    "nameEn": "Nong Muang",
+    "nameTH": "หนองม่วง",
+    "postalCode": 15170
+  },
+  {
+    "id": 104,
+    "provinceCode": 17,
+    "districtCode": 1701,
+    "nameEn": "Mueang Sing Buri",
+    "nameTH": "เมืองสิงห์บุรี",
+    "postalCode": 16000
+  },
+  {
+    "id": 105,
+    "provinceCode": 17,
+    "districtCode": 1702,
+    "nameEn": "Bang Rachan",
+    "nameTH": "บางระจัน",
+    "postalCode": 16130
+  },
+  {
+    "id": 106,
+    "provinceCode": 17,
+    "districtCode": 1703,
+    "nameEn": "Khai Bang Rachan",
+    "nameTH": "ค่ายบางระจัน",
+    "postalCode": 16150
+  },
+  {
+    "id": 107,
+    "provinceCode": 17,
+    "districtCode": 1704,
+    "nameEn": "Phrom Buri",
+    "nameTH": "พรหมบุรี",
+    "postalCode": 16120
+  },
+  {
+    "id": 108,
+    "provinceCode": 17,
+    "districtCode": 1705,
+    "nameEn": "Tha Chang",
+    "nameTH": "ท่าช้าง",
+    "postalCode": 16140
+  },
+  {
+    "id": 109,
+    "provinceCode": 17,
+    "districtCode": 1706,
+    "nameEn": "In Buri",
+    "nameTH": "อินทร์บุรี",
+    "postalCode": 16110
+  },
+  {
+    "id": 110,
+    "provinceCode": 18,
+    "districtCode": 1801,
+    "nameEn": "Mueang Chai Nat",
+    "nameTH": "เมืองชัยนาท",
+    "postalCode": 17000
+  },
+  {
+    "id": 111,
+    "provinceCode": 18,
+    "districtCode": 1802,
+    "nameEn": "Manorom",
+    "nameTH": "มโนรมย์",
+    "postalCode": 17110
+  },
+  {
+    "id": 112,
+    "provinceCode": 18,
+    "districtCode": 1803,
+    "nameEn": "Wat Sing",
+    "nameTH": "วัดสิงห์",
+    "postalCode": 17120
+  },
+  {
+    "id": 113,
+    "provinceCode": 18,
+    "districtCode": 1804,
+    "nameEn": "Sapphaya",
+    "nameTH": "สรรพยา",
+    "postalCode": 17150
+  },
+  {
+    "id": 114,
+    "provinceCode": 18,
+    "districtCode": 1805,
+    "nameEn": "Sankhaburi",
+    "nameTH": "สรรคบุรี",
+    "postalCode": 17140
+  },
+  {
+    "id": 115,
+    "provinceCode": 18,
+    "districtCode": 1806,
+    "nameEn": "Hankha",
+    "nameTH": "หันคา",
+    "postalCode": 17130
+  },
+  {
+    "id": 116,
+    "provinceCode": 18,
+    "districtCode": 1807,
+    "nameEn": "Nong Mamong",
+    "nameTH": "หนองมะโมง",
+    "postalCode": 17120
+  },
+  {
+    "id": 117,
+    "provinceCode": 18,
+    "districtCode": 1808,
+    "nameEn": "Noen Kham",
+    "nameTH": "เนินขาม",
+    "postalCode": 17130
+  },
+  {
+    "id": 118,
+    "provinceCode": 19,
+    "districtCode": 1901,
+    "nameEn": "Mueang Saraburi",
+    "nameTH": "เมืองสระบุรี",
+    "postalCode": 18000
+  },
+  {
+    "id": 119,
+    "provinceCode": 19,
+    "districtCode": 1902,
+    "nameEn": "Kaeng Khoi",
+    "nameTH": "แก่งคอย",
+    "postalCode": 18110
+  },
+  {
+    "id": 120,
+    "provinceCode": 19,
+    "districtCode": 1903,
+    "nameEn": "Nong Khae",
+    "nameTH": "หนองแค",
+    "postalCode": 18140
+  },
+  {
+    "id": 121,
+    "provinceCode": 19,
+    "districtCode": 1904,
+    "nameEn": "Wihan Daeng",
+    "nameTH": "วิหารแดง",
+    "postalCode": 18150
+  },
+  {
+    "id": 122,
+    "provinceCode": 19,
+    "districtCode": 1905,
+    "nameEn": "Nong Saeng",
+    "nameTH": "หนองแซง",
+    "postalCode": 18170
+  },
+  {
+    "id": 123,
+    "provinceCode": 19,
+    "districtCode": 1906,
+    "nameEn": "Ban Mo",
+    "nameTH": "บ้านหมอ",
+    "postalCode": 18130
+  },
+  {
+    "id": 124,
+    "provinceCode": 19,
+    "districtCode": 1907,
+    "nameEn": "Don Phut",
+    "nameTH": "ดอนพุด",
+    "postalCode": 18210
+  },
+  {
+    "id": 125,
+    "provinceCode": 19,
+    "districtCode": 1908,
+    "nameEn": "Nong Don",
+    "nameTH": "หนองโดน",
+    "postalCode": 18190
+  },
+  {
+    "id": 126,
+    "provinceCode": 19,
+    "districtCode": 1909,
+    "nameEn": "Phra Phutthabat",
+    "nameTH": "พระพุทธบาท",
+    "postalCode": 18120
+  },
+  {
+    "id": 127,
+    "provinceCode": 19,
+    "districtCode": 1910,
+    "nameEn": "Sao Hai",
+    "nameTH": "เสาไห้",
+    "postalCode": 18160
+  },
+  {
+    "id": 128,
+    "provinceCode": 19,
+    "districtCode": 1911,
+    "nameEn": "Muak Lek",
+    "nameTH": "มวกเหล็ก",
+    "postalCode": 18180
+  },
+  {
+    "id": 129,
+    "provinceCode": 19,
+    "districtCode": 1912,
+    "nameEn": "Wang Muang",
+    "nameTH": "วังม่วง",
+    "postalCode": 18220
+  },
+  {
+    "id": 130,
+    "provinceCode": 19,
+    "districtCode": 1913,
+    "nameEn": "Chaloem Phra Kiet",
+    "nameTH": "เฉลิมพระเกียรติ",
+    "postalCode": 18000
+  },
+  {
+    "id": 131,
+    "provinceCode": 20,
+    "districtCode": 2001,
+    "nameEn": "Mueang Chon Buri",
+    "nameTH": "เมืองชลบุรี",
+    "postalCode": 20000
+  },
+  {
+    "id": 132,
+    "provinceCode": 20,
+    "districtCode": 2002,
+    "nameEn": "Ban Bueng",
+    "nameTH": "บ้านบึง",
+    "postalCode": 20170
+  },
+  {
+    "id": 133,
+    "provinceCode": 20,
+    "districtCode": 2003,
+    "nameEn": "Nong Yai",
+    "nameTH": "หนองใหญ่",
+    "postalCode": 20190
+  },
+  {
+    "id": 134,
+    "provinceCode": 20,
+    "districtCode": 2004,
+    "nameEn": "Bang Lamung",
+    "nameTH": "บางละมุง",
+    "postalCode": 20150
+  },
+  {
+    "id": 135,
+    "provinceCode": 20,
+    "districtCode": 2005,
+    "nameEn": "Phan Thong",
+    "nameTH": "พานทอง",
+    "postalCode": 20160
+  },
+  {
+    "id": 136,
+    "provinceCode": 20,
+    "districtCode": 2006,
+    "nameEn": "Phanat Nikhom",
+    "nameTH": "พนัสนิคม",
+    "postalCode": 20140
+  },
+  {
+    "id": 137,
+    "provinceCode": 20,
+    "districtCode": 2007,
+    "nameEn": "Si Racha",
+    "nameTH": "ศรีราชา",
+    "postalCode": 20110
+  },
+  {
+    "id": 138,
+    "provinceCode": 20,
+    "districtCode": 2008,
+    "nameEn": "Ko Sichang",
+    "nameTH": "เกาะสีชัง",
+    "postalCode": 20120
+  },
+  {
+    "id": 139,
+    "provinceCode": 20,
+    "districtCode": 2009,
+    "nameEn": "Sattahip",
+    "nameTH": "สัตหีบ",
+    "postalCode": 20180
+  },
+  {
+    "id": 140,
+    "provinceCode": 20,
+    "districtCode": 2010,
+    "nameEn": "Bo Thong",
+    "nameTH": "บ่อทอง",
+    "postalCode": 20270
+  },
+  {
+    "id": 141,
+    "provinceCode": 20,
+    "districtCode": 2011,
+    "nameEn": "Ko Chan",
+    "nameTH": "เกาะจันทร์",
+    "postalCode": 20240
+  },
+  {
+    "id": 142,
+    "provinceCode": 21,
+    "districtCode": 2101,
+    "nameEn": "Mueang Rayong",
+    "nameTH": "เมืองระยอง",
+    "postalCode": 21000
+  },
+  {
+    "id": 143,
+    "provinceCode": 21,
+    "districtCode": 2102,
+    "nameEn": "Ban Chang",
+    "nameTH": "บ้านฉาง",
+    "postalCode": 21130
+  },
+  {
+    "id": 144,
+    "provinceCode": 21,
+    "districtCode": 2103,
+    "nameEn": "Klaeng",
+    "nameTH": "แกลง",
+    "postalCode": 21110
+  },
+  {
+    "id": 145,
+    "provinceCode": 21,
+    "districtCode": 2104,
+    "nameEn": "Wang Chan",
+    "nameTH": "วังจันทร์",
+    "postalCode": 21210
+  },
+  {
+    "id": 146,
+    "provinceCode": 21,
+    "districtCode": 2105,
+    "nameEn": "Ban Khai",
+    "nameTH": "บ้านค่าย",
+    "postalCode": 21120
+  },
+  {
+    "id": 147,
+    "provinceCode": 21,
+    "districtCode": 2106,
+    "nameEn": "Pluak Daeng",
+    "nameTH": "ปลวกแดง",
+    "postalCode": 21140
+  },
+  {
+    "id": 148,
+    "provinceCode": 21,
+    "districtCode": 2107,
+    "nameEn": "Khao Chamao",
+    "nameTH": "เขาชะเมา",
+    "postalCode": 21110
+  },
+  {
+    "id": 149,
+    "provinceCode": 21,
+    "districtCode": 2108,
+    "nameEn": "Nikhom Phatthana",
+    "nameTH": "นิคมพัฒนา",
+    "postalCode": 21180
+  },
+  {
+    "id": 150,
+    "provinceCode": 22,
+    "districtCode": 2201,
+    "nameEn": "Mueang Chanthaburi",
+    "nameTH": "เมืองจันทบุรี",
+    "postalCode": 22000
+  },
+  {
+    "id": 151,
+    "provinceCode": 22,
+    "districtCode": 2202,
+    "nameEn": "Khlung",
+    "nameTH": "ขลุง",
+    "postalCode": 22110
+  },
+  {
+    "id": 152,
+    "provinceCode": 22,
+    "districtCode": 2203,
+    "nameEn": "Tha Mai",
+    "nameTH": "ท่าใหม่",
+    "postalCode": 22120
+  },
+  {
+    "id": 153,
+    "provinceCode": 22,
+    "districtCode": 2204,
+    "nameEn": "Pong Nam Ron",
+    "nameTH": "โป่งน้ำร้อน",
+    "postalCode": 22140
+  },
+  {
+    "id": 154,
+    "provinceCode": 22,
+    "districtCode": 2205,
+    "nameEn": "Makham",
+    "nameTH": "มะขาม",
+    "postalCode": 22150
+  },
+  {
+    "id": 155,
+    "provinceCode": 22,
+    "districtCode": 2206,
+    "nameEn": "Laem Sing",
+    "nameTH": "แหลมสิงห์",
+    "postalCode": 22130
+  },
+  {
+    "id": 156,
+    "provinceCode": 22,
+    "districtCode": 2207,
+    "nameEn": "Soi Dao",
+    "nameTH": "สอยดาว",
+    "postalCode": 22180
+  },
+  {
+    "id": 157,
+    "provinceCode": 22,
+    "districtCode": 2208,
+    "nameEn": "Kaeng Hang Maeo",
+    "nameTH": "แก่งหางแมว",
+    "postalCode": 22160
+  },
+  {
+    "id": 158,
+    "provinceCode": 22,
+    "districtCode": 2209,
+    "nameEn": "Na Yai Am",
+    "nameTH": "นายายอาม",
+    "postalCode": 22160
+  },
+  {
+    "id": 159,
+    "provinceCode": 22,
+    "districtCode": 2210,
+    "nameEn": "Khao Khitchakut",
+    "nameTH": "เขาคิชฌกูฏ",
+    "postalCode": 22210
+  },
+  {
+    "id": 160,
+    "provinceCode": 23,
+    "districtCode": 2301,
+    "nameEn": "Mueang Trat",
+    "nameTH": "เมืองตราด",
+    "postalCode": 23000
+  },
+  {
+    "id": 161,
+    "provinceCode": 23,
+    "districtCode": 2302,
+    "nameEn": "Khlong Yai",
+    "nameTH": "คลองใหญ่",
+    "postalCode": 23110
+  },
+  {
+    "id": 162,
+    "provinceCode": 23,
+    "districtCode": 2303,
+    "nameEn": "Khao Saming",
+    "nameTH": "เขาสมิง",
+    "postalCode": 23130
+  },
+  {
+    "id": 163,
+    "provinceCode": 23,
+    "districtCode": 2304,
+    "nameEn": "Bo Rai",
+    "nameTH": "บ่อไร่",
+    "postalCode": 23140
+  },
+  {
+    "id": 164,
+    "provinceCode": 23,
+    "districtCode": 2305,
+    "nameEn": "Laem Ngop",
+    "nameTH": "แหลมงอบ",
+    "postalCode": 23120
+  },
+  {
+    "id": 165,
+    "provinceCode": 23,
+    "districtCode": 2306,
+    "nameEn": "Ko Kut",
+    "nameTH": "เกาะกูด",
+    "postalCode": 23000
+  },
+  {
+    "id": 166,
+    "provinceCode": 23,
+    "districtCode": 2307,
+    "nameEn": "Ko Chang",
+    "nameTH": "เกาะช้าง",
+    "postalCode": 23170
+  },
+  {
+    "id": 167,
+    "provinceCode": 24,
+    "districtCode": 2401,
+    "nameEn": "Mueang Chachoengsao",
+    "nameTH": "เมืองฉะเชิงเทรา",
+    "postalCode": 24000
+  },
+  {
+    "id": 168,
+    "provinceCode": 24,
+    "districtCode": 2402,
+    "nameEn": "Bang Khla",
+    "nameTH": "บางคล้า",
+    "postalCode": 24110
+  },
+  {
+    "id": 169,
+    "provinceCode": 24,
+    "districtCode": 2403,
+    "nameEn": "Bang Nam Priao",
+    "nameTH": "บางน้ำเปรี้ยว",
+    "postalCode": 24150
+  },
+  {
+    "id": 170,
+    "provinceCode": 24,
+    "districtCode": 2404,
+    "nameEn": "Bang Pakong",
+    "nameTH": "บางปะกง",
+    "postalCode": 24130
+  },
+  {
+    "id": 171,
+    "provinceCode": 24,
+    "districtCode": 2405,
+    "nameEn": "Ban Pho",
+    "nameTH": "บ้านโพธิ์",
+    "postalCode": 24140
+  },
+  {
+    "id": 172,
+    "provinceCode": 24,
+    "districtCode": 2406,
+    "nameEn": "Phanom Sarakham",
+    "nameTH": "พนมสารคาม",
+    "postalCode": 24120
+  },
+  {
+    "id": 173,
+    "provinceCode": 24,
+    "districtCode": 2407,
+    "nameEn": "Ratchasan",
+    "nameTH": "ราชสาส์น",
+    "postalCode": 24120
+  },
+  {
+    "id": 174,
+    "provinceCode": 24,
+    "districtCode": 2408,
+    "nameEn": "Sanam Chai Khet",
+    "nameTH": "สนามชัยเขต",
+    "postalCode": 24160
+  },
+  {
+    "id": 175,
+    "provinceCode": 24,
+    "districtCode": 2409,
+    "nameEn": "Pleang Yao",
+    "nameTH": "แปลงยาว",
+    "postalCode": 24190
+  },
+  {
+    "id": 176,
+    "provinceCode": 24,
+    "districtCode": 2410,
+    "nameEn": "Tha Takiap",
+    "nameTH": "ท่าตะเกียบ",
+    "postalCode": 24160
+  },
+  {
+    "id": 177,
+    "provinceCode": 24,
+    "districtCode": 2411,
+    "nameEn": "Khlong Khuean",
+    "nameTH": "คลองเขื่อน",
+    "postalCode": 24000
+  },
+  {
+    "id": 178,
+    "provinceCode": 25,
+    "districtCode": 2501,
+    "nameEn": "Mueang Prachin Buri",
+    "nameTH": "เมืองปราจีนบุรี",
+    "postalCode": 25000
+  },
+  {
+    "id": 179,
+    "provinceCode": 25,
+    "districtCode": 2502,
+    "nameEn": "Kabin Buri",
+    "nameTH": "กบินทร์บุรี",
+    "postalCode": 25110
+  },
+  {
+    "id": 180,
+    "provinceCode": 25,
+    "districtCode": 2503,
+    "nameEn": "Na Di",
+    "nameTH": "นาดี",
+    "postalCode": 25220
+  },
+  {
+    "id": 181,
+    "provinceCode": 25,
+    "districtCode": 2506,
+    "nameEn": "Ban Sang",
+    "nameTH": "บ้านสร้าง",
+    "postalCode": 25150
+  },
+  {
+    "id": 182,
+    "provinceCode": 25,
+    "districtCode": 2507,
+    "nameEn": "Prachantakham",
+    "nameTH": "ประจันตคาม",
+    "postalCode": 25130
+  },
+  {
+    "id": 183,
+    "provinceCode": 25,
+    "districtCode": 2508,
+    "nameEn": "Si Maha Phot",
+    "nameTH": "ศรีมหาโพธิ",
+    "postalCode": 25140
+  },
+  {
+    "id": 184,
+    "provinceCode": 25,
+    "districtCode": 2509,
+    "nameEn": "Si Mahosot",
+    "nameTH": "ศรีมโหสถ",
+    "postalCode": 25190
+  },
+  {
+    "id": 185,
+    "provinceCode": 26,
+    "districtCode": 2601,
+    "nameEn": "Mueang Nakhon Nayok",
+    "nameTH": "เมืองนครนายก",
+    "postalCode": 26000
+  },
+  {
+    "id": 186,
+    "provinceCode": 26,
+    "districtCode": 2602,
+    "nameEn": "Pak Phli",
+    "nameTH": "ปากพลี",
+    "postalCode": 26130
+  },
+  {
+    "id": 187,
+    "provinceCode": 26,
+    "districtCode": 2603,
+    "nameEn": "Ban Na",
+    "nameTH": "บ้านนา",
+    "postalCode": 26110
+  },
+  {
+    "id": 188,
+    "provinceCode": 26,
+    "districtCode": 2604,
+    "nameEn": "Ongkharak",
+    "nameTH": "องครักษ์",
+    "postalCode": 26120
+  },
+  {
+    "id": 189,
+    "provinceCode": 27,
+    "districtCode": 2701,
+    "nameEn": "Mueang Sa Kaeo",
+    "nameTH": "เมืองสระแก้ว",
+    "postalCode": 27000
+  },
+  {
+    "id": 190,
+    "provinceCode": 27,
+    "districtCode": 2702,
+    "nameEn": "Khlong Hat",
+    "nameTH": "คลองหาด",
+    "postalCode": 27260
+  },
+  {
+    "id": 191,
+    "provinceCode": 27,
+    "districtCode": 2703,
+    "nameEn": "Ta Phraya",
+    "nameTH": "ตาพระยา",
+    "postalCode": 27180
+  },
+  {
+    "id": 192,
+    "provinceCode": 27,
+    "districtCode": 2704,
+    "nameEn": "Wang Nam Yen",
+    "nameTH": "วังน้ำเย็น",
+    "postalCode": 27210
+  },
+  {
+    "id": 193,
+    "provinceCode": 27,
+    "districtCode": 2705,
+    "nameEn": "Watthana Nakhon",
+    "nameTH": "วัฒนานคร",
+    "postalCode": 27160
+  },
+  {
+    "id": 194,
+    "provinceCode": 27,
+    "districtCode": 2706,
+    "nameEn": "Aranyaprathet",
+    "nameTH": "อรัญประเทศ",
+    "postalCode": 27120
+  },
+  {
+    "id": 195,
+    "provinceCode": 27,
+    "districtCode": 2707,
+    "nameEn": "Khao Chakan",
+    "nameTH": "เขาฉกรรจ์",
+    "postalCode": 27000
+  },
+  {
+    "id": 196,
+    "provinceCode": 27,
+    "districtCode": 2708,
+    "nameEn": "Khok Sung",
+    "nameTH": "โคกสูง",
+    "postalCode": 27120
+  },
+  {
+    "id": 197,
+    "provinceCode": 27,
+    "districtCode": 2709,
+    "nameEn": "Wang Sombun",
+    "nameTH": "วังสมบูรณ์",
+    "postalCode": 27250
+  },
+  {
+    "id": 198,
+    "provinceCode": 30,
+    "districtCode": 3001,
+    "nameEn": "Mueang Nakhon Ratchasima",
+    "nameTH": "เมืองนครราชสีมา",
+    "postalCode": 30000
+  },
+  {
+    "id": 199,
+    "provinceCode": 30,
+    "districtCode": 3002,
+    "nameEn": "Khon Buri",
+    "nameTH": "ครบุรี",
+    "postalCode": 30250
+  },
+  {
+    "id": 200,
+    "provinceCode": 30,
+    "districtCode": 3003,
+    "nameEn": "Soeng Sang",
+    "nameTH": "เสิงสาง",
+    "postalCode": 30330
+  },
+  {
+    "id": 201,
+    "provinceCode": 30,
+    "districtCode": 3004,
+    "nameEn": "Khong",
+    "nameTH": "คง",
+    "postalCode": 30260
+  },
+  {
+    "id": 202,
+    "provinceCode": 30,
+    "districtCode": 3005,
+    "nameEn": "Ban Lueam",
+    "nameTH": "บ้านเหลื่อม",
+    "postalCode": 30350
+  },
+  {
+    "id": 203,
+    "provinceCode": 30,
+    "districtCode": 3006,
+    "nameEn": "Chakkarat",
+    "nameTH": "จักราช",
+    "postalCode": 30230
+  },
+  {
+    "id": 204,
+    "provinceCode": 30,
+    "districtCode": 3007,
+    "nameEn": "Chok Chai",
+    "nameTH": "โชคชัย",
+    "postalCode": 30190
+  },
+  {
+    "id": 205,
+    "provinceCode": 30,
+    "districtCode": 3008,
+    "nameEn": "Dan Khun Thot",
+    "nameTH": "ด่านขุนทด",
+    "postalCode": 30210
+  },
+  {
+    "id": 206,
+    "provinceCode": 30,
+    "districtCode": 3009,
+    "nameEn": "Non Thai",
+    "nameTH": "โนนไทย",
+    "postalCode": 30220
+  },
+  {
+    "id": 207,
+    "provinceCode": 30,
+    "districtCode": 3010,
+    "nameEn": "Non Sung",
+    "nameTH": "โนนสูง",
+    "postalCode": 30160
+  },
+  {
+    "id": 208,
+    "provinceCode": 30,
+    "districtCode": 3011,
+    "nameEn": "Kham Sakaesaeng",
+    "nameTH": "ขามสะแกแสง",
+    "postalCode": 30290
+  },
+  {
+    "id": 209,
+    "provinceCode": 30,
+    "districtCode": 3012,
+    "nameEn": "Bua Yai",
+    "nameTH": "บัวใหญ่",
+    "postalCode": 30120
+  },
+  {
+    "id": 210,
+    "provinceCode": 30,
+    "districtCode": 3013,
+    "nameEn": "Prathai",
+    "nameTH": "ประทาย",
+    "postalCode": 30180
+  },
+  {
+    "id": 211,
+    "provinceCode": 30,
+    "districtCode": 3014,
+    "nameEn": "Pak Thong Chai",
+    "nameTH": "ปักธงชัย",
+    "postalCode": 30150
+  },
+  {
+    "id": 212,
+    "provinceCode": 30,
+    "districtCode": 3015,
+    "nameEn": "Phimai",
+    "nameTH": "พิมาย",
+    "postalCode": 30110
+  },
+  {
+    "id": 213,
+    "provinceCode": 30,
+    "districtCode": 3016,
+    "nameEn": "Huai Thalaeng",
+    "nameTH": "ห้วยแถลง",
+    "postalCode": 30240
+  },
+  {
+    "id": 214,
+    "provinceCode": 30,
+    "districtCode": 3017,
+    "nameEn": "Chum Phuang",
+    "nameTH": "ชุมพวง",
+    "postalCode": 30270
+  },
+  {
+    "id": 215,
+    "provinceCode": 30,
+    "districtCode": 3018,
+    "nameEn": "Sung Noen",
+    "nameTH": "สูงเนิน",
+    "postalCode": 30170
+  },
+  {
+    "id": 216,
+    "provinceCode": 30,
+    "districtCode": 3019,
+    "nameEn": "Kham Thale So",
+    "nameTH": "ขามทะเลสอ",
+    "postalCode": 30280
+  },
+  {
+    "id": 217,
+    "provinceCode": 30,
+    "districtCode": 3020,
+    "nameEn": "Si Khio",
+    "nameTH": "สีคิ้ว",
+    "postalCode": 30140
+  },
+  {
+    "id": 218,
+    "provinceCode": 30,
+    "districtCode": 3021,
+    "nameEn": "Pak Chong",
+    "nameTH": "ปากช่อง",
+    "postalCode": 30130
+  },
+  {
+    "id": 219,
+    "provinceCode": 30,
+    "districtCode": 3022,
+    "nameEn": "Nong Bunmak",
+    "nameTH": "หนองบุญมาก",
+    "postalCode": 30410
+  },
+  {
+    "id": 220,
+    "provinceCode": 30,
+    "districtCode": 3023,
+    "nameEn": "Kaeng Sanam Nang",
+    "nameTH": "แก้งสนามนาง",
+    "postalCode": 30440
+  },
+  {
+    "id": 221,
+    "provinceCode": 30,
+    "districtCode": 3024,
+    "nameEn": "Non Daeng",
+    "nameTH": "โนนแดง",
+    "postalCode": 30360
+  },
+  {
+    "id": 222,
+    "provinceCode": 30,
+    "districtCode": 3025,
+    "nameEn": "Wang Nam Khiao",
+    "nameTH": "วังน้ำเขียว",
+    "postalCode": 30370
+  },
+  {
+    "id": 223,
+    "provinceCode": 30,
+    "districtCode": 3026,
+    "nameEn": "Thepharak",
+    "nameTH": "เทพารักษ์",
+    "postalCode": 30210
+  },
+  {
+    "id": 224,
+    "provinceCode": 30,
+    "districtCode": 3027,
+    "nameEn": "Mueang Yang",
+    "nameTH": "เมืองยาง",
+    "postalCode": 30270
+  },
+  {
+    "id": 225,
+    "provinceCode": 30,
+    "districtCode": 3028,
+    "nameEn": "Phra Thong Kham",
+    "nameTH": "พระทองคำ",
+    "postalCode": 30220
+  },
+  {
+    "id": 226,
+    "provinceCode": 30,
+    "districtCode": 3029,
+    "nameEn": "Lamtaman Chai",
+    "nameTH": "ลำทะเมนชัย",
+    "postalCode": 30270
+  },
+  {
+    "id": 227,
+    "provinceCode": 30,
+    "districtCode": 3030,
+    "nameEn": "Bua Lai",
+    "nameTH": "บัวลาย",
+    "postalCode": 30120
+  },
+  {
+    "id": 228,
+    "provinceCode": 30,
+    "districtCode": 3031,
+    "nameEn": "Sida",
+    "nameTH": "สีดา",
+    "postalCode": 30430
+  },
+  {
+    "id": 229,
+    "provinceCode": 30,
+    "districtCode": 3032,
+    "nameEn": "Chaloem Phra Kiet",
+    "nameTH": "เฉลิมพระเกียรติ",
+    "postalCode": 30230
+  },
+  {
+    "id": 230,
+    "provinceCode": 31,
+    "districtCode": 3101,
+    "nameEn": "Mueang Buri Ram",
+    "nameTH": "เมืองบุรีรัมย์",
+    "postalCode": 31000
+  },
+  {
+    "id": 231,
+    "provinceCode": 31,
+    "districtCode": 3102,
+    "nameEn": "Khu Mueang",
+    "nameTH": "คูเมือง",
+    "postalCode": 31190
+  },
+  {
+    "id": 232,
+    "provinceCode": 31,
+    "districtCode": 3103,
+    "nameEn": "Krasang",
+    "nameTH": "กระสัง",
+    "postalCode": 31160
+  },
+  {
+    "id": 233,
+    "provinceCode": 31,
+    "districtCode": 3104,
+    "nameEn": "Nang Rong",
+    "nameTH": "นางรอง",
+    "postalCode": 31110
+  },
+  {
+    "id": 234,
+    "provinceCode": 31,
+    "districtCode": 3105,
+    "nameEn": "Nong Ki",
+    "nameTH": "หนองกี่",
+    "postalCode": 31210
+  },
+  {
+    "id": 235,
+    "provinceCode": 31,
+    "districtCode": 3106,
+    "nameEn": "Lahan Sai",
+    "nameTH": "ละหานทราย",
+    "postalCode": 31170
+  },
+  {
+    "id": 236,
+    "provinceCode": 31,
+    "districtCode": 3107,
+    "nameEn": "Prakhon Chai",
+    "nameTH": "ประโคนชัย",
+    "postalCode": 31140
+  },
+  {
+    "id": 237,
+    "provinceCode": 31,
+    "districtCode": 3108,
+    "nameEn": "Ban Kruat",
+    "nameTH": "บ้านกรวด",
+    "postalCode": 31180
+  },
+  {
+    "id": 238,
+    "provinceCode": 31,
+    "districtCode": 3109,
+    "nameEn": "Phutthaisong",
+    "nameTH": "พุทไธสง",
+    "postalCode": 31120
+  },
+  {
+    "id": 239,
+    "provinceCode": 31,
+    "districtCode": 3110,
+    "nameEn": "Lam Plai Mat",
+    "nameTH": "ลำปลายมาศ",
+    "postalCode": 31130
+  },
+  {
+    "id": 240,
+    "provinceCode": 31,
+    "districtCode": 3111,
+    "nameEn": "Satuek",
+    "nameTH": "สตึก",
+    "postalCode": 31150
+  },
+  {
+    "id": 241,
+    "provinceCode": 31,
+    "districtCode": 3112,
+    "nameEn": "Pakham",
+    "nameTH": "ปะคำ",
+    "postalCode": 31220
+  },
+  {
+    "id": 242,
+    "provinceCode": 31,
+    "districtCode": 3113,
+    "nameEn": "Na Pho",
+    "nameTH": "นาโพธิ์",
+    "postalCode": 31230
+  },
+  {
+    "id": 243,
+    "provinceCode": 31,
+    "districtCode": 3114,
+    "nameEn": "Nong Hong",
+    "nameTH": "หนองหงส์",
+    "postalCode": 31240
+  },
+  {
+    "id": 244,
+    "provinceCode": 31,
+    "districtCode": 3115,
+    "nameEn": "Phlapphla Chai",
+    "nameTH": "พลับพลาชัย",
+    "postalCode": 31250
+  },
+  {
+    "id": 245,
+    "provinceCode": 31,
+    "districtCode": 3116,
+    "nameEn": "Huai Rat",
+    "nameTH": "ห้วยราช",
+    "postalCode": 31000
+  },
+  {
+    "id": 246,
+    "provinceCode": 31,
+    "districtCode": 3117,
+    "nameEn": "Non Din Daeng",
+    "nameTH": "โนนสุวรรณ",
+    "postalCode": 31110
+  },
+  {
+    "id": 247,
+    "provinceCode": 31,
+    "districtCode": 3118,
+    "nameEn": "Chamni",
+    "nameTH": "ชำนิ",
+    "postalCode": 31110
+  },
+  {
+    "id": 248,
+    "provinceCode": 31,
+    "districtCode": 3119,
+    "nameEn": "Ban Mai Chaiyaphot",
+    "nameTH": "บ้านใหม่ไชยพจน์",
+    "postalCode": 31120
+  },
+  {
+    "id": 249,
+    "provinceCode": 31,
+    "districtCode": 3120,
+    "nameEn": "Non Din Daeng",
+    "nameTH": "โนนดินแดง",
+    "postalCode": 31260
+  },
+  {
+    "id": 250,
+    "provinceCode": 31,
+    "districtCode": 3121,
+    "nameEn": "Ban Dan",
+    "nameTH": "บ้านด่าน",
+    "postalCode": 31000
+  },
+  {
+    "id": 251,
+    "provinceCode": 31,
+    "districtCode": 3122,
+    "nameEn": "Khaen Dong",
+    "nameTH": "แคนดง",
+    "postalCode": 31150
+  },
+  {
+    "id": 252,
+    "provinceCode": 31,
+    "districtCode": 3123,
+    "nameEn": "Chaloem Phra Kiet",
+    "nameTH": "เฉลิมพระเกียรติ",
+    "postalCode": 31110
+  },
+  {
+    "id": 253,
+    "provinceCode": 32,
+    "districtCode": 3201,
+    "nameEn": "Mueang Surin",
+    "nameTH": "เมืองสุรินทร์",
+    "postalCode": 32000
+  },
+  {
+    "id": 254,
+    "provinceCode": 32,
+    "districtCode": 3202,
+    "nameEn": "Chumphon Buri",
+    "nameTH": "ชุมพลบุรี",
+    "postalCode": 32190
+  },
+  {
+    "id": 255,
+    "provinceCode": 32,
+    "districtCode": 3203,
+    "nameEn": "Tha Tum",
+    "nameTH": "ท่าตูม",
+    "postalCode": 32120
+  },
+  {
+    "id": 256,
+    "provinceCode": 32,
+    "districtCode": 3204,
+    "nameEn": "Chom Phra",
+    "nameTH": "จอมพระ",
+    "postalCode": 32180
+  },
+  {
+    "id": 257,
+    "provinceCode": 32,
+    "districtCode": 3205,
+    "nameEn": "Prasat",
+    "nameTH": "ปราสาท",
+    "postalCode": 32140
+  },
+  {
+    "id": 258,
+    "provinceCode": 32,
+    "districtCode": 3206,
+    "nameEn": "Kap Choeng",
+    "nameTH": "กาบเชิง",
+    "postalCode": 32210
+  },
+  {
+    "id": 259,
+    "provinceCode": 32,
+    "districtCode": 3207,
+    "nameEn": "Rattanaburi",
+    "nameTH": "รัตนบุรี",
+    "postalCode": 32130
+  },
+  {
+    "id": 260,
+    "provinceCode": 32,
+    "districtCode": 3208,
+    "nameEn": "Sanom",
+    "nameTH": "สนม",
+    "postalCode": 32160
+  },
+  {
+    "id": 261,
+    "provinceCode": 32,
+    "districtCode": 3209,
+    "nameEn": "Sikhoraphum",
+    "nameTH": "ศีขรภูมิ",
+    "postalCode": 32110
+  },
+  {
+    "id": 262,
+    "provinceCode": 32,
+    "districtCode": 3210,
+    "nameEn": "Sangkha",
+    "nameTH": "สังขะ",
+    "postalCode": 32150
+  },
+  {
+    "id": 263,
+    "provinceCode": 32,
+    "districtCode": 3211,
+    "nameEn": "Lamduan",
+    "nameTH": "ลำดวน",
+    "postalCode": 32220
+  },
+  {
+    "id": 264,
+    "provinceCode": 32,
+    "districtCode": 3212,
+    "nameEn": "Samrong Thap",
+    "nameTH": "สำโรงทาบ",
+    "postalCode": 32170
+  },
+  {
+    "id": 265,
+    "provinceCode": 32,
+    "districtCode": 3213,
+    "nameEn": "Buachet",
+    "nameTH": "บัวเชด",
+    "postalCode": 32230
+  },
+  {
+    "id": 266,
+    "provinceCode": 32,
+    "districtCode": 3214,
+    "nameEn": "Phanom Dong Rak",
+    "nameTH": "พนมดงรัก",
+    "postalCode": 32140
+  },
+  {
+    "id": 267,
+    "provinceCode": 32,
+    "districtCode": 3215,
+    "nameEn": "Si Narong",
+    "nameTH": "ศรีณรงค์",
+    "postalCode": 32150
+  },
+  {
+    "id": 268,
+    "provinceCode": 32,
+    "districtCode": 3216,
+    "nameEn": "Khwao Sinarin",
+    "nameTH": "เขวาสินรินทร์",
+    "postalCode": 32000
+  },
+  {
+    "id": 269,
+    "provinceCode": 32,
+    "districtCode": 3217,
+    "nameEn": "Non Narai",
+    "nameTH": "โนนนารายณ์",
+    "postalCode": 32130
+  },
+  {
+    "id": 270,
+    "provinceCode": 33,
+    "districtCode": 3301,
+    "nameEn": "Mueang Si Sa Ket",
+    "nameTH": "เมืองศรีสะเกษ",
+    "postalCode": 33000
+  },
+  {
+    "id": 271,
+    "provinceCode": 33,
+    "districtCode": 3302,
+    "nameEn": "Yang Chum Noi",
+    "nameTH": "ยางชุมน้อย",
+    "postalCode": 33190
+  },
+  {
+    "id": 272,
+    "provinceCode": 33,
+    "districtCode": 3303,
+    "nameEn": "Kanthararom",
+    "nameTH": "กันทรารมย์",
+    "postalCode": 33130
+  },
+  {
+    "id": 273,
+    "provinceCode": 33,
+    "districtCode": 3304,
+    "nameEn": "Kantharalak",
+    "nameTH": "กันทรลักษ์",
+    "postalCode": 33110
+  },
+  {
+    "id": 274,
+    "provinceCode": 33,
+    "districtCode": 3305,
+    "nameEn": "Khukhan",
+    "nameTH": "ขุขันธ์",
+    "postalCode": 33140
+  },
+  {
+    "id": 275,
+    "provinceCode": 33,
+    "districtCode": 3306,
+    "nameEn": "Phrai Bueng",
+    "nameTH": "ไพรบึง",
+    "postalCode": 33180
+  },
+  {
+    "id": 276,
+    "provinceCode": 33,
+    "districtCode": 3307,
+    "nameEn": "Prang Ku",
+    "nameTH": "ปรางค์กู่",
+    "postalCode": 33170
+  },
+  {
+    "id": 277,
+    "provinceCode": 33,
+    "districtCode": 3308,
+    "nameEn": "Khun Han",
+    "nameTH": "ขุนหาญ",
+    "postalCode": 33150
+  },
+  {
+    "id": 278,
+    "provinceCode": 33,
+    "districtCode": 3309,
+    "nameEn": "Rasi Salai",
+    "nameTH": "ราษีไศล",
+    "postalCode": 33160
+  },
+  {
+    "id": 279,
+    "provinceCode": 33,
+    "districtCode": 3310,
+    "nameEn": "Uthumphon Phisai",
+    "nameTH": "อุทุมพรพิสัย",
+    "postalCode": 33120
+  },
+  {
+    "id": 280,
+    "provinceCode": 33,
+    "districtCode": 3311,
+    "nameEn": "Bueng Bun",
+    "nameTH": "บึงบูรพ์",
+    "postalCode": 33220
+  },
+  {
+    "id": 281,
+    "provinceCode": 33,
+    "districtCode": 3312,
+    "nameEn": "Huai Thap Than",
+    "nameTH": "ห้วยทับทัน",
+    "postalCode": 33210
+  },
+  {
+    "id": 282,
+    "provinceCode": 33,
+    "districtCode": 3313,
+    "nameEn": "Non Khun",
+    "nameTH": "โนนคูณ",
+    "postalCode": 33250
+  },
+  {
+    "id": 283,
+    "provinceCode": 33,
+    "districtCode": 3314,
+    "nameEn": "Si Rattana",
+    "nameTH": "ศรีรัตนะ",
+    "postalCode": 33240
+  },
+  {
+    "id": 284,
+    "provinceCode": 33,
+    "districtCode": 3315,
+    "nameEn": "Nam Kliang",
+    "nameTH": "น้ำเกลี้ยง",
+    "postalCode": 33130
+  },
+  {
+    "id": 285,
+    "provinceCode": 33,
+    "districtCode": 3316,
+    "nameEn": "Wang Hin",
+    "nameTH": "วังหิน",
+    "postalCode": 33270
+  },
+  {
+    "id": 286,
+    "provinceCode": 33,
+    "districtCode": 3317,
+    "nameEn": "Phu Sing",
+    "nameTH": "ภูสิงห์",
+    "postalCode": 33140
+  },
+  {
+    "id": 287,
+    "provinceCode": 33,
+    "districtCode": 3318,
+    "nameEn": "Mueang Chan",
+    "nameTH": "เมืองจันทร์",
+    "postalCode": 33120
+  },
+  {
+    "id": 288,
+    "provinceCode": 33,
+    "districtCode": 3319,
+    "nameEn": "Benchalak",
+    "nameTH": "เบญจลักษ์",
+    "postalCode": 33110
+  },
+  {
+    "id": 289,
+    "provinceCode": 33,
+    "districtCode": 3320,
+    "nameEn": "Phayu",
+    "nameTH": "พยุห์",
+    "postalCode": 33230
+  },
+  {
+    "id": 290,
+    "provinceCode": 33,
+    "districtCode": 3321,
+    "nameEn": "Pho Si Suwan",
+    "nameTH": "โพธิ์ศรีสุวรรณ",
+    "postalCode": 33120
+  },
+  {
+    "id": 291,
+    "provinceCode": 33,
+    "districtCode": 3322,
+    "nameEn": "Sila Lat",
+    "nameTH": "ศิลาลาด",
+    "postalCode": 33160
+  },
+  {
+    "id": 292,
+    "provinceCode": 34,
+    "districtCode": 3401,
+    "nameEn": "Mueang Ubon Ratchathani",
+    "nameTH": "เมืองอุบลราชธานี",
+    "postalCode": 34000
+  },
+  {
+    "id": 293,
+    "provinceCode": 34,
+    "districtCode": 3402,
+    "nameEn": "Si Mueang Mai",
+    "nameTH": "ศรีเมืองใหม่",
+    "postalCode": 34250
+  },
+  {
+    "id": 294,
+    "provinceCode": 34,
+    "districtCode": 3403,
+    "nameEn": "Khong Chiam",
+    "nameTH": "โขงเจียม",
+    "postalCode": 34220
+  },
+  {
+    "id": 295,
+    "provinceCode": 34,
+    "districtCode": 3404,
+    "nameEn": "Khueang Nai",
+    "nameTH": "เขื่องใน",
+    "postalCode": 34150
+  },
+  {
+    "id": 296,
+    "provinceCode": 34,
+    "districtCode": 3405,
+    "nameEn": "Khemarat",
+    "nameTH": "เขมราฐ",
+    "postalCode": 34170
+  },
+  {
+    "id": 297,
+    "provinceCode": 34,
+    "districtCode": 3407,
+    "nameEn": "Det Udom",
+    "nameTH": "เดชอุดม",
+    "postalCode": 34160
+  },
+  {
+    "id": 298,
+    "provinceCode": 34,
+    "districtCode": 3408,
+    "nameEn": "Na Chaluai",
+    "nameTH": "นาจะหลวย",
+    "postalCode": 34280
+  },
+  {
+    "id": 299,
+    "provinceCode": 34,
+    "districtCode": 3409,
+    "nameEn": "Nam Yuen",
+    "nameTH": "น้ำยืน",
+    "postalCode": 34260
+  },
+  {
+    "id": 300,
+    "provinceCode": 34,
+    "districtCode": 3410,
+    "nameEn": "Boontharik",
+    "nameTH": "บุณฑริก",
+    "postalCode": 34230
+  },
+  {
+    "id": 301,
+    "provinceCode": 34,
+    "districtCode": 3411,
+    "nameEn": "Trakan Phuet Phon",
+    "nameTH": "ตระการพืชผล",
+    "postalCode": 34130
+  },
+  {
+    "id": 302,
+    "provinceCode": 34,
+    "districtCode": 3412,
+    "nameEn": "Kut Khaopun",
+    "nameTH": "กุดข้าวปุ้น",
+    "postalCode": 34270
+  },
+  {
+    "id": 303,
+    "provinceCode": 34,
+    "districtCode": 3414,
+    "nameEn": "Muang Sam Sip",
+    "nameTH": "ม่วงสามสิบ",
+    "postalCode": 34140
+  },
+  {
+    "id": 304,
+    "provinceCode": 34,
+    "districtCode": 3415,
+    "nameEn": "Warin Chamrap",
+    "nameTH": "วารินชำราบ",
+    "postalCode": 34190
+  },
+  {
+    "id": 305,
+    "provinceCode": 34,
+    "districtCode": 3419,
+    "nameEn": "Phibun Mangsahan",
+    "nameTH": "พิบูลมังสาหาร",
+    "postalCode": 34110
+  },
+  {
+    "id": 306,
+    "provinceCode": 34,
+    "districtCode": 3420,
+    "nameEn": "Tan Sum",
+    "nameTH": "ตาลสุม",
+    "postalCode": 34330
+  },
+  {
+    "id": 307,
+    "provinceCode": 34,
+    "districtCode": 3421,
+    "nameEn": "Pho Sai",
+    "nameTH": "โพธิ์ไทร",
+    "postalCode": 34340
+  },
+  {
+    "id": 308,
+    "provinceCode": 34,
+    "districtCode": 3422,
+    "nameEn": "Samrong",
+    "nameTH": "สำโรง",
+    "postalCode": 34360
+  },
+  {
+    "id": 309,
+    "provinceCode": 34,
+    "districtCode": 3424,
+    "nameEn": "Don Mot Daeng",
+    "nameTH": "ดอนมดแดง",
+    "postalCode": 34000
+  },
+  {
+    "id": 310,
+    "provinceCode": 34,
+    "districtCode": 3425,
+    "nameEn": "Sirindhorn",
+    "nameTH": "สิรินธร",
+    "postalCode": 34350
+  },
+  {
+    "id": 311,
+    "provinceCode": 34,
+    "districtCode": 3426,
+    "nameEn": "Thung Si Udom",
+    "nameTH": "ทุ่งศรีอุดม",
+    "postalCode": 34160
+  },
+  {
+    "id": 312,
+    "provinceCode": 34,
+    "districtCode": 3429,
+    "nameEn": "Na Yia",
+    "nameTH": "นาเยีย",
+    "postalCode": 34160
+  },
+  {
+    "id": 313,
+    "provinceCode": 34,
+    "districtCode": 3430,
+    "nameEn": "Na Tan",
+    "nameTH": "นาตาล",
+    "postalCode": 34170
+  },
+  {
+    "id": 314,
+    "provinceCode": 34,
+    "districtCode": 3431,
+    "nameEn": "Lao Suea Kok",
+    "nameTH": "เหล่าเสือโก้ก",
+    "postalCode": 34000
+  },
+  {
+    "id": 315,
+    "provinceCode": 34,
+    "districtCode": 3432,
+    "nameEn": "Sawang Wirawong",
+    "nameTH": "สว่างวีระวงศ์",
+    "postalCode": 34190
+  },
+  {
+    "id": 316,
+    "provinceCode": 34,
+    "districtCode": 3433,
+    "nameEn": "Nam Khun",
+    "nameTH": "น้ำขุ่น",
+    "postalCode": 34260
+  },
+  {
+    "id": 317,
+    "provinceCode": 35,
+    "districtCode": 3501,
+    "nameEn": "Mueang Yasothon",
+    "nameTH": "เมืองยโสธร",
+    "postalCode": 35000
+  },
+  {
+    "id": 318,
+    "provinceCode": 35,
+    "districtCode": 3502,
+    "nameEn": "Sai Mun",
+    "nameTH": "ทรายมูล",
+    "postalCode": 35170
+  },
+  {
+    "id": 319,
+    "provinceCode": 35,
+    "districtCode": 3503,
+    "nameEn": "Kut Chum",
+    "nameTH": "กุดชุม",
+    "postalCode": 35140
+  },
+  {
+    "id": 320,
+    "provinceCode": 35,
+    "districtCode": 3504,
+    "nameEn": "Kham Khuean Kaeo",
+    "nameTH": "คำเขื่อนแก้ว",
+    "postalCode": 35110
+  },
+  {
+    "id": 321,
+    "provinceCode": 35,
+    "districtCode": 3505,
+    "nameEn": "Pa Tio",
+    "nameTH": "ป่าติ้ว",
+    "postalCode": 35150
+  },
+  {
+    "id": 322,
+    "provinceCode": 35,
+    "districtCode": 3506,
+    "nameEn": "Maha Chana Chai",
+    "nameTH": "มหาชนะชัย",
+    "postalCode": 35130
+  },
+  {
+    "id": 323,
+    "provinceCode": 35,
+    "districtCode": 3507,
+    "nameEn": "Kho Wang",
+    "nameTH": "ค้อวัง",
+    "postalCode": 35160
+  },
+  {
+    "id": 324,
+    "provinceCode": 35,
+    "districtCode": 3508,
+    "nameEn": "Loeng Nok Tha",
+    "nameTH": "เลิงนกทา",
+    "postalCode": 35120
+  },
+  {
+    "id": 325,
+    "provinceCode": 35,
+    "districtCode": 3509,
+    "nameEn": "Thai Charoen",
+    "nameTH": "ไทยเจริญ",
+    "postalCode": 35120
+  },
+  {
+    "id": 326,
+    "provinceCode": 36,
+    "districtCode": 3601,
+    "nameEn": "Mueang Chaiyaphum",
+    "nameTH": "เมืองชัยภูมิ",
+    "postalCode": 36000
+  },
+  {
+    "id": 327,
+    "provinceCode": 36,
+    "districtCode": 3602,
+    "nameEn": "Ban Khwao",
+    "nameTH": "บ้านเขว้า",
+    "postalCode": 36170
+  },
+  {
+    "id": 328,
+    "provinceCode": 36,
+    "districtCode": 3603,
+    "nameEn": "Khon Sawan",
+    "nameTH": "คอนสวรรค์",
+    "postalCode": 36140
+  },
+  {
+    "id": 329,
+    "provinceCode": 36,
+    "districtCode": 3604,
+    "nameEn": "Kaset Sombun",
+    "nameTH": "เกษตรสมบูรณ์",
+    "postalCode": 36120
+  },
+  {
+    "id": 330,
+    "provinceCode": 36,
+    "districtCode": 3605,
+    "nameEn": "Nong Bua Daeng",
+    "nameTH": "หนองบัวแดง",
+    "postalCode": 36210
+  },
+  {
+    "id": 331,
+    "provinceCode": 36,
+    "districtCode": 3606,
+    "nameEn": "Chatturat",
+    "nameTH": "จัตุรัส",
+    "postalCode": 36130
+  },
+  {
+    "id": 332,
+    "provinceCode": 36,
+    "districtCode": 3607,
+    "nameEn": "Bamnet Narong",
+    "nameTH": "บำเหน็จณรงค์",
+    "postalCode": 36160
+  },
+  {
+    "id": 333,
+    "provinceCode": 36,
+    "districtCode": 3608,
+    "nameEn": "Nong Bua Rawe",
+    "nameTH": "หนองบัวระเหว",
+    "postalCode": 36250
+  },
+  {
+    "id": 334,
+    "provinceCode": 36,
+    "districtCode": 3609,
+    "nameEn": "Thep Sathit",
+    "nameTH": "เทพสถิต",
+    "postalCode": 36230
+  },
+  {
+    "id": 335,
+    "provinceCode": 36,
+    "districtCode": 3610,
+    "nameEn": "Phu Khiao",
+    "nameTH": "ภูเขียว",
+    "postalCode": 36110
+  },
+  {
+    "id": 336,
+    "provinceCode": 36,
+    "districtCode": 3611,
+    "nameEn": "Ban Thaen",
+    "nameTH": "บ้านแท่น",
+    "postalCode": 36190
+  },
+  {
+    "id": 337,
+    "provinceCode": 36,
+    "districtCode": 3612,
+    "nameEn": "Kaeng Khro",
+    "nameTH": "แก้งคร้อ",
+    "postalCode": 36150
+  },
+  {
+    "id": 338,
+    "provinceCode": 36,
+    "districtCode": 3613,
+    "nameEn": "Khon San",
+    "nameTH": "คอนสาร",
+    "postalCode": 36180
+  },
+  {
+    "id": 339,
+    "provinceCode": 36,
+    "districtCode": 3614,
+    "nameEn": "Phakdi Chumphon",
+    "nameTH": "ภักดีชุมพล",
+    "postalCode": 36260
+  },
+  {
+    "id": 340,
+    "provinceCode": 36,
+    "districtCode": 3615,
+    "nameEn": "Noen Sa-Nga",
+    "nameTH": "เนินสง่า",
+    "postalCode": 36130
+  },
+  {
+    "id": 341,
+    "provinceCode": 36,
+    "districtCode": 3616,
+    "nameEn": "Sap Yai",
+    "nameTH": "ซับใหญ่",
+    "postalCode": 36130
+  },
+  {
+    "id": 342,
+    "provinceCode": 37,
+    "districtCode": 3701,
+    "nameEn": "Mueang Amnat Charoen",
+    "nameTH": "เมืองอำนาจเจริญ",
+    "postalCode": 37000
+  },
+  {
+    "id": 343,
+    "provinceCode": 37,
+    "districtCode": 3702,
+    "nameEn": "Chanuman",
+    "nameTH": "ชานุมาน",
+    "postalCode": 37210
+  },
+  {
+    "id": 344,
+    "provinceCode": 37,
+    "districtCode": 3703,
+    "nameEn": "Pathum Ratchawongsa",
+    "nameTH": "ปทุมราชวงศา",
+    "postalCode": 37110
+  },
+  {
+    "id": 345,
+    "provinceCode": 37,
+    "districtCode": 3704,
+    "nameEn": "Phana",
+    "nameTH": "พนา",
+    "postalCode": 37180
+  },
+  {
+    "id": 346,
+    "provinceCode": 37,
+    "districtCode": 3705,
+    "nameEn": "Senangkhanikhom",
+    "nameTH": "เสนางคนิคม",
+    "postalCode": 37290
+  },
+  {
+    "id": 347,
+    "provinceCode": 37,
+    "districtCode": 3706,
+    "nameEn": "Hua Taphan",
+    "nameTH": "หัวตะพาน",
+    "postalCode": 37240
+  },
+  {
+    "id": 348,
+    "provinceCode": 37,
+    "districtCode": 3707,
+    "nameEn": "Lue Amnat",
+    "nameTH": "ลืออำนาจ",
+    "postalCode": 37000
+  },
+  {
+    "id": 349,
+    "provinceCode": 38,
+    "districtCode": 3801,
+    "nameEn": "Bueng Kan",
+    "nameTH": "เมืองบึงกาฬ",
+    "postalCode": 38000
+  },
+  {
+    "id": 350,
+    "provinceCode": 38,
+    "districtCode": 3802,
+    "nameEn": "Phon Charoen",
+    "nameTH": "พรเจริญ",
+    "postalCode": 38150
+  },
+  {
+    "id": 351,
+    "provinceCode": 38,
+    "districtCode": 3803,
+    "nameEn": "So Phisai",
+    "nameTH": "โซ่พิสัย",
+    "postalCode": 38170
+  },
+  {
+    "id": 352,
+    "provinceCode": 38,
+    "districtCode": 3804,
+    "nameEn": "Seka",
+    "nameTH": "เซกา",
+    "postalCode": 38150
+  },
+  {
+    "id": 353,
+    "provinceCode": 38,
+    "districtCode": 3805,
+    "nameEn": "Pak Khat",
+    "nameTH": "ปากคาด",
+    "postalCode": 38190
+  },
+  {
+    "id": 354,
+    "provinceCode": 38,
+    "districtCode": 3806,
+    "nameEn": "Bueng Khong Long",
+    "nameTH": "บึงโขงหลง",
+    "postalCode": 38220
+  },
+  {
+    "id": 355,
+    "provinceCode": 38,
+    "districtCode": 3807,
+    "nameEn": "Si Wilai",
+    "nameTH": "ศรีวิไล",
+    "postalCode": 38190
+  },
+  {
+    "id": 356,
+    "provinceCode": 38,
+    "districtCode": 3808,
+    "nameEn": "Bung Khla",
+    "nameTH": "บุ่งคล้า",
+    "postalCode": 38000
+  },
+  {
+    "id": 357,
+    "provinceCode": 39,
+    "districtCode": 3901,
+    "nameEn": "Mueang Nong Bua Lam Phu",
+    "nameTH": "เมืองหนองบัวลำภู",
+    "postalCode": 39000
+  },
+  {
+    "id": 358,
+    "provinceCode": 39,
+    "districtCode": 3902,
+    "nameEn": "Na Klang",
+    "nameTH": "นากลาง",
+    "postalCode": 39170
+  },
+  {
+    "id": 359,
+    "provinceCode": 39,
+    "districtCode": 3903,
+    "nameEn": "Non Sang",
+    "nameTH": "โนนสัง",
+    "postalCode": 39140
+  },
+  {
+    "id": 360,
+    "provinceCode": 39,
+    "districtCode": 3904,
+    "nameEn": "Si Bun Rueang",
+    "nameTH": "ศรีบุญเรือง",
+    "postalCode": 39180
+  },
+  {
+    "id": 361,
+    "provinceCode": 39,
+    "districtCode": 3905,
+    "nameEn": "Suwannakhuha",
+    "nameTH": "สุวรรณคูหา",
+    "postalCode": 39270
+  },
+  {
+    "id": 362,
+    "provinceCode": 39,
+    "districtCode": 3906,
+    "nameEn": "Na Wang",
+    "nameTH": "นาวัง",
+    "postalCode": 39170
+  },
+  {
+    "id": 363,
+    "provinceCode": 40,
+    "districtCode": 4001,
+    "nameEn": "Mueang Khon Kaen",
+    "nameTH": "เมืองขอนแก่น",
+    "postalCode": 40000
+  },
+  {
+    "id": 364,
+    "provinceCode": 40,
+    "districtCode": 4002,
+    "nameEn": "Ban Fang",
+    "nameTH": "บ้านฝาง",
+    "postalCode": 40270
+  },
+  {
+    "id": 365,
+    "provinceCode": 40,
+    "districtCode": 4003,
+    "nameEn": "Phra Yuen",
+    "nameTH": "พระยืน",
+    "postalCode": 40320
+  },
+  {
+    "id": 366,
+    "provinceCode": 40,
+    "districtCode": 4004,
+    "nameEn": "Nong Ruea",
+    "nameTH": "หนองเรือ",
+    "postalCode": 40210
+  },
+  {
+    "id": 367,
+    "provinceCode": 40,
+    "districtCode": 4005,
+    "nameEn": "Chum Phae",
+    "nameTH": "ชุมแพ",
+    "postalCode": 40130
+  },
+  {
+    "id": 368,
+    "provinceCode": 40,
+    "districtCode": 4006,
+    "nameEn": "Si Chomphu",
+    "nameTH": "สีชมพู",
+    "postalCode": 40220
+  },
+  {
+    "id": 369,
+    "provinceCode": 40,
+    "districtCode": 4007,
+    "nameEn": "Nam Phong",
+    "nameTH": "น้ำพอง",
+    "postalCode": 40140
+  },
+  {
+    "id": 370,
+    "provinceCode": 40,
+    "districtCode": 4008,
+    "nameEn": "Ubolratana",
+    "nameTH": "อุบลรัตน์",
+    "postalCode": 40250
+  },
+  {
+    "id": 371,
+    "provinceCode": 40,
+    "districtCode": 4009,
+    "nameEn": "Kranuan",
+    "nameTH": "กระนวน",
+    "postalCode": 40170
+  },
+  {
+    "id": 372,
+    "provinceCode": 40,
+    "districtCode": 4010,
+    "nameEn": "Ban Phai",
+    "nameTH": "บ้านไผ่",
+    "postalCode": 40110
+  },
+  {
+    "id": 373,
+    "provinceCode": 40,
+    "districtCode": 4011,
+    "nameEn": "Pueai Noi",
+    "nameTH": "เปือยน้อย",
+    "postalCode": 40340
+  },
+  {
+    "id": 374,
+    "provinceCode": 40,
+    "districtCode": 4012,
+    "nameEn": "Phon",
+    "nameTH": "พล",
+    "postalCode": 40120
+  },
+  {
+    "id": 375,
+    "provinceCode": 40,
+    "districtCode": 4013,
+    "nameEn": "Waeng Yai",
+    "nameTH": "แวงใหญ่",
+    "postalCode": 40330
+  },
+  {
+    "id": 376,
+    "provinceCode": 40,
+    "districtCode": 4014,
+    "nameEn": "Waeng Noi",
+    "nameTH": "แวงน้อย",
+    "postalCode": 40230
+  },
+  {
+    "id": 377,
+    "provinceCode": 40,
+    "districtCode": 4015,
+    "nameEn": "Nong Song Hong",
+    "nameTH": "หนองสองห้อง",
+    "postalCode": 40190
+  },
+  {
+    "id": 378,
+    "provinceCode": 40,
+    "districtCode": 4016,
+    "nameEn": "Phu Wiang",
+    "nameTH": "ภูเวียง",
+    "postalCode": 40150
+  },
+  {
+    "id": 379,
+    "provinceCode": 40,
+    "districtCode": 4017,
+    "nameEn": "Mancha Khiri",
+    "nameTH": "มัญจาคีรี",
+    "postalCode": 40160
+  },
+  {
+    "id": 380,
+    "provinceCode": 40,
+    "districtCode": 4018,
+    "nameEn": "Chonnabot",
+    "nameTH": "ชนบท",
+    "postalCode": 40180
+  },
+  {
+    "id": 381,
+    "provinceCode": 40,
+    "districtCode": 4019,
+    "nameEn": "Khao Suan Kwang",
+    "nameTH": "เขาสวนกวาง",
+    "postalCode": 40280
+  },
+  {
+    "id": 382,
+    "provinceCode": 40,
+    "districtCode": 4020,
+    "nameEn": "Phu Phaman",
+    "nameTH": "ภูผาม่าน",
+    "postalCode": 40350
+  },
+  {
+    "id": 383,
+    "provinceCode": 40,
+    "districtCode": 4021,
+    "nameEn": "Sam Sung",
+    "nameTH": "ซำสูง",
+    "postalCode": 40170
+  },
+  {
+    "id": 384,
+    "provinceCode": 40,
+    "districtCode": 4022,
+    "nameEn": "Khok Pho Chai",
+    "nameTH": "โคกโพธิ์ไชย",
+    "postalCode": 40160
+  },
+  {
+    "id": 385,
+    "provinceCode": 40,
+    "districtCode": 4023,
+    "nameEn": "Nong Na Kham",
+    "nameTH": "หนองนาคำ",
+    "postalCode": 40150
+  },
+  {
+    "id": 386,
+    "provinceCode": 40,
+    "districtCode": 4024,
+    "nameEn": "Ban Haet",
+    "nameTH": "บ้านแฮด",
+    "postalCode": 40110
+  },
+  {
+    "id": 387,
+    "provinceCode": 40,
+    "districtCode": 4025,
+    "nameEn": "Non Sila",
+    "nameTH": "โนนศิลา",
+    "postalCode": 40110
+  },
+  {
+    "id": 388,
+    "provinceCode": 40,
+    "districtCode": 4029,
+    "nameEn": "Wiang Kao",
+    "nameTH": "เวียงเก่า",
+    "postalCode": 40140
+  },
+  {
+    "id": 389,
+    "provinceCode": 41,
+    "districtCode": 4101,
+    "nameEn": "Mueang Udon Thani",
+    "nameTH": "เมืองอุดรธานี",
+    "postalCode": 41000
+  },
+  {
+    "id": 390,
+    "provinceCode": 41,
+    "districtCode": 4102,
+    "nameEn": "Kut Chap",
+    "nameTH": "กุดจับ",
+    "postalCode": 41250
+  },
+  {
+    "id": 391,
+    "provinceCode": 41,
+    "districtCode": 4103,
+    "nameEn": "Nong Wua So",
+    "nameTH": "หนองวัวซอ",
+    "postalCode": 41360
+  },
+  {
+    "id": 392,
+    "provinceCode": 41,
+    "districtCode": 4104,
+    "nameEn": "Kumphawapi",
+    "nameTH": "กุมภวาปี",
+    "postalCode": 41110
+  },
+  {
+    "id": 393,
+    "provinceCode": 41,
+    "districtCode": 4105,
+    "nameEn": "Non Sa-At",
+    "nameTH": "โนนสะอาด",
+    "postalCode": 41240
+  },
+  {
+    "id": 394,
+    "provinceCode": 41,
+    "districtCode": 4106,
+    "nameEn": "Nong Saeng",
+    "nameTH": "หนองหาน",
+    "postalCode": 41130
+  },
+  {
+    "id": 395,
+    "provinceCode": 41,
+    "districtCode": 4107,
+    "nameEn": "Thung Fon",
+    "nameTH": "ทุ่งฝน",
+    "postalCode": 41310
+  },
+  {
+    "id": 396,
+    "provinceCode": 41,
+    "districtCode": 4108,
+    "nameEn": "Chai Wan",
+    "nameTH": "ไชยวาน",
+    "postalCode": 41290
+  },
+  {
+    "id": 397,
+    "provinceCode": 41,
+    "districtCode": 4109,
+    "nameEn": "Si That",
+    "nameTH": "ศรีธาตุ",
+    "postalCode": 41230
+  },
+  {
+    "id": 398,
+    "provinceCode": 41,
+    "districtCode": 4110,
+    "nameEn": "Wang Sam Mo",
+    "nameTH": "วังสามหมอ",
+    "postalCode": 41280
+  },
+  {
+    "id": 399,
+    "provinceCode": 41,
+    "districtCode": 4111,
+    "nameEn": "Ban Dung",
+    "nameTH": "บ้านดุง",
+    "postalCode": 41190
+  },
+  {
+    "id": 400,
+    "provinceCode": 41,
+    "districtCode": 4117,
+    "nameEn": "Ban Phue",
+    "nameTH": "บ้านผือ",
+    "postalCode": 41160
+  },
+  {
+    "id": 401,
+    "provinceCode": 41,
+    "districtCode": 4118,
+    "nameEn": "Nam Som",
+    "nameTH": "น้ำโสม",
+    "postalCode": 41210
+  },
+  {
+    "id": 402,
+    "provinceCode": 41,
+    "districtCode": 4119,
+    "nameEn": "Phen",
+    "nameTH": "เพ็ญ",
+    "postalCode": 41150
+  },
+  {
+    "id": 403,
+    "provinceCode": 41,
+    "districtCode": 4120,
+    "nameEn": "Sang Khom",
+    "nameTH": "สร้างคอม",
+    "postalCode": 41260
+  },
+  {
+    "id": 404,
+    "provinceCode": 41,
+    "districtCode": 4121,
+    "nameEn": "Nong Saeng",
+    "nameTH": "หนองแสง",
+    "postalCode": 41340
+  },
+  {
+    "id": 405,
+    "provinceCode": 41,
+    "districtCode": 4122,
+    "nameEn": "Na Yung",
+    "nameTH": "นายูง",
+    "postalCode": 41380
+  },
+  {
+    "id": 406,
+    "provinceCode": 41,
+    "districtCode": 4123,
+    "nameEn": "Phibun Rak",
+    "nameTH": "พิบูลย์รักษ์",
+    "postalCode": 41130
+  },
+  {
+    "id": 407,
+    "provinceCode": 41,
+    "districtCode": 4124,
+    "nameEn": "Ku Kaeo",
+    "nameTH": "กู่แก้ว",
+    "postalCode": 41130
+  },
+  {
+    "id": 408,
+    "provinceCode": 41,
+    "districtCode": 4125,
+    "nameEn": "Prachaksinlapakhom",
+    "nameTH": "ประจักษ์ศิลปาคม",
+    "postalCode": 41110
+  },
+  {
+    "id": 409,
+    "provinceCode": 42,
+    "districtCode": 4201,
+    "nameEn": "Mueang Loei",
+    "nameTH": "เมืองเลย",
+    "postalCode": 42000
+  },
+  {
+    "id": 410,
+    "provinceCode": 42,
+    "districtCode": 4202,
+    "nameEn": "Na Duang",
+    "nameTH": "นาด้วง",
+    "postalCode": 42210
+  },
+  {
+    "id": 411,
+    "provinceCode": 42,
+    "districtCode": 4203,
+    "nameEn": "Chiang Khan",
+    "nameTH": "เชียงคาน",
+    "postalCode": 42110
+  },
+  {
+    "id": 412,
+    "provinceCode": 42,
+    "districtCode": 4204,
+    "nameEn": "Pak Chom",
+    "nameTH": "ปากชม",
+    "postalCode": 42150
+  },
+  {
+    "id": 413,
+    "provinceCode": 42,
+    "districtCode": 4205,
+    "nameEn": "Dan Sai",
+    "nameTH": "ด่านซ้าย",
+    "postalCode": 42120
+  },
+  {
+    "id": 414,
+    "provinceCode": 42,
+    "districtCode": 4206,
+    "nameEn": "Na Haeo",
+    "nameTH": "นาแห้ว",
+    "postalCode": 42170
+  },
+  {
+    "id": 415,
+    "provinceCode": 42,
+    "districtCode": 4207,
+    "nameEn": "Phu Ruea",
+    "nameTH": "ภูเรือ",
+    "postalCode": 42160
+  },
+  {
+    "id": 416,
+    "provinceCode": 42,
+    "districtCode": 4208,
+    "nameEn": "Tha Li",
+    "nameTH": "ท่าลี่",
+    "postalCode": 42140
+  },
+  {
+    "id": 417,
+    "provinceCode": 42,
+    "districtCode": 4209,
+    "nameEn": "Wang Saphung",
+    "nameTH": "วังสะพุง",
+    "postalCode": 42130
+  },
+  {
+    "id": 418,
+    "provinceCode": 42,
+    "districtCode": 4210,
+    "nameEn": "Phu Kradueng",
+    "nameTH": "ภูกระดึง",
+    "postalCode": 42180
+  },
+  {
+    "id": 419,
+    "provinceCode": 42,
+    "districtCode": 4211,
+    "nameEn": "Phu Luang",
+    "nameTH": "ภูหลวง",
+    "postalCode": 42230
+  },
+  {
+    "id": 420,
+    "provinceCode": 42,
+    "districtCode": 4212,
+    "nameEn": "Pha Khao",
+    "nameTH": "ผาขาว",
+    "postalCode": 42240
+  },
+  {
+    "id": 421,
+    "provinceCode": 42,
+    "districtCode": 4213,
+    "nameEn": "Erawan",
+    "nameTH": "เอราวัณ",
+    "postalCode": 42220
+  },
+  {
+    "id": 422,
+    "provinceCode": 42,
+    "districtCode": 4214,
+    "nameEn": "Nong Hin",
+    "nameTH": "หนองหิน",
+    "postalCode": 42190
+  },
+  {
+    "id": 423,
+    "provinceCode": 43,
+    "districtCode": 4301,
+    "nameEn": "Mueang Nong Khai",
+    "nameTH": "เมืองหนองคาย",
+    "postalCode": 43000
+  },
+  {
+    "id": 424,
+    "provinceCode": 43,
+    "districtCode": 4302,
+    "nameEn": "Tha Bo",
+    "nameTH": "ท่าบ่อ",
+    "postalCode": 43110
+  },
+  {
+    "id": 425,
+    "provinceCode": 43,
+    "districtCode": 4305,
+    "nameEn": "Phon Phisai",
+    "nameTH": "โพนพิสัย",
+    "postalCode": 43120
+  },
+  {
+    "id": 426,
+    "provinceCode": 43,
+    "districtCode": 4307,
+    "nameEn": "Si Chiang Mai",
+    "nameTH": "ศรีเชียงใหม่",
+    "postalCode": 43130
+  },
+  {
+    "id": 427,
+    "provinceCode": 43,
+    "districtCode": 4308,
+    "nameEn": "Sangkhom",
+    "nameTH": "สังคม",
+    "postalCode": 43160
+  },
+  {
+    "id": 428,
+    "provinceCode": 43,
+    "districtCode": 4314,
+    "nameEn": "Sakhrai",
+    "nameTH": "สระใคร",
+    "postalCode": 43100
+  },
+  {
+    "id": 429,
+    "provinceCode": 43,
+    "districtCode": 4315,
+    "nameEn": "Fao Rai",
+    "nameTH": "เฝ้าไร่",
+    "postalCode": 43120
+  },
+  {
+    "id": 430,
+    "provinceCode": 43,
+    "districtCode": 4316,
+    "nameEn": "Rattanawapi",
+    "nameTH": "รัตนวาปี",
+    "postalCode": 43120
+  },
+  {
+    "id": 431,
+    "provinceCode": 43,
+    "districtCode": 4317,
+    "nameEn": "Pho Tak",
+    "nameTH": "โพธิ์ตาก",
+    "postalCode": 43130
+  },
+  {
+    "id": 432,
+    "provinceCode": 44,
+    "districtCode": 4401,
+    "nameEn": "Mueang Maha Sarakham",
+    "nameTH": "เมืองมหาสารคาม",
+    "postalCode": 44000
+  },
+  {
+    "id": 433,
+    "provinceCode": 44,
+    "districtCode": 4402,
+    "nameEn": "Kae Dam",
+    "nameTH": "แกดำ",
+    "postalCode": 44190
+  },
+  {
+    "id": 434,
+    "provinceCode": 44,
+    "districtCode": 4403,
+    "nameEn": "Kosum Phisai",
+    "nameTH": "โกสุมพิสัย",
+    "postalCode": 44140
+  },
+  {
+    "id": 435,
+    "provinceCode": 44,
+    "districtCode": 4404,
+    "nameEn": "Kantharawichai",
+    "nameTH": "กันทรวิชัย",
+    "postalCode": 44150
+  },
+  {
+    "id": 436,
+    "provinceCode": 44,
+    "districtCode": 4405,
+    "nameEn": "Chiang Yuen",
+    "nameTH": "เชียงยืน",
+    "postalCode": 44160
+  },
+  {
+    "id": 437,
+    "provinceCode": 44,
+    "districtCode": 4406,
+    "nameEn": "Borabue",
+    "nameTH": "บรบือ",
+    "postalCode": 44130
+  },
+  {
+    "id": 438,
+    "provinceCode": 44,
+    "districtCode": 4407,
+    "nameEn": "Na Chueak",
+    "nameTH": "นาเชือก",
+    "postalCode": 44170
+  },
+  {
+    "id": 439,
+    "provinceCode": 44,
+    "districtCode": 4408,
+    "nameEn": "Phayakkhaphum Phisai",
+    "nameTH": "พยัคฆภูมิพิสัย",
+    "postalCode": 44110
+  },
+  {
+    "id": 440,
+    "provinceCode": 44,
+    "districtCode": 4409,
+    "nameEn": "Wapi Pathum",
+    "nameTH": "วาปีปทุม",
+    "postalCode": 44120
+  },
+  {
+    "id": 441,
+    "provinceCode": 44,
+    "districtCode": 4410,
+    "nameEn": "Na Dun",
+    "nameTH": "นาดูน",
+    "postalCode": 44180
+  },
+  {
+    "id": 442,
+    "provinceCode": 44,
+    "districtCode": 4411,
+    "nameEn": "Yang Sisurat",
+    "nameTH": "ยางสีสุราช",
+    "postalCode": 44210
+  },
+  {
+    "id": 443,
+    "provinceCode": 44,
+    "districtCode": 4412,
+    "nameEn": "Kut Rang",
+    "nameTH": "กุดรัง",
+    "postalCode": 44130
+  },
+  {
+    "id": 444,
+    "provinceCode": 44,
+    "districtCode": 4413,
+    "nameEn": "Chuen Chom",
+    "nameTH": "ชื่นชม",
+    "postalCode": 44160
+  },
+  {
+    "id": 445,
+    "provinceCode": 45,
+    "districtCode": 4501,
+    "nameEn": "Mueang Roi Et",
+    "nameTH": "เมืองร้อยเอ็ด",
+    "postalCode": 45000
+  },
+  {
+    "id": 446,
+    "provinceCode": 45,
+    "districtCode": 4502,
+    "nameEn": "Kaset Wisai",
+    "nameTH": "เกษตรวิสัย",
+    "postalCode": 45150
+  },
+  {
+    "id": 447,
+    "provinceCode": 45,
+    "districtCode": 4503,
+    "nameEn": "Pathum Rat",
+    "nameTH": "ปทุมรัตต์",
+    "postalCode": 45190
+  },
+  {
+    "id": 448,
+    "provinceCode": 45,
+    "districtCode": 4504,
+    "nameEn": "Chaturaphak Phiman",
+    "nameTH": "จตุรพักตรพิมาน",
+    "postalCode": 45180
+  },
+  {
+    "id": 449,
+    "provinceCode": 45,
+    "districtCode": 4505,
+    "nameEn": "Thawat Buri",
+    "nameTH": "ธวัชบุรี",
+    "postalCode": 45170
+  },
+  {
+    "id": 450,
+    "provinceCode": 45,
+    "districtCode": 4506,
+    "nameEn": "Phanom Phrai",
+    "nameTH": "พนมไพร",
+    "postalCode": 45140
+  },
+  {
+    "id": 451,
+    "provinceCode": 45,
+    "districtCode": 4507,
+    "nameEn": "Phon Thong",
+    "nameTH": "โพนทอง",
+    "postalCode": 45110
+  },
+  {
+    "id": 452,
+    "provinceCode": 45,
+    "districtCode": 4508,
+    "nameEn": "Pho Chai",
+    "nameTH": "โพธิ์ชัย",
+    "postalCode": 45230
+  },
+  {
+    "id": 453,
+    "provinceCode": 45,
+    "districtCode": 4509,
+    "nameEn": "Nong Phok",
+    "nameTH": "หนองพอก",
+    "postalCode": 45210
+  },
+  {
+    "id": 454,
+    "provinceCode": 45,
+    "districtCode": 4510,
+    "nameEn": "Selaphum",
+    "nameTH": "เสลภูมิ",
+    "postalCode": 45120
+  },
+  {
+    "id": 455,
+    "provinceCode": 45,
+    "districtCode": 4511,
+    "nameEn": "Suwannaphum",
+    "nameTH": "สุวรรณภูมิ",
+    "postalCode": 45130
+  },
+  {
+    "id": 456,
+    "provinceCode": 45,
+    "districtCode": 4512,
+    "nameEn": "Mueang Suang",
+    "nameTH": "เมืองสรวง",
+    "postalCode": 45220
+  },
+  {
+    "id": 457,
+    "provinceCode": 45,
+    "districtCode": 4513,
+    "nameEn": "Phon Sai",
+    "nameTH": "โพนทราย",
+    "postalCode": 45240
+  },
+  {
+    "id": 458,
+    "provinceCode": 45,
+    "districtCode": 4514,
+    "nameEn": "At Samat",
+    "nameTH": "อาจสามารถ",
+    "postalCode": 45160
+  },
+  {
+    "id": 459,
+    "provinceCode": 45,
+    "districtCode": 4515,
+    "nameEn": "Moei Wadi",
+    "nameTH": "เมยวดี",
+    "postalCode": 45250
+  },
+  {
+    "id": 460,
+    "provinceCode": 45,
+    "districtCode": 4516,
+    "nameEn": "Si Somdet",
+    "nameTH": "ศรีสมเด็จ",
+    "postalCode": 45000
+  },
+  {
+    "id": 461,
+    "provinceCode": 45,
+    "districtCode": 4517,
+    "nameEn": "Changhan",
+    "nameTH": "จังหาร",
+    "postalCode": 45000
+  },
+  {
+    "id": 462,
+    "provinceCode": 45,
+    "districtCode": 4518,
+    "nameEn": "Chiang Khwan",
+    "nameTH": "เชียงขวัญ",
+    "postalCode": 45000
+  },
+  {
+    "id": 463,
+    "provinceCode": 45,
+    "districtCode": 4519,
+    "nameEn": "Nong Hi",
+    "nameTH": "หนองฮี",
+    "postalCode": 45140
+  },
+  {
+    "id": 464,
+    "provinceCode": 45,
+    "districtCode": 4520,
+    "nameEn": "Thung Khao Luang",
+    "nameTH": "ทุ่งเขาหลวง",
+    "postalCode": 45170
+  },
+  {
+    "id": 465,
+    "provinceCode": 46,
+    "districtCode": 4601,
+    "nameEn": "Mueang Kalasin",
+    "nameTH": "เมืองกาฬสินธุ์",
+    "postalCode": 46000
+  },
+  {
+    "id": 466,
+    "provinceCode": 46,
+    "districtCode": 4602,
+    "nameEn": "Na Mon",
+    "nameTH": "นามน",
+    "postalCode": 46230
+  },
+  {
+    "id": 467,
+    "provinceCode": 46,
+    "districtCode": 4603,
+    "nameEn": "Kamalasai",
+    "nameTH": "กมลาไสย",
+    "postalCode": 46130
+  },
+  {
+    "id": 468,
+    "provinceCode": 46,
+    "districtCode": 4604,
+    "nameEn": "Rong Kham",
+    "nameTH": "ร่องคำ",
+    "postalCode": 46210
+  },
+  {
+    "id": 469,
+    "provinceCode": 46,
+    "districtCode": 4605,
+    "nameEn": "Kuchinarai",
+    "nameTH": "กุฉินารายณ์",
+    "postalCode": 46110
+  },
+  {
+    "id": 470,
+    "provinceCode": 46,
+    "districtCode": 4606,
+    "nameEn": "Khao Wong",
+    "nameTH": "เขาวง",
+    "postalCode": 46160
+  },
+  {
+    "id": 471,
+    "provinceCode": 46,
+    "districtCode": 4607,
+    "nameEn": "Yang Talat",
+    "nameTH": "ยางตลาด",
+    "postalCode": 46120
+  },
+  {
+    "id": 472,
+    "provinceCode": 46,
+    "districtCode": 4608,
+    "nameEn": "Huai Mek",
+    "nameTH": "ห้วยเม็ก",
+    "postalCode": 46170
+  },
+  {
+    "id": 473,
+    "provinceCode": 46,
+    "districtCode": 4609,
+    "nameEn": "Sahatsakhan",
+    "nameTH": "สหัสขันธ์",
+    "postalCode": 46140
+  },
+  {
+    "id": 474,
+    "provinceCode": 46,
+    "districtCode": 4610,
+    "nameEn": "Kham Muang",
+    "nameTH": "คำม่วง",
+    "postalCode": 46180
+  },
+  {
+    "id": 475,
+    "provinceCode": 46,
+    "districtCode": 4611,
+    "nameEn": "Tha Khantho",
+    "nameTH": "ท่าคันโท",
+    "postalCode": 46190
+  },
+  {
+    "id": 476,
+    "provinceCode": 46,
+    "districtCode": 4612,
+    "nameEn": "Nong Kung Si",
+    "nameTH": "หนองกุงศรี",
+    "postalCode": 46220
+  },
+  {
+    "id": 477,
+    "provinceCode": 46,
+    "districtCode": 4613,
+    "nameEn": "Somdet",
+    "nameTH": "สมเด็จ",
+    "postalCode": 46150
+  },
+  {
+    "id": 478,
+    "provinceCode": 46,
+    "districtCode": 4614,
+    "nameEn": "Huai Phueng",
+    "nameTH": "ห้วยผึ้ง",
+    "postalCode": 46240
+  },
+  {
+    "id": 479,
+    "provinceCode": 46,
+    "districtCode": 4615,
+    "nameEn": "Sam Chai",
+    "nameTH": "สามชัย",
+    "postalCode": 46180
+  },
+  {
+    "id": 480,
+    "provinceCode": 46,
+    "districtCode": 4616,
+    "nameEn": "Na Khu",
+    "nameTH": "นาคู",
+    "postalCode": 46160
+  },
+  {
+    "id": 481,
+    "provinceCode": 46,
+    "districtCode": 4617,
+    "nameEn": "Don Chan",
+    "nameTH": "ดอนจาน",
+    "postalCode": 46000
+  },
+  {
+    "id": 482,
+    "provinceCode": 46,
+    "districtCode": 4618,
+    "nameEn": "Khong Chai",
+    "nameTH": "ฆ้องชัย",
+    "postalCode": 46130
+  },
+  {
+    "id": 483,
+    "provinceCode": 47,
+    "districtCode": 4701,
+    "nameEn": "Mueang Sakon Nakhon",
+    "nameTH": "เมืองสกลนคร",
+    "postalCode": 47000
+  },
+  {
+    "id": 484,
+    "provinceCode": 47,
+    "districtCode": 4702,
+    "nameEn": "Kusuman",
+    "nameTH": "กุสุมาลย์",
+    "postalCode": 47210
+  },
+  {
+    "id": 485,
+    "provinceCode": 47,
+    "districtCode": 4703,
+    "nameEn": "Kut Bak",
+    "nameTH": "กุดบาก",
+    "postalCode": 47180
+  },
+  {
+    "id": 486,
+    "provinceCode": 47,
+    "districtCode": 4704,
+    "nameEn": "Phanna Nikhom",
+    "nameTH": "พรรณานิคม",
+    "postalCode": 47130
+  },
+  {
+    "id": 487,
+    "provinceCode": 47,
+    "districtCode": 4705,
+    "nameEn": "Phanh Khon",
+    "nameTH": "พังโคน",
+    "postalCode": 47160
+  },
+  {
+    "id": 488,
+    "provinceCode": 47,
+    "districtCode": 4706,
+    "nameEn": "Waritchaphum",
+    "nameTH": "วาริชภูมิ",
+    "postalCode": 47150
+  },
+  {
+    "id": 489,
+    "provinceCode": 47,
+    "districtCode": 4707,
+    "nameEn": "Nikhom Nam Un",
+    "nameTH": "นิคมน้ำอูน",
+    "postalCode": 47270
+  },
+  {
+    "id": 490,
+    "provinceCode": 47,
+    "districtCode": 4708,
+    "nameEn": "Wanon Niwat",
+    "nameTH": "วานรนิวาส",
+    "postalCode": 47120
+  },
+  {
+    "id": 491,
+    "provinceCode": 47,
+    "districtCode": 4709,
+    "nameEn": "Kham Ta Kla",
+    "nameTH": "คำตากล้า",
+    "postalCode": 47250
+  },
+  {
+    "id": 492,
+    "provinceCode": 47,
+    "districtCode": 4710,
+    "nameEn": "Ban Muang",
+    "nameTH": "บ้านม่วง",
+    "postalCode": 47140
+  },
+  {
+    "id": 493,
+    "provinceCode": 47,
+    "districtCode": 4711,
+    "nameEn": "Akat Amnuai",
+    "nameTH": "อากาศอำนวย",
+    "postalCode": 47170
+  },
+  {
+    "id": 494,
+    "provinceCode": 47,
+    "districtCode": 4712,
+    "nameEn": "Sawang Daen Din",
+    "nameTH": "สว่างแดนดิน",
+    "postalCode": 47110
+  },
+  {
+    "id": 495,
+    "provinceCode": 47,
+    "districtCode": 4713,
+    "nameEn": "Song Dao",
+    "nameTH": "ส่องดาว",
+    "postalCode": 47190
+  },
+  {
+    "id": 496,
+    "provinceCode": 47,
+    "districtCode": 4714,
+    "nameEn": "Tao Ngoi",
+    "nameTH": "เต่างอย",
+    "postalCode": 47260
+  },
+  {
+    "id": 497,
+    "provinceCode": 47,
+    "districtCode": 4715,
+    "nameEn": "Khok Si Suphan",
+    "nameTH": "โคกศรีสุพรรณ",
+    "postalCode": 47280
+  },
+  {
+    "id": 498,
+    "provinceCode": 47,
+    "districtCode": 4716,
+    "nameEn": "Charoen Sin",
+    "nameTH": "เจริญศิลป์",
+    "postalCode": 47290
+  },
+  {
+    "id": 499,
+    "provinceCode": 47,
+    "districtCode": 4717,
+    "nameEn": "Phon Na Kaeo",
+    "nameTH": "โพนนาแก้ว",
+    "postalCode": 47230
+  },
+  {
+    "id": 500,
+    "provinceCode": 47,
+    "districtCode": 4718,
+    "nameEn": "Phu Phan",
+    "nameTH": "ภูพาน",
+    "postalCode": 47180
+  },
+  {
+    "id": 501,
+    "provinceCode": 48,
+    "districtCode": 4801,
+    "nameEn": "Mueang Nakhon Phanom",
+    "nameTH": "เมืองนครพนม",
+    "postalCode": 48000
+  },
+  {
+    "id": 502,
+    "provinceCode": 48,
+    "districtCode": 4802,
+    "nameEn": "Pla Pak",
+    "nameTH": "ปลาปาก",
+    "postalCode": 48160
+  },
+  {
+    "id": 503,
+    "provinceCode": 48,
+    "districtCode": 4803,
+    "nameEn": "Tha Uthen",
+    "nameTH": "ท่าอุเทน",
+    "postalCode": 48120
+  },
+  {
+    "id": 504,
+    "provinceCode": 48,
+    "districtCode": 4804,
+    "nameEn": "Ban Phaeng",
+    "nameTH": "บ้านแพง",
+    "postalCode": 48140
+  },
+  {
+    "id": 505,
+    "provinceCode": 48,
+    "districtCode": 4805,
+    "nameEn": "That Phanom",
+    "nameTH": "ธาตุพนม",
+    "postalCode": 48110
+  },
+  {
+    "id": 506,
+    "provinceCode": 48,
+    "districtCode": 4806,
+    "nameEn": "Renu Nakhon",
+    "nameTH": "เรณูนคร",
+    "postalCode": 48170
+  },
+  {
+    "id": 507,
+    "provinceCode": 48,
+    "districtCode": 4807,
+    "nameEn": "Na Kae",
+    "nameTH": "นาแก",
+    "postalCode": 48130
+  },
+  {
+    "id": 508,
+    "provinceCode": 48,
+    "districtCode": 4808,
+    "nameEn": "Si Songkhram",
+    "nameTH": "ศรีสงคราม",
+    "postalCode": 48150
+  },
+  {
+    "id": 509,
+    "provinceCode": 48,
+    "districtCode": 4809,
+    "nameEn": "Na Wa",
+    "nameTH": "นาหว้า",
+    "postalCode": 48180
+  },
+  {
+    "id": 510,
+    "provinceCode": 48,
+    "districtCode": 4810,
+    "nameEn": "Phon Sawan",
+    "nameTH": "โพนสวรรค์",
+    "postalCode": 48190
+  },
+  {
+    "id": 511,
+    "provinceCode": 48,
+    "districtCode": 4811,
+    "nameEn": "Na Thom",
+    "nameTH": "นาทม",
+    "postalCode": 48140
+  },
+  {
+    "id": 512,
+    "provinceCode": 48,
+    "districtCode": 4812,
+    "nameEn": "Wang Yang",
+    "nameTH": "วังยาง",
+    "postalCode": 48130
+  },
+  {
+    "id": 513,
+    "provinceCode": 49,
+    "districtCode": 4901,
+    "nameEn": "Mueang Mukdahan",
+    "nameTH": "เมืองมุกดาหาร",
+    "postalCode": 49000
+  },
+  {
+    "id": 514,
+    "provinceCode": 49,
+    "districtCode": 4902,
+    "nameEn": "Nikhom Kham Soi",
+    "nameTH": "นิคมคำสร้อย",
+    "postalCode": 49130
+  },
+  {
+    "id": 515,
+    "provinceCode": 49,
+    "districtCode": 4903,
+    "nameEn": "Don Tan",
+    "nameTH": "ดอนตาล",
+    "postalCode": 49120
+  },
+  {
+    "id": 516,
+    "provinceCode": 49,
+    "districtCode": 4904,
+    "nameEn": "Don Tan",
+    "nameTH": "ดงหลวง",
+    "postalCode": 49140
+  },
+  {
+    "id": 517,
+    "provinceCode": 49,
+    "districtCode": 4905,
+    "nameEn": "Khamcha-I",
+    "nameTH": "คำชะอี",
+    "postalCode": 49110
+  },
+  {
+    "id": 518,
+    "provinceCode": 49,
+    "districtCode": 4906,
+    "nameEn": "Wan Yai",
+    "nameTH": "หว้านใหญ่",
+    "postalCode": 49150
+  },
+  {
+    "id": 519,
+    "provinceCode": 49,
+    "districtCode": 4907,
+    "nameEn": "Nong Sung",
+    "nameTH": "หนองสูง",
+    "postalCode": 49160
+  },
+  {
+    "id": 520,
+    "provinceCode": 50,
+    "districtCode": 5001,
+    "nameEn": "Mueang Chiang Mai",
+    "nameTH": "เมืองเชียงใหม่",
+    "postalCode": 50200
+  },
+  {
+    "id": 521,
+    "provinceCode": 50,
+    "districtCode": 5002,
+    "nameEn": "Chom Thong",
+    "nameTH": "จอมทอง",
+    "postalCode": 50160
+  },
+  {
+    "id": 522,
+    "provinceCode": 50,
+    "districtCode": 5003,
+    "nameEn": "Mae Chaem",
+    "nameTH": "แม่แจ่ม",
+    "postalCode": 50270
+  },
+  {
+    "id": 523,
+    "provinceCode": 50,
+    "districtCode": 5004,
+    "nameEn": "Chiang Dao",
+    "nameTH": "เชียงดาว",
+    "postalCode": 50170
+  },
+  {
+    "id": 524,
+    "provinceCode": 50,
+    "districtCode": 5005,
+    "nameEn": "Doi Saket",
+    "nameTH": "ดอยสะเก็ด",
+    "postalCode": 50220
+  },
+  {
+    "id": 525,
+    "provinceCode": 50,
+    "districtCode": 5006,
+    "nameEn": "Mae Taeng",
+    "nameTH": "แม่แตง",
+    "postalCode": 50150
+  },
+  {
+    "id": 526,
+    "provinceCode": 50,
+    "districtCode": 5007,
+    "nameEn": "Mae Rim",
+    "nameTH": "แม่ริม",
+    "postalCode": 50180
+  },
+  {
+    "id": 527,
+    "provinceCode": 50,
+    "districtCode": 5008,
+    "nameEn": "Samoeng",
+    "nameTH": "สะเมิง",
+    "postalCode": 50250
+  },
+  {
+    "id": 528,
+    "provinceCode": 50,
+    "districtCode": 5009,
+    "nameEn": "Fang",
+    "nameTH": "ฝาง",
+    "postalCode": 50110
+  },
+  {
+    "id": 529,
+    "provinceCode": 50,
+    "districtCode": 5010,
+    "nameEn": "Mae Ai",
+    "nameTH": "แม่อาย",
+    "postalCode": 50280
+  },
+  {
+    "id": 530,
+    "provinceCode": 50,
+    "districtCode": 5011,
+    "nameEn": "Phrao",
+    "nameTH": "พร้าว",
+    "postalCode": 50190
+  },
+  {
+    "id": 531,
+    "provinceCode": 50,
+    "districtCode": 5012,
+    "nameEn": "San Pa Tong",
+    "nameTH": "สันป่าตอง",
+    "postalCode": 50120
+  },
+  {
+    "id": 532,
+    "provinceCode": 50,
+    "districtCode": 5013,
+    "nameEn": "San Kamphaeng",
+    "nameTH": "สันกำแพง",
+    "postalCode": 50130
+  },
+  {
+    "id": 533,
+    "provinceCode": 50,
+    "districtCode": 5014,
+    "nameEn": "San Sai",
+    "nameTH": "สันทราย",
+    "postalCode": 50210
+  },
+  {
+    "id": 534,
+    "provinceCode": 50,
+    "districtCode": 5015,
+    "nameEn": "Hang Dong",
+    "nameTH": "หางดง",
+    "postalCode": 50230
+  },
+  {
+    "id": 535,
+    "provinceCode": 50,
+    "districtCode": 5016,
+    "nameEn": "Hot",
+    "nameTH": "ฮอด",
+    "postalCode": 50240
+  },
+  {
+    "id": 536,
+    "provinceCode": 50,
+    "districtCode": 5017,
+    "nameEn": "Doi Tao",
+    "nameTH": "ดอยเต่า",
+    "postalCode": 50260
+  },
+  {
+    "id": 537,
+    "provinceCode": 50,
+    "districtCode": 5018,
+    "nameEn": "Omkoi",
+    "nameTH": "อมก๋อย",
+    "postalCode": 50310
+  },
+  {
+    "id": 538,
+    "provinceCode": 50,
+    "districtCode": 5019,
+    "nameEn": "Saraphi",
+    "nameTH": "สารภี",
+    "postalCode": 50140
+  },
+  {
+    "id": 539,
+    "provinceCode": 50,
+    "districtCode": 5020,
+    "nameEn": "Wiang Haeng",
+    "nameTH": "เวียงแหง",
+    "postalCode": 50350
+  },
+  {
+    "id": 540,
+    "provinceCode": 50,
+    "districtCode": 5021,
+    "nameEn": "Chai Prakan",
+    "nameTH": "ไชยปราการ",
+    "postalCode": 50320
+  },
+  {
+    "id": 541,
+    "provinceCode": 50,
+    "districtCode": 5022,
+    "nameEn": "Mae Wang",
+    "nameTH": "แม่วาง",
+    "postalCode": 50360
+  },
+  {
+    "id": 542,
+    "provinceCode": 50,
+    "districtCode": 5023,
+    "nameEn": "Mae On",
+    "nameTH": "แม่ออน",
+    "postalCode": 50130
+  },
+  {
+    "id": 543,
+    "provinceCode": 50,
+    "districtCode": 5024,
+    "nameEn": "Doi Lo",
+    "nameTH": "ดอยหล่อ",
+    "postalCode": 50160
+  },
+  {
+    "id": 544,
+    "provinceCode": 50,
+    "districtCode": 5025,
+    "nameEn": "Kanlayaniwatthana",
+    "nameTH": "กัลยาณิวัฒนา",
+    "postalCode": 58130
+  },
+  {
+    "id": 545,
+    "provinceCode": 51,
+    "districtCode": 5101,
+    "nameEn": "Mueang Lamphun",
+    "nameTH": "เมืองลำพูน",
+    "postalCode": 51000
+  },
+  {
+    "id": 546,
+    "provinceCode": 51,
+    "districtCode": 5102,
+    "nameEn": "Mae Tha",
+    "nameTH": "แม่ทา",
+    "postalCode": 51140
+  },
+  {
+    "id": 547,
+    "provinceCode": 51,
+    "districtCode": 5103,
+    "nameEn": "Ban Hong",
+    "nameTH": "บ้านโฮ่ง",
+    "postalCode": 51130
+  },
+  {
+    "id": 548,
+    "provinceCode": 51,
+    "districtCode": 5104,
+    "nameEn": "Li",
+    "nameTH": "ลี้",
+    "postalCode": 51110
+  },
+  {
+    "id": 549,
+    "provinceCode": 51,
+    "districtCode": 5105,
+    "nameEn": "Thung Hua Chang",
+    "nameTH": "ทุ่งหัวช้าง",
+    "postalCode": 51160
+  },
+  {
+    "id": 550,
+    "provinceCode": 51,
+    "districtCode": 5106,
+    "nameEn": "Pa Sang",
+    "nameTH": "ป่าซาง",
+    "postalCode": 51120
+  },
+  {
+    "id": 551,
+    "provinceCode": 51,
+    "districtCode": 5107,
+    "nameEn": "Ban Thi",
+    "nameTH": "บ้านธิ",
+    "postalCode": 51180
+  },
+  {
+    "id": 552,
+    "provinceCode": 51,
+    "districtCode": 5108,
+    "nameEn": "Wiang Nong Long",
+    "nameTH": "เวียงหนองล่อง",
+    "postalCode": 51120
+  },
+  {
+    "id": 553,
+    "provinceCode": 52,
+    "districtCode": 5201,
+    "nameEn": "Mueang Lampang",
+    "nameTH": "เมืองลำปาง",
+    "postalCode": 52000
+  },
+  {
+    "id": 554,
+    "provinceCode": 52,
+    "districtCode": 5202,
+    "nameEn": "Mae Mo",
+    "nameTH": "แม่เมาะ",
+    "postalCode": 52220
+  },
+  {
+    "id": 555,
+    "provinceCode": 52,
+    "districtCode": 5203,
+    "nameEn": "Ko Kha",
+    "nameTH": "เกาะคา",
+    "postalCode": 52130
+  },
+  {
+    "id": 556,
+    "provinceCode": 52,
+    "districtCode": 5204,
+    "nameEn": "Soem Ngam",
+    "nameTH": "เสริมงาม",
+    "postalCode": 52210
+  },
+  {
+    "id": 557,
+    "provinceCode": 52,
+    "districtCode": 5205,
+    "nameEn": "Ngao",
+    "nameTH": "งาว",
+    "postalCode": 52110
+  },
+  {
+    "id": 558,
+    "provinceCode": 52,
+    "districtCode": 5206,
+    "nameEn": "Chae Hom",
+    "nameTH": "แจ้ห่ม",
+    "postalCode": 52120
+  },
+  {
+    "id": 559,
+    "provinceCode": 52,
+    "districtCode": 5207,
+    "nameEn": "Wang Nuea",
+    "nameTH": "วังเหนือ",
+    "postalCode": 52140
+  },
+  {
+    "id": 560,
+    "provinceCode": 52,
+    "districtCode": 5208,
+    "nameEn": "Thoen",
+    "nameTH": "เถิน",
+    "postalCode": 52160
+  },
+  {
+    "id": 561,
+    "provinceCode": 52,
+    "districtCode": 5209,
+    "nameEn": "Mae Phrik",
+    "nameTH": "แม่พริก",
+    "postalCode": 52180
+  },
+  {
+    "id": 562,
+    "provinceCode": 52,
+    "districtCode": 5210,
+    "nameEn": "Mae Tha",
+    "nameTH": "แม่ทะ",
+    "postalCode": 52150
+  },
+  {
+    "id": 563,
+    "provinceCode": 52,
+    "districtCode": 5211,
+    "nameEn": "Sop Prap",
+    "nameTH": "สบปราบ",
+    "postalCode": 52170
+  },
+  {
+    "id": 564,
+    "provinceCode": 52,
+    "districtCode": 5212,
+    "nameEn": "Hang Chat",
+    "nameTH": "ห้างฉัตร",
+    "postalCode": 52190
+  },
+  {
+    "id": 565,
+    "provinceCode": 52,
+    "districtCode": 5213,
+    "nameEn": "Mueang Pan",
+    "nameTH": "เมืองปาน",
+    "postalCode": 52240
+  },
+  {
+    "id": 566,
+    "provinceCode": 53,
+    "districtCode": 5301,
+    "nameEn": "Mueang Uttaradit",
+    "nameTH": "เมืองอุตรดิตถ์",
+    "postalCode": 53000
+  },
+  {
+    "id": 567,
+    "provinceCode": 53,
+    "districtCode": 5302,
+    "nameEn": "Tron",
+    "nameTH": "ตรอน",
+    "postalCode": 53140
+  },
+  {
+    "id": 568,
+    "provinceCode": 53,
+    "districtCode": 5303,
+    "nameEn": "Tha Pla",
+    "nameTH": "ท่าปลา",
+    "postalCode": 53150
+  },
+  {
+    "id": 569,
+    "provinceCode": 53,
+    "districtCode": 5304,
+    "nameEn": "Nam Pat",
+    "nameTH": "น้ำปาด",
+    "postalCode": 53110
+  },
+  {
+    "id": 570,
+    "provinceCode": 53,
+    "districtCode": 5305,
+    "nameEn": "Fak Tha",
+    "nameTH": "ฟากท่า",
+    "postalCode": 53160
+  },
+  {
+    "id": 571,
+    "provinceCode": 53,
+    "districtCode": 5306,
+    "nameEn": "Ban Khok",
+    "nameTH": "บ้านโคก",
+    "postalCode": 53180
+  },
+  {
+    "id": 572,
+    "provinceCode": 53,
+    "districtCode": 5307,
+    "nameEn": "Phichai",
+    "nameTH": "พิชัย",
+    "postalCode": 53120
+  },
+  {
+    "id": 573,
+    "provinceCode": 53,
+    "districtCode": 5308,
+    "nameEn": "Laplae",
+    "nameTH": "ลับแล",
+    "postalCode": 53130
+  },
+  {
+    "id": 574,
+    "provinceCode": 53,
+    "districtCode": 5309,
+    "nameEn": "Thong Saen Khan",
+    "nameTH": "ทองแสนขัน",
+    "postalCode": 53230
+  },
+  {
+    "id": 575,
+    "provinceCode": 54,
+    "districtCode": 5401,
+    "nameEn": "Mueang Phrae",
+    "nameTH": "เมืองแพร่",
+    "postalCode": 54000
+  },
+  {
+    "id": 576,
+    "provinceCode": 54,
+    "districtCode": 5402,
+    "nameEn": "Mueang Phrae",
+    "nameTH": "ร้องกวาง",
+    "postalCode": 54140
+  },
+  {
+    "id": 577,
+    "provinceCode": 54,
+    "districtCode": 5403,
+    "nameEn": "Long",
+    "nameTH": "ลอง",
+    "postalCode": 54150
+  },
+  {
+    "id": 578,
+    "provinceCode": 54,
+    "districtCode": 5404,
+    "nameEn": "Sung Men",
+    "nameTH": "สูงเม่น",
+    "postalCode": 54130
+  },
+  {
+    "id": 579,
+    "provinceCode": 54,
+    "districtCode": 5405,
+    "nameEn": "Den Chai",
+    "nameTH": "เด่นชัย",
+    "postalCode": 54110
+  },
+  {
+    "id": 580,
+    "provinceCode": 54,
+    "districtCode": 5406,
+    "nameEn": "Song",
+    "nameTH": "สอง",
+    "postalCode": 54120
+  },
+  {
+    "id": 581,
+    "provinceCode": 54,
+    "districtCode": 5407,
+    "nameEn": "Wang Chin",
+    "nameTH": "วังชิ้น",
+    "postalCode": 54160
+  },
+  {
+    "id": 582,
+    "provinceCode": 54,
+    "districtCode": 5408,
+    "nameEn": "Nong Muang Khai",
+    "nameTH": "หนองม่วงไข่",
+    "postalCode": 54170
+  },
+  {
+    "id": 583,
+    "provinceCode": 55,
+    "districtCode": 5501,
+    "nameEn": "Mueang Nan",
+    "nameTH": "เมืองน่าน",
+    "postalCode": 55000
+  },
+  {
+    "id": 584,
+    "provinceCode": 55,
+    "districtCode": 5502,
+    "nameEn": "Mae Charim",
+    "nameTH": "แม่จริม",
+    "postalCode": 55170
+  },
+  {
+    "id": 585,
+    "provinceCode": 55,
+    "districtCode": 5503,
+    "nameEn": "Ban Luang",
+    "nameTH": "บ้านหลวง",
+    "postalCode": 55190
+  },
+  {
+    "id": 586,
+    "provinceCode": 55,
+    "districtCode": 5504,
+    "nameEn": "Na Noi",
+    "nameTH": "นาน้อย",
+    "postalCode": 55150
+  },
+  {
+    "id": 587,
+    "provinceCode": 55,
+    "districtCode": 5505,
+    "nameEn": "Pua",
+    "nameTH": "ปัว",
+    "postalCode": 55120
+  },
+  {
+    "id": 588,
+    "provinceCode": 55,
+    "districtCode": 5506,
+    "nameEn": "Tha Wang Pha",
+    "nameTH": "ท่าวังผา",
+    "postalCode": 55140
+  },
+  {
+    "id": 589,
+    "provinceCode": 55,
+    "districtCode": 5507,
+    "nameEn": "Wiang Sa",
+    "nameTH": "เวียงสา",
+    "postalCode": 55110
+  },
+  {
+    "id": 590,
+    "provinceCode": 55,
+    "districtCode": 5508,
+    "nameEn": "Thung Chang",
+    "nameTH": "ทุ่งช้าง",
+    "postalCode": 55130
+  },
+  {
+    "id": 591,
+    "provinceCode": 55,
+    "districtCode": 5509,
+    "nameEn": "Chiang Klang",
+    "nameTH": "เชียงกลาง",
+    "postalCode": 55160
+  },
+  {
+    "id": 592,
+    "provinceCode": 55,
+    "districtCode": 5510,
+    "nameEn": "Na Muen",
+    "nameTH": "นาหมื่น",
+    "postalCode": 55180
+  },
+  {
+    "id": 593,
+    "provinceCode": 55,
+    "districtCode": 5511,
+    "nameEn": "Santi Suk",
+    "nameTH": "สันติสุข",
+    "postalCode": 55210
+  },
+  {
+    "id": 594,
+    "provinceCode": 55,
+    "districtCode": 5512,
+    "nameEn": "Bo Kluea",
+    "nameTH": "บ่อเกลือ",
+    "postalCode": 55220
+  },
+  {
+    "id": 595,
+    "provinceCode": 55,
+    "districtCode": 5513,
+    "nameEn": "Song Khwae",
+    "nameTH": "สองแคว",
+    "postalCode": 55160
+  },
+  {
+    "id": 596,
+    "provinceCode": 55,
+    "districtCode": 5514,
+    "nameEn": "Phu Phiang",
+    "nameTH": "ภูเพียง",
+    "postalCode": 55000
+  },
+  {
+    "id": 597,
+    "provinceCode": 55,
+    "districtCode": 5515,
+    "nameEn": "Chaloem Phra Kiet",
+    "nameTH": "เฉลิมพระเกียรติ",
+    "postalCode": 55130
+  },
+  {
+    "id": 598,
+    "provinceCode": 56,
+    "districtCode": 5601,
+    "nameEn": "Mueang Phayao",
+    "nameTH": "เมืองพะเยา",
+    "postalCode": 56000
+  },
+  {
+    "id": 599,
+    "provinceCode": 56,
+    "districtCode": 5602,
+    "nameEn": "Chun",
+    "nameTH": "จุน",
+    "postalCode": 56150
+  },
+  {
+    "id": 600,
+    "provinceCode": 56,
+    "districtCode": 5603,
+    "nameEn": "Chiang Kham",
+    "nameTH": "เชียงคำ",
+    "postalCode": 56110
+  },
+  {
+    "id": 601,
+    "provinceCode": 56,
+    "districtCode": 5604,
+    "nameEn": "Chiang Muan",
+    "nameTH": "เชียงม่วน",
+    "postalCode": 56160
+  },
+  {
+    "id": 602,
+    "provinceCode": 56,
+    "districtCode": 5605,
+    "nameEn": "Dok Khamtai",
+    "nameTH": "ดอกคำใต้",
+    "postalCode": 56120
+  },
+  {
+    "id": 603,
+    "provinceCode": 56,
+    "districtCode": 5606,
+    "nameEn": "Pong",
+    "nameTH": "ปง",
+    "postalCode": 56140
+  },
+  {
+    "id": 604,
+    "provinceCode": 56,
+    "districtCode": 5607,
+    "nameEn": "Mae Chai",
+    "nameTH": "แม่ใจ",
+    "postalCode": 56130
+  },
+  {
+    "id": 605,
+    "provinceCode": 56,
+    "districtCode": 5608,
+    "nameEn": "Phu Sang",
+    "nameTH": "ภูซาง",
+    "postalCode": 56110
+  },
+  {
+    "id": 606,
+    "provinceCode": 56,
+    "districtCode": 5609,
+    "nameEn": "Phu Kamyao",
+    "nameTH": "ภูกามยาว",
+    "postalCode": 56000
+  },
+  {
+    "id": 607,
+    "provinceCode": 57,
+    "districtCode": 5701,
+    "nameEn": "Mueang Chiang Rai",
+    "nameTH": "เมืองเชียงราย",
+    "postalCode": 57000
+  },
+  {
+    "id": 608,
+    "provinceCode": 57,
+    "districtCode": 5702,
+    "nameEn": "Wiang Chai",
+    "nameTH": "เวียงชัย",
+    "postalCode": 57210
+  },
+  {
+    "id": 609,
+    "provinceCode": 57,
+    "districtCode": 5703,
+    "nameEn": "Chiang Khong",
+    "nameTH": "เชียงของ",
+    "postalCode": 57140
+  },
+  {
+    "id": 610,
+    "provinceCode": 57,
+    "districtCode": 5704,
+    "nameEn": "Thoeng",
+    "nameTH": "เทิง",
+    "postalCode": 57160
+  },
+  {
+    "id": 611,
+    "provinceCode": 57,
+    "districtCode": 5705,
+    "nameEn": "Phan",
+    "nameTH": "พาน",
+    "postalCode": 57120
+  },
+  {
+    "id": 612,
+    "provinceCode": 57,
+    "districtCode": 5706,
+    "nameEn": "Pa Daet",
+    "nameTH": "ป่าแดด",
+    "postalCode": 57190
+  },
+  {
+    "id": 613,
+    "provinceCode": 57,
+    "districtCode": 5707,
+    "nameEn": "Mae Chan",
+    "nameTH": "แม่จัน",
+    "postalCode": 57110
+  },
+  {
+    "id": 614,
+    "provinceCode": 57,
+    "districtCode": 5708,
+    "nameEn": "Chiang Saen",
+    "nameTH": "เชียงแสน",
+    "postalCode": 57150
+  },
+  {
+    "id": 615,
+    "provinceCode": 57,
+    "districtCode": 5709,
+    "nameEn": "Mae Sai",
+    "nameTH": "แม่สาย",
+    "postalCode": 57130
+  },
+  {
+    "id": 616,
+    "provinceCode": 57,
+    "districtCode": 5710,
+    "nameEn": "Mae Suai",
+    "nameTH": "แม่สรวย",
+    "postalCode": 57180
+  },
+  {
+    "id": 617,
+    "provinceCode": 57,
+    "districtCode": 5711,
+    "nameEn": "Wiang Pa Pao",
+    "nameTH": "เวียงป่าเป้า",
+    "postalCode": 57170
+  },
+  {
+    "id": 618,
+    "provinceCode": 57,
+    "districtCode": 5712,
+    "nameEn": "Phaya Mengrai",
+    "nameTH": "พญาเม็งราย",
+    "postalCode": 57290
+  },
+  {
+    "id": 619,
+    "provinceCode": 57,
+    "districtCode": 5713,
+    "nameEn": "Wiang Kaen",
+    "nameTH": "เวียงแก่น",
+    "postalCode": 57310
+  },
+  {
+    "id": 620,
+    "provinceCode": 57,
+    "districtCode": 5714,
+    "nameEn": "Khun Tan",
+    "nameTH": "ขุนตาล",
+    "postalCode": 57340
+  },
+  {
+    "id": 621,
+    "provinceCode": 57,
+    "districtCode": 5715,
+    "nameEn": "Mae Fa Luang",
+    "nameTH": "แม่ฟ้าหลวง",
+    "postalCode": 57240
+  },
+  {
+    "id": 622,
+    "provinceCode": 57,
+    "districtCode": 5716,
+    "nameEn": "Mae Lao",
+    "nameTH": "แม่ลาว",
+    "postalCode": 57250
+  },
+  {
+    "id": 623,
+    "provinceCode": 57,
+    "districtCode": 5717,
+    "nameEn": "Wiang Chiang Rung",
+    "nameTH": "เวียงเชียงรุ้ง",
+    "postalCode": 57210
+  },
+  {
+    "id": 624,
+    "provinceCode": 57,
+    "districtCode": 5718,
+    "nameEn": "Doi Luang",
+    "nameTH": "ดอยหลวง",
+    "postalCode": 57110
+  },
+  {
+    "id": 625,
+    "provinceCode": 58,
+    "districtCode": 5801,
+    "nameEn": "Mueang Mae Hong Son",
+    "nameTH": "เมืองแม่ฮ่องสอน",
+    "postalCode": 58000
+  },
+  {
+    "id": 626,
+    "provinceCode": 58,
+    "districtCode": 5802,
+    "nameEn": "Khun Yuam",
+    "nameTH": "ขุนยวม",
+    "postalCode": 58140
+  },
+  {
+    "id": 627,
+    "provinceCode": 58,
+    "districtCode": 5803,
+    "nameEn": "Pai",
+    "nameTH": "ปาย",
+    "postalCode": 58130
+  },
+  {
+    "id": 628,
+    "provinceCode": 58,
+    "districtCode": 5804,
+    "nameEn": "Mae Sariang",
+    "nameTH": "แม่สะเรียง",
+    "postalCode": 58110
+  },
+  {
+    "id": 629,
+    "provinceCode": 58,
+    "districtCode": 5805,
+    "nameEn": "Mae La Noi",
+    "nameTH": "แม่ลาน้อย",
+    "postalCode": 58120
+  },
+  {
+    "id": 630,
+    "provinceCode": 58,
+    "districtCode": 5806,
+    "nameEn": "Sop Moei",
+    "nameTH": "สบเมย",
+    "postalCode": 58110
+  },
+  {
+    "id": 631,
+    "provinceCode": 58,
+    "districtCode": 5807,
+    "nameEn": "Pang Mapha",
+    "nameTH": "ปางมะผ้า",
+    "postalCode": 58150
+  },
+  {
+    "id": 632,
+    "provinceCode": 60,
+    "districtCode": 6001,
+    "nameEn": "Mueang Nakhon Sawan",
+    "nameTH": "เมืองนครสวรรค์",
+    "postalCode": 60000
+  },
+  {
+    "id": 633,
+    "provinceCode": 60,
+    "districtCode": 6002,
+    "nameEn": "Krok Phra",
+    "nameTH": "โกรกพระ",
+    "postalCode": 60170
+  },
+  {
+    "id": 634,
+    "provinceCode": 60,
+    "districtCode": 6003,
+    "nameEn": "Chum Saeng",
+    "nameTH": "ชุมแสง",
+    "postalCode": 60120
+  },
+  {
+    "id": 635,
+    "provinceCode": 60,
+    "districtCode": 6004,
+    "nameEn": "Nong Bua",
+    "nameTH": "หนองบัว",
+    "postalCode": 60110
+  },
+  {
+    "id": 636,
+    "provinceCode": 60,
+    "districtCode": 6005,
+    "nameEn": "Banphot Phisai",
+    "nameTH": "บรรพตพิสัย",
+    "postalCode": 60180
+  },
+  {
+    "id": 637,
+    "provinceCode": 60,
+    "districtCode": 6006,
+    "nameEn": "Kao Liao",
+    "nameTH": "เก้าเลี้ยว",
+    "postalCode": 60230
+  },
+  {
+    "id": 638,
+    "provinceCode": 60,
+    "districtCode": 6007,
+    "nameEn": "Takhli",
+    "nameTH": "ตาคลี",
+    "postalCode": 60140
+  },
+  {
+    "id": 639,
+    "provinceCode": 60,
+    "districtCode": 6008,
+    "nameEn": "Tha Tako",
+    "nameTH": "ท่าตะโก",
+    "postalCode": 60160
+  },
+  {
+    "id": 640,
+    "provinceCode": 60,
+    "districtCode": 6009,
+    "nameEn": "Phaisali",
+    "nameTH": "ไพศาลี",
+    "postalCode": 60220
+  },
+  {
+    "id": 641,
+    "provinceCode": 60,
+    "districtCode": 6010,
+    "nameEn": "Phayuha Hkiri",
+    "nameTH": "พยุหะคีรี",
+    "postalCode": 60130
+  },
+  {
+    "id": 642,
+    "provinceCode": 60,
+    "districtCode": 6011,
+    "nameEn": "Lat Yao",
+    "nameTH": "ลาดยาว",
+    "postalCode": 60150
+  },
+  {
+    "id": 643,
+    "provinceCode": 60,
+    "districtCode": 6012,
+    "nameEn": "Tak Fa",
+    "nameTH": "ตากฟ้า",
+    "postalCode": 60190
+  },
+  {
+    "id": 644,
+    "provinceCode": 60,
+    "districtCode": 6013,
+    "nameEn": "Mae Wong",
+    "nameTH": "แม่วงก์",
+    "postalCode": 60150
+  },
+  {
+    "id": 645,
+    "provinceCode": 60,
+    "districtCode": 6014,
+    "nameEn": "Mae Pern",
+    "nameTH": "แม่เปิน",
+    "postalCode": 60150
+  },
+  {
+    "id": 646,
+    "provinceCode": 60,
+    "districtCode": 6015,
+    "nameEn": "Chum Ta Bong",
+    "nameTH": "ชุมตาบง",
+    "postalCode": 60150
+  },
+  {
+    "id": 647,
+    "provinceCode": 61,
+    "districtCode": 6101,
+    "nameEn": "Mueang Uthai Thani",
+    "nameTH": "เมืองอุทัยธานี",
+    "postalCode": 61000
+  },
+  {
+    "id": 648,
+    "provinceCode": 61,
+    "districtCode": 6102,
+    "nameEn": "Thap Than",
+    "nameTH": "ทัพทัน",
+    "postalCode": 61120
+  },
+  {
+    "id": 649,
+    "provinceCode": 61,
+    "districtCode": 6103,
+    "nameEn": "Sawang Arom",
+    "nameTH": "สว่างอารมณ์",
+    "postalCode": 61150
+  },
+  {
+    "id": 650,
+    "provinceCode": 61,
+    "districtCode": 6104,
+    "nameEn": "Nong Chang",
+    "nameTH": "หนองฉาง",
+    "postalCode": 61110
+  },
+  {
+    "id": 651,
+    "provinceCode": 61,
+    "districtCode": 6105,
+    "nameEn": "Nong Khayang",
+    "nameTH": "หนองขาหย่าง",
+    "postalCode": 61130
+  },
+  {
+    "id": 652,
+    "provinceCode": 61,
+    "districtCode": 6106,
+    "nameEn": "Ban Rai",
+    "nameTH": "บ้านไร่",
+    "postalCode": 61140
+  },
+  {
+    "id": 653,
+    "provinceCode": 61,
+    "districtCode": 6107,
+    "nameEn": "Lan Sak",
+    "nameTH": "ลานสัก",
+    "postalCode": 61160
+  },
+  {
+    "id": 654,
+    "provinceCode": 61,
+    "districtCode": 6108,
+    "nameEn": "Huai Khot",
+    "nameTH": "ห้วยคต",
+    "postalCode": 61170
+  },
+  {
+    "id": 655,
+    "provinceCode": 62,
+    "districtCode": 6201,
+    "nameEn": "Mueang Kamphaeng Phet",
+    "nameTH": "เมืองกำแพงเพชร",
+    "postalCode": 62000
+  },
+  {
+    "id": 656,
+    "provinceCode": 62,
+    "districtCode": 6202,
+    "nameEn": "Sai Ngam",
+    "nameTH": "ไทรงาม",
+    "postalCode": 62150
+  },
+  {
+    "id": 657,
+    "provinceCode": 62,
+    "districtCode": 6203,
+    "nameEn": "Khlong Lan",
+    "nameTH": "คลองลาน",
+    "postalCode": 62180
+  },
+  {
+    "id": 658,
+    "provinceCode": 62,
+    "districtCode": 6204,
+    "nameEn": "Khanu Woralaksaburi",
+    "nameTH": "ขาณุวรลักษบุรี",
+    "postalCode": 62130
+  },
+  {
+    "id": 659,
+    "provinceCode": 62,
+    "districtCode": 6205,
+    "nameEn": "Khlong Khlung",
+    "nameTH": "คลองขลุง",
+    "postalCode": 62120
+  },
+  {
+    "id": 660,
+    "provinceCode": 62,
+    "districtCode": 6206,
+    "nameEn": "Phran Kratai",
+    "nameTH": "พรานกระต่าย",
+    "postalCode": 62110
+  },
+  {
+    "id": 661,
+    "provinceCode": 62,
+    "districtCode": 6207,
+    "nameEn": "Lan Krabue",
+    "nameTH": "ลานกระบือ",
+    "postalCode": 62170
+  },
+  {
+    "id": 662,
+    "provinceCode": 62,
+    "districtCode": 6208,
+    "nameEn": "Sai Thong Watthana",
+    "nameTH": "ทรายทองวัฒนา",
+    "postalCode": 62190
+  },
+  {
+    "id": 663,
+    "provinceCode": 62,
+    "districtCode": 6209,
+    "nameEn": "Pang Sila Thong",
+    "nameTH": "ปางศิลาทอง",
+    "postalCode": 62120
+  },
+  {
+    "id": 664,
+    "provinceCode": 62,
+    "districtCode": 6210,
+    "nameEn": "Bueng Samakkhi",
+    "nameTH": "บึงสามัคคี",
+    "postalCode": 62210
+  },
+  {
+    "id": 665,
+    "provinceCode": 62,
+    "districtCode": 6211,
+    "nameEn": "Kosamphi Nakhon",
+    "nameTH": "โกสัมพีนคร",
+    "postalCode": 62000
+  },
+  {
+    "id": 666,
+    "provinceCode": 63,
+    "districtCode": 6301,
+    "nameEn": "Mueang Tak",
+    "nameTH": "เมืองตาก",
+    "postalCode": 63000
+  },
+  {
+    "id": 667,
+    "provinceCode": 63,
+    "districtCode": 6302,
+    "nameEn": "Ban Tak",
+    "nameTH": "บ้านตาก",
+    "postalCode": 63120
+  },
+  {
+    "id": 668,
+    "provinceCode": 63,
+    "districtCode": 6303,
+    "nameEn": "Sam Ngao",
+    "nameTH": "สามเงา",
+    "postalCode": 63130
+  },
+  {
+    "id": 669,
+    "provinceCode": 63,
+    "districtCode": 6304,
+    "nameEn": "Mae Ramat",
+    "nameTH": "แม่ระมาด",
+    "postalCode": 63140
+  },
+  {
+    "id": 670,
+    "provinceCode": 63,
+    "districtCode": 6305,
+    "nameEn": "Tha Song Yang",
+    "nameTH": "ท่าสองยาง",
+    "postalCode": 63150
+  },
+  {
+    "id": 671,
+    "provinceCode": 63,
+    "districtCode": 6306,
+    "nameEn": "Mae Sot",
+    "nameTH": "แม่สอด",
+    "postalCode": 63110
+  },
+  {
+    "id": 672,
+    "provinceCode": 63,
+    "districtCode": 6307,
+    "nameEn": "Phop Phra",
+    "nameTH": "พบพระ",
+    "postalCode": 63160
+  },
+  {
+    "id": 673,
+    "provinceCode": 63,
+    "districtCode": 6308,
+    "nameEn": "Um Phang",
+    "nameTH": "อุ้มผาง",
+    "postalCode": 63170
+  },
+  {
+    "id": 674,
+    "provinceCode": 63,
+    "districtCode": 6309,
+    "nameEn": "Wang Chao",
+    "nameTH": "วังเจ้า",
+    "postalCode": 63000
+  },
+  {
+    "id": 675,
+    "provinceCode": 64,
+    "districtCode": 6401,
+    "nameEn": "Mueang Sukhothai",
+    "nameTH": "เมืองสุโขทัย",
+    "postalCode": 64000
+  },
+  {
+    "id": 676,
+    "provinceCode": 64,
+    "districtCode": 6402,
+    "nameEn": "Ban Dan Lan Hoi",
+    "nameTH": "บ้านด่านลานหอย",
+    "postalCode": 64140
+  },
+  {
+    "id": 677,
+    "provinceCode": 64,
+    "districtCode": 6403,
+    "nameEn": "Khiri Mat",
+    "nameTH": "คีรีมาศ",
+    "postalCode": 64160
+  },
+  {
+    "id": 678,
+    "provinceCode": 64,
+    "districtCode": 6404,
+    "nameEn": "Kong Krailat",
+    "nameTH": "กงไกรลาศ",
+    "postalCode": 64170
+  },
+  {
+    "id": 679,
+    "provinceCode": 64,
+    "districtCode": 6405,
+    "nameEn": "Si Satchanalai",
+    "nameTH": "ศรีสัชนาลัย",
+    "postalCode": 64130
+  },
+  {
+    "id": 680,
+    "provinceCode": 64,
+    "districtCode": 6406,
+    "nameEn": "Si Samrong",
+    "nameTH": "ศรีสำโรง",
+    "postalCode": 64120
+  },
+  {
+    "id": 681,
+    "provinceCode": 64,
+    "districtCode": 6407,
+    "nameEn": "Sawankhalok",
+    "nameTH": "สวรรคโลก",
+    "postalCode": 64110
+  },
+  {
+    "id": 682,
+    "provinceCode": 64,
+    "districtCode": 6408,
+    "nameEn": "Si Nakhon",
+    "nameTH": "ศรีนคร",
+    "postalCode": 64180
+  },
+  {
+    "id": 683,
+    "provinceCode": 64,
+    "districtCode": 6409,
+    "nameEn": "Thung Saliam",
+    "nameTH": "ทุ่งเสลี่ยม",
+    "postalCode": 64230
+  },
+  {
+    "id": 684,
+    "provinceCode": 65,
+    "districtCode": 6501,
+    "nameEn": "Mueang Phitsanulok",
+    "nameTH": "เมืองพิษณุโลก",
+    "postalCode": 65000
+  },
+  {
+    "id": 685,
+    "provinceCode": 65,
+    "districtCode": 6502,
+    "nameEn": "Nakhon Thai",
+    "nameTH": "นครไทย",
+    "postalCode": 65120
+  },
+  {
+    "id": 686,
+    "provinceCode": 65,
+    "districtCode": 6503,
+    "nameEn": "Chat Trakan",
+    "nameTH": "ชาติตระการ",
+    "postalCode": 65170
+  },
+  {
+    "id": 687,
+    "provinceCode": 65,
+    "districtCode": 6504,
+    "nameEn": "Bang Rakam",
+    "nameTH": "บางระกำ",
+    "postalCode": 65140
+  },
+  {
+    "id": 688,
+    "provinceCode": 65,
+    "districtCode": 6505,
+    "nameEn": "Bang Krathum",
+    "nameTH": "บางกระทุ่ม",
+    "postalCode": 65110
+  },
+  {
+    "id": 689,
+    "provinceCode": 65,
+    "districtCode": 6506,
+    "nameEn": "Phrom Phiram",
+    "nameTH": "พรหมพิราม",
+    "postalCode": 65150
+  },
+  {
+    "id": 690,
+    "provinceCode": 65,
+    "districtCode": 6507,
+    "nameEn": "Wat Bot",
+    "nameTH": "วัดโบสถ์",
+    "postalCode": 65160
+  },
+  {
+    "id": 691,
+    "provinceCode": 65,
+    "districtCode": 6508,
+    "nameEn": "Wang Thong",
+    "nameTH": "วังทอง",
+    "postalCode": 65130
+  },
+  {
+    "id": 692,
+    "provinceCode": 65,
+    "districtCode": 6509,
+    "nameEn": "Noen Maprang",
+    "nameTH": "เนินมะปราง",
+    "postalCode": 65190
+  },
+  {
+    "id": 693,
+    "provinceCode": 66,
+    "districtCode": 6601,
+    "nameEn": "Mueang Phichit",
+    "nameTH": "เมืองพิจิตร",
+    "postalCode": 66000
+  },
+  {
+    "id": 694,
+    "provinceCode": 66,
+    "districtCode": 6602,
+    "nameEn": "Wang Sai Phun",
+    "nameTH": "วังทรายพูน",
+    "postalCode": 66180
+  },
+  {
+    "id": 695,
+    "provinceCode": 66,
+    "districtCode": 6603,
+    "nameEn": "Pho Prathap Chang",
+    "nameTH": "โพธิ์ประทับช้าง",
+    "postalCode": 66190
+  },
+  {
+    "id": 696,
+    "provinceCode": 66,
+    "districtCode": 6604,
+    "nameEn": "Taphan Hin",
+    "nameTH": "ตะพานหิน",
+    "postalCode": 66110
+  },
+  {
+    "id": 697,
+    "provinceCode": 66,
+    "districtCode": 6605,
+    "nameEn": "Bang Mun Nak",
+    "nameTH": "บางมูลนาก",
+    "postalCode": 66120
+  },
+  {
+    "id": 698,
+    "provinceCode": 66,
+    "districtCode": 6606,
+    "nameEn": "Pho Thale",
+    "nameTH": "โพทะเล",
+    "postalCode": 66130
+  },
+  {
+    "id": 699,
+    "provinceCode": 66,
+    "districtCode": 6607,
+    "nameEn": "Sam Ngam",
+    "nameTH": "สามง่าม",
+    "postalCode": 66140
+  },
+  {
+    "id": 700,
+    "provinceCode": 66,
+    "districtCode": 6608,
+    "nameEn": "Tap Khlo",
+    "nameTH": "ทับคล้อ",
+    "postalCode": 66150
+  },
+  {
+    "id": 701,
+    "provinceCode": 66,
+    "districtCode": 6609,
+    "nameEn": "Sak Lek",
+    "nameTH": "สากเหล็ก",
+    "postalCode": 66160
+  },
+  {
+    "id": 702,
+    "provinceCode": 66,
+    "districtCode": 6610,
+    "nameEn": "Bueng Na Rang",
+    "nameTH": "บึงนาราง",
+    "postalCode": 66130
+  },
+  {
+    "id": 703,
+    "provinceCode": 66,
+    "districtCode": 6611,
+    "nameEn": "Dong Charoen",
+    "nameTH": "ดงเจริญ",
+    "postalCode": 66210
+  },
+  {
+    "id": 704,
+    "provinceCode": 66,
+    "districtCode": 6612,
+    "nameEn": "Wachirabarami",
+    "nameTH": "วชิรบารมี",
+    "postalCode": 66140
+  },
+  {
+    "id": 705,
+    "provinceCode": 67,
+    "districtCode": 6701,
+    "nameEn": "Mueang Phetchabun",
+    "nameTH": "เมืองเพชรบูรณ์",
+    "postalCode": 67000
+  },
+  {
+    "id": 706,
+    "provinceCode": 67,
+    "districtCode": 6702,
+    "nameEn": "Chon Daen",
+    "nameTH": "ชนแดน",
+    "postalCode": 67150
+  },
+  {
+    "id": 707,
+    "provinceCode": 67,
+    "districtCode": 6703,
+    "nameEn": "Lom Sak",
+    "nameTH": "หล่มสัก",
+    "postalCode": 67110
+  },
+  {
+    "id": 708,
+    "provinceCode": 67,
+    "districtCode": 6704,
+    "nameEn": "Lom Kao",
+    "nameTH": "หล่มเก่า",
+    "postalCode": 67120
+  },
+  {
+    "id": 709,
+    "provinceCode": 67,
+    "districtCode": 6705,
+    "nameEn": "Wichian Buri",
+    "nameTH": "วิเชียรบุรี",
+    "postalCode": 67130
+  },
+  {
+    "id": 710,
+    "provinceCode": 67,
+    "districtCode": 6706,
+    "nameEn": "Si Thep",
+    "nameTH": "ศรีเทพ",
+    "postalCode": 67170
+  },
+  {
+    "id": 711,
+    "provinceCode": 67,
+    "districtCode": 6707,
+    "nameEn": "Nong Phai",
+    "nameTH": "หนองไผ่",
+    "postalCode": 67140
+  },
+  {
+    "id": 712,
+    "provinceCode": 67,
+    "districtCode": 6708,
+    "nameEn": "Bueng Sam Phan",
+    "nameTH": "บึงสามพัน",
+    "postalCode": 67160
+  },
+  {
+    "id": 713,
+    "provinceCode": 67,
+    "districtCode": 6709,
+    "nameEn": "Nam Nao",
+    "nameTH": "น้ำหนาว",
+    "postalCode": 67260
+  },
+  {
+    "id": 714,
+    "provinceCode": 67,
+    "districtCode": 6710,
+    "nameEn": "Wang Pong",
+    "nameTH": "วังโป่ง",
+    "postalCode": 67240
+  },
+  {
+    "id": 715,
+    "provinceCode": 67,
+    "districtCode": 6711,
+    "nameEn": "Khao Kho",
+    "nameTH": "เขาค้อ",
+    "postalCode": 67270
+  },
+  {
+    "id": 716,
+    "provinceCode": 70,
+    "districtCode": 7001,
+    "nameEn": "Mueang Ratchaburi",
+    "nameTH": "เมืองราชบุรี",
+    "postalCode": 70000
+  },
+  {
+    "id": 717,
+    "provinceCode": 70,
+    "districtCode": 7002,
+    "nameEn": "Chom Bueng",
+    "nameTH": "จอมบึง",
+    "postalCode": 70150
+  },
+  {
+    "id": 718,
+    "provinceCode": 70,
+    "districtCode": 7003,
+    "nameEn": "Suan Phueng",
+    "nameTH": "สวนผึ้ง",
+    "postalCode": 70180
+  },
+  {
+    "id": 719,
+    "provinceCode": 70,
+    "districtCode": 7004,
+    "nameEn": "Damnoen Saduak",
+    "nameTH": "ดำเนินสะดวก",
+    "postalCode": 70130
+  },
+  {
+    "id": 720,
+    "provinceCode": 70,
+    "districtCode": 7005,
+    "nameEn": "Ban Pong",
+    "nameTH": "บ้านโป่ง",
+    "postalCode": 70110
+  },
+  {
+    "id": 721,
+    "provinceCode": 70,
+    "districtCode": 7006,
+    "nameEn": "Bang Phae",
+    "nameTH": "บางแพ",
+    "postalCode": 70160
+  },
+  {
+    "id": 722,
+    "provinceCode": 70,
+    "districtCode": 7007,
+    "nameEn": "Photharam",
+    "nameTH": "โพธาราม",
+    "postalCode": 70120
+  },
+  {
+    "id": 723,
+    "provinceCode": 70,
+    "districtCode": 7008,
+    "nameEn": "Pak Tho",
+    "nameTH": "ปากท่อ",
+    "postalCode": 70140
+  },
+  {
+    "id": 724,
+    "provinceCode": 70,
+    "districtCode": 7009,
+    "nameEn": "Wat Phleng",
+    "nameTH": "วัดเพลง",
+    "postalCode": 70170
+  },
+  {
+    "id": 725,
+    "provinceCode": 70,
+    "districtCode": 7010,
+    "nameEn": "Ban Kha",
+    "nameTH": "บ้านคา",
+    "postalCode": 70180
+  },
+  {
+    "id": 726,
+    "provinceCode": 71,
+    "districtCode": 7101,
+    "nameEn": "Mueang Kanchanaburi",
+    "nameTH": "เมืองกาญจนบุรี",
+    "postalCode": 71000
+  },
+  {
+    "id": 727,
+    "provinceCode": 71,
+    "districtCode": 7102,
+    "nameEn": "Sai Yok",
+    "nameTH": "ไทรโยค",
+    "postalCode": 71150
+  },
+  {
+    "id": 728,
+    "provinceCode": 71,
+    "districtCode": 7103,
+    "nameEn": "Bo Phloi",
+    "nameTH": "บ่อพลอย",
+    "postalCode": 71160
+  },
+  {
+    "id": 729,
+    "provinceCode": 71,
+    "districtCode": 7104,
+    "nameEn": "Si Sawat",
+    "nameTH": "ศรีสวัสดิ์",
+    "postalCode": 71250
+  },
+  {
+    "id": 730,
+    "provinceCode": 71,
+    "districtCode": 7105,
+    "nameEn": "Tha Maka",
+    "nameTH": "ท่ามะกา",
+    "postalCode": 71120
+  },
+  {
+    "id": 731,
+    "provinceCode": 71,
+    "districtCode": 7106,
+    "nameEn": "Tha Muang",
+    "nameTH": "ท่าม่วง",
+    "postalCode": 71110
+  },
+  {
+    "id": 732,
+    "provinceCode": 71,
+    "districtCode": 7107,
+    "nameEn": "Thong Pha Phum",
+    "nameTH": "ทองผาภูมิ",
+    "postalCode": 71180
+  },
+  {
+    "id": 733,
+    "provinceCode": 71,
+    "districtCode": 7108,
+    "nameEn": "Sangkhla Buri",
+    "nameTH": "สังขละบุรี",
+    "postalCode": 71240
+  },
+  {
+    "id": 734,
+    "provinceCode": 71,
+    "districtCode": 7109,
+    "nameEn": "Phanom Thuan",
+    "nameTH": "พนมทวน",
+    "postalCode": 71140
+  },
+  {
+    "id": 735,
+    "provinceCode": 71,
+    "districtCode": 7110,
+    "nameEn": "Lao Khwan",
+    "nameTH": "เลาขวัญ",
+    "postalCode": 71210
+  },
+  {
+    "id": 736,
+    "provinceCode": 71,
+    "districtCode": 7111,
+    "nameEn": "Dan Makham Tia",
+    "nameTH": "ด่านมะขามเตี้ย",
+    "postalCode": 71260
+  },
+  {
+    "id": 737,
+    "provinceCode": 71,
+    "districtCode": 7112,
+    "nameEn": "Nong Prue",
+    "nameTH": "หนองปรือ",
+    "postalCode": 71220
+  },
+  {
+    "id": 738,
+    "provinceCode": 71,
+    "districtCode": 7113,
+    "nameEn": "Huai Krachao",
+    "nameTH": "ห้วยกระเจา",
+    "postalCode": 71170
+  },
+  {
+    "id": 739,
+    "provinceCode": 72,
+    "districtCode": 7201,
+    "nameEn": "Mueang Saphan Buri",
+    "nameTH": "เมืองสุพรรณบุรี",
+    "postalCode": 72000
+  },
+  {
+    "id": 740,
+    "provinceCode": 72,
+    "districtCode": 7202,
+    "nameEn": "Doem Bang Nang Buat",
+    "nameTH": "เดิมบางนางบวช",
+    "postalCode": 72120
+  },
+  {
+    "id": 741,
+    "provinceCode": 72,
+    "districtCode": 7203,
+    "nameEn": "Dan Chang",
+    "nameTH": "ด่านช้าง",
+    "postalCode": 72180
+  },
+  {
+    "id": 742,
+    "provinceCode": 72,
+    "districtCode": 7204,
+    "nameEn": "Bang Pla Ma",
+    "nameTH": "บางปลาม้า",
+    "postalCode": 72150
+  },
+  {
+    "id": 743,
+    "provinceCode": 72,
+    "districtCode": 7205,
+    "nameEn": "Si Prachan",
+    "nameTH": "ศรีประจันต์",
+    "postalCode": 72140
+  },
+  {
+    "id": 744,
+    "provinceCode": 72,
+    "districtCode": 7206,
+    "nameEn": "Don Chedi",
+    "nameTH": "ดอนเจดีย์",
+    "postalCode": 72170
+  },
+  {
+    "id": 745,
+    "provinceCode": 72,
+    "districtCode": 7207,
+    "nameEn": "Song Phi Nong",
+    "nameTH": "สองพี่น้อง",
+    "postalCode": 72110
+  },
+  {
+    "id": 746,
+    "provinceCode": 72,
+    "districtCode": 7208,
+    "nameEn": "Sam Chuk",
+    "nameTH": "สามชุก",
+    "postalCode": 72130
+  },
+  {
+    "id": 747,
+    "provinceCode": 72,
+    "districtCode": 7209,
+    "nameEn": "U Thong",
+    "nameTH": "อู่ทอง",
+    "postalCode": 72160
+  },
+  {
+    "id": 748,
+    "provinceCode": 72,
+    "districtCode": 7210,
+    "nameEn": "Nong Ya Sai",
+    "nameTH": "หนองหญ้าไซ",
+    "postalCode": 72240
+  },
+  {
+    "id": 749,
+    "provinceCode": 73,
+    "districtCode": 7301,
+    "nameEn": "Mueang Nakhon Pathom",
+    "nameTH": "เมืองนครปฐม",
+    "postalCode": 73000
+  },
+  {
+    "id": 750,
+    "provinceCode": 73,
+    "districtCode": 7302,
+    "nameEn": "Kamphaeng Saen",
+    "nameTH": "กำแพงแสน",
+    "postalCode": 73140
+  },
+  {
+    "id": 751,
+    "provinceCode": 73,
+    "districtCode": 7303,
+    "nameEn": "Nakhon Chai Si",
+    "nameTH": "นครชัยศรี",
+    "postalCode": 73120
+  },
+  {
+    "id": 752,
+    "provinceCode": 73,
+    "districtCode": 7304,
+    "nameEn": "Don Tum",
+    "nameTH": "ดอนตูม",
+    "postalCode": 73150
+  },
+  {
+    "id": 753,
+    "provinceCode": 73,
+    "districtCode": 7305,
+    "nameEn": "Bang Len",
+    "nameTH": "บางเลน",
+    "postalCode": 73130
+  },
+  {
+    "id": 754,
+    "provinceCode": 73,
+    "districtCode": 7306,
+    "nameEn": "Sam Phran",
+    "nameTH": "สามพราน",
+    "postalCode": 73110
+  },
+  {
+    "id": 755,
+    "provinceCode": 73,
+    "districtCode": 7307,
+    "nameEn": "Phutthamonthon",
+    "nameTH": "พุทธมณฑล",
+    "postalCode": 73170
+  },
+  {
+    "id": 756,
+    "provinceCode": 74,
+    "districtCode": 7401,
+    "nameEn": "Mueang Samut Sakhon",
+    "nameTH": "เมืองสมุทรสาคร",
+    "postalCode": 74000
+  },
+  {
+    "id": 757,
+    "provinceCode": 74,
+    "districtCode": 7402,
+    "nameEn": "Krathum Baen",
+    "nameTH": "กระทุ่มแบน",
+    "postalCode": 74110
+  },
+  {
+    "id": 758,
+    "provinceCode": 74,
+    "districtCode": 7403,
+    "nameEn": "Ban Phaeo",
+    "nameTH": "บ้านแพ้ว",
+    "postalCode": 74120
+  },
+  {
+    "id": 759,
+    "provinceCode": 75,
+    "districtCode": 7501,
+    "nameEn": "Mueang Samut Songkhram",
+    "nameTH": "เมืองสมุทรสงคราม",
+    "postalCode": 75000
+  },
+  {
+    "id": 760,
+    "provinceCode": 75,
+    "districtCode": 7502,
+    "nameEn": "Bang Khonthi",
+    "nameTH": "บางคนที",
+    "postalCode": 75120
+  },
+  {
+    "id": 761,
+    "provinceCode": 75,
+    "districtCode": 7503,
+    "nameEn": "Amphawa",
+    "nameTH": "อัมพวา",
+    "postalCode": 75110
+  },
+  {
+    "id": 762,
+    "provinceCode": 76,
+    "districtCode": 7601,
+    "nameEn": "Mueang Phetchaburi",
+    "nameTH": "เมืองเพชรบุรี",
+    "postalCode": 76000
+  },
+  {
+    "id": 763,
+    "provinceCode": 76,
+    "districtCode": 7602,
+    "nameEn": "Khao Yoi",
+    "nameTH": "เขาย้อย",
+    "postalCode": 76140
+  },
+  {
+    "id": 764,
+    "provinceCode": 76,
+    "districtCode": 7603,
+    "nameEn": "Nong Ya Plong",
+    "nameTH": "หนองหญ้าปล้อง",
+    "postalCode": 76160
+  },
+  {
+    "id": 765,
+    "provinceCode": 76,
+    "districtCode": 7604,
+    "nameEn": "Cha-Am",
+    "nameTH": "ชะอำ",
+    "postalCode": 76120
+  },
+  {
+    "id": 766,
+    "provinceCode": 76,
+    "districtCode": 7605,
+    "nameEn": "Tha Yang",
+    "nameTH": "ท่ายาง",
+    "postalCode": 76130
+  },
+  {
+    "id": 767,
+    "provinceCode": 76,
+    "districtCode": 7606,
+    "nameEn": "Ban Lat",
+    "nameTH": "บ้านลาด",
+    "postalCode": 76150
+  },
+  {
+    "id": 768,
+    "provinceCode": 76,
+    "districtCode": 7607,
+    "nameEn": "Ban Laem",
+    "nameTH": "บ้านแหลม",
+    "postalCode": 76110
+  },
+  {
+    "id": 769,
+    "provinceCode": 76,
+    "districtCode": 7608,
+    "nameEn": "Kaeng Krachan",
+    "nameTH": "แก่งกระจาน",
+    "postalCode": 76170
+  },
+  {
+    "id": 770,
+    "provinceCode": 77,
+    "districtCode": 7701,
+    "nameEn": "Mueang Prachuap Khiri Khan",
+    "nameTH": "เมืองประจวบคีรีขันธ์",
+    "postalCode": 77000
+  },
+  {
+    "id": 771,
+    "provinceCode": 77,
+    "districtCode": 7702,
+    "nameEn": "Kui Buri",
+    "nameTH": "กุยบุรี",
+    "postalCode": 77150
+  },
+  {
+    "id": 772,
+    "provinceCode": 77,
+    "districtCode": 7703,
+    "nameEn": "Thap Sakae",
+    "nameTH": "ทับสะแก",
+    "postalCode": 77130
+  },
+  {
+    "id": 773,
+    "provinceCode": 77,
+    "districtCode": 7704,
+    "nameEn": "Bang Saphan",
+    "nameTH": "บางสะพาน",
+    "postalCode": 77140
+  },
+  {
+    "id": 774,
+    "provinceCode": 77,
+    "districtCode": 7705,
+    "nameEn": "Bang Saphan Noi",
+    "nameTH": "บางสะพานน้อย",
+    "postalCode": 77170
+  },
+  {
+    "id": 775,
+    "provinceCode": 77,
+    "districtCode": 7706,
+    "nameEn": "Pran Buri",
+    "nameTH": "ปราณบุรี",
+    "postalCode": 77120
+  },
+  {
+    "id": 776,
+    "provinceCode": 77,
+    "districtCode": 7707,
+    "nameEn": "Hua Hin",
+    "nameTH": "หัวหิน",
+    "postalCode": 77110
+  },
+  {
+    "id": 777,
+    "provinceCode": 77,
+    "districtCode": 7708,
+    "nameEn": "Sam Roi Yot",
+    "nameTH": "สามร้อยยอด",
+    "postalCode": 77120
+  },
+  {
+    "id": 778,
+    "provinceCode": 80,
+    "districtCode": 8001,
+    "nameEn": "Mueang Nakhon Si Thammarat",
+    "nameTH": "เมืองนครศรีธรรมราช",
+    "postalCode": 80000
+  },
+  {
+    "id": 779,
+    "provinceCode": 80,
+    "districtCode": 8002,
+    "nameEn": "Phrom Khiri",
+    "nameTH": "พรหมคีรี",
+    "postalCode": 80320
+  },
+  {
+    "id": 780,
+    "provinceCode": 80,
+    "districtCode": 8003,
+    "nameEn": "Lan Saka",
+    "nameTH": "ลานสกา",
+    "postalCode": 80230
+  },
+  {
+    "id": 781,
+    "provinceCode": 80,
+    "districtCode": 8004,
+    "nameEn": "Chawang",
+    "nameTH": "ฉวาง",
+    "postalCode": 80150
+  },
+  {
+    "id": 782,
+    "provinceCode": 80,
+    "districtCode": 8005,
+    "nameEn": "Phipun",
+    "nameTH": "พิปูน",
+    "postalCode": 80270
+  },
+  {
+    "id": 783,
+    "provinceCode": 80,
+    "districtCode": 8006,
+    "nameEn": "Chian Yai",
+    "nameTH": "เชียรใหญ่",
+    "postalCode": 80190
+  },
+  {
+    "id": 784,
+    "provinceCode": 80,
+    "districtCode": 8007,
+    "nameEn": "Cha-Uat",
+    "nameTH": "ชะอวด",
+    "postalCode": 80180
+  },
+  {
+    "id": 785,
+    "provinceCode": 80,
+    "districtCode": 8008,
+    "nameEn": "Tha Sala",
+    "nameTH": "ท่าศาลา",
+    "postalCode": 80160
+  },
+  {
+    "id": 786,
+    "provinceCode": 80,
+    "districtCode": 8009,
+    "nameEn": "Thung Song",
+    "nameTH": "ทุ่งสง",
+    "postalCode": 80110
+  },
+  {
+    "id": 787,
+    "provinceCode": 80,
+    "districtCode": 8010,
+    "nameEn": "Na Bon",
+    "nameTH": "นาบอน",
+    "postalCode": 80220
+  },
+  {
+    "id": 788,
+    "provinceCode": 80,
+    "districtCode": 8011,
+    "nameEn": "Thung Yai",
+    "nameTH": "ทุ่งใหญ่",
+    "postalCode": 80240
+  },
+  {
+    "id": 789,
+    "provinceCode": 80,
+    "districtCode": 8012,
+    "nameEn": "Pak Phanang",
+    "nameTH": "ปากพนัง",
+    "postalCode": 80140
+  },
+  {
+    "id": 790,
+    "provinceCode": 80,
+    "districtCode": 8013,
+    "nameEn": "Ron Phibun",
+    "nameTH": "ร่อนพิบูลย์",
+    "postalCode": 80130
+  },
+  {
+    "id": 791,
+    "provinceCode": 80,
+    "districtCode": 8014,
+    "nameEn": "Sichon",
+    "nameTH": "สิชล",
+    "postalCode": 80120
+  },
+  {
+    "id": 792,
+    "provinceCode": 80,
+    "districtCode": 8015,
+    "nameEn": "Khanom",
+    "nameTH": "ขนอม",
+    "postalCode": 80210
+  },
+  {
+    "id": 793,
+    "provinceCode": 80,
+    "districtCode": 8016,
+    "nameEn": "Hua Sai",
+    "nameTH": "หัวไทร",
+    "postalCode": 80170
+  },
+  {
+    "id": 794,
+    "provinceCode": 80,
+    "districtCode": 8017,
+    "nameEn": "Bang Khan",
+    "nameTH": "บางขัน",
+    "postalCode": 80360
+  },
+  {
+    "id": 795,
+    "provinceCode": 80,
+    "districtCode": 8018,
+    "nameEn": "Tham Phannara",
+    "nameTH": "ถ้ำพรรณรา",
+    "postalCode": 80260
+  },
+  {
+    "id": 796,
+    "provinceCode": 80,
+    "districtCode": 8019,
+    "nameEn": "Chulabhorn",
+    "nameTH": "จุฬาภรณ์",
+    "postalCode": 80180
+  },
+  {
+    "id": 797,
+    "provinceCode": 80,
+    "districtCode": 8020,
+    "nameEn": "Phra Phrom",
+    "nameTH": "พระพรหม",
+    "postalCode": 80000
+  },
+  {
+    "id": 798,
+    "provinceCode": 80,
+    "districtCode": 8021,
+    "nameEn": "Nopphitam",
+    "nameTH": "นบพิตำ",
+    "postalCode": 80160
+  },
+  {
+    "id": 799,
+    "provinceCode": 80,
+    "districtCode": 8022,
+    "nameEn": "Chang Klang",
+    "nameTH": "ช้างกลาง",
+    "postalCode": 80250
+  },
+  {
+    "id": 800,
+    "provinceCode": 80,
+    "districtCode": 8023,
+    "nameEn": "Chaloem Phra Kiet",
+    "nameTH": "เฉลิมพระเกียรติ",
+    "postalCode": 80190
+  },
+  {
+    "id": 801,
+    "provinceCode": 81,
+    "districtCode": 8101,
+    "nameEn": "Mueang Krabi",
+    "nameTH": "เมืองกระบี่",
+    "postalCode": 81000
+  },
+  {
+    "id": 802,
+    "provinceCode": 81,
+    "districtCode": 8102,
+    "nameEn": "Khao Phanom",
+    "nameTH": "เขาพนม",
+    "postalCode": 81140
+  },
+  {
+    "id": 803,
+    "provinceCode": 81,
+    "districtCode": 8103,
+    "nameEn": "Ko Lanta",
+    "nameTH": "เกาะลันตา",
+    "postalCode": 81150
+  },
+  {
+    "id": 804,
+    "provinceCode": 81,
+    "districtCode": 8104,
+    "nameEn": "Khlong Thom",
+    "nameTH": "คลองท่อม",
+    "postalCode": 81120
+  },
+  {
+    "id": 805,
+    "provinceCode": 81,
+    "districtCode": 8105,
+    "nameEn": "Ao Luek",
+    "nameTH": "อ่าวลึก",
+    "postalCode": 81110
+  },
+  {
+    "id": 806,
+    "provinceCode": 81,
+    "districtCode": 8106,
+    "nameEn": "Plai Phraya",
+    "nameTH": "ปลายพระยา",
+    "postalCode": 81160
+  },
+  {
+    "id": 807,
+    "provinceCode": 81,
+    "districtCode": 8107,
+    "nameEn": "Lam Thap",
+    "nameTH": "ลำทับ",
+    "postalCode": 81120
+  },
+  {
+    "id": 808,
+    "provinceCode": 81,
+    "districtCode": 8108,
+    "nameEn": "Nuea Khlong",
+    "nameTH": "เหนือคลอง",
+    "postalCode": 81130
+  },
+  {
+    "id": 809,
+    "provinceCode": 82,
+    "districtCode": 8201,
+    "nameEn": "Mueang Phang-Nga",
+    "nameTH": "เมืองพังงา",
+    "postalCode": 82000
+  },
+  {
+    "id": 810,
+    "provinceCode": 82,
+    "districtCode": 8202,
+    "nameEn": "Ko Yao",
+    "nameTH": "เกาะยาว",
+    "postalCode": 82160
+  },
+  {
+    "id": 811,
+    "provinceCode": 82,
+    "districtCode": 8203,
+    "nameEn": "Kapong",
+    "nameTH": "กะปง",
+    "postalCode": 82170
+  },
+  {
+    "id": 812,
+    "provinceCode": 82,
+    "districtCode": 8204,
+    "nameEn": "Takua Thung",
+    "nameTH": "ตะกั่วทุ่ง",
+    "postalCode": 82130
+  },
+  {
+    "id": 813,
+    "provinceCode": 82,
+    "districtCode": 8205,
+    "nameEn": "Takua Pa",
+    "nameTH": "ตะกั่วป่า",
+    "postalCode": 82110
+  },
+  {
+    "id": 814,
+    "provinceCode": 82,
+    "districtCode": 8206,
+    "nameEn": "Khura Buri",
+    "nameTH": "คุระบุรี",
+    "postalCode": 82150
+  },
+  {
+    "id": 815,
+    "provinceCode": 82,
+    "districtCode": 8207,
+    "nameEn": "Thap Put",
+    "nameTH": "ทับปุด",
+    "postalCode": 82180
+  },
+  {
+    "id": 816,
+    "provinceCode": 82,
+    "districtCode": 8208,
+    "nameEn": "Thai Mueang",
+    "nameTH": "ท้ายเหมือง",
+    "postalCode": 82120
+  },
+  {
+    "id": 817,
+    "provinceCode": 83,
+    "districtCode": 8301,
+    "nameEn": "Mueang Phuket",
+    "nameTH": "เมืองภูเก็ต",
+    "postalCode": 83000
+  },
+  {
+    "id": 818,
+    "provinceCode": 83,
+    "districtCode": 8302,
+    "nameEn": "Kathu",
+    "nameTH": "กะทู้",
+    "postalCode": 83120
+  },
+  {
+    "id": 819,
+    "provinceCode": 83,
+    "districtCode": 8303,
+    "nameEn": "Thalang",
+    "nameTH": "ถลาง",
+    "postalCode": 83110
+  },
+  {
+    "id": 820,
+    "provinceCode": 84,
+    "districtCode": 8401,
+    "nameEn": "Mueang Surat Thani",
+    "nameTH": "เมืองสุราษฎร์ธานี",
+    "postalCode": 84000
+  },
+  {
+    "id": 821,
+    "provinceCode": 84,
+    "districtCode": 8402,
+    "nameEn": "Kanchanadit",
+    "nameTH": "กาญจนดิษฐ์",
+    "postalCode": 84290
+  },
+  {
+    "id": 822,
+    "provinceCode": 84,
+    "districtCode": 8403,
+    "nameEn": "Don Sak",
+    "nameTH": "ดอนสัก",
+    "postalCode": 84220
+  },
+  {
+    "id": 823,
+    "provinceCode": 84,
+    "districtCode": 8404,
+    "nameEn": "Ko Samui",
+    "nameTH": "เกาะสมุย",
+    "postalCode": 84140
+  },
+  {
+    "id": 824,
+    "provinceCode": 84,
+    "districtCode": 8405,
+    "nameEn": "Ko Pha-Ngan",
+    "nameTH": "เกาะพะงัน",
+    "postalCode": 84280
+  },
+  {
+    "id": 825,
+    "provinceCode": 84,
+    "districtCode": 8406,
+    "nameEn": "Chaiya",
+    "nameTH": "ไชยา",
+    "postalCode": 84110
+  },
+  {
+    "id": 826,
+    "provinceCode": 84,
+    "districtCode": 8407,
+    "nameEn": "Tha Chana",
+    "nameTH": "ท่าชนะ",
+    "postalCode": 84170
+  },
+  {
+    "id": 827,
+    "provinceCode": 84,
+    "districtCode": 8408,
+    "nameEn": "Khiri Rat Nikhom",
+    "nameTH": "คีรีรัฐนิคม",
+    "postalCode": 84180
+  },
+  {
+    "id": 828,
+    "provinceCode": 84,
+    "districtCode": 8409,
+    "nameEn": "Ban Ta Khun",
+    "nameTH": "บ้านตาขุน",
+    "postalCode": 84230
+  },
+  {
+    "id": 829,
+    "provinceCode": 84,
+    "districtCode": 8410,
+    "nameEn": "Phanom",
+    "nameTH": "พนม",
+    "postalCode": 84250
+  },
+  {
+    "id": 830,
+    "provinceCode": 84,
+    "districtCode": 8411,
+    "nameEn": "Tha Chang",
+    "nameTH": "ท่าฉาง",
+    "postalCode": 84150
+  },
+  {
+    "id": 831,
+    "provinceCode": 84,
+    "districtCode": 8412,
+    "nameEn": "Ban Na San",
+    "nameTH": "บ้านนาสาร",
+    "postalCode": 84120
+  },
+  {
+    "id": 832,
+    "provinceCode": 84,
+    "districtCode": 8413,
+    "nameEn": "Ban Na Doem",
+    "nameTH": "บ้านนาเดิม",
+    "postalCode": 84240
+  },
+  {
+    "id": 833,
+    "provinceCode": 84,
+    "districtCode": 8414,
+    "nameEn": "Khian Sa",
+    "nameTH": "เคียนซา",
+    "postalCode": 84260
+  },
+  {
+    "id": 834,
+    "provinceCode": 84,
+    "districtCode": 8415,
+    "nameEn": "Wiang Sa",
+    "nameTH": "เวียงสระ",
+    "postalCode": 84190
+  },
+  {
+    "id": 835,
+    "provinceCode": 84,
+    "districtCode": 8416,
+    "nameEn": "Phrasaeng",
+    "nameTH": "พระแสง",
+    "postalCode": 84210
+  },
+  {
+    "id": 836,
+    "provinceCode": 84,
+    "districtCode": 8417,
+    "nameEn": "Phunphin",
+    "nameTH": "พุนพิน",
+    "postalCode": 84130
+  },
+  {
+    "id": 837,
+    "provinceCode": 84,
+    "districtCode": 8418,
+    "nameEn": "Chai Buri",
+    "nameTH": "ชัยบุรี",
+    "postalCode": 84350
+  },
+  {
+    "id": 838,
+    "provinceCode": 84,
+    "districtCode": 8419,
+    "nameEn": "Chai Buri",
+    "nameTH": "วิภาวดี",
+    "postalCode": 84180
+  },
+  {
+    "id": 839,
+    "provinceCode": 85,
+    "districtCode": 8501,
+    "nameEn": "Mueang Ranong",
+    "nameTH": "เมืองระนอง",
+    "postalCode": 85000
+  },
+  {
+    "id": 840,
+    "provinceCode": 85,
+    "districtCode": 8502,
+    "nameEn": "La-Un",
+    "nameTH": "ละอุ่น",
+    "postalCode": 85130
+  },
+  {
+    "id": 841,
+    "provinceCode": 85,
+    "districtCode": 8503,
+    "nameEn": "Papoe",
+    "nameTH": "กะเปอร์",
+    "postalCode": 85120
+  },
+  {
+    "id": 842,
+    "provinceCode": 85,
+    "districtCode": 8504,
+    "nameEn": "Kra Buri",
+    "nameTH": "กระบุรี",
+    "postalCode": 85110
+  },
+  {
+    "id": 843,
+    "provinceCode": 85,
+    "districtCode": 8505,
+    "nameEn": "Suk Samran",
+    "nameTH": "สุขสำราญ",
+    "postalCode": 85120
+  },
+  {
+    "id": 844,
+    "provinceCode": 86,
+    "districtCode": 8601,
+    "nameEn": "Mueang Chumphon",
+    "nameTH": "เมืองชุมพร",
+    "postalCode": 86000
+  },
+  {
+    "id": 845,
+    "provinceCode": 86,
+    "districtCode": 8602,
+    "nameEn": "Tha Sae",
+    "nameTH": "ท่าแซะ",
+    "postalCode": 86140
+  },
+  {
+    "id": 846,
+    "provinceCode": 86,
+    "districtCode": 8603,
+    "nameEn": "Pathio",
+    "nameTH": "ปะทิว",
+    "postalCode": 86160
+  },
+  {
+    "id": 847,
+    "provinceCode": 86,
+    "districtCode": 8604,
+    "nameEn": "Lang Suan",
+    "nameTH": "หลังสวน",
+    "postalCode": 86110
+  },
+  {
+    "id": 848,
+    "provinceCode": 86,
+    "districtCode": 8605,
+    "nameEn": "Lamae",
+    "nameTH": "ละแม",
+    "postalCode": 86170
+  },
+  {
+    "id": 849,
+    "provinceCode": 86,
+    "districtCode": 8606,
+    "nameEn": "Phato",
+    "nameTH": "พะโต๊ะ",
+    "postalCode": 86180
+  },
+  {
+    "id": 850,
+    "provinceCode": 86,
+    "districtCode": 8607,
+    "nameEn": "Sawi",
+    "nameTH": "สวี",
+    "postalCode": 86130
+  },
+  {
+    "id": 851,
+    "provinceCode": 86,
+    "districtCode": 8608,
+    "nameEn": "Thung Tako",
+    "nameTH": "ทุ่งตะโก",
+    "postalCode": 86220
+  },
+  {
+    "id": 852,
+    "provinceCode": 90,
+    "districtCode": 9001,
+    "nameEn": "Muaeng Songkhla",
+    "nameTH": "เมืองสงขลา",
+    "postalCode": 90000
+  },
+  {
+    "id": 853,
+    "provinceCode": 90,
+    "districtCode": 9002,
+    "nameEn": "Sathing Phra",
+    "nameTH": "สทิงพระ",
+    "postalCode": 90190
+  },
+  {
+    "id": 854,
+    "provinceCode": 90,
+    "districtCode": 9003,
+    "nameEn": "Chana",
+    "nameTH": "จะนะ",
+    "postalCode": 90130
+  },
+  {
+    "id": 855,
+    "provinceCode": 90,
+    "districtCode": 9004,
+    "nameEn": "Na Thawi",
+    "nameTH": "นาทวี",
+    "postalCode": 90160
+  },
+  {
+    "id": 856,
+    "provinceCode": 90,
+    "districtCode": 9005,
+    "nameEn": "Thepha",
+    "nameTH": "เทพา",
+    "postalCode": 90150
+  },
+  {
+    "id": 857,
+    "provinceCode": 90,
+    "districtCode": 9006,
+    "nameEn": "Saba Yoi",
+    "nameTH": "สะบ้าย้อย",
+    "postalCode": 90210
+  },
+  {
+    "id": 858,
+    "provinceCode": 90,
+    "districtCode": 9007,
+    "nameEn": "Ranot",
+    "nameTH": "ระโนด",
+    "postalCode": 90140
+  },
+  {
+    "id": 859,
+    "provinceCode": 90,
+    "districtCode": 9008,
+    "nameEn": "Krasae Sin",
+    "nameTH": "กระแสสินธุ์",
+    "postalCode": 90270
+  },
+  {
+    "id": 860,
+    "provinceCode": 90,
+    "districtCode": 9009,
+    "nameEn": "Rattaphum",
+    "nameTH": "รัตภูมิ",
+    "postalCode": 90180
+  },
+  {
+    "id": 861,
+    "provinceCode": 90,
+    "districtCode": 9010,
+    "nameEn": "Sadao",
+    "nameTH": "สะเดา",
+    "postalCode": 90120
+  },
+  {
+    "id": 862,
+    "provinceCode": 90,
+    "districtCode": 9011,
+    "nameEn": "Hat Yai",
+    "nameTH": "หาดใหญ่",
+    "postalCode": 90110
+  },
+  {
+    "id": 863,
+    "provinceCode": 90,
+    "districtCode": 9012,
+    "nameEn": "Na Mom",
+    "nameTH": "นาหม่อม",
+    "postalCode": 90310
+  },
+  {
+    "id": 864,
+    "provinceCode": 90,
+    "districtCode": 9013,
+    "nameEn": "Khuan Niang",
+    "nameTH": "ควนเนียง",
+    "postalCode": 90220
+  },
+  {
+    "id": 865,
+    "provinceCode": 90,
+    "districtCode": 9014,
+    "nameEn": "Bang Klam",
+    "nameTH": "บางกล่ำ",
+    "postalCode": 90110
+  },
+  {
+    "id": 866,
+    "provinceCode": 90,
+    "districtCode": 9015,
+    "nameEn": "Singhanakhon",
+    "nameTH": "สิงหนคร",
+    "postalCode": 90280
+  },
+  {
+    "id": 867,
+    "provinceCode": 90,
+    "districtCode": 9016,
+    "nameEn": "Khlong Hoi Khong",
+    "nameTH": "คลองหอยโข่ง",
+    "postalCode": 90230
+  },
+  {
+    "id": 868,
+    "provinceCode": 91,
+    "districtCode": 9101,
+    "nameEn": "Mueang Satun",
+    "nameTH": "เมืองสตูล",
+    "postalCode": 91000
+  },
+  {
+    "id": 869,
+    "provinceCode": 91,
+    "districtCode": 9102,
+    "nameEn": "Khuan Don",
+    "nameTH": "ควนโดน",
+    "postalCode": 91160
+  },
+  {
+    "id": 870,
+    "provinceCode": 91,
+    "districtCode": 9103,
+    "nameEn": "Khuan Kalong",
+    "nameTH": "ควนกาหลง",
+    "postalCode": 91130
+  },
+  {
+    "id": 871,
+    "provinceCode": 91,
+    "districtCode": 9104,
+    "nameEn": "Tha Phae",
+    "nameTH": "ท่าแพ",
+    "postalCode": 91150
+  },
+  {
+    "id": 872,
+    "provinceCode": 91,
+    "districtCode": 9105,
+    "nameEn": "La-Ngu",
+    "nameTH": "ละงู",
+    "postalCode": 91110
+  },
+  {
+    "id": 873,
+    "provinceCode": 91,
+    "districtCode": 9106,
+    "nameEn": "Thung Wa",
+    "nameTH": "ทุ่งหว้า",
+    "postalCode": 91120
+  },
+  {
+    "id": 874,
+    "provinceCode": 91,
+    "districtCode": 9107,
+    "nameEn": "Manang",
+    "nameTH": "มะนัง",
+    "postalCode": 91130
+  },
+  {
+    "id": 875,
+    "provinceCode": 92,
+    "districtCode": 9201,
+    "nameEn": "Mueang Trang",
+    "nameTH": "เมืองตรัง",
+    "postalCode": 92000
+  },
+  {
+    "id": 876,
+    "provinceCode": 92,
+    "districtCode": 9202,
+    "nameEn": "Kantang",
+    "nameTH": "กันตัง",
+    "postalCode": 92110
+  },
+  {
+    "id": 877,
+    "provinceCode": 92,
+    "districtCode": 9203,
+    "nameEn": "Yan Ta Khao",
+    "nameTH": "ย่านตาขาว",
+    "postalCode": 92140
+  },
+  {
+    "id": 878,
+    "provinceCode": 92,
+    "districtCode": 9204,
+    "nameEn": "Palian",
+    "nameTH": "ปะเหลียน",
+    "postalCode": 92120
+  },
+  {
+    "id": 879,
+    "provinceCode": 92,
+    "districtCode": 9205,
+    "nameEn": "Sikao",
+    "nameTH": "สิเกา",
+    "postalCode": 92150
+  },
+  {
+    "id": 880,
+    "provinceCode": 92,
+    "districtCode": 9206,
+    "nameEn": "Huai Yot",
+    "nameTH": "ห้วยยอด",
+    "postalCode": 92130
+  },
+  {
+    "id": 881,
+    "provinceCode": 92,
+    "districtCode": 9207,
+    "nameEn": "Wang Wiset",
+    "nameTH": "วังวิเศษ",
+    "postalCode": 92220
+  },
+  {
+    "id": 882,
+    "provinceCode": 92,
+    "districtCode": 9208,
+    "nameEn": "Na Yong",
+    "nameTH": "นาโยง",
+    "postalCode": 92170
+  },
+  {
+    "id": 883,
+    "provinceCode": 92,
+    "districtCode": 9209,
+    "nameEn": "Ratsada",
+    "nameTH": "รัษฎา",
+    "postalCode": 92160
+  },
+  {
+    "id": 884,
+    "provinceCode": 92,
+    "districtCode": 9210,
+    "nameEn": "Hat Samran",
+    "nameTH": "หาดสำราญ",
+    "postalCode": 92120
+  },
+  {
+    "id": 885,
+    "provinceCode": 93,
+    "districtCode": 9301,
+    "nameEn": "Mueang Phatthalung",
+    "nameTH": "เมืองพัทลุง",
+    "postalCode": 93000
+  },
+  {
+    "id": 886,
+    "provinceCode": 93,
+    "districtCode": 9302,
+    "nameEn": "Kong Ra",
+    "nameTH": "กงหรา",
+    "postalCode": 93180
+  },
+  {
+    "id": 887,
+    "provinceCode": 93,
+    "districtCode": 9303,
+    "nameEn": "Khao Chaison",
+    "nameTH": "เขาชัยสน",
+    "postalCode": 93130
+  },
+  {
+    "id": 888,
+    "provinceCode": 93,
+    "districtCode": 9304,
+    "nameEn": "Tamot",
+    "nameTH": "ตะโหมด",
+    "postalCode": 93160
+  },
+  {
+    "id": 889,
+    "provinceCode": 93,
+    "districtCode": 9305,
+    "nameEn": "Khuan Khanun",
+    "nameTH": "ควนขนุน",
+    "postalCode": 93110
+  },
+  {
+    "id": 890,
+    "provinceCode": 93,
+    "districtCode": 9306,
+    "nameEn": "Pak Phayun",
+    "nameTH": "ปากพะยูน",
+    "postalCode": 93120
+  },
+  {
+    "id": 891,
+    "provinceCode": 93,
+    "districtCode": 9307,
+    "nameEn": "Si Banphot",
+    "nameTH": "ศรีบรรพต",
+    "postalCode": 93190
+  },
+  {
+    "id": 892,
+    "provinceCode": 93,
+    "districtCode": 9308,
+    "nameEn": "Pa Bon",
+    "nameTH": "ป่าบอน",
+    "postalCode": 93170
+  },
+  {
+    "id": 893,
+    "provinceCode": 93,
+    "districtCode": 9309,
+    "nameEn": "Bang Kaeo",
+    "nameTH": "บางแก้ว",
+    "postalCode": 93140
+  },
+  {
+    "id": 894,
+    "provinceCode": 93,
+    "districtCode": 9310,
+    "nameEn": "Pa Phayom",
+    "nameTH": "ป่าพะยอม",
+    "postalCode": 93110
+  },
+  {
+    "id": 895,
+    "provinceCode": 93,
+    "districtCode": 9311,
+    "nameEn": "Srinagarindra",
+    "nameTH": "ศรีนครินทร์",
+    "postalCode": 93000
+  },
+  {
+    "id": 896,
+    "provinceCode": 94,
+    "districtCode": 9401,
+    "nameEn": "Mueang Pattani",
+    "nameTH": "เมืองปัตตานี",
+    "postalCode": 94000
+  },
+  {
+    "id": 897,
+    "provinceCode": 94,
+    "districtCode": 9402,
+    "nameEn": "Khok Pho",
+    "nameTH": "โคกโพธิ์",
+    "postalCode": 94120
+  },
+  {
+    "id": 898,
+    "provinceCode": 94,
+    "districtCode": 9403,
+    "nameEn": "Nong Chik",
+    "nameTH": "หนองจิก",
+    "postalCode": 94170
+  },
+  {
+    "id": 899,
+    "provinceCode": 94,
+    "districtCode": 9404,
+    "nameEn": "Panare",
+    "nameTH": "ปะนาเระ",
+    "postalCode": 94130
+  },
+  {
+    "id": 900,
+    "provinceCode": 94,
+    "districtCode": 9405,
+    "nameEn": "Mayo",
+    "nameTH": "มายอ",
+    "postalCode": 94140
+  },
+  {
+    "id": 901,
+    "provinceCode": 94,
+    "districtCode": 9406,
+    "nameEn": "Thung Yang Daeng",
+    "nameTH": "ทุ่งยางแดง",
+    "postalCode": 94140
+  },
+  {
+    "id": 902,
+    "provinceCode": 94,
+    "districtCode": 9407,
+    "nameEn": "Sai Buri",
+    "nameTH": "สายบุรี",
+    "postalCode": 94110
+  },
+  {
+    "id": 903,
+    "provinceCode": 94,
+    "districtCode": 9408,
+    "nameEn": "Mai Kaen",
+    "nameTH": "ไม้แก่น",
+    "postalCode": 94220
+  },
+  {
+    "id": 904,
+    "provinceCode": 94,
+    "districtCode": 9409,
+    "nameEn": "Yaring",
+    "nameTH": "ยะหริ่ง",
+    "postalCode": 94150
+  },
+  {
+    "id": 905,
+    "provinceCode": 94,
+    "districtCode": 9410,
+    "nameEn": "Yarang",
+    "nameTH": "ยะรัง",
+    "postalCode": 94160
+  },
+  {
+    "id": 906,
+    "provinceCode": 94,
+    "districtCode": 9411,
+    "nameEn": "Kapho",
+    "nameTH": "กะพ้อ",
+    "postalCode": 94230
+  },
+  {
+    "id": 907,
+    "provinceCode": 94,
+    "districtCode": 9412,
+    "nameEn": "Mae Lan",
+    "nameTH": "แม่ลาน",
+    "postalCode": 94180
+  },
+  {
+    "id": 908,
+    "provinceCode": 95,
+    "districtCode": 9501,
+    "nameEn": "Mueang Yala",
+    "nameTH": "เมืองยะลา",
+    "postalCode": 95000
+  },
+  {
+    "id": 909,
+    "provinceCode": 95,
+    "districtCode": 9502,
+    "nameEn": "Betong",
+    "nameTH": "เบตง",
+    "postalCode": 95110
+  },
+  {
+    "id": 910,
+    "provinceCode": 95,
+    "districtCode": 9503,
+    "nameEn": "Bannang Sata",
+    "nameTH": "บันนังสตา",
+    "postalCode": 95130
+  },
+  {
+    "id": 911,
+    "provinceCode": 95,
+    "districtCode": 9504,
+    "nameEn": "Than To",
+    "nameTH": "ธารโต",
+    "postalCode": 95150
+  },
+  {
+    "id": 912,
+    "provinceCode": 95,
+    "districtCode": 9505,
+    "nameEn": "Yaha",
+    "nameTH": "ยะหา",
+    "postalCode": 95120
+  },
+  {
+    "id": 913,
+    "provinceCode": 95,
+    "districtCode": 9506,
+    "nameEn": "Raman",
+    "nameTH": "รามัน",
+    "postalCode": 95140
+  },
+  {
+    "id": 914,
+    "provinceCode": 95,
+    "districtCode": 9507,
+    "nameEn": "Kabang",
+    "nameTH": "กาบัง",
+    "postalCode": 95120
+  },
+  {
+    "id": 915,
+    "provinceCode": 95,
+    "districtCode": 9508,
+    "nameEn": "Krong Pinang",
+    "nameTH": "กรงปินัง",
+    "postalCode": 95000
+  },
+  {
+    "id": 916,
+    "provinceCode": 96,
+    "districtCode": 9601,
+    "nameEn": "Mueang Narathiwat",
+    "nameTH": "เมืองนราธิวาส",
+    "postalCode": 96000
+  },
+  {
+    "id": 917,
+    "provinceCode": 96,
+    "districtCode": 9602,
+    "nameEn": "Tak Bai",
+    "nameTH": "ตากใบ",
+    "postalCode": 96110
+  },
+  {
+    "id": 918,
+    "provinceCode": 96,
+    "districtCode": 9603,
+    "nameEn": "Tak Bai",
+    "nameTH": "บาเจาะ",
+    "postalCode": 96170
+  },
+  {
+    "id": 919,
+    "provinceCode": 96,
+    "districtCode": 9604,
+    "nameEn": "Yi-Ngo",
+    "nameTH": "ยี่งอ",
+    "postalCode": 96180
+  },
+  {
+    "id": 920,
+    "provinceCode": 96,
+    "districtCode": 9605,
+    "nameEn": "Ra-Ngae",
+    "nameTH": "ระแงะ",
+    "postalCode": 96130
+  },
+  {
+    "id": 921,
+    "provinceCode": 96,
+    "districtCode": 9606,
+    "nameEn": "Rueso",
+    "nameTH": "รือเสาะ",
+    "postalCode": 96150
+  },
+  {
+    "id": 922,
+    "provinceCode": 96,
+    "districtCode": 9607,
+    "nameEn": "Si Sakhon",
+    "nameTH": "ศรีสาคร",
+    "postalCode": 96210
+  },
+  {
+    "id": 923,
+    "provinceCode": 96,
+    "districtCode": 9608,
+    "nameEn": "Waeng",
+    "nameTH": "แว้ง",
+    "postalCode": 96160
+  },
+  {
+    "id": 924,
+    "provinceCode": 96,
+    "districtCode": 9609,
+    "nameEn": "Sukhirin",
+    "nameTH": "สุคิริน",
+    "postalCode": 96190
+  },
+  {
+    "id": 925,
+    "provinceCode": 96,
+    "districtCode": 9610,
+    "nameEn": "Su-Ngai Kolok",
+    "nameTH": "สุไหงโก-ลก",
+    "postalCode": 96120
+  },
+  {
+    "id": 926,
+    "provinceCode": 96,
+    "districtCode": 9611,
+    "nameEn": "Su-Ngai Padi",
+    "nameTH": "สุไหงปาดี",
+    "postalCode": 96140
+  },
+  {
+    "id": 927,
+    "provinceCode": 96,
+    "districtCode": 9612,
+    "nameEn": "Chanae",
+    "nameTH": "จะแนะ",
+    "postalCode": 96220
+  },
+  {
+    "id": 928,
+    "provinceCode": 96,
+    "districtCode": 9613,
+    "nameEn": "Cho-Airong",
+    "nameTH": "เจาะไอร้อง",
+    "postalCode": 96130
+  }
+]

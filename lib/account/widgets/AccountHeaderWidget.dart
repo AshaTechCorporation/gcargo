@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/models/user.dart';
 
 class AccountHeaderWidget extends StatelessWidget {
   final VoidCallback onCreditTap;
@@ -6,6 +7,8 @@ class AccountHeaderWidget extends StatelessWidget {
   final VoidCallback onParcelTap;
   final VoidCallback onWalletTap;
   final VoidCallback onTransferTap;
+  final User? user;
+  final bool isLoading;
 
   const AccountHeaderWidget({
     super.key,
@@ -14,6 +17,8 @@ class AccountHeaderWidget extends StatelessWidget {
     required this.onParcelTap,
     required this.onWalletTap,
     required this.onTransferTap,
+    this.user,
+    this.isLoading = false,
   });
 
   @override
@@ -29,12 +34,47 @@ class AccountHeaderWidget extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  ClipOval(child: Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover)),
+                  ClipOval(
+                    child:
+                        (user?.image != null && user!.image!.isNotEmpty)
+                            ? Image.network(
+                              user!.image!,
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                // ถ้าโหลดรูปจาก network ไม่ได้ ให้แสดง Avatar default
+                                return Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover);
+                              },
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                // แสดง loading indicator ขณะโหลดรูป
+                                return Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
+                                  child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                );
+                              },
+                            )
+                            : Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover),
+                  ),
                   const SizedBox(width: 12),
-                  const Text('Thanaporn', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black)),
+                  isLoading
+                      ? Container(
+                        width: 100,
+                        height: 16,
+                        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                      )
+                      : Text(
+                        user?.fname ?? 'ผู้ใช้ยังไม่เข้าสู่ระบบ',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                      ),
                 ],
               ),
-              const Text('A100', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500)),
+              isLoading
+                  ? Container(width: 50, height: 14, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)))
+                  : Text(user?.code ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500)),
             ],
           ),
 
@@ -63,8 +103,8 @@ class AccountHeaderWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _quickItem('100', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap),
-              _quickItem('฿100.00', 'Wallet ของฉัน', 'assets/icons/empty-wallet.png', onWalletTap),
+              _quickItem('100', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap, 'สถานะ'),
+              _quickItem('฿100.00', 'Wallet ของฉัน', 'assets/icons/empty-wallet.png', onWalletTap, 'โอนเงิน'),
             ],
           ),
         ],
@@ -72,7 +112,7 @@ class AccountHeaderWidget extends StatelessWidget {
     );
   }
 
-  Widget _quickItem(String value, String label, String iconPath, VoidCallback onTap) {
+  Widget _quickItem(String value, String label, String iconPath, VoidCallback onTap, String transferLabel) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -106,7 +146,7 @@ class AccountHeaderWidget extends StatelessWidget {
                   child: Center(child: Image.asset(iconPath, width: 20)),
                 ),
                 const SizedBox(height: 4),
-                const Text('ดูรายละเอียด', style: TextStyle(fontSize: 12)), // หรือข้อความอื่นตามรูป
+                Text('$transferLabel', style: TextStyle(fontSize: 12)), // หรือข้อความอื่นตามรูป
               ],
             ),
           ],

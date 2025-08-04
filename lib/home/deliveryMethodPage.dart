@@ -10,8 +10,19 @@ class DeliveryMethodPage extends StatefulWidget {
 
 class _DeliveryMethodPageState extends State<DeliveryMethodPage> {
   int? selectedIndex;
+  Map<String, dynamic> selectedOption = {};
 
-  final List<String> deliveryOptions = ['ขนส่งทางรถ', 'ขนส่งทางเรือ'];
+  final List<Map<String, dynamic>> deliveryOptions = [
+    {'id': 1, 'name': 'ขนส่งทางรถ', 'nameEng': 'car'},
+    {'id': 2, 'name': 'ขนส่งทางเรือ', 'nameEng': 'Ship'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = 0;
+    selectedOption = deliveryOptions[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +43,15 @@ class _DeliveryMethodPageState extends State<DeliveryMethodPage> {
               separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey.shade300),
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(deliveryOptions[index], style: const TextStyle(fontSize: 16)),
+                  title: Text(deliveryOptions[index]['name'], style: const TextStyle(fontSize: 16)),
                   trailing: Radio<int>(
                     value: index,
                     groupValue: selectedIndex,
                     onChanged: (value) {
-                      setState(() => selectedIndex = value);
+                      setState(() {
+                        selectedIndex = value;
+                        selectedOption = deliveryOptions[value!];
+                      });
                     },
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -47,17 +61,17 @@ class _DeliveryMethodPageState extends State<DeliveryMethodPage> {
           ),
           // ✅ ปุ่มยืนยัน
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.grey.shade300))),
             child: SizedBox(
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigator.pop(context, selectedIndex);
+                  Navigator.pop(context, selectedOption);
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: kButtonColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                child: const Text('ยืนยัน', style: TextStyle(color: Colors.white, fontSize: 16)),
+                child: Text('ยืนยัน', style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
             ),
           ),

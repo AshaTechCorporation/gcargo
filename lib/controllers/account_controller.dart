@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:gcargo/models/faq.dart';
 import 'package:gcargo/models/manual.dart';
+import 'package:gcargo/models/tegaboutus.dart';
 import 'package:gcargo/services/accountService.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +14,7 @@ class AccountController extends GetxController {
   var faqs = <Faq>[].obs;
   var manuals = <Manual>[].obs;
   var news = <Manual>[].obs;
+  var aboutUs = Rxn<Tegaboutus>();
 
   @override
   void onInit() {
@@ -84,6 +86,29 @@ class AccountController extends GetxController {
     } catch (e) {
       log('❌ Error in getNews: $e');
       _setError('ไม่สามารถโหลดข้อมูล News ได้');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getTegAboutUs() async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await AccountService.getTegAboutUs();
+
+      if (data != null) {
+        // ไม่ต้องทำอะไร
+        aboutUs.value = data;
+        log('About Us: $aboutUs');
+      } else {
+        _setError('ไม่สามารถโหลดข้อมูล About Us ได้');
+      }
+    } catch (e) {
+      log('❌ Error in getTegAboutUs: $e');
+      _setError('ไม่สามารถโหลดข้อมูล About Us ได้');
     } finally {
       isLoading.value = false;
     }

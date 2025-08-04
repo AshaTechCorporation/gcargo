@@ -16,8 +16,7 @@ PartAddOnTrack _$PartAddOnTrackFromJson(Map<String, dynamic> json) =>
       json['add_on_service'] == null
           ? null
           : ServiceTransporterById.fromJson(
-            json['add_on_service'] as Map<String, dynamic>,
-          ),
+              json['add_on_service'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PartAddOnTrackToJson(PartAddOnTrack instance) =>

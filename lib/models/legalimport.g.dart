@@ -7,14 +7,14 @@ part of 'legalimport.dart';
 // **************************************************************************
 
 LegalImport _$LegalImportFromJson(Map<String, dynamic> json) => LegalImport(
-  (json['delivery_orders'] as List<dynamic>?)
-      ?.map((e) => OrdersPageNew.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  json['status'] as String?,
-  (json['import_orders'] as List<dynamic>?)
-      ?.map((e) => Importorders.fromJson(e as Map<String, dynamic>))
-      .toList(),
-);
+      (json['delivery_orders'] as List<dynamic>?)
+          ?.map((e) => OrdersPageNew.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['status'] as String?,
+      (json['import_orders'] as List<dynamic>?)
+          ?.map((e) => Importorders.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$LegalImportToJson(LegalImport instance) =>
     <String, dynamic>{
