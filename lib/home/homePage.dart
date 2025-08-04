@@ -6,18 +6,14 @@ import 'package:gcargo/home/exchangePage.dart';
 import 'package:gcargo/home/searchPage.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 import 'package:gcargo/home/widgets/ServiceImageCard.dart';
+import 'package:gcargo/home/widgets/service_item_widget.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
-import 'package:gcargo/home/exchangeRatePage.dart';
 import 'package:gcargo/home/notificationPage.dart';
 import 'package:gcargo/home/packageDepositPage.dart';
 import 'package:gcargo/home/productDetailPage.dart';
 import 'package:gcargo/home/rewardRedeemPage.dart';
-import 'package:gcargo/home/shippingRatePage.dart';
-import 'package:gcargo/home/trackingOwnerPage.dart';
-import 'package:gcargo/home/transportCalculatePage.dart';
-import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -421,13 +417,13 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildServiceItem(context, 'assets/icons/tran1.png', 'อัตราค่าขนส่ง'),
+                        ServiceItemWidget(iconPath: 'assets/icons/tran1.png', label: 'อัตราค่าขนส่ง'),
                         VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                        _buildServiceItem(context, 'assets/icons/monny.png', 'อัตราแลกเปลี่ยน'),
+                        ServiceItemWidget(iconPath: 'assets/icons/monny.png', label: 'อัตราแลกเปลี่ยน'),
                         VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                        _buildServiceItem(context, 'assets/icons/cal1.png', 'คำนวณค่าบริการ'),
+                        ServiceItemWidget(iconPath: 'assets/icons/cal1.png', label: 'คำนวณค่าบริการ'),
                         VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                        _buildServiceItem(context, 'assets/icons/box1.png', 'ตามพัสดุของฉัน'),
+                        ServiceItemWidget(iconPath: 'assets/icons/box1.png', label: 'ตามพัสดุของฉัน'),
                       ],
                     ),
                   ),
@@ -525,38 +521,6 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildServiceItem(BuildContext context, String iconPath, String label) {
-    return GestureDetector(
-      onTap: () {
-        if (label == 'อัตราค่าขนส่ง') {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ShippingRatePage()));
-        } else if (label == 'อัตราแลกเปลี่ยน') {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangeRatePage(exchangeRate: homeController.exchangeRate)));
-        } else if (label == 'คำนวณค่าบริการ') {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => TransportCalculatePage()));
-        } else if (label == 'ตามพัสดุของฉัน') {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => TrackingOwnerPage()));
-        }
-      },
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: Offset(0, 2))],
-            ),
-            child: Image.asset(iconPath, width: 36, height: 36),
-          ),
-          const SizedBox(height: 6),
-          SizedBox(child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-        ],
       ),
     );
   }
