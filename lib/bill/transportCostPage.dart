@@ -17,44 +17,31 @@ class _TransportCostPageState extends State<TransportCostPage> {
   String selectedStatus = 'ทั้งหมด';
   final OrderController orderController = Get.put(OrderController());
 
-  // Mock data สำหรับแสดงผล
-  final List<Map<String, dynamic>> mockTransportData = [
-    {'date': '2025-01-31', 'docNo': 'TC001', 'status': 'สำเร็จ', 'amount': 1250.00},
-    {'date': '2025-01-31', 'docNo': 'TC002', 'status': 'กำลังตรวจสอบ', 'amount': 890.50},
-    {'date': '2025-01-30', 'docNo': 'TC003', 'status': 'ยกเลิก', 'amount': 0.00},
-    {'date': '2025-01-30', 'docNo': 'TC004', 'status': 'สำเร็จ', 'amount': 2100.75},
-    {'date': '2025-01-29', 'docNo': 'TC005', 'status': 'กำลังตรวจสอบ', 'amount': 675.25},
-    {'date': '2025-01-29', 'docNo': 'TC006', 'status': 'สำเร็จ', 'amount': 1450.00},
-    {'date': '2025-01-28', 'docNo': 'TC007', 'status': 'กำลังตรวจสอบ', 'amount': 980.00},
-    {'date': '2025-01-28', 'docNo': 'TC008', 'status': 'ยกเลิก', 'amount': 0.00},
-    {'date': '2025-01-27', 'docNo': 'TC009', 'status': 'สำเร็จ', 'amount': 1800.50},
-    {'date': '2025-01-27', 'docNo': 'TC010', 'status': 'กำลังตรวจสอบ', 'amount': 1125.75},
-  ];
-
   @override
   void initState() {
     super.initState();
-    // Call getDeliveryOrders when page loads
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   orderController.getDeliveryOrders();
-    // });
+    // Call getBills when page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      orderController.getBills();
+    });
   }
 
-  // Status mapping from API to Thai
+  // Status mapping from API to Thai (เหลือ 3 สถานะ)
   String _getStatusInThai(String? apiStatus) {
     switch (apiStatus) {
-      case 'arrived_china_warehouse':
-        return 'ถึงคลังจีน';
-      case 'in_transit':
-        return 'กำลังขนส่ง';
-      case 'arrived_thailand_warehouse':
-        return 'ถึงคลังไทย';
+      case 'pending':
+      case 'processing':
       case 'awaiting_payment':
-        return 'รอชำระเงิน';
+      case 'in_transit':
+      case 'arrived_china_warehouse':
+      case 'arrived_thailand_warehouse':
+        return 'รอดำเนินการ';
+      case 'completed':
       case 'delivered':
+      case 'paid':
         return 'สำเร็จ';
       default:
-        return 'ไม่ทราบสถานะ';
+        return 'รอดำเนินการ';
     }
   }
 
@@ -71,124 +58,130 @@ class _TransportCostPageState extends State<TransportCostPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ใช้ mock data แทน API data (ยังคงฟังก์ชัน API ไว้)
-    final displayOrders = List<Map<String, dynamic>>.from(mockTransportData);
+    return Obx(() {
+      // แสดง loading
+      if (orderController.isLoading.value) {
+        return Scaffold(
+          backgroundColor: Colors.grey.shade50,
+          appBar: AppBar(
+            backgroundColor: Colors.grey.shade50,
+            title: const Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          ),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      }
 
-    // TODO: ใช้ API data แทน mock data
-    // final displayOrders = <Map<String, dynamic>>[];
-    // for (var legalImport in orderController.deilveryOrders) {
-    //   if (legalImport.delivery_orders != null && legalImport.delivery_orders!.isNotEmpty) {
-    //     for (var deliveryOrder in legalImport.delivery_orders!) {
-    //       displayOrders.add({
-    //         'date': _formatDate(deliveryOrder.date),
-    //         'docNo': deliveryOrder.code ?? '',
-    //         'status': _getStatusInThai(deliveryOrder.status),
-    //         'amount': 0.0,
-    //       });
-    //     }
-    //   }
-    // }
+      // ใช้ API data จาก OrderController
+      final displayOrders = <Map<String, dynamic>>[];
+      for (var bill in orderController.billing) {
+        displayOrders.add({
+          'id': bill.id ?? 0, // เพิ่ม id สำหรับส่งไป detail page
+          'date': _formatDate(bill.in_thai_date ?? bill.created_at?.toString()),
+          'docNo': bill.code ?? '',
+          'status': _getStatusInThai(bill.status),
+          'amount': double.tryParse(bill.total_amount ?? '0') ?? 0.0,
+        });
+      }
 
-    // ✅ กรองตามสถานะ
-    final filteredData = selectedStatus == 'ทั้งหมด' ? displayOrders : displayOrders.where((e) => e['status'] == selectedStatus).toList();
+      // ✅ กรองตามสถานะ
+      final filteredData = selectedStatus == 'ทั้งหมด' ? displayOrders : displayOrders.where((e) => e['status'] == selectedStatus).toList();
 
-    // ✅ นับแต่ละสถานะ
-    final int totalCount = displayOrders.length;
-    final int pendingCount = displayOrders.where((e) => e['status'] == 'กำลังตรวจสอบ').length;
-    final int successCount = displayOrders.where((e) => e['status'] == 'สำเร็จ').length;
-    final int cancelledCount = displayOrders.where((e) => e['status'] == 'ยกเลิก').length;
+      // ✅ นับแต่ละสถานะ (เหลือ 3 สถานะ)
+      final int totalCount = displayOrders.length;
+      final int pendingCount = displayOrders.where((e) => e['status'] == 'รอดำเนินการ').length;
+      final int successCount = displayOrders.where((e) => e['status'] == 'สำเร็จ').length;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 🔹 Header Row: ค่าขนส่ง + ช่องเลือกวันที่
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
-                children: [
-                  // 🔙 ปุ่มกลับ
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
-                      child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
-                    ),
-                  ),
-                  const Expanded(child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                  GestureDetector(
-                    onTap: () {
-                      // TODO: Add date range picker
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentDetailPage()));
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          Image.asset('assets/icons/calendar_icon.png', width: 18, height: 18),
-                          const SizedBox(width: 8),
-                          const Text('01/01/2024 - 01/07/2025', style: TextStyle(fontSize: 13)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // 🔹 Body
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // 🔹 Header Row: ค่าขนส่ง + ช่องเลือกวันที่
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Row(
                   children: [
-                    // 🔹 Search Field
-                    TextFormField(
-                      enabled: false,
-                      decoration: InputDecoration(
-                        hintText: 'ค้นหาเลขที่เอกสาร',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                    // 🔙 ปุ่มกลับ
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
+                        child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
                       ),
                     ),
-                    const SizedBox(height: 12),
-
-                    // 🔹 Filter Chips
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildChip('ทั้งหมด', count: totalCount),
-                          _buildChip('กำลังตรวจสอบ', count: pendingCount),
-                          _buildChip('สำเร็จ', count: successCount),
-                          _buildChip('ยกเลิก', count: cancelledCount),
-                        ],
+                    const Expanded(child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                    GestureDetector(
+                      onTap: () {
+                        // TODO: Add date range picker
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentDetailPage()));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset('assets/icons/calendar_icon.png', width: 18, height: 18),
+                            const SizedBox(width: 8),
+                            const Text('01/01/2024 - 01/07/2025', style: TextStyle(fontSize: 13)),
+                          ],
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    // 🔹 Group by date
-                    ..._buildGroupedList(filteredData),
                   ],
                 ),
               ),
-            ),
-          ],
+
+              // 🔹 Body
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 🔹 Search Field
+                      TextFormField(
+                        enabled: false,
+                        decoration: InputDecoration(
+                          hintText: 'ค้นหาเลขที่เอกสาร',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // 🔹 Filter Chips
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildChip('ทั้งหมด', count: totalCount),
+                            _buildChip('รอดำเนินการ', count: pendingCount),
+                            _buildChip('สำเร็จ', count: successCount),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // 🔹 Group by date
+                      ..._buildGroupedList(filteredData),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }); // ปิด Obx
   }
 
   Widget _buildChip(String label, {int? count}) {
@@ -262,7 +255,8 @@ class _TransportCostPageState extends State<TransportCostPage> {
             : 'black';
 
     return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TransportCostDetailPage(paper_number: item['docNo']))),
+      onTap:
+          () => Navigator.push(context, MaterialPageRoute(builder: (_) => TransportCostDetailPage(paper_number: item['docNo'], billId: item['id']))),
       child: Container(
         padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.only(bottom: 12),

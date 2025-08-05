@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/scheduler.dart';
+import 'package:gcargo/models/bill.dart';
 import 'package:gcargo/models/legalimport.dart';
 import 'package:gcargo/models/wallettrans.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,8 @@ class OrderController extends GetxController {
   var deilveryOrders = <LegalImport>[].obs;
   var order = Rxn<OrdersPage>();
   var walletTrans = <WalletTrans>[].obs;
+  var billing = <Bill>[];
+  var billingById = Rxn<Bill>();
 
   @override
   void onInit() {
@@ -107,6 +110,49 @@ class OrderController extends GetxController {
     } catch (e) {
       log('❌ Error in getWalletTrans: $e');
       _setError('ไม่สามารถโหลดข้อมูล Wallet ได้ ลองใหม่ครั้ง');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getBills() async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await OrderService.getBills();
+
+      if (data.isNotEmpty) {
+        billing = data;
+      } else {
+        billing.clear();
+      }
+    } catch (e) {
+      log('❌ Error in getBills: $e');
+      _setError('ไม่สามารถโหลดข้อมูล Bill ได้ ลองใหม่ครั้ง');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getBillById(int id) async {
+    if (id <= 0) return;
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await OrderService.getBillById(id: id);
+
+      if (data != null) {
+        billingById.value = data;
+      } else {
+        _setError('ไม่พบข้อมูล Bill');
+      }
+    } catch (e) {
+      log('❌ Error in getBillById: $e');
+      _setError('ไม่สามารถโหลดข้อมูล Bill ได้ ลองใหม่ครั้ง');
     } finally {
       isLoading.value = false;
     }
