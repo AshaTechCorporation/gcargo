@@ -373,7 +373,7 @@ class _CartPageState extends State<CartPage> {
         title: const Text('ตะกร้าสินค้า', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
         actions: [
           if (isDeleteMode)
             TextButton(onPressed: toggleDeleteMode, child: const Text('ยกเลิก', style: TextStyle(color: Colors.black)))

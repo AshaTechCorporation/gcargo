@@ -504,11 +504,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             postal_code: _postalCodeController.text,
                           );
                           if (_register != null) {
-                            //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
-                            ScaffoldMessenger.of(
-                              currentContext,
-                            ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.green));
-                            Navigator.pop(context);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                            // ScaffoldMessenger.of(
+                            //   currentContext,
+                            // ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.green));
+                            // Navigator.pop(context);
                           } else {
                             // TODO: Handle error
                           }

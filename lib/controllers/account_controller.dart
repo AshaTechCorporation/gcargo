@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:gcargo/models/faq.dart';
 import 'package:gcargo/models/manual.dart';
 import 'package:gcargo/models/tegaboutus.dart';
+import 'package:gcargo/models/wallettrans.dart';
 import 'package:gcargo/services/accountService.dart';
 import 'package:get/get.dart';
 
@@ -15,6 +16,8 @@ class AccountController extends GetxController {
   var manuals = <Manual>[].obs;
   var news = <Manual>[].obs;
   var aboutUs = Rxn<Tegaboutus>();
+  var walletTrans = Rxn<WalletTrans>().obs;
+  var listWalletTrans = <WalletTrans>[].obs;
 
   @override
   void onInit() {
@@ -109,6 +112,29 @@ class AccountController extends GetxController {
     } catch (e) {
       log('❌ Error in getTegAboutUs: $e');
       _setError('ไม่สามารถโหลดข้อมูล About Us ได้');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getListWalletTrans() async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await AccountService.getListWalletTrans();
+
+      if (data != null) {
+        // ไม่ต้องทำอะไร
+        listWalletTrans.value = data;
+        log('List Wallet Trans: $listWalletTrans');
+      } else {
+        _setError('ไม่สามารถโหลดข้อมูล Wallet Trans ได้');
+      }
+    } catch (e) {
+      log('❌ Error in getListWalletTrans: $e');
+      _setError('ไม่สามารถโหลดข้อมูล Wallet Trans ได้');
     } finally {
       isLoading.value = false;
     }

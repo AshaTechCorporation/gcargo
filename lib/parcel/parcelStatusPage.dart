@@ -33,7 +33,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
 
   int selectedStatusIndex = 0;
   bool isRequestTaxCertificate = false; // สำหรับ radio button ขอใบรับรองภาษี
-  bool isSelectAll = true; // สำหรับ checkbox เลือกทั้งหมด
+  bool isSelectAll = false; // สำหรับ checkbox เลือกทั้งหมด
 
   @override
   void initState() {

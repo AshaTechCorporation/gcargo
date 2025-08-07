@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/accountPage.dart';
-import 'package:gcargo/bill/billPage.dart';
 import 'package:gcargo/bill/orderHistoryPage.dart';
 import 'package:gcargo/bill/transportCostPage.dart';
 import 'package:gcargo/home/homePage.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/exchangeStatusPage.dart';
 import 'package:gcargo/parcel/orderStatusPage.dart';
-import 'package:gcargo/parcel/parcelPage.dart';
 import 'package:gcargo/parcel/parcelStatusPage.dart';
 import 'package:gcargo/parcel/problemPackagePage.dart';
 

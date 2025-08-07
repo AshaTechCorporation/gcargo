@@ -51,7 +51,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       case 'preparing_shipment':
         return 'เตรียมจัดส่ง';
       case 'shipped':
-        return 'จัดส่งแล้ว';
+        return 'สำเร็จ';
       case 'cancelled':
         return 'ยกเลิก';
       default:

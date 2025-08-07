@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/models/user.dart';
+import 'package:gcargo/models/wallettrans.dart';
 
 class AccountHeaderWidget extends StatelessWidget {
   final VoidCallback onCreditTap;
@@ -9,6 +10,7 @@ class AccountHeaderWidget extends StatelessWidget {
   final VoidCallback onTransferTap;
   final User? user;
   final bool isLoading;
+  final List<WalletTrans>? walletTrans;
 
   const AccountHeaderWidget({
     super.key,
@@ -19,7 +21,24 @@ class AccountHeaderWidget extends StatelessWidget {
     required this.onTransferTap,
     this.user,
     this.isLoading = false,
+    this.walletTrans,
   });
+
+  // คำนวณยอดเงิน wallet
+  double _calculateWalletBalance() {
+    if (walletTrans == null || walletTrans!.isEmpty) return 0.0;
+
+    double total = 0.0;
+    for (var trans in walletTrans!) {
+      final amount = double.tryParse(trans.amount ?? '0') ?? 0.0;
+      if (trans.type == 'I') {
+        total += amount; // เงินเข้า
+      } else if (trans.type == 'O') {
+        total -= amount; // เงินออก
+      }
+    }
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +123,13 @@ class AccountHeaderWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _quickItem('100', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap, 'สถานะ'),
-              _quickItem('฿100.00', 'Wallet ของฉัน', 'assets/icons/empty-wallet.png', onWalletTap, 'โอนเงิน'),
+              _quickItem(
+                '฿${_calculateWalletBalance().toStringAsFixed(2)}',
+                'Wallet ของฉัน',
+                'assets/icons/empty-wallet.png',
+                onWalletTap,
+                'โอนเงิน',
+              ),
             ],
           ),
         ],

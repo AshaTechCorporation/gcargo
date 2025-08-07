@@ -163,21 +163,27 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           // Page Indicators
           if (imagesToShow.length > 1) ...[
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                imagesToShow.length,
-                (index) => GestureDetector(
-                  onTap: () {
-                    _stopAutoSlide();
-                    _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                    _restartAutoSlide();
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: selectedImage == index ? Colors.black : Colors.grey.shade300),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  imagesToShow.length,
+                  (index) => Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: GestureDetector(
+                      onTap: () {
+                        _stopAutoSlide();
+                        _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        _restartAutoSlide();
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: selectedImage == index ? Colors.black : Colors.grey.shade300),
+                      ),
+                    ),
                   ),
                 ),
               ),

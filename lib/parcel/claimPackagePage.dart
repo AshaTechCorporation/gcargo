@@ -165,7 +165,9 @@ class _ClaimPackagePageState extends State<ClaimPackagePage> {
           width: double.infinity,
           height: 48,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF001B47),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

@@ -24,6 +24,7 @@ class _CouponSelectionPageState extends State<CouponSelectionPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text('คูปองส่วนลด', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
         iconTheme: const IconThemeData(color: Colors.black),
         bottom: PreferredSize(preferredSize: const Size.fromHeight(1), child: Container(height: 1, color: Colors.grey.shade300)),
       ),
@@ -69,6 +70,7 @@ class _CouponSelectionPageState extends State<CouponSelectionPage> {
               child: ElevatedButton(
                 onPressed: () {
                   // TODO: ใช้คูปอง
+                  Navigator.pop(context, selectedCouponIndex);
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: kButtonColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
                 child: const Text('ยืนยัน', style: TextStyle(fontSize: 16, color: Colors.white)),

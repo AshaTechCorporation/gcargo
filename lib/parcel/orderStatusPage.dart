@@ -18,7 +18,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
   String selectedStatus = 'ทั้งหมด';
   TextEditingController _dateController = TextEditingController();
 
-  final List<String> statusList = ['ทั้งหมด', 'รอตรวจสอบ', 'รอชำระเงิน', 'รอดำเนินการ', 'เตรียมจัดส่ง', 'จัดส่งแล้ว', 'ยกเลิก'];
+  final List<String> statusList = ['ทั้งหมด', 'รอตรวจสอบ', 'รอชำระเงิน', 'รอดำเนินการ', 'เตรียมจัดส่ง', 'สำเร็จ', 'ยกเลิก'];
 
   // State variables
   bool needVatReceipt = false;
@@ -37,7 +37,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
       case 'preparing_shipment':
         return 'เตรียมจัดส่ง';
       case 'shipped':
-        return 'จัดส่งแล้ว';
+        return 'สำเร็จ';
       case 'cancelled':
         return 'ยกเลิก';
       default:
@@ -419,7 +419,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
   Widget _buildOrderCard(Map<String, dynamic> order) {
     final status = order['status'];
     final isCancelled = status == 'ยกเลิก';
-    final isShipped = status == 'จัดส่งแล้ว';
+    final isShipped = status == 'สำเร็จ';
     final isPending = status == 'รอตรวจสอบ';
     final isAwaitingPayment = status == 'รอชำระเงิน';
     final isInProgress = status == 'รอดำเนินการ';

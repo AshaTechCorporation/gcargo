@@ -118,7 +118,9 @@ class _ShippingMethodPageState extends State<ShippingMethodPage> {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context, selectedMethod);
+                  },
                   child: const Text('ยืนยัน', style: TextStyle(fontSize: 20, color: Colors.white)),
                 ),
               ),

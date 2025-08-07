@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/account/WalletPage.dart';
 import 'package:gcargo/account/aboutUsPage.dart';
 import 'package:gcargo/account/addressListPage.dart';
 import 'package:gcargo/account/bankVerifyPage.dart';
-import 'package:gcargo/account/changeLanguagePage.dart';
 import 'package:gcargo/account/couponPage.dart';
 import 'package:gcargo/account/faqPage.dart';
 import 'package:gcargo/account/favoritePage.dart';
@@ -11,13 +11,12 @@ import 'package:gcargo/account/profilePage.dart';
 import 'package:gcargo/account/securityPage.dart';
 import 'package:gcargo/account/userManualPage.dart';
 import 'package:gcargo/account/widgets/AccountHeaderWidget.dart';
-import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
-import 'package:gcargo/login/loginPage.dart';
 import 'package:gcargo/login/welcomePage.dart';
-import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
 import 'package:get/get.dart';
+import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountPage extends StatefulWidget {
@@ -28,6 +27,8 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  final HomeController homeController = Get.find<HomeController>();
+  final OrderController orderController = Get.put(OrderController());
   String? token;
 
   @override
@@ -35,6 +36,7 @@ class _AccountPageState extends State<AccountPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await fristLoad();
+      orderController.getWalletTrans();
     });
   }
 
@@ -80,14 +82,19 @@ class _AccountPageState extends State<AccountPage> {
                   // Header Profile (ชื่อผู้ใช้ + ยอด)
                   GetBuilder<HomeController>(
                     builder:
-                        (homeController) => AccountHeaderWidget(
-                          onCreditTap: () {},
-                          onPointTap: () {},
-                          onParcelTap: () {},
-                          onWalletTap: () {},
-                          onTransferTap: () {},
-                          user: homeController.currentUser.value,
-                          isLoading: homeController.isLoading.value,
+                        (homeController) => Obx(
+                          () => AccountHeaderWidget(
+                            onCreditTap: () {},
+                            onPointTap: () {},
+                            onParcelTap: () {},
+                            onWalletTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
+                            },
+                            onTransferTap: () {},
+                            user: homeController.currentUser.value,
+                            isLoading: homeController.isLoading.value,
+                            walletTrans: orderController.walletTrans,
+                          ),
                         ),
                   ),
                   const SizedBox(height: 24),

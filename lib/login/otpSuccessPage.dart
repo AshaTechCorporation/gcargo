@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/login/loginPage.dart';
 
 class OtpSuccessPage extends StatelessWidget {
   const OtpSuccessPage({super.key});
@@ -45,6 +46,7 @@ class OtpSuccessPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // TODO: นำไปหน้า Home หรือ Login
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kButtonColor,
