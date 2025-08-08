@@ -177,6 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
   // Load province data from JSON files
   Future<void> _loadProvinceData() async {
     try {
+      _birthdateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
       // Load provinces
       final provincesJson = await rootBundle.loadString('assets/provice/provinces.json');
       final provincesData = json.decode(provincesJson) as List;
@@ -301,30 +302,29 @@ class _RegisterPageState extends State<RegisterPage> {
                 CustomTextFormField(label: 'ไอดีไลน์', hintText: 'กรุณากรอกไอดีไลน์', controller: _lineController),
                 const SizedBox(height: 20),
 
-                const Text('เพศ', style: TextStyle(fontSize: 16, color: kButtonColor)),
-                const SizedBox(height: 8),
-                Theme(
-                  data: Theme.of(context).copyWith(
-                    unselectedWidgetColor: kButtonColor,
-                    radioTheme: RadioThemeData(fillColor: MaterialStateProperty.resolveWith<Color>((states) => kButtonColor)),
-                  ),
-                  child: Row(
-                    children: [
-                      Radio<bool>(value: false, groupValue: isMale, onChanged: (value) => setState(() => isMale = false)),
-                      const Text('หญิง', style: TextStyle(color: kButtonColor)),
-                      const SizedBox(width: 16),
-                      Radio<bool>(value: true, groupValue: isMale, onChanged: (value) => setState(() => isMale = true)),
-                      const Text('ชาย', style: TextStyle(color: kButtonColor)),
-                    ],
-                  ),
-                ),
+                // const Text('เพศ', style: TextStyle(fontSize: 16, color: kButtonColor)),
+                // const SizedBox(height: 8),
+                // Theme(
+                //   data: Theme.of(context).copyWith(
+                //     unselectedWidgetColor: kButtonColor,
+                //     radioTheme: RadioThemeData(fillColor: MaterialStateProperty.resolveWith<Color>((states) => kButtonColor)),
+                //   ),
+                //   child: Row(
+                //     children: [
+                //       Radio<bool>(value: false, groupValue: isMale, onChanged: (value) => setState(() => isMale = false)),
+                //       const Text('หญิง', style: TextStyle(color: kButtonColor)),
+                //       const SizedBox(width: 16),
+                //       Radio<bool>(value: true, groupValue: isMale, onChanged: (value) => setState(() => isMale = true)),
+                //       const Text('ชาย', style: TextStyle(color: kButtonColor)),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
+                // // 🔹 วันเดือนปีเกิด
+                // DatePickerTextFormField(label: 'วันเดือนปีเกิด', hintText: 'กรุณากรอกวันเดือนปีเกิด', controller: _birthdateController),
 
-                // 🔹 วันเดือนปีเกิด
-                DatePickerTextFormField(label: 'วันเดือนปีเกิด', hintText: 'กรุณากรอกวันเดือนปีเกิด', controller: _birthdateController),
-
-                const SizedBox(height: 12),
+                // const SizedBox(height: 12),
 
                 // เบอร์โทรศัพท์มือถือ (จำกัดไม่เกิน 10 ตัว)
                 Column(
@@ -504,11 +504,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             postal_code: _postalCodeController.text,
                           );
                           if (_register != null) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
-                            // ScaffoldMessenger.of(
-                            //   currentContext,
-                            // ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.green));
-                            // Navigator.pop(context);
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                            ScaffoldMessenger.of(
+                              currentContext,
+                            ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.green));
+                            Navigator.pop(context);
                           } else {
                             // TODO: Handle error
                           }

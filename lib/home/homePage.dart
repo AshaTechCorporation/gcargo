@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
       // 1. อัปโหลดรูปภาพ
       //final _imageUpload = await UoloadService.uploadImage(image);
       File file = File(image.path);
-      final _imageUpload = await UoloadService.addImage(file: file!, path: 'uploads/alipay/');
+      final _imageUpload = await UoloadService.addImage(file: file, path: 'uploads/alipay/');
 
       if (_imageUpload != null) {
         // 2. อัปรูปที่ HomeService

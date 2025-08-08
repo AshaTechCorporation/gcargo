@@ -260,11 +260,11 @@ class _LoginPageState extends State<LoginPage> {
                 // 🔹 ไอคอน + สร้างบัญชีใหม่ในแถวเดียวกัน
                 Row(
                   children: [
-                    Image.asset('assets/icons/g.png', width: 50, fit: BoxFit.fill),
-                    SizedBox(width: 20),
-                    Image.asset('assets/icons/f.png', width: 50, fit: BoxFit.fill),
-                    SizedBox(width: 20),
-                    Image.asset('assets/icons/line.png', width: 50, fit: BoxFit.fill),
+                    // Image.asset('assets/icons/g.png', width: 50, fit: BoxFit.fill),
+                    // SizedBox(width: 20),
+                    // Image.asset('assets/icons/f.png', width: 50, fit: BoxFit.fill),
+                    // SizedBox(width: 20),
+                    // Image.asset('assets/icons/line.png', width: 50, fit: BoxFit.fill),
                     Spacer(),
                     TextButton(
                       onPressed: () {

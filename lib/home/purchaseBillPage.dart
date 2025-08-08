@@ -254,7 +254,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                                   product['detail_url'] ?? '', // product_url
                                   product['pic_url'] ?? '', // product_image
                                   product['name'] ?? '', // product_category
-                                  'taobao', // product_store_type
+                                  'shopgs1', // product_store_type
                                   noteController.text, // product_note
                                   product['price']?.toString() ?? '0', // product_price
                                   product['quantity']?.toString() ?? '1', // product_qty

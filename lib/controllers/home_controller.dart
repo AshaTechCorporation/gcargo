@@ -60,7 +60,7 @@ class HomeController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
 
-      final data = await HomeService.getItemSearch(search: query, type: selectedItemType.value, page: 1);
+      final data = await HomeService.getItemSearch(search: query, type: selectedItemType.value == 'shopgs1' ? 'taobao' : '1688', page: 1);
 
       if (data != null && data is Map && data['item'] is Map && data['item']['items'] is Map && data['item']['items']['item'] is List) {
         final List<Map<String, dynamic>> items =
