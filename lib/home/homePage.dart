@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  late Timer _timer;
+  //late Timer _timer;
 
   @override
   void initState() {
@@ -42,12 +42,12 @@ class _HomePageState extends State<HomePage> {
     // คอมเม้น Timer สำหรับ auto-slide เพราะใช้แบนเนอร์เดียว
 
     if (!mounted) return;
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
-        int nextPage = (_currentPage + 1) % homeController.imgBanners.length;
-        _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
-      }
-    });
+    // _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    //   if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
+    //     int nextPage = (_currentPage + 1) % homeController.imgBanners.length;
+    //     _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+    //   }
+    // });
   }
 
   @override
@@ -243,82 +243,83 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔹 Image Slider
-              Obx(() {
-                if (homeController.isLoading.value) {
-                  return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
-                }
+              Image.asset('assets/images/slidpic.png', width: double.infinity, height: 140, fit: BoxFit.cover),
 
-                if (homeController.imgBanners.isEmpty) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        height: 140,
-                        color: Colors.grey.shade200,
-                        child: Center(child: Text('ไม่มีรูปภาพแบนเนอร์', style: TextStyle(color: Colors.grey))),
-                      ),
-                    ),
-                  );
-                }
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: SizedBox(
-                      height: 140,
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: homeController.imgBanners.length,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          final banner = homeController.imgBanners[index];
-                          return Image.network(
-                            banner.image ?? 'assets/images/placeholder.png',
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey.shade200,
-                                child: Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                );
-              }),
+              // Obx(() {
+              //   if (homeController.isLoading.value) {
+              //     return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
+              //   }
 
-              SizedBox(height: 16),
+              //   if (homeController.imgBanners.isEmpty) {
+              //     return Padding(
+              //       padding: EdgeInsets.symmetric(horizontal: 16),
+              //       child: ClipRRect(
+              //         borderRadius: BorderRadius.circular(12),
+              //         child: Container(
+              //           height: 140,
+              //           color: Colors.grey.shade200,
+              //           child: Center(child: Text('ไม่มีรูปภาพแบนเนอร์', style: TextStyle(color: Colors.grey))),
+              //         ),
+              //       ),
+              //     );
+              //   }
+              //   return Padding(
+              //     padding: EdgeInsets.symmetric(horizontal: 16),
+              //     child: ClipRRect(
+              //       borderRadius: BorderRadius.circular(12),
+              //       child: SizedBox(
+              //         height: 140,
+              //         child: PageView.builder(
+              //           controller: _pageController,
+              //           itemCount: homeController.imgBanners.length,
+              //           onPageChanged: (index) {
+              //             setState(() {
+              //               _currentPage = index;
+              //             });
+              //           },
+              //           itemBuilder: (context, index) {
+              //             final banner = homeController.imgBanners[index];
+              //             return Image.network(
+              //               banner.image ?? 'assets/images/placeholder.png',
+              //               fit: BoxFit.cover,
+              //               width: double.infinity,
+              //               errorBuilder: (context, error, stackTrace) {
+              //                 return Container(
+              //                   color: Colors.grey.shade200,
+              //                   child: Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
+              //                 );
+              //               },
+              //             );
+              //           },
+              //         ),
+              //       ),
+              //     ),
+              //   );
+              // }),
 
-              Obx(() {
-                if (homeController.imgBanners.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(homeController.imgBanners.length, (index) {
-                    final isActive = _currentPage == index;
-                    return AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      margin: EdgeInsets.symmetric(horizontal: 4),
-                      width: isActive ? 20 : 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: isActive ? Colors.blue.shade900 : Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    );
-                  }),
-                );
-              }),
+              // SizedBox(height: 16),
 
+              // Obx(() {
+              //   if (homeController.imgBanners.isEmpty) {
+              //     return const SizedBox.shrink();
+              //   }
+              //   return Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: List.generate(homeController.imgBanners.length, (index) {
+              //       final isActive = _currentPage == index;
+              //       return AnimatedContainer(
+              //         duration: Duration(milliseconds: 300),
+              //         margin: EdgeInsets.symmetric(horizontal: 4),
+              //         width: isActive ? 20 : 8,
+              //         height: 8,
+              //         decoration: BoxDecoration(
+              //           color: isActive ? Colors.blue.shade900 : Colors.grey.shade300,
+              //           borderRadius: BorderRadius.circular(4),
+              //         ),
+              //       );
+              //     }),
+              //   );
+              // }),
               SizedBox(height: 16),
 
               // 🔹 Stack รูป + ช่องค้นหา + ข้อความ
