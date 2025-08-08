@@ -11,6 +11,7 @@ import 'package:gcargo/account/profilePage.dart';
 import 'package:gcargo/account/securityPage.dart';
 import 'package:gcargo/account/userManualPage.dart';
 import 'package:gcargo/account/widgets/AccountHeaderWidget.dart';
+import 'package:gcargo/account/widgets/showQrDialog.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
@@ -117,7 +118,14 @@ class _AccountPageState extends State<AccountPage> {
                   _buildMenuItem(
                     'รายการโปรด',
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritePage()));
+                      if (token != null) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritePage()));
+                      } else {
+                        // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่'), backgroundColor: Colors.orange));
+                      }
                     },
                   ),
 
@@ -150,13 +158,27 @@ class _AccountPageState extends State<AccountPage> {
                     'ยืนยันบัญชีธนาคาร',
                     showVerified: true,
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
+                      Get.snackbar(
+                        'แจ้งเตือน',
+                        'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                        backgroundColor: Colors.yellowAccent,
+                        colorText: Colors.black,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
                     },
                   ),
                   _buildMenuItem(
                     'ความปลอดภัย',
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
+                      Get.snackbar(
+                        'แจ้งเตือน',
+                        'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                        backgroundColor: Colors.yellowAccent,
+                        colorText: Colors.black,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
                     },
                   ),
                   _buildMenuItem(
@@ -177,12 +199,13 @@ class _AccountPageState extends State<AccountPage> {
                   _buildMenuItem(
                     'ติดต่อเจ้าหน้าที่',
                     onTap: () {
-                      Get.snackbar(
-                        'แจ้งเตือน',
-                        'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                        backgroundColor: Colors.yellowAccent,
-                        colorText: Colors.black,
-                        snackPosition: SnackPosition.BOTTOM,
+                      showQrDialog(
+                        context,
+                        handle: '@gcargo',
+                        avatarUrl: 'https://i.pravatar.cc/150?img=12', // หรือ avatarAsset: 'assets/images/avatar.png'
+                        onDownload: () {
+                          // TODO: ทำฟังก์ชันบันทึกรูป/แชร์
+                        },
                       );
                     },
                   ),

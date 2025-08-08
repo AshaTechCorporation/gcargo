@@ -8,6 +8,7 @@ import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart' as controller;
 import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
+import 'package:gcargo/home/widgets/product_description_widget.dart';
 import 'package:gcargo/home/widgets/search_header_widget.dart';
 import 'package:gcargo/services/cart_service.dart';
 import 'package:image_picker/image_picker.dart';
@@ -523,7 +524,26 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               child: ListView(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 children: [
-                  buildImageSlider(),
+                  Stack(
+                    children: [
+                      buildImageSlider(),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Obx(
+                          () => GestureDetector(
+                            onTap: () async {
+                              await productController.toggleFavorite();
+                            },
+                            child: Icon(
+                              productController.isFavorite.value ? Icons.favorite : Icons.favorite_border,
+                              color: productController.isFavorite.value ? kButtonColor : Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 16),
 
                   // แสดงข้อมูลสินค้าจาก API
@@ -606,41 +626,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   SizedBox(height: 20),
 
                   // แสดงคำอธิบายสินค้า
-                  Obx(() {
-                    if (productController.isLoading.value) {
-                      return Column(
-                        children: [
-                          Container(
-                            height: 16,
-                            width: double.infinity,
-                            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
-                          ),
-                          SizedBox(height: 4),
-                          Container(
-                            height: 16,
-                            width: 200,
-                            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
-                          ),
-                        ],
-                      );
-                    }
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('รายละเอียดสินค้า', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        SizedBox(height: 8),
-                        Text(productController.title, style: TextStyle(color: Colors.grey.shade700)),
-                        if (productController.detailUrl.isNotEmpty) ...[
-                          SizedBox(height: 8),
-                          Text(
-                            'ลิงก์สินค้า: ${productController.detailUrl}',
-                            style: TextStyle(color: Colors.blue, fontSize: 12, decoration: TextDecoration.underline),
-                          ),
-                        ],
-                      ],
-                    );
-                  }),
+                  ProductDescriptionWidget(productController: productController),
 
                   // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
                   Column(

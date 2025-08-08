@@ -1,28 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart'; // ✅ ต้องมี kButtonColor
+import 'package:gcargo/utils/helpers.dart';
+import 'package:hive/hive.dart';
 
-class FavoritePage extends StatelessWidget {
+class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final favorites = [
-      {'image': 'assets/images/unsplash0.png', 'title': 'เสื้อแขนสั้น', 'desc': 'เสื้อแขนสั้นไว้ใส่ไปเดินเล่นลายกราฟิก สำหรับผู้ชาย', 'price': '฿10'},
-      {
-        'image': 'assets/images/unsplash1.png',
-        'title': 'รองเท้าบาส',
-        'desc': 'รองเท้าบาสไว้ใส่เล่นกีฬาบาสเก็ตบอลเหมะสำหรับพื้นไม้ปาเก้',
-        'price': '฿100',
-      },
-      {'image': 'assets/images/unsplash3.png', 'title': 'นาฬิกาข้อมือ', 'desc': 'นาฬิกาแฟชั่น ดีไซน์ล้ำ ทันสมัย เท่ทุกมุมมอง', 'price': '฿999'},
-      {
-        'image': 'assets/images/unsplash2.png',
-        'title': 'เสื้อคลุม',
-        'desc': 'เสื้อฮู้ดฟรีไซน์มีหลายโทนสีสามารถใส่ได้ทั้งชาย และหญิง กันลม กันฝน ใส่เดินเที่ยวก็เท่',
-        'price': '฿499',
-      },
-    ];
+  State<FavoritePage> createState() => _FavoritePageState();
+}
 
+class _FavoritePageState extends State<FavoritePage> {
+  List<Map<String, dynamic>> favorites = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    try {
+      final box = await Hive.openBox('favorites');
+      final favoriteItems = <Map<String, dynamic>>[];
+
+      for (String key in box.keys) {
+        if (key.endsWith('_favorite')) {
+          final item = box.get(key);
+          if (item is Map) {
+            favoriteItems.add(Map<String, dynamic>.from(item));
+          }
+        }
+      }
+
+      setState(() {
+        favorites = favoriteItems;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading favorites: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _removeFavorite(String numIid) async {
+    try {
+      final box = await Hive.openBox('favorites');
+      final favoriteKey = '${numIid}_favorite';
+      await box.delete(favoriteKey);
+
+      // รีโหลดข้อมูล
+      await _loadFavorites();
+    } catch (e) {
+      print('Error removing favorite: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -33,59 +71,107 @@ class FavoritePage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: GridView.builder(
-          itemCount: favorites.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 0.68,
-          ),
-          itemBuilder: (context, index) {
-            final item = favorites[index];
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 🔹 Image + heart
-                  Stack(
+        child:
+            isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : favorites.isEmpty
+                ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                        child: Image.asset(item['image']!, height: 120, width: double.infinity, fit: BoxFit.cover),
-                      ),
-                      Positioned(top: 8, right: 8, child: Icon(Icons.favorite, color: kButtonColor, size: 20)),
+                      Icon(Icons.favorite_border, size: 64, color: Colors.grey),
+                      SizedBox(height: 16),
+                      Text('ยังไม่มีรายการโปรด', style: TextStyle(fontSize: 16, color: Colors.grey)),
                     ],
                   ),
-                  // 🔹 Details
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(item['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                        const SizedBox(height: 6),
-                        Text(
-                          item['desc']!,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12, color: Colors.black87),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(item['price']!, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black)),
-                      ],
-                    ),
+                )
+                : GridView.builder(
+                  itemCount: favorites.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.74,
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+                  itemBuilder: (context, index) {
+                    final item = favorites[index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 🔹 Image + heart
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                child:
+                                    item['pic_url'] != null && item['pic_url'].isNotEmpty
+                                        ? Image.network(
+                                          formatImageUrl(item['pic_url']),
+                                          height: 120,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Container(
+                                              height: 120,
+                                              color: Colors.grey.shade200,
+                                              child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                                            );
+                                          },
+                                        )
+                                        : Container(
+                                          height: 120,
+                                          color: Colors.grey.shade200,
+                                          child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                                        ),
+                              ),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: GestureDetector(
+                                  onTap: () => _removeFavorite(item['num_iid'] ?? ''),
+                                  child: const Icon(Icons.favorite, color: kButtonColor, size: 20),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // 🔹 Details
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item['title'] ?? 'ไม่มีชื่อสินค้า',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  item['brand'] ?? 'ไม่มีข้อมูลแบรนด์',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 12, color: Colors.black87),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  '฿${item['price']?.toString() ?? '0'}',
+                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
       ),
     );
   }

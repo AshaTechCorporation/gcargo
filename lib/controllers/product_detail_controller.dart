@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:gcargo/services/homeService.dart';
+import 'package:hive/hive.dart';
 
 class ProductDetailController extends GetxController {
   // Observable variables
@@ -9,6 +10,7 @@ class ProductDetailController extends GetxController {
   var errorMessage = ''.obs;
   var hasError = false.obs;
   var numIid = ''.obs;
+  var isFavorite = false.obs; // สำหรับเช็คว่าอยู่ในรายการโปรดหรือไม่
 
   @override
   void onInit() {
@@ -50,6 +52,9 @@ class ProductDetailController extends GetxController {
         };
 
         productDetail.value = formattedData;
+
+        // เช็คว่าอยู่ในรายการโปรดหรือไม่
+        await checkIfFavorite();
 
         // Debug: Log desc_img and props_list data
         log('🖼️ desc_img data: ${data['desc_img']}');
@@ -321,6 +326,54 @@ class ProductDetailController extends GetxController {
   Future<void> refreshData() async {
     if (numIid.value.isNotEmpty) {
       await getItemDetail(numIid.value);
+    }
+  }
+
+  // ฟังก์ชั่นสำหรับจัดการรายการโปรด
+  Future<void> checkIfFavorite() async {
+    try {
+      final box = await Hive.openBox('favorites');
+      final favoriteKey = '${numIid.value}_favorite';
+      isFavorite.value = box.containsKey(favoriteKey);
+    } catch (e) {
+      log('Error checking favorite: $e');
+    }
+  }
+
+  Future<void> toggleFavorite() async {
+    try {
+      final box = await Hive.openBox('favorites');
+      final favoriteKey = '${numIid.value}_favorite';
+
+      if (isFavorite.value) {
+        // ลบออกจากรายการโปรด
+        await box.delete(favoriteKey);
+        isFavorite.value = false;
+        log('Removed from favorites: $favoriteKey');
+      } else {
+        // เพิ่มเข้ารายการโปรด
+        final favoriteItem = {
+          'num_iid': numIidValue,
+          'title': title,
+          'price': price,
+          'orginal_price': originalPrice,
+          'nick': nick,
+          'detail_url': detailUrl,
+          'pic_url': picUrl,
+          'brand': brand,
+          'quantity': 1, // ค่าเริ่มต้น
+          'selectedSize': '', // ค่าเริ่มต้น
+          'selectedColor': '', // ค่าเริ่มต้น
+          'name': title, // ใช้ title เป็น name
+          'added_at': DateTime.now().toIso8601String(),
+        };
+
+        await box.put(favoriteKey, favoriteItem);
+        isFavorite.value = true;
+        log('Added to favorites: $favoriteKey');
+      }
+    } catch (e) {
+      log('Error toggling favorite: $e');
     }
   }
 }
