@@ -23,3 +23,5 @@ const kTextgreyColor = Color(0xFF333333);
 const kCicleColor = Color(0xFF23547D);
 const kCicleSelectedColor = Color(0xFFE5EBFC);
 const kTextTitleHeadColor = Color(0xFF202020);
+
+final List<String> itemType = ['taobao', '1688'];

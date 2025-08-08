@@ -123,6 +123,7 @@ class HomeService {
     }
   }
 
+  //ค้นหาสินค้าด้วยรูป
   static Future getItemSearchImg({required String searchImg, required String type}) async {
     // 1) percent‐encode แล้วสร้าง URI
     final encodedImg = Uri.encodeComponent(searchImg);

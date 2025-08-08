@@ -5,9 +5,10 @@ import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/product_detail_controller.dart';
 import 'package:gcargo/controllers/home_controller.dart';
-import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
+import 'package:gcargo/controllers/showImagePickerBottomSheet.dart' as controller;
 import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
+import 'package:gcargo/home/widgets/search_header_widget.dart';
 import 'package:gcargo/services/cart_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -499,49 +500,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-          title: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 36,
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: searchController, // 👈 เพิ่ม controller ตามที่คุณกำหนดไว้
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                            hintText: 'ค้นหาสินค้า',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: InputBorder.none,
-                          ),
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          showImagePickerBottomSheet(
-                            context: context,
-                            onImagePicked: (XFile image) {
-                              print('📸 ได้รูป: ${image.path}');
-                              // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
-                            },
-                          );
-                        },
-                        child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(width: 12),
-              Icon(Icons.delete_outline, color: Colors.black),
-              SizedBox(width: 12),
-              Icon(Icons.notifications_none, color: Colors.black),
-            ],
+          title: SearchHeaderWidget(
+            searchController: searchController,
+            onImagePicked: (XFile image) {
+              print('📸 ได้รูป: ${image.path}');
+              // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
+            },
+            onBagTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+            },
+            onNotificationTap: () {
+              // TODO: ไปหน้า notification
+            },
           ),
         ),
       ),

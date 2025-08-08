@@ -68,7 +68,7 @@ class ProductCardFromAPI extends StatelessWidget {
                             child: const Icon(Icons.image, color: Colors.grey),
                           ),
                 ),
-                Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
+                //Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
               ],
             ),
             Padding(

@@ -11,6 +11,7 @@ import 'package:gcargo/models/user.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gcargo/constants.dart';
 
 class HomeController extends GetxController {
   final HomeService _homeService = HomeService();
@@ -20,6 +21,7 @@ class HomeController extends GetxController {
   final RxList<Map<String, dynamic>> searchItems = <Map<String, dynamic>>[].obs;
   var errorMessage = ''.obs;
   var hasError = false.obs;
+  var selectedItemType = ''.obs; // สำหรับเก็บ type ที่เลือก
   final RxMap<String, dynamic> exchangeRate = <String, dynamic>{}.obs;
   final RxList<ImgBanner> imgBanners = <ImgBanner>[].obs;
   List<Shipping> ship_address = [];
@@ -36,6 +38,8 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     log('🚀 HomeController onInit called');
+    // ตั้งค่าเริ่มต้นให้เลือกตัวแรกของ itemType
+    selectedItemType.value = itemType.first;
     // เรียก API หลังจาก build เสร็จแล้วเพื่อหลีกเลี่ยง setState during build error
     SchedulerBinding.instance.addPostFrameCallback((_) {
       searchItemsFromAPI('Shirt');
@@ -56,7 +60,7 @@ class HomeController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
 
-      final data = await HomeService.getItemSearch(search: query, type: 'taobao', page: 1);
+      final data = await HomeService.getItemSearch(search: query, type: selectedItemType.value, page: 1);
 
       if (data != null && data is Map && data['item'] is Map && data['item']['items'] is Map && data['item']['items']['item'] is List) {
         final List<Map<String, dynamic>> items =

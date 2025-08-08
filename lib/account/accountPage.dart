@@ -15,6 +15,7 @@ import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
 import 'package:gcargo/login/welcomePage.dart';
+import 'package:gcargo/parcel/parcelStatusPage.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -86,7 +87,9 @@ class _AccountPageState extends State<AccountPage> {
                           () => AccountHeaderWidget(
                             onCreditTap: () {},
                             onPointTap: () {},
-                            onParcelTap: () {},
+                            onParcelTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
+                            },
                             onWalletTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
                             },

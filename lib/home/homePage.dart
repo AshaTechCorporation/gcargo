@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
@@ -7,6 +8,8 @@ import 'package:gcargo/home/searchPage.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 import 'package:gcargo/home/widgets/ServiceImageCard.dart';
 import 'package:gcargo/home/widgets/service_item_widget.dart';
+import 'package:gcargo/services/homeService.dart';
+import 'package:gcargo/services/uploadService.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
@@ -14,6 +17,7 @@ import 'package:gcargo/home/notificationPage.dart';
 import 'package:gcargo/home/packageDepositPage.dart';
 import 'package:gcargo/home/productDetailPage.dart';
 import 'package:gcargo/home/rewardRedeemPage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,13 +34,13 @@ class _HomePageState extends State<HomePage> {
 
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  //late Timer _timer;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
     // คอมเม้น Timer สำหรับ auto-slide เพราะใช้แบนเนอร์เดียว
-    /*
+
     if (!mounted) return;
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
@@ -44,7 +48,6 @@ class _HomePageState extends State<HomePage> {
         _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
       }
     });
-    */
   }
 
   @override
@@ -53,6 +56,52 @@ class _HomePageState extends State<HomePage> {
     //_timer.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  // ฟังก์ชั่นสำหรับจัดการการค้นหาด้วยรูปภาพ
+  Future<void> _handleImageSearch(XFile image) async {
+    try {
+      // แสดง loading
+      showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+
+      // 1. อัปโหลดรูปภาพ
+      //final _imageUpload = await UoloadService.uploadImage(image);
+      File file = File(image.path);
+      final _imageUpload = await UoloadService.addImage(file: file!, path: 'uploads/alipay/');
+
+      if (_imageUpload != null) {
+        // 2. อัปรูปที่ HomeService
+        final _imgcode = await HomeService.uploadImage(imgcode: 'https://cargo-api.dev-asha9.com/${_imageUpload}');
+
+        if (_imgcode != null && _imgcode.isNotEmpty) {
+          // 3. ค้นหาด้วยรูปภาพ
+          final _searchImage = await HomeService.getItemSearchImg(searchImg: _imgcode, type: homeController.selectedItemType.value);
+
+          if (_searchImage.isNotEmpty) {
+            // ปิด loading
+            Navigator.pop(context);
+
+            // ไปหน้า SearchPage พร้อมส่งข้อมูล
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchPage(initialSearchResults: _searchImage, initialSearchQuery: 'ค้นหาด้วยรูปภาพ')),
+            );
+          } else {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่พบสินค้าจากรูปภาพที่ค้นหา')));
+          }
+        } else {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่สามารถประมวลผลรูปภาพได้')));
+        }
+      } else {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่สามารถอัปโหลดรูปภาพได้')));
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: ${e.toString()}')));
+    }
   }
 
   // Method to handle search
@@ -149,20 +198,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          Get.snackbar(
-                            'แจ้งเตือน',
-                            'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                            backgroundColor: Colors.yellowAccent,
-                            colorText: Colors.black,
-                            snackPosition: SnackPosition.BOTTOM,
+                          showImagePickerBottomSheet(
+                            context: context,
+                            onImagePicked: (XFile image) async {
+                              await _handleImageSearch(image);
+                            },
                           );
-                          // showImagePickerBottomSheet(
-                          //   context: context,
-                          //   onImagePicked: (XFile image) {
-                          //     print('📸 ได้รูป: ${image.path}');
-                          //     // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
-                          //   },
-                          // );
                         },
                         child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
                       ),
@@ -202,8 +243,6 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔹 Image Slider
-              // คอมเม้นส่วน API Banner ไว้ก่อน
-              /*
               Obx(() {
                 if (homeController.isLoading.value) {
                   return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
@@ -222,7 +261,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
                 }
-
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: ClipRRect(
@@ -256,33 +294,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }),
-              */
-
-              // แบนเนอร์จาก Assets
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox(
-                    height: 140,
-                    width: double.infinity,
-                    child: Image.asset(
-                      'assets/images/slidpic.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey.shade200,
-                          child: const Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
 
               SizedBox(height: 16),
-              // 🔹 Indicator (คอมเม้นไว้เพราะใช้แบนเนอร์เดียว)
-              /*
+
               Obx(() {
                 if (homeController.imgBanners.isEmpty) {
                   return const SizedBox.shrink();
@@ -304,7 +318,7 @@ class _HomePageState extends State<HomePage> {
                   }),
                 );
               }),
-              */
+
               SizedBox(height: 16),
 
               // 🔹 Stack รูป + ช่องค้นหา + ข้อความ
@@ -432,10 +446,36 @@ class _HomePageState extends State<HomePage> {
 
               SizedBox(height: 24),
 
-              // 🔹 สินค้าแนะนำ
+              // 🔹 สินค้าแนะนำ พร้อม dropdown
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text('รายการสินค้าแนะนำ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('รายการสินค้าแนะนำ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    Obx(
+                      () => Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: homeController.selectedItemType.value.isEmpty ? itemType.first : homeController.selectedItemType.value,
+                            items:
+                                itemType.map((item) {
+                                  return DropdownMenuItem<String>(value: item, child: Text(item, style: TextStyle(fontSize: 14)));
+                                }).toList(),
+                            onChanged: (String? newValue) {
+                              if (newValue != null) {
+                                homeController.selectedItemType.value = newValue;
+                                homeController.searchItemsFromAPI('Shirt');
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 12),
 
