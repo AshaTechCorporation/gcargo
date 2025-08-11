@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/auth/auth_wrapper.dart';
 import 'package:gcargo/controllers/home_controller.dart';
-import 'package:gcargo/home/firstPage.dart';
-import 'package:gcargo/login/loginPage.dart';
 import 'package:gcargo/services/cart_service.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -38,7 +37,7 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'SukhumvitSet',
       ),
-      home: FirstPage(),
+      home: const AuthWrapper(),
     );
   }
 }

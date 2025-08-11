@@ -48,6 +48,7 @@ dependencies:
   shared_preferences: ^2.5.3
   dio: ^5.8.0+1
   flutter_widget_from_html: ^0.16.0
+  local_auth: ^2.3.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   promptpay_qrcode_generate: ^1.0.2
