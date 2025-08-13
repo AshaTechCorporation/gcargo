@@ -6,6 +6,7 @@ class SearchHeaderWidget extends StatelessWidget {
   final VoidCallback? onBagTap;
   final VoidCallback? onNotificationTap;
   final Function(XFile)? onImagePicked;
+  final Function(String)? onFieldSubmitted;
 
   const SearchHeaderWidget({
     super.key,
@@ -13,6 +14,7 @@ class SearchHeaderWidget extends StatelessWidget {
     this.onBagTap,
     this.onNotificationTap,
     this.onImagePicked,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -23,10 +25,7 @@ class SearchHeaderWidget extends StatelessWidget {
           child: Container(
             height: 36,
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(20),
-            ),
+            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
             child: Row(
               children: [
                 Expanded(
@@ -40,45 +39,30 @@ class SearchHeaderWidget extends StatelessWidget {
                       border: InputBorder.none,
                     ),
                     style: const TextStyle(color: Colors.black),
+                    onFieldSubmitted: onFieldSubmitted,
                   ),
                 ),
                 GestureDetector(
                   onTap: () async {
-                    showImagePickerBottomSheet(
-                      context: context,
-                      onImagePicked: onImagePicked,
-                    );
+                    showImagePickerBottomSheet(context: context, onImagePicked: onImagePicked);
                   },
-                  child: Icon(
-                    Icons.camera_alt_outlined,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
+                  child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
                 ),
               ],
             ),
           ),
         ),
         const SizedBox(width: 12),
-        GestureDetector(
-          onTap: onBagTap,
-          child: Image.asset('assets/icons/bag.png', height: 24, width: 24),
-        ),
+        GestureDetector(onTap: onBagTap, child: Image.asset('assets/icons/bag.png', height: 24, width: 24)),
         const SizedBox(width: 12),
-        GestureDetector(
-          onTap: onNotificationTap,
-          child: Image.asset('assets/icons/notification.png', height: 24, width: 24),
-        ),
+        GestureDetector(onTap: onNotificationTap, child: Image.asset('assets/icons/notification.png', height: 24, width: 24)),
       ],
     );
   }
 }
 
 // Helper function สำหรับ image picker bottom sheet
-void showImagePickerBottomSheet({
-  required BuildContext context,
-  Function(XFile)? onImagePicked,
-}) {
+void showImagePickerBottomSheet({required BuildContext context, Function(XFile)? onImagePicked}) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {

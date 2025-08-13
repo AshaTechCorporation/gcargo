@@ -1,15 +1,10 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:gcargo/controllers/showImagePickerBottomSheet.dart';
 import 'package:gcargo/home/exchangePage.dart';
-import 'package:gcargo/home/searchPage.dart';
+
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 import 'package:gcargo/home/widgets/ServiceImageCard.dart';
 import 'package:gcargo/home/widgets/service_item_widget.dart';
-import 'package:gcargo/services/homeService.dart';
-import 'package:gcargo/services/uploadService.dart';
+import 'package:gcargo/services/search_service.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
@@ -17,7 +12,6 @@ import 'package:gcargo/home/notificationPage.dart';
 import 'package:gcargo/home/packageDepositPage.dart';
 import 'package:gcargo/home/productDetailPage.dart';
 import 'package:gcargo/home/rewardRedeemPage.dart';
-import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -58,105 +52,6 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // ฟังก์ชั่นสำหรับจัดการการค้นหาด้วยรูปภาพ
-  Future<void> _handleImageSearch(XFile image) async {
-    try {
-      // แสดง loading
-      showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
-
-      // 1. อัปโหลดรูปภาพ
-      //final _imageUpload = await UoloadService.uploadImage(image);
-      File file = File(image.path);
-      final _imageUpload = await UoloadService.addImage(file: file, path: 'uploads/alipay/');
-
-      if (_imageUpload != null) {
-        // 2. อัปรูปที่ HomeService
-        final _imgcode = await HomeService.uploadImage(imgcode: 'https://cargo-api.dev-asha9.com/${_imageUpload}');
-
-        if (_imgcode != null && _imgcode.isNotEmpty) {
-          // 3. ค้นหาด้วยรูปภาพ
-          final _searchImage = await HomeService.getItemSearchImg(searchImg: _imgcode, type: homeController.selectedItemType.value);
-
-          if (_searchImage.isNotEmpty) {
-            // ปิด loading
-            Navigator.pop(context);
-
-            // ไปหน้า SearchPage พร้อมส่งข้อมูล
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SearchPage(initialSearchResults: _searchImage, initialSearchQuery: 'ค้นหาด้วยรูปภาพ')),
-            );
-          } else {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่พบสินค้าจากรูปภาพที่ค้นหา')));
-          }
-        } else {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่สามารถประมวลผลรูปภาพได้')));
-        }
-      } else {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่สามารถอัปโหลดรูปภาพได้')));
-      }
-    } catch (e) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: ${e.toString()}')));
-    }
-  }
-
-  // Method to handle search
-  Future<void> _handleSearch(String query) async {
-    if (query.trim().isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณากรอกคำค้นหา')));
-      }
-      return;
-    }
-
-    // Show loading indicator
-    if (mounted) {
-      showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
-    }
-
-    try {
-      // Call API to search
-      await homeController.searchItemsFromAPI(query);
-
-      // Close loading dialog
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
-
-      // Check if we have results
-      if (homeController.hasError.value) {
-        // Show error message
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(homeController.errorMessage.value)));
-        }
-      } else if (homeController.searchItems.isEmpty) {
-        // Show no results message
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่พบสินค้าที่ค้นหา')));
-        }
-      } else {
-        // Navigate to SearchPage with results
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SearchPage(initialSearchResults: homeController.searchItems, initialSearchQuery: query)),
-          );
-        }
-      }
-    } catch (e) {
-      // Close loading dialog
-      if (mounted) {
-        Navigator.of(context).pop();
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e')));
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -192,18 +87,13 @@ class _HomePageState extends State<HomePage> {
                           ),
                           style: TextStyle(color: Colors.black),
                           onFieldSubmitted: (value) {
-                            _handleSearch(value);
+                            SearchService.handleTextSearch(context: context, query: value, selectedType: homeController.selectedItemType.value);
                           },
                         ),
                       ),
                       GestureDetector(
-                        onTap: () async {
-                          showImagePickerBottomSheet(
-                            context: context,
-                            onImagePicked: (XFile image) async {
-                              await _handleImageSearch(image);
-                            },
-                          );
+                        onTap: () {
+                          SearchService.showImagePickerBottomSheet(context: context, selectedType: homeController.selectedItemType.value);
                         },
                         child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
                       ),
@@ -539,7 +429,6 @@ class _HomePageState extends State<HomePage> {
                     itemCount: homeController.searchItems.length,
                     itemBuilder: (context, index) {
                       final item = homeController.searchItems[index];
-
                       return ProductCardFromAPI(
                         imageUrl: item['pic_url'] ?? '',
                         title: item['title'] ?? 'ไม่มีชื่อสินค้า',
@@ -550,7 +439,17 @@ class _HomePageState extends State<HomePage> {
                           final rawNumIid = item['num_iid'];
                           final String numIidStr = (rawNumIid is int || rawNumIid is String) ? rawNumIid.toString() : '0';
 
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: numIidStr, name: 'Shirt')));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => ProductDetailPage(
+                                    num_iid: numIidStr,
+                                    name: 'Shirt',
+                                    type: homeController.selectedItemType.value == 'shopgs1' ? 'taobao' : '1688',
+                                  ),
+                            ),
+                          );
                         },
                       );
                     },

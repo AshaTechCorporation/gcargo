@@ -10,6 +10,7 @@ class ProductDetailController extends GetxController {
   var errorMessage = ''.obs;
   var hasError = false.obs;
   var numIid = ''.obs;
+  var type = ''.obs;
   var isFavorite = false.obs; // สำหรับเช็คว่าอยู่ในรายการโปรดหรือไม่
 
   @override
@@ -18,7 +19,7 @@ class ProductDetailController extends GetxController {
     log('🚀 ProductDetailController onInit called');
   }
 
-  Future<void> getItemDetail(String itemId) async {
+  Future<void> getItemDetail(String itemId, String type) async {
     if (itemId.isEmpty) return;
 
     try {
@@ -26,11 +27,12 @@ class ProductDetailController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
       numIid.value = itemId;
+      this.type.value = type;
 
       // เรียก API จริงโดยใช้ service ที่คุณเขียนไว้
       final data = await HomeService.getItemDetail(
         num_id: itemId,
-        type: 'taobao', // หรือ type ที่ต้องการ
+        type: type, // หรือ type ที่ต้องการ
       );
 
       if (data != null && data is Map<String, dynamic>) {
@@ -325,7 +327,7 @@ class ProductDetailController extends GetxController {
   // Method สำหรับ refresh ข้อมูล
   Future<void> refreshData() async {
     if (numIid.value.isNotEmpty) {
-      await getItemDetail(numIid.value);
+      await getItemDetail(numIid.value, type.value);
     }
   }
 

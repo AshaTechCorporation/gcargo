@@ -7,8 +7,9 @@ import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 class SearchPage extends StatefulWidget {
   final List<Map<String, dynamic>> initialSearchResults;
   final String initialSearchQuery;
+  final String type;
 
-  const SearchPage({super.key, this.initialSearchResults = const [], this.initialSearchQuery = ''});
+  const SearchPage({super.key, this.initialSearchResults = const [], this.initialSearchQuery = '', required this.type});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -245,7 +246,7 @@ class _SearchPageState extends State<SearchPage> {
                           final String numIidStr = (rawNumIid is int || rawNumIid is String) ? rawNumIid.toString() : '0';
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: numIidStr, name: searchController.text)),
+                            MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: numIidStr, name: searchController.text, type: widget.type)),
                           );
                         },
                       );

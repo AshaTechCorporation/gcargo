@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:gcargo/home/firstPage.dart';
 import 'package:gcargo/utils/helpers.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
@@ -9,15 +10,18 @@ import 'package:gcargo/controllers/showImagePickerBottomSheet.dart' as controlle
 import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
 import 'package:gcargo/home/widgets/product_description_widget.dart';
+import 'package:gcargo/home/widgets/product_image_slider_widget.dart';
 import 'package:gcargo/home/widgets/search_header_widget.dart';
 import 'package:gcargo/services/cart_service.dart';
+import 'package:gcargo/services/search_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetailPage extends StatefulWidget {
-  ProductDetailPage({super.key, required this.num_iid, required this.name});
+  ProductDetailPage({super.key, required this.num_iid, required this.name, required this.type});
   String num_iid;
   String name;
+  String type;
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -27,10 +31,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   int quantity = 1;
   String selectedSize = '';
   String selectedColor = '';
-  int selectedImage = 0;
   final TextEditingController searchController = TextEditingController();
-  late PageController _pageController;
-  Timer? _autoSlideTimer;
 
   // Initialize ProductDetailController
   late final ProductDetailController productController;
@@ -41,10 +42,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     // สร้าง controller และเรียก API
     productController = Get.put(ProductDetailController(), tag: widget.num_iid);
-    productController.getItemDetail(widget.num_iid);
+    productController.getItemDetail(widget.num_iid, widget.type);
 
     // Get existing HomeController or create new one
     try {
@@ -52,14 +52,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     } catch (e) {
       homeController = Get.put(HomeController());
     }
-
-    _startAutoSlide();
   }
 
   @override
   void dispose() {
-    _autoSlideTimer?.cancel();
-    _pageController.dispose();
     // ลบ controller เมื่อออกจากหน้า
     Get.delete<ProductDetailController>(tag: widget.num_iid);
     super.dispose();
@@ -88,140 +84,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     }
 
     return true;
-  }
-
-  void _startAutoSlide() {
-    _autoSlideTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      if (_pageController.hasClients) {
-        final allImages = productController.allImages;
-        final imagesToShow = allImages.isNotEmpty ? allImages : images;
-
-        if (imagesToShow.length > 1) {
-          final nextPage = (selectedImage + 1) % imagesToShow.length;
-          _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-        }
-      }
-    });
-  }
-
-  void _stopAutoSlide() {
-    _autoSlideTimer?.cancel();
-  }
-
-  void _restartAutoSlide() {
-    _stopAutoSlide();
-    _startAutoSlide();
-  }
-
-  List<String> images = ['assets/images/unsplash0.png', 'assets/images/unsplash1.png', 'assets/images/unsplash2.png', 'assets/images/unsplash3.png'];
-
-  Widget buildImageSlider() {
-    return Obx(() {
-      if (productController.isLoading.value) {
-        return Container(
-          height: 200,
-          decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(12)),
-          child: Center(child: CircularProgressIndicator()),
-        );
-      }
-
-      // Get all images from API (main pic_url + desc_img)
-      final allImages = productController.allImages;
-
-      // If no images from API, use fallback images
-      final imagesToShow = allImages.isNotEmpty ? allImages : images;
-      final isUsingApiImages = allImages.isNotEmpty;
-
-      return Column(
-        children: [
-          // Image Slider
-          SizedBox(
-            height: 200,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child:
-                  imagesToShow.length == 1
-                      ? _buildSingleImage(imagesToShow[0], isUsingApiImages)
-                      : GestureDetector(
-                        onPanDown: (_) => _stopAutoSlide(),
-                        onPanEnd: (_) => _restartAutoSlide(),
-                        child: PageView.builder(
-                          controller: _pageController,
-                          onPageChanged: (index) {
-                            setState(() {
-                              selectedImage = index;
-                            });
-                          },
-                          itemCount: imagesToShow.length,
-                          itemBuilder: (context, index) {
-                            final imageUrl = imagesToShow[index];
-                            return _buildSingleImage(imageUrl, isUsingApiImages);
-                          },
-                        ),
-                      ),
-            ),
-          ),
-
-          // Page Indicators
-          if (imagesToShow.length > 1) ...[
-            const SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  imagesToShow.length,
-                  (index) => Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
-                    child: GestureDetector(
-                      onTap: () {
-                        _stopAutoSlide();
-                        _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                        _restartAutoSlide();
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: selectedImage == index ? Colors.black : Colors.grey.shade300),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
-      );
-    });
-  }
-
-  Widget _buildSingleImage(String imageUrl, bool isUsingApiImages) {
-    if (isUsingApiImages) {
-      // Display API images
-      final formattedUrl = formatImageUrl(imageUrl);
-      return Image.network(
-        formattedUrl,
-        width: double.infinity,
-        height: 200,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: double.infinity,
-            height: 200,
-            color: Colors.grey.shade200,
-            child: const Icon(Icons.image_not_supported, color: Colors.grey),
-          );
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(width: double.infinity, height: 200, color: Colors.grey.shade200, child: const Center(child: CircularProgressIndicator()));
-        },
-      );
-    } else {
-      // Display fallback asset images
-      return Image.asset(imageUrl, width: double.infinity, height: 200, fit: BoxFit.cover);
-    }
   }
 
   Widget buildSizeSelector() {
@@ -298,7 +160,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       onTap: () {
         if (numIid.isNotEmpty) {
           // Navigate to product detail page
-          productController.getItemDetail(numIid);
+          productController.getItemDetail(numIid, widget.type);
         }
       },
       child: Container(
@@ -500,12 +362,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false),
+          ),
           title: SearchHeaderWidget(
             searchController: searchController,
+            onFieldSubmitted: (query) {
+              SearchService.handleTextSearch(context: context, query: query, selectedType: widget.type);
+            },
             onImagePicked: (XFile image) {
-              print('📸 ได้รูป: ${image.path}');
-              // คุณสามารถใช้งาน image.path ได้ตามต้องการ เช่นส่ง API หรือแสดง preview
+              SearchService.handleImageSearch(context: context, image: image, selectedType: widget.type);
             },
             onBagTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
@@ -526,7 +393,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 children: [
                   Stack(
                     children: [
-                      buildImageSlider(),
+                      ProductImageSliderWidget(productController: productController),
                       Positioned(
                         top: 8,
                         right: 8,
