@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/exchangeDetailPage.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class ExchangeStatusPage extends StatefulWidget {
   const ExchangeStatusPage({super.key});
@@ -16,17 +18,78 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
   final HomeController homeController = Get.put(HomeController());
 
   final List<String> statusList = ['ทั้งหมด', 'รอชำระเงิน', 'สำเร็จ'];
-  final TextEditingController _dateController = TextEditingController(text: '1/01/2024 - 01/07/2025');
+  final TextEditingController _dateController = TextEditingController();
+
+  // Date filter variables
+  DateTime? startDate;
+  DateTime? endDate;
 
   @override
   void initState() {
     super.initState();
+    _dateController.text = 'เลือกช่วงวันที่'; // ไม่ตั้งค่าเริ่มต้น
+
+    // ไม่ตั้งค่าวันที่เริ่มต้น - ให้ผู้ใช้เลือกเอง
+    startDate = null;
+    endDate = null;
+
     // เรียก API เมื่อเข้าหน้า
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.getAlipayPaymentFromAPI();
       homeController.getExchangeRateFromAPI();
       homeController.getServiceFeeFromAPI();
     });
+  }
+
+  // Parse date string to DateTime for filtering
+  DateTime? _parseDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return null;
+    try {
+      return DateTime.parse(dateString);
+    } catch (e) {
+      // Try different date formats
+      try {
+        // Try dd/MM/yyyy format
+        return DateFormat('dd/MM/yyyy').parse(dateString);
+      } catch (e2) {
+        try {
+          // Try yyyy-MM-dd format
+          return DateFormat('yyyy-MM-dd').parse(dateString);
+        } catch (e3) {
+          print('Cannot parse date: $dateString');
+          return null;
+        }
+      }
+    }
+  }
+
+  // ฟังก์ชั่นสำหรับเลือกช่วงวันที่
+  Future<void> _selectDateRange() async {
+    DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: startDate != null && endDate != null ? DateTimeRange(start: startDate!, end: endDate!) : null,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(
+            context,
+          ).copyWith(colorScheme: ColorScheme.light(primary: kButtonColor, onPrimary: Colors.white, surface: Colors.white, onSurface: Colors.black)),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        startDate = picked.start;
+        endDate = picked.end;
+        _dateController.text = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
+
+        // Debug: แสดงวันที่ที่เลือก
+        print('🗓️ เลือกช่วงวันที่: $startDate ถึง $endDate');
+      });
+    }
   }
 
   // แปลงสถานะจาก API เป็นสถานะที่แสดงใน UI
@@ -46,13 +109,56 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
     return Obx(() {
       final payments = homeController.alipayPayment;
 
-      // กรองข้อมูลตามสถานะที่เลือก
-      final filteredPayments =
-          payments.where((payment) {
-            if (selectedStatus == 'ทั้งหมด') return true;
-            final displayStatus = _getDisplayStatus(payment.status ?? '');
-            return displayStatus == selectedStatus;
-          }).toList();
+      // กรองข้อมูลตามสถานะและวันที่ที่เลือก
+      List<dynamic> filteredPayments = List.from(payments);
+
+      // ฟิลเตอร์ตามช่วงวันที่ (เฉพาะเมื่อผู้ใช้เลือกแล้ว)
+      if (startDate != null && endDate != null) {
+        print('🔍 กำลังฟิลเตอร์ตามวันที่: $startDate ถึง $endDate');
+        print('📊 จำนวนรายการก่อนฟิลเตอร์: ${filteredPayments.length}');
+
+        filteredPayments =
+            filteredPayments.where((payment) {
+              final paymentDateStr = payment.created_at?.toString();
+
+              print('📅 ตรวจสอบรายการ: created_at="$paymentDateStr"');
+
+              if (paymentDateStr == null || paymentDateStr.isEmpty) {
+                print('❌ ไม่มีวันที่');
+                return false;
+              }
+
+              final paymentDate = _parseDate(paymentDateStr);
+              if (paymentDate == null) {
+                print('❌ ไม่สามารถแปลงวันที่: $paymentDateStr');
+                return false;
+              }
+
+              // ตรวจสอบว่าวันที่รายการอยู่ในช่วงที่เลือก
+              final startOfDay = DateTime(startDate!.year, startDate!.month, startDate!.day);
+              final endOfDay = DateTime(endDate!.year, endDate!.month, endDate!.day, 23, 59, 59);
+
+              final isInRange =
+                  paymentDate.isAfter(startOfDay.subtract(const Duration(days: 1))) && paymentDate.isBefore(endOfDay.add(const Duration(days: 1)));
+
+              print('✅ วันที่รายการ: $paymentDate, อยู่ในช่วง: $isInRange');
+
+              return isInRange;
+            }).toList();
+
+        print('📊 จำนวนรายการหลังฟิลเตอร์: ${filteredPayments.length}');
+      } else {
+        print('📅 ไม่ได้เลือกช่วงวันที่ - แสดงรายการทั้งหมด');
+      }
+
+      // ฟิลเตอร์ตามสถานะ
+      if (selectedStatus != 'ทั้งหมด') {
+        filteredPayments =
+            filteredPayments.where((payment) {
+              final displayStatus = _getDisplayStatus(payment.status ?? '');
+              return displayStatus == selectedStatus;
+            }).toList();
+      }
 
       // จัดกลุ่มตามวันที่
       final grouped = <String, List<dynamic>>{};
@@ -61,7 +167,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
         grouped.putIfAbsent(date, () => []).add(payment);
       }
 
-      // นับจำนวนตามสถานะ (ใช้ _getDisplayStatus เหมือนกับการกรอง)
+      // นับจำนวนตามสถานะ (ใช้ข้อมูลทั้งหมดไม่ใช่ข้อมูลที่ถูกฟิลเตอร์)
       final Map<String, int> statusCounts = {
         'ทั้งหมด': payments.length,
         'รอชำระเงิน': payments.where((p) => _getDisplayStatus(p.status ?? '') == 'รอชำระเงิน').length,
@@ -84,7 +190,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: TextFormField(
                 controller: _dateController,
-                readOnly: false,
+                readOnly: true,
                 decoration: InputDecoration(
                   prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 20)),
                   hintText: 'เลือกช่วงวันที่',
@@ -94,9 +200,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
                 ),
-                onTap: () {
-                  // TODO: picker date
-                },
+                onTap: _selectDateRange,
               ),
             ),
 

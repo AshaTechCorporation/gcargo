@@ -17,6 +17,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
   late final OrderController orderController;
   String selectedStatus = 'ทั้งหมด';
   TextEditingController _dateController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
 
   final List<String> statusList = ['ทั้งหมด', 'รอตรวจสอบ', 'รอชำระเงิน', 'รอดำเนินการ', 'เตรียมจัดส่ง', 'สำเร็จ', 'ยกเลิก'];
 
@@ -24,6 +25,11 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
   bool needVatReceipt = false;
   bool selectAll = false;
   Set<String> selectedOrders = {};
+
+  // Search variables
+  DateTime? startDate;
+  DateTime? endDate;
+  String searchQuery = '';
 
   // Status mapping from API to Thai
   String _getStatusInThai(String? apiStatus) {
@@ -56,6 +62,28 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
     }
   }
 
+  // Parse date string to DateTime for filtering
+  DateTime? _parseDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return null;
+    try {
+      return DateTime.parse(dateString);
+    } catch (e) {
+      // Try different date formats
+      try {
+        // Try dd/MM/yyyy format
+        return DateFormat('dd/MM/yyyy').parse(dateString);
+      } catch (e2) {
+        try {
+          // Try yyyy-MM-dd format
+          return DateFormat('yyyy-MM-dd').parse(dateString);
+        } catch (e3) {
+          print('Cannot parse date: $dateString');
+          return null;
+        }
+      }
+    }
+  }
+
   // Get shipping type in Thai
   String _getShippingTypeInThai(String? shippingType) {
     switch (shippingType) {
@@ -71,10 +99,95 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
   @override
   void initState() {
     super.initState();
-    _dateController.text = '01/01/2024 - 01/07/2025'; // ค่าเริ่มต้น
+    _dateController.text = 'เลือกช่วงวันที่'; // ไม่ตั้งค่าเริ่มต้น
+
+    // ไม่ตั้งค่าวันที่เริ่มต้น - ให้ผู้ใช้เลือกเอง
+    startDate = null;
+    endDate = null;
+
     orderController = Get.put(OrderController());
     orderController.getOrders();
     orderController.refreshData();
+  }
+
+  // ฟังก์ชั่นสำหรับค้นหาและฟิลเตอร์ออเดอร์
+  List<Map<String, dynamic>> _getFilteredOrders() {
+    List<Map<String, dynamic>> filteredOrders = List.from(orderController.orders);
+
+    // ฟิลเตอร์ตามช่วงวันที่
+    if (startDate != null && endDate != null) {
+      filteredOrders =
+          filteredOrders.where((order) {
+            final orderDateStr = order['created_at'] as String?;
+            if (orderDateStr == null) return false;
+
+            try {
+              final orderDate = DateTime.parse(orderDateStr);
+              return orderDate.isAfter(startDate!.subtract(const Duration(days: 1))) && orderDate.isBefore(endDate!.add(const Duration(days: 1)));
+            } catch (e) {
+              return false;
+            }
+          }).toList();
+    }
+
+    // ฟิลเตอร์ตามเลขบิล
+    if (searchQuery.isNotEmpty) {
+      filteredOrders =
+          filteredOrders.where((order) {
+            final billNumber = order['bill_number']?.toString().toLowerCase() ?? '';
+            final orderNumber = order['order_number']?.toString().toLowerCase() ?? '';
+            final query = searchQuery.toLowerCase();
+
+            return billNumber.contains(query) || orderNumber.contains(query);
+          }).toList();
+    }
+
+    // ฟิลเตอร์ตามสถานะ
+    if (selectedStatus != 'ทั้งหมด') {
+      filteredOrders =
+          filteredOrders.where((order) {
+            final orderStatus = _getStatusInThai(order['status']);
+            return orderStatus == selectedStatus;
+          }).toList();
+    }
+
+    return filteredOrders;
+  }
+
+  // ฟังก์ชั่นสำหรับการค้นหา
+  void _performSearch() {
+    setState(() {
+      searchQuery = _searchController.text.trim();
+    });
+  }
+
+  // ฟังก์ชั่นสำหรับเลือกช่วงวันที่
+  Future<void> _selectDateRange() async {
+    DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: startDate != null && endDate != null ? DateTimeRange(start: startDate!, end: endDate!) : null,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(
+            context,
+          ).copyWith(colorScheme: ColorScheme.light(primary: kButtonColor, onPrimary: Colors.white, surface: Colors.white, onSurface: Colors.black)),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        startDate = picked.start;
+        endDate = picked.end;
+        _dateController.text = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
+
+        // Debug: แสดงวันที่ที่เลือก
+        print('🗓️ เลือกช่วงวันที่: ${startDate} ถึง ${endDate}');
+      });
+    }
   }
 
   @override
@@ -120,14 +233,14 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
       }
 
       // Convert API data to display format - extract nested orders only
-      final displayOrders = <Map<String, dynamic>>[];
+      final allDisplayOrders = <Map<String, dynamic>>[];
 
       for (var parentOrder in orderController.orders) {
         // Only process parent orders that have nested orders
         if (parentOrder.orders != null && parentOrder.orders!.isNotEmpty) {
           // Add each nested order to display list
           for (var nestedOrder in parentOrder.orders!) {
-            displayOrders.add({
+            allDisplayOrders.add({
               'date': _formatDate(nestedOrder.date),
               'status': _getStatusInThai(nestedOrder.status),
               'code': nestedOrder.code ?? '',
@@ -135,48 +248,199 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
               'total': double.tryParse(nestedOrder.total_price ?? '0') ?? 0.0,
               'originalOrder': nestedOrder, // Keep reference to original order
               'parentOrder': parentOrder, // Keep reference to parent order
+              'bill_number': nestedOrder.code ?? '', // สำหรับการค้นหา
+              'order_number': nestedOrder.id?.toString() ?? '', // สำหรับการค้นหา
+              'created_at': nestedOrder.date ?? '', // สำหรับการฟิลเตอร์วันที่
+              'raw_date': nestedOrder.date, // เก็บข้อมูลวันที่ดิบไว้ debug
             });
           }
         }
         // Skip parent orders without nested orders - don't show them as cards
       }
 
-      // Group orders by date and filter by status
+      // Apply filters using the _getFilteredOrders function
+      // First, set the orders for filtering
+      final tempOrders = allDisplayOrders;
+
+      // Apply filters
+      List<Map<String, dynamic>> filteredOrders = List.from(tempOrders);
+
+      // ฟิลเตอร์ตามช่วงวันที่
+      if (startDate != null && endDate != null) {
+        print('🔍 กำลังฟิลเตอร์ตามวันที่: $startDate ถึง $endDate');
+        print('📊 จำนวนออเดอร์ก่อนฟิลเตอร์: ${filteredOrders.length}');
+
+        filteredOrders =
+            filteredOrders.where((order) {
+              final orderDateStr = order['created_at'] as String?;
+              final rawDate = order['raw_date'];
+
+              print('📅 ตรวจสอบออเดอร์: created_at="$orderDateStr", raw_date="$rawDate"');
+
+              if (orderDateStr == null || orderDateStr.isEmpty) {
+                print('❌ ไม่มีวันที่');
+                return false;
+              }
+
+              final orderDate = _parseDate(orderDateStr);
+              if (orderDate == null) {
+                print('❌ ไม่สามารถแปลงวันที่: $orderDateStr');
+                return false;
+              }
+
+              // ตรวจสอบว่าวันที่ออเดอร์อยู่ในช่วงที่เลือก
+              final startOfDay = DateTime(startDate!.year, startDate!.month, startDate!.day);
+              final endOfDay = DateTime(endDate!.year, endDate!.month, endDate!.day, 23, 59, 59);
+
+              final isInRange =
+                  orderDate.isAfter(startOfDay.subtract(const Duration(days: 1))) && orderDate.isBefore(endOfDay.add(const Duration(days: 1)));
+
+              print('✅ วันที่ออเดอร์: $orderDate, อยู่ในช่วง: $isInRange');
+
+              return isInRange;
+            }).toList();
+
+        print('📊 จำนวนออเดอร์หลังฟิลเตอร์: ${filteredOrders.length}');
+      } else {
+        print('📅 ไม่ได้เลือกช่วงวันที่ - แสดงออเดอร์ทั้งหมด');
+      }
+
+      // ฟิลเตอร์ตามเลขบิล
+      if (searchQuery.isNotEmpty) {
+        filteredOrders =
+            filteredOrders.where((order) {
+              final billNumber = order['bill_number']?.toString().toLowerCase() ?? '';
+              final orderNumber = order['order_number']?.toString().toLowerCase() ?? '';
+              final code = order['code']?.toString().toLowerCase() ?? '';
+              final query = searchQuery.toLowerCase();
+
+              return billNumber.contains(query) || orderNumber.contains(query) || code.contains(query);
+            }).toList();
+      }
+
+      // ฟิลเตอร์ตามสถานะ
+      if (selectedStatus != 'ทั้งหมด') {
+        filteredOrders =
+            filteredOrders.where((order) {
+              final orderStatus = order['status'];
+              return orderStatus == selectedStatus;
+            }).toList();
+      }
+
+      final displayOrders = filteredOrders;
+
+      // Group orders by date
       final groupedOrders = <String, List<Map<String, dynamic>>>{};
       for (var order in displayOrders) {
-        if (selectedStatus != 'ทั้งหมด' && order['status'] != selectedStatus) continue;
         final dateKey = order['date'] as String? ?? '';
         groupedOrders.putIfAbsent(dateKey, () => []).add(order);
       }
 
-      // Calculate status counts
+      // Calculate status counts (ใช้ข้อมูลทั้งหมดไม่ใช่ข้อมูลที่ถูกฟิลเตอร์)
       final Map<String, int> statusCounts = {
         for (var status in statusList)
-          status: status == 'ทั้งหมด' ? displayOrders.length : displayOrders.where((order) => order['status'] == status).length,
+          status: status == 'ทั้งหมด' ? allDisplayOrders.length : allDisplayOrders.where((order) => order['status'] == status).length,
       };
 
-      // Show empty state if no orders
-      if (displayOrders.isEmpty) {
-        return Scaffold(
-          backgroundColor: Colors.grey.shade100,
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Colors.white,
-            leading: IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
-            title: Text('ออเดอร์', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      // Build the main UI structure
+      Widget buildMainContent() {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.grey),
-                SizedBox(height: 16),
-                Text('ยังไม่มีออเดอร์', style: TextStyle(fontSize: 18, color: Colors.grey)),
-                SizedBox(height: 8),
-                Text('เมื่อคุณสั่งซื้อสินค้า ออเดอร์จะแสดงที่นี่', style: TextStyle(fontSize: 14, color: Colors.grey), textAlign: TextAlign.center),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'ค้นหาเลขที่บิล',
+                      filled: true,
+                      hintStyle: TextStyle(fontSize: 14),
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                      suffixIcon: IconButton(icon: Icon(Icons.search, color: kButtonColor), onPressed: _performSearch),
+                    ),
+                    onSubmitted: (_) => _performSearch(),
+                  ),
+                ),
               ],
             ),
-          ),
+            SizedBox(height: 12),
+
+            // ✅ Status Tabs with proper count and background circle
+            SizedBox(
+              height: 36,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: statusList.length,
+                itemBuilder: (_, index) {
+                  final status = statusList[index];
+                  final isSelected = status == selectedStatus;
+                  final count = statusCounts[status] ?? 0;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () => setState(() => selectedStatus = status),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isSelected ? kBackgroundTextColor.withOpacity(0.1) : Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: isSelected ? kBackgroundTextColor : Colors.grey.shade300),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              status,
+                              style: TextStyle(
+                                color: isSelected ? kBackgroundTextColor : Colors.black,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              width: 25,
+                              height: 25,
+                              decoration: BoxDecoration(color: isSelected ? kCicleColor : Colors.grey.shade300, shape: BoxShape.circle),
+                              child: Center(child: Text('$count', style: TextStyle(fontSize: 12, color: isSelected ? Colors.white : Colors.black))),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            SizedBox(height: 16),
+
+            // Show empty state if no orders, but keep the search and status tabs
+            if (displayOrders.isEmpty)
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.grey),
+                      SizedBox(height: 16),
+                      Text('ไม่พบออเดอร์', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                      SizedBox(height: 8),
+                      Text(
+                        searchQuery.isNotEmpty
+                            ? 'ไม่พบออเดอร์ที่ตรงกับการค้นหา "${searchQuery}"'
+                            : selectedStatus != 'ทั้งหมด'
+                            ? 'ไม่มีออเดอร์ในสถานะ "${selectedStatus}"'
+                            : 'เมื่อคุณสั่งซื้อสินค้า ออเดอร์จะแสดงที่นี่',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
         );
       }
 
@@ -195,20 +459,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                 child: TextFormField(
                   controller: _dateController,
                   readOnly: true,
-                  onTap: () async {
-                    DateTimeRange? picked = await showDateRangePicker(
-                      context: context,
-                      firstDate: DateTime(2023),
-                      lastDate: DateTime(2030),
-                      initialDateRange: DateTimeRange(start: DateTime(2024, 1, 1), end: DateTime(2025, 7, 1)),
-                    );
-                    if (picked != null) {
-                      String formatted = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
-                      setState(() {
-                        _dateController.text = formatted;
-                      });
-                    }
-                  },
+                  onTap: _selectDateRange,
                   decoration: InputDecoration(
                     prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 18)),
                     hintText: 'เลือกช่วงวันที่',
@@ -224,92 +475,100 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
         ),
         body: Padding(
           padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'ค้นหาเลขที่บิล',
-                        filled: true,
-                        hintStyle: TextStyle(fontSize: 14),
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 12),
-
-              // ✅ Status Tabs with proper count and background circle
-              SizedBox(
-                height: 36,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: statusList.length,
-                  itemBuilder: (_, index) {
-                    final status = statusList[index];
-                    final isSelected = status == selectedStatus;
-                    final count = statusCounts[status] ?? 0;
-
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                        onTap: () => setState(() => selectedStatus = status),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: isSelected ? kBackgroundTextColor.withOpacity(0.1) : Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: isSelected ? kBackgroundTextColor : Colors.grey.shade300),
+          child:
+              displayOrders.isEmpty
+                  ? buildMainContent()
+                  : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _searchController,
+                              decoration: InputDecoration(
+                                hintText: 'ค้นหาเลขที่บิล',
+                                filled: true,
+                                hintStyle: TextStyle(fontSize: 14),
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                                suffixIcon: IconButton(icon: Icon(Icons.search, color: kButtonColor), onPressed: _performSearch),
+                              ),
+                              onSubmitted: (_) => _performSearch(),
+                            ),
                           ),
-                          child: Row(
-                            children: [
-                              Text(
-                                status,
-                                style: TextStyle(
-                                  color: isSelected ? kBackgroundTextColor : Colors.black,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ],
+                      ),
+                      SizedBox(height: 12),
+
+                      // ✅ Status Tabs with proper count and background circle
+                      SizedBox(
+                        height: 36,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: statusList.length,
+                          itemBuilder: (_, index) {
+                            final status = statusList[index];
+                            final isSelected = status == selectedStatus;
+                            final count = statusCounts[status] ?? 0;
+
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: GestureDetector(
+                                onTap: () => setState(() => selectedStatus = status),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? kBackgroundTextColor.withOpacity(0.1) : Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: isSelected ? kBackgroundTextColor : Colors.grey.shade300),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        status,
+                                        style: TextStyle(
+                                          color: isSelected ? kBackgroundTextColor : Colors.black,
+                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        width: 25,
+                                        height: 25,
+                                        decoration: BoxDecoration(color: isSelected ? kCicleColor : Colors.grey.shade300, shape: BoxShape.circle),
+                                        child: Center(
+                                          child: Text('$count', style: TextStyle(fontSize: 12, color: isSelected ? Colors.white : Colors.black)),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 6),
-                              Container(
-                                width: 25,
-                                height: 25,
-                                decoration: BoxDecoration(color: isSelected ? kCicleColor : Colors.grey.shade300, shape: BoxShape.circle),
-                                child: Center(child: Text('$count', style: TextStyle(fontSize: 12, color: isSelected ? Colors.white : Colors.black))),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       ),
-                    );
-                  },
-                ),
-              ),
 
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  children:
-                      groupedOrders.entries.map((entry) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(entry.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                            const SizedBox(height: 8),
-                            ...entry.value.map((order) => _buildOrderCard(order)),
-                            const SizedBox(height: 16),
-                          ],
-                        );
-                      }).toList(),
-                ),
-              ),
-            ],
-          ),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: ListView(
+                          children:
+                              groupedOrders.entries.map((entry) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(entry.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    const SizedBox(height: 8),
+                                    ...entry.value.map((order) => _buildOrderCard(order)),
+                                    const SizedBox(height: 16),
+                                  ],
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
         ),
         bottomNavigationBar: selectedStatus == 'รอชำระเงิน' ? _buildBottomBar() : null,
       );

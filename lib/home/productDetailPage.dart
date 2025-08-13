@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gcargo/home/firstPage.dart';
+import 'package:gcargo/home/notificationPage.dart';
 import 'package:gcargo/utils/helpers.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
@@ -379,6 +380,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             },
             onNotificationTap: () {
               // TODO: ไปหน้า notification
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
             },
           ),
         ),
