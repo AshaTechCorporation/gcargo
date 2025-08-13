@@ -175,26 +175,26 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
       };
 
       return Scaffold(
-        backgroundColor: const Color(0xFFF2F2F2),
+        backgroundColor: Color(0xFFF2F2F2),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-          title: const Text('แลกเปลี่ยนเงินบาทเป็นหยวน', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
+          leading: IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+          title: Text('แลกเปลี่ยนเงินบาทเป็นหยวน', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         body: Column(
           children: [
             // 🔹 ช่องวันที่แบบ TextField
             Container(
               color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: TextFormField(
                 controller: _dateController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 20)),
+                  prefixIcon: Padding(padding: EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 20)),
                   hintText: 'เลือกช่วงวันที่',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                  contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),

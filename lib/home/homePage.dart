@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/exchangePage.dart';
 
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
@@ -66,7 +67,12 @@ class _HomePageState extends State<HomePage> {
           automaticallyImplyLeading: false,
           title: Row(
             children: [
-              Text('A100', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kSubTitleTextGridColor)),
+              Obx(
+                () => Text(
+                  homeController.currentUser.value?.code ?? '',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kSubTitleTextGridColor),
+                ),
+              ),
               SizedBox(width: 12),
               Expanded(
                 child: Container(
@@ -106,13 +112,14 @@ class _HomePageState extends State<HomePage> {
               GestureDetector(
                 onTap: () {
                   ////go action
-                  Get.snackbar(
-                    'แจ้งเตือน',
-                    'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                    backgroundColor: Colors.yellowAccent,
-                    colorText: Colors.black,
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+                  // Get.snackbar(
+                  //   'แจ้งเตือน',
+                  //   'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                  //   backgroundColor: Colors.yellowAccent,
+                  //   colorText: Colors.black,
+                  //   snackPosition: SnackPosition.BOTTOM,
+                  // );
                 },
                 child: Image.asset('assets/icons/bag.png', width: 20, height: 20, fit: BoxFit.fill),
               ),
