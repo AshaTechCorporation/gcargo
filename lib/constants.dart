@@ -24,4 +24,4 @@ const kCicleColor = Color(0xFF23547D);
 const kCicleSelectedColor = Color(0xFFE5EBFC);
 const kTextTitleHeadColor = Color(0xFF202020);
 
-final List<String> itemType = ['shopgs1', 'shopgs2'];
+final List<String> itemType = ['shopgs2', 'shopgs1'];
