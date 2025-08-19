@@ -87,9 +87,23 @@ class _LoginPageState extends State<LoginPage> {
 
                 // 🔹 Email
                 SizedBox(height: 8),
-                CustomTextFormField(label: 'ชื่อผู้ใช้งาน', hintText: 'กรุณากรอกอีเมล', controller: _emailController),
+                CustomTextFormField(label: 'ชื่อผู้ใช้งาน', hintText: 'กรุณากรอกชื่อผู้ใช้งาน', controller: _emailController),
                 SizedBox(height: 20),
-                CustomTextFormField(label: 'รหัสผ่าน', hintText: '••••••••', controller: _passwordController, isPassword: true),
+                CustomTextFormField(
+                  label: 'รหัสผ่าน',
+                  hintText: '••••••••',
+                  controller: _passwordController,
+                  isPassword: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'กรุณากรอกรหัสผ่าน';
+                    }
+                    if (value.length < 8 || value.length > 20) {
+                      return 'รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร';
+                    }
+                    return null;
+                  },
+                ),
                 SizedBox(height: 6),
                 Text('รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร', style: TextStyle(fontSize: 14, color: kHintTextColor)),
 

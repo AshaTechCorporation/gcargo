@@ -288,10 +288,38 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 20),
 
-                CustomTextFormField(label: 'รหัสผ่าน', hintText: '••••••••', controller: _passwordController, isPassword: true),
+                CustomTextFormField(
+                  label: 'รหัสผ่าน',
+                  hintText: '••••••••',
+                  controller: _passwordController,
+                  isPassword: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'กรุณากรอกรหัสผ่าน';
+                    }
+                    if (value.length < 8 || value.length > 20) {
+                      return 'รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร';
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 20),
 
-                CustomTextFormField(label: 'ยืนยันรหัสผ่าน', hintText: '••••••••', controller: _confirmPasswordController, isPassword: true),
+                CustomTextFormField(
+                  label: 'ยืนยันรหัสผ่าน',
+                  hintText: '••••••••',
+                  controller: _confirmPasswordController,
+                  isPassword: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'กรุณายืนยันรหัสผ่าน';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'รหัสผ่านไม่ตรงกัน';
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 20),
 
                 CustomTextFormField(label: 'ชื่อ', hintText: 'กรุณากรอกชื่อ', controller: _nameController),
@@ -517,36 +545,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           print(e);
                           ScaffoldMessenger.of(
                             context,
-                          ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.yellowAccent));
-                          //LoadingDialog.close(context);
-                          // showDialog(
-                          //   context: context,
-                          //   builder:
-                          //       (context) => AlertDialogYes(
-                          //         title: 'Setting.warning'.tr(),
-                          //         description: '$e',
-                          //         pressYes: () {
-                          //           Navigator.pop(context);
-                          //         },
-                          //       ),
-                          // );
+                          ).showSnackBar(SnackBar(content: Text('${e.toString()}!'), backgroundColor: Colors.yellowAccent));
                         } catch (e) {
                           if (!mounted) return;
                           ScaffoldMessenger.of(
                             context,
-                          ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.yellowAccent));
-                          //LoadingDialog.close(context);
-                          // showDialog(
-                          //   context: context,
-                          //   builder:
-                          //       (context) => AlertDialogYes(
-                          //         title: 'Setting.warning'.tr(),
-                          //         description: '$e',
-                          //         pressYes: () {
-                          //           Navigator.pop(context);
-                          //         },
-                          //       ),
-                          // );
+                          ).showSnackBar(SnackBar(content: Text('${e.toString()}!'), backgroundColor: Colors.yellowAccent));
                         }
 
                         //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));

@@ -267,10 +267,13 @@ class _AccountPageState extends State<AccountPage> {
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 16),
-                          foregroundColor: const Color(0xFF4A4A4A),
+                          foregroundColor: Color(0xFF4A4A4A),
                           textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                         ),
-                        child: Text(token == null ? 'เข้าสู่ระบบ' : 'ออกจากระบบ'),
+                        child: Text(
+                          token == null ? 'เข้าสู่ระบบ' : 'ออกจากระบบ',
+                          style: TextStyle(fontFamily: 'SukhumvitSet', fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ),

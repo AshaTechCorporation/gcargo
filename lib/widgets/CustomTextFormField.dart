@@ -9,6 +9,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool isRequired;
   final int maxLines;
   final TextInputType keyboardType;
+  final String? Function(String?)? validator;
 
   const CustomTextFormField({
     super.key,
@@ -19,6 +20,7 @@ class CustomTextFormField extends StatefulWidget {
     this.isRequired = true,
     this.maxLines = 1,
     this.keyboardType = TextInputType.text,
+    this.validator,
   });
 
   @override
@@ -75,6 +77,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     : null,
           ),
           validator: (value) {
+            // ใช้ custom validator ถ้ามี
+            if (widget.validator != null) {
+              final result = widget.validator!(value);
+              setState(() => _showError = result != null);
+              return result;
+            }
+
+            // ใช้ default validator
             if (widget.isRequired && (value == null || value.isEmpty)) {
               setState(() => _showError = true);
               return 'กรุณากรอก${widget.label}';
