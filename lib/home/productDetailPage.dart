@@ -33,6 +33,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   String selectedSize = '';
   String selectedColor = '';
   final TextEditingController searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingRecommendedItem = false;
 
   // Initialize ProductDetailController
   late final ProductDetailController productController;
@@ -57,6 +59,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     // ลบ controller เมื่อออกจากหน้า
     Get.delete<ProductDetailController>(tag: widget.num_iid);
     super.dispose();
@@ -158,92 +161,125 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final numIid = item['num_iid']?.toString() ?? '';
 
     return GestureDetector(
-      onTap: () {
-        if (numIid.isNotEmpty) {
-          // Navigate to product detail page
-          productController.getItemDetail(numIid, widget.type);
+      onTap: () async {
+        // ป้องกันการกดซ้ำระหว่างโหลด
+        if (_isLoadingRecommendedItem || numIid.isEmpty) return;
+
+        setState(() {
+          _isLoadingRecommendedItem = true;
+        });
+
+        try {
+          // เรียก API เพื่อดึงข้อมูลสินค้าใหม่
+          await productController.getItemDetail(numIid, widget.type);
+
+          // เลื่อนขึ้นด้านบนหลังจาก API เสร็จ
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(0.0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          }
+        } catch (e) {
+          print('Error loading recommended item: $e');
+        } finally {
+          if (mounted) {
+            setState(() {
+              _isLoadingRecommendedItem = false;
+            });
+          }
         }
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.grey.withValues(alpha: 0.1), blurRadius: 4)],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Image
-            Expanded(
-              flex: 3,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-                    child:
-                        picUrl.isNotEmpty
-                            ? Image.network(
-                              picUrl,
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  color: Colors.grey.shade200,
-                                  child: const Icon(Icons.image_not_supported, color: Colors.grey),
-                                );
-                              },
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Container(
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  color: Colors.grey.shade200,
-                                  child: const Center(child: CircularProgressIndicator()),
-                                );
-                              },
-                            )
-                            : Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              color: Colors.grey.shade200,
-                              child: const Icon(Icons.image, color: Colors.grey),
-                            ),
-                  ),
-                  const Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
-                ],
-              ),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [BoxShadow(color: Colors.grey.withValues(alpha: 0.1), blurRadius: 4)],
             ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Product Image
+                Expanded(
+                  flex: 3,
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                        child:
+                            picUrl.isNotEmpty
+                                ? Image.network(
+                                  picUrl,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.fill,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      color: Colors.grey.shade200,
+                                      child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                                    );
+                                  },
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      color: Colors.grey.shade200,
+                                      child: const Center(child: CircularProgressIndicator()),
+                                    );
+                                  },
+                                )
+                                : Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  color: Colors.grey.shade200,
+                                  child: const Icon(Icons.image, color: Colors.grey),
+                                ),
+                      ),
+                      const Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
+                    ],
+                  ),
+                ),
 
-            // Product Info
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
-                    Column(
+                // Product Info
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (promotionPrice.isNotEmpty && promotionPrice != '0') ...[
-                          Text('¥$promotionPrice', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 12)),
-                          Text('¥$price', style: const TextStyle(fontSize: 10, color: Colors.grey, decoration: TextDecoration.lineThrough)),
-                        ] else ...[
-                          Text('¥$price', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                        ],
+                        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (promotionPrice.isNotEmpty && promotionPrice != '0') ...[
+                              Text('¥$promotionPrice', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 12)),
+                              Text('¥$price', style: const TextStyle(fontSize: 10, color: Colors.grey, decoration: TextDecoration.lineThrough)),
+                            ] else ...[
+                              Text('¥$price', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                            ],
+                          ],
+                        ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
+              ],
+            ),
+          ),
+
+          // Loading overlay
+          if (_isLoadingRecommendedItem)
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(12)),
+                child: const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white), strokeWidth: 3)),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -391,6 +427,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           children: [
             Expanded(
               child: ListView(
+                controller: _scrollController,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 children: [
                   Stack(

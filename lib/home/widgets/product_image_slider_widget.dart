@@ -7,10 +7,7 @@ import 'package:get/get.dart';
 class ProductImageSliderWidget extends StatefulWidget {
   final ProductDetailController productController;
 
-  const ProductImageSliderWidget({
-    super.key,
-    required this.productController,
-  });
+  const ProductImageSliderWidget({super.key, required this.productController});
 
   @override
   State<ProductImageSliderWidget> createState() => _ProductImageSliderWidgetState();
@@ -26,7 +23,7 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
     'assets/images/unsplash0.png',
     'assets/images/unsplash1.png',
     'assets/images/unsplash2.png',
-    'assets/images/unsplash3.png'
+    'assets/images/unsplash3.png',
   ];
 
   @override
@@ -47,14 +44,10 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
       if (_pageController.hasClients) {
         final allImages = widget.productController.allImages;
         final imagesToShow = allImages.isNotEmpty ? allImages : fallbackImages;
-        
+
         if (imagesToShow.length > 1) {
           final nextPage = (selectedImage + 1) % imagesToShow.length;
-          _pageController.animateToPage(
-            nextPage,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
+          _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
         }
       }
     });
@@ -76,12 +69,12 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
       return Image.network(
         formattedUrl,
         width: double.infinity,
-        height: 200,
-        fit: BoxFit.cover,
+        height: double.infinity,
+        fit: BoxFit.cover, // ใช้ cover เพื่อให้รูปเต็มพื้นที่แต่คงอัตราส่วน
         errorBuilder: (context, error, stackTrace) {
           return Container(
             width: double.infinity,
-            height: 200,
+            height: double.infinity,
             color: Colors.grey.shade200,
             child: const Icon(Icons.image_not_supported, color: Colors.grey),
           );
@@ -90,7 +83,7 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
           if (loadingProgress == null) return child;
           return Container(
             width: double.infinity,
-            height: 200,
+            height: double.infinity,
             color: Colors.grey.shade200,
             child: const Center(child: CircularProgressIndicator()),
           );
@@ -101,8 +94,8 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
       return Image.asset(
         imageUrl,
         width: double.infinity,
-        height: 200,
-        fit: BoxFit.cover,
+        height: double.infinity,
+        fit: BoxFit.cover, // ใช้ cover เพื่อให้รูปเต็มพื้นที่แต่คงอัตราส่วน
       );
     }
   }
@@ -113,10 +106,7 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
       if (widget.productController.isLoading.value) {
         return Container(
           height: 200,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(12)),
           child: const Center(child: CircularProgressIndicator()),
         );
       }
@@ -130,30 +120,31 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
 
       return Column(
         children: [
-          // Image Slider
-          SizedBox(
-            height: 200,
+          // Image Slider with 1:1 aspect ratio
+          AspectRatio(
+            aspectRatio: 1.0, // 1:1 aspect ratio
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: imagesToShow.length == 1
-                  ? _buildSingleImage(imagesToShow[0], isUsingApiImages)
-                  : GestureDetector(
-                      onPanDown: (_) => _stopAutoSlide(),
-                      onPanEnd: (_) => _restartAutoSlide(),
-                      child: PageView.builder(
-                        controller: _pageController,
-                        onPageChanged: (index) {
-                          setState(() {
-                            selectedImage = index;
-                          });
-                        },
-                        itemCount: imagesToShow.length,
-                        itemBuilder: (context, index) {
-                          final imageUrl = imagesToShow[index];
-                          return _buildSingleImage(imageUrl, isUsingApiImages);
-                        },
+              child:
+                  imagesToShow.length == 1
+                      ? _buildSingleImage(imagesToShow[0], isUsingApiImages)
+                      : GestureDetector(
+                        onPanDown: (_) => _stopAutoSlide(),
+                        onPanEnd: (_) => _restartAutoSlide(),
+                        child: PageView.builder(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              selectedImage = index;
+                            });
+                          },
+                          itemCount: imagesToShow.length,
+                          itemBuilder: (context, index) {
+                            final imageUrl = imagesToShow[index];
+                            return _buildSingleImage(imageUrl, isUsingApiImages);
+                          },
+                        ),
                       ),
-                    ),
             ),
           ),
 
@@ -171,23 +162,14 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
                     child: GestureDetector(
                       onTap: () {
                         _stopAutoSlide();
-                        _pageController.animateToPage(
-                          index,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
+                        _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
                         _restartAutoSlide();
                       },
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 4),
                         width: 8,
                         height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: selectedImage == index
-                              ? Colors.black
-                              : Colors.grey.shade300,
-                        ),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: selectedImage == index ? Colors.black : Colors.grey.shade300),
                       ),
                     ),
                   ),

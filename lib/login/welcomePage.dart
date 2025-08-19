@@ -60,7 +60,7 @@ class WelcomePage extends StatelessWidget {
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: const Text('เริ่มต้นใช้งาน', style: TextStyle(fontSize: 20)),
+                    child: Text('เริ่มต้นใช้งาน', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -75,8 +75,8 @@ class WelcomePage extends StatelessWidget {
                     style: TextButton.styleFrom(foregroundColor: kdefaultTextColor, padding: EdgeInsets.zero),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: 20)),
+                      children: [
+                        Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                         SizedBox(width: 4),
                         CircleAvatar(
                           radius: 16, // ขนาดวงกลม
