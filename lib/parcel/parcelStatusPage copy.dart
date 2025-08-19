@@ -1,32 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/couponPage.dart';
 import 'package:gcargo/constants.dart';
-import 'package:gcargo/controllers/order_controller.dart';
-import 'package:gcargo/models/legalimport.dart';
-import 'package:gcargo/models/orders/ordersPageNew.dart';
 import 'package:gcargo/parcel/claimPackagePage.dart';
 import 'package:gcargo/parcel/parcelDetailPage.dart';
 import 'package:gcargo/parcel/shippingMethodPage.dart';
-import 'package:gcargo/parcel/widgets/date_range_picker_widget.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class ParcelStatusPage extends StatefulWidget {
-  const ParcelStatusPage({super.key});
+class ParcelStatusPage1 extends StatefulWidget {
+  const ParcelStatusPage1({super.key});
 
   @override
-  State<ParcelStatusPage> createState() => _ParcelStatusPageState();
+  State<ParcelStatusPage1> createState() => _ParcelStatusPage1State();
 }
 
-class _ParcelStatusPageState extends State<ParcelStatusPage> {
+class _ParcelStatusPage1State extends State<ParcelStatusPage1> {
   final List<String> statuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดตู้', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอจัดส่ง', 'สำเร็จ'];
-  final TextEditingController _dateController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
 
   // เพิ่ม state สำหรับ checkbox ของสถานะ "ถึงโกดังไทย"
   Set<String> selectedParcels = {};
 
-  // เพิ่ม OrderController
-  late final OrderController orderController;
+  final Map<String, int> statusCounts = {
+    'ทั้งหมด': 0,
+    'รอส่งไปโกดังจีน': 1,
+    'ถึงโกดังจีน': 1,
+    'ปิดตู้': 1,
+    'ถึงโกดังไทย': 3, // เพิ่มจำนวนเป็น 3
+    'กำลังตรวจสอบ': 1,
+    'รอจัดส่ง': 1,
+    'สำเร็จ': 1,
+  };
 
   int selectedStatusIndex = 0;
   bool isRequestTaxCertificate = false; // สำหรับ radio button ขอใบรับรองภาษี
@@ -36,89 +39,12 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
   void initState() {
     super.initState();
     _dateController.text = '01/01/2024 - 01/07/2025'; // ค่าเริ่มต้น
-
-    // Initialize OrderController และเรียก API
-    orderController = Get.put(OrderController());
-    orderController.getDeliveryOrders();
-  }
-
-  @override
-  void dispose() {
-    _dateController.dispose();
-    super.dispose();
-  }
-
-  // ฟังก์ชั่นสำหรับคำนวณจำนวนตามสถานะ
-  Map<String, int> _calculateStatusCounts() {
-    final counts = <String, int>{};
-
-    // Initialize all statuses with 0
-    for (String status in statuses) {
-      counts[status] = 0;
-    }
-
-    // Count from API data
-    int totalCount = 0;
-    for (LegalImport legalImport in orderController.deilveryOrders) {
-      if (legalImport.delivery_orders != null) {
-        for (OrdersPageNew order in legalImport.delivery_orders!) {
-          totalCount++;
-          final status = _mapApiStatusToDisplayStatus(order.status ?? '');
-          if (counts.containsKey(status)) {
-            counts[status] = (counts[status] ?? 0) + 1;
-          }
-        }
-      }
-    }
-
-    counts['ทั้งหมด'] = totalCount;
-    return counts;
-  }
-
-  // ฟังก์ชั่นสำหรับแปลงสถานะจาก API เป็นสถานะที่แสดง
-  String _mapApiStatusToDisplayStatus(String apiStatus) {
-    switch (apiStatus.toLowerCase()) {
-      case 'pending_send_to_china':
-      case 'รอส่งไปโกดังจีน':
-        return 'รอส่งไปโกดังจีน';
-      case 'arrived_china_warehouse':
-      case 'ถึงโกดังจีน':
-        return 'ถึงโกดังจีน';
-      case 'in_transit':
-      case 'ปิดตู้':
-        return 'ปิดตู้';
-      case 'arrived_thailand_warehouse':
-      case 'ถึงโกดังไทย':
-        return 'ถึงโกดังไทย';
-      case 'awaiting_payment':
-      case 'กำลังตรวจสอบ':
-        return 'กำลังตรวจสอบ';
-      case 'delivered':
-      case 'รอจัดส่ง':
-        return 'รอจัดส่ง';
-      case 'completed':
-      case 'สำเร็จ':
-        return 'สำเร็จ';
-      default:
-        return 'รอส่งไปโกดังจีน'; // default status
-    }
   }
 
   // Method สำหรับอัปเดต selection ของพัสดุทั้งหมดในสถานะ "ถึงโกดังไทย"
   void _updateAllParcelsSelection() {
-    // รายการพัสดุทั้งหมดในสถานะ "ถึงโกดังไทย" จาก API
-    List<String> allThailandParcels = [];
-
-    for (LegalImport legalImport in orderController.deilveryOrders) {
-      if (legalImport.delivery_orders != null) {
-        for (OrdersPageNew order in legalImport.delivery_orders!) {
-          final orderStatus = _mapApiStatusToDisplayStatus(order.status ?? '');
-          if (orderStatus == 'ถึงโกดังไทย') {
-            allThailandParcels.add(order.code ?? '');
-          }
-        }
-      }
-    }
+    // รายการพัสดุทั้งหมดในสถานะ "ถึงโกดังไทย"
+    final allThailandParcels = ['00044', '00051', '00052'];
 
     if (isSelectAll) {
       // เลือกทั้งหมด
@@ -296,51 +222,55 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
 
   // สร้างข้อมูลการ์ดตามสถานะ
   List<Widget> _getCardsForStatus(String status) {
-    // Get filtered orders from API
-    List<OrdersPageNew> filteredOrders = [];
-
-    for (LegalImport legalImport in orderController.deilveryOrders) {
-      if (legalImport.delivery_orders != null) {
-        for (OrdersPageNew order in legalImport.delivery_orders!) {
-          final orderStatus = _mapApiStatusToDisplayStatus(order.status ?? '');
-
-          if (status == 'ทั้งหมด' || orderStatus == status) {
-            filteredOrders.add(order);
-          }
-        }
-      }
+    switch (status) {
+      case 'ทั้งหมด':
+        return [
+          _buildDateGroup('02/07/2025', [
+            _buildParcelCard(parcelNo: '00044', status: 'ถึงโกดังไทย', showActionButton: false),
+            _buildParcelCard(parcelNo: '00051', status: 'ถึงโกดังไทย', showActionButton: false),
+            _buildParcelCard(parcelNo: '00045', status: 'รอส่งไปโกดังจีน', showActionButton: false),
+          ]),
+          _buildDateGroup('01/07/2025', [
+            _buildParcelCard(parcelNo: '00052', status: 'ถึงโกดังไทย', showActionButton: false),
+            _buildParcelCard(parcelNo: '00046', status: 'สำเร็จ', showActionButton: true),
+            _buildParcelCard(parcelNo: '00047', status: 'กำลังตรวจสอบ', showActionButton: false),
+          ]),
+        ];
+      case 'รอส่งไปโกดังจีน':
+        return [
+          _buildDateGroup('02/07/2025', [_buildParcelCard(parcelNo: '00045', status: 'รอส่งไปโกดังจีน', showActionButton: false)]),
+        ];
+      case 'ถึงโกดังจีน':
+        return [
+          _buildDateGroup('01/07/2025', [_buildParcelCard(parcelNo: '00048', status: 'ถึงโกดังจีน', showActionButton: false)]),
+        ];
+      case 'ปิดตู้':
+        return [
+          _buildDateGroup('30/06/2025', [_buildParcelCard(parcelNo: '00049', status: 'ปิดตู้', showActionButton: false)]),
+        ];
+      case 'ถึงโกดังไทย':
+        return [
+          _buildDateGroup('02/07/2025', [
+            _buildParcelCard(parcelNo: '00044', status: 'ถึงโกดังไทย', showActionButton: false),
+            _buildParcelCard(parcelNo: '00051', status: 'ถึงโกดังไทย', showActionButton: false),
+          ]),
+          _buildDateGroup('01/07/2025', [_buildParcelCard(parcelNo: '00052', status: 'ถึงโกดังไทย', showActionButton: false)]),
+        ];
+      case 'กำลังตรวจสอบ':
+        return [
+          _buildDateGroup('01/07/2025', [_buildParcelCard(parcelNo: '00047', status: 'กำลังตรวจสอบ', showActionButton: false)]),
+        ];
+      case 'รอจัดส่ง':
+        return [
+          _buildDateGroup('29/06/2025', [_buildParcelCard(parcelNo: '00050', status: 'รอจัดส่ง', showActionButton: false)]),
+        ];
+      case 'สำเร็จ':
+        return [
+          _buildDateGroup('01/07/2025', [_buildParcelCard(parcelNo: '00046', status: 'สำเร็จ', showActionButton: true)]),
+        ];
+      default:
+        return [];
     }
-
-    // Group orders by date
-    Map<String, List<OrdersPageNew>> groupedOrders = {};
-    for (OrdersPageNew order in filteredOrders) {
-      String dateKey = _formatDate(order.created_at);
-      if (!groupedOrders.containsKey(dateKey)) {
-        groupedOrders[dateKey] = [];
-      }
-      groupedOrders[dateKey]!.add(order);
-    }
-
-    // Convert to widgets
-    List<Widget> widgets = [];
-    List<String> sortedDates = groupedOrders.keys.toList()..sort((a, b) => b.compareTo(a)); // Sort descending (newest first)
-
-    for (String date in sortedDates) {
-      List<Widget> cards = [];
-      for (OrdersPageNew order in groupedOrders[date]!) {
-        final orderStatus = _mapApiStatusToDisplayStatus(order.status ?? '');
-        cards.add(_buildParcelCard(parcelNo: order.code ?? 'N/A', status: orderStatus, showActionButton: orderStatus == 'สำเร็จ'));
-      }
-      widgets.add(_buildDateGroup(date, cards));
-    }
-
-    return widgets;
-  }
-
-  // ฟังก์ชั่นสำหรับ format วันที่
-  String _formatDate(DateTime? dateTime) {
-    if (dateTime == null) return DateFormat('dd/MM/yyyy').format(DateTime.now());
-    return DateFormat('dd/MM/yyyy').format(dateTime);
   }
 
   @override
@@ -358,16 +288,33 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
             children: [
               Text('สถานะพัสดุ', style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
               SizedBox(width: 20),
-              DateRangePickerWidget(
-                controller: _dateController,
-                hintText: 'เลือกช่วงวันที่',
-                onDateRangeSelected: (DateTimeRange? picked) {
-                  if (picked != null) {
-                    setState(() {
-                      // อัปเดต UI หากต้องการ
-                    });
-                  }
-                },
+              Expanded(
+                child: TextFormField(
+                  controller: _dateController,
+                  readOnly: true,
+                  onTap: () async {
+                    DateTimeRange? picked = await showDateRangePicker(
+                      context: context,
+                      firstDate: DateTime(2023),
+                      lastDate: DateTime(2030),
+                      initialDateRange: DateTimeRange(start: DateTime(2024, 1, 1), end: DateTime(2025, 7, 1)),
+                    );
+                    if (picked != null) {
+                      String formatted = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
+                      setState(() {
+                        _dateController.text = formatted;
+                      });
+                    }
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 18)),
+                    hintText: 'เลือกช่วงวันที่',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),
@@ -376,69 +323,47 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
           iconTheme: const IconThemeData(color: Colors.black),
         ),
       ),
-      body: Obx(() {
-        if (orderController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
 
-        if (orderController.hasError.value) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.error_outline, size: 64, color: Colors.grey),
-                SizedBox(height: 16),
-                Text(orderController.errorMessage.value, style: TextStyle(color: Colors.grey)),
-                SizedBox(height: 16),
-                ElevatedButton(onPressed: () => orderController.getDeliveryOrders(), child: Text('ลองใหม่')),
-              ],
+            // 🔍 Search Box
+            TextFormField(
+              decoration: InputDecoration(
+                hintText: 'ค้นหาเลขที่ออเดอร์/เลขขนส่งจีน',
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+              ),
             ),
-          );
-        }
+            const SizedBox(height: 16),
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-
-              // 🔍 Search Box
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'ค้นหาเลขที่ออเดอร์/เลขขนส่งจีน',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                ),
+            // 🔄 Scrollable Chips
+            SizedBox(
+              height: 38,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: statuses.length,
+                padding: const EdgeInsets.only(right: 4),
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final label = statuses[index];
+                  final count = statusCounts[label] ?? 0;
+                  return _buildStatusChip(label, count, index == selectedStatusIndex, index);
+                },
               ),
-              const SizedBox(height: 16),
+            ),
+            const SizedBox(height: 24),
 
-              // 🔄 Scrollable Chips
-              SizedBox(
-                height: 38,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: statuses.length,
-                  padding: const EdgeInsets.only(right: 4),
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final label = statuses[index];
-                    final statusCounts = _calculateStatusCounts();
-                    final count = statusCounts[label] ?? 0;
-                    return _buildStatusChip(label, count, index == selectedStatusIndex, index);
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // 📦 Parcel List
-              Expanded(child: ListView(children: _getCardsForStatus(statuses[selectedStatusIndex]))),
-            ],
-          ),
-        );
-      }),
+            // 📦 Parcel List
+            Expanded(child: ListView(children: _getCardsForStatus(statuses[selectedStatusIndex]))),
+          ],
+        ),
+      ),
       bottomNavigationBar: selectedStatusIndex == statuses.indexOf('ถึงโกดังไทย') ? _buildBottomPanel() : null,
     );
   }
