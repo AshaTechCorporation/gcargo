@@ -72,9 +72,11 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
       initialDateRange: startDate != null && endDate != null ? DateTimeRange(start: startDate!, end: endDate!) : null,
       builder: (context, child) {
         return Theme(
-          data: Theme.of(
-            context,
-          ).copyWith(colorScheme: ColorScheme.light(primary: kButtonColor, onPrimary: Colors.white, surface: Colors.white, onSurface: Colors.black)),
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(primary: kButtonColor, onPrimary: Colors.white, surface: Colors.white, onSurface: Colors.black),
+            dialogTheme: const DialogThemeData(backgroundColor: Colors.white),
+            canvasColor: Colors.white,
+          ),
           child: child!,
         );
       },

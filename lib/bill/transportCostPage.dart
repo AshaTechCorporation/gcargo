@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gcargo/bill/documentDetailPage.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
+import 'package:gcargo/parcel/widgets/date_range_picker_widget.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -15,10 +16,16 @@ class TransportCostPage extends StatefulWidget {
 class _TransportCostPageState extends State<TransportCostPage> {
   String selectedStatus = 'ทั้งหมด';
   final OrderController orderController = Get.put(OrderController());
+  final TextEditingController _dateController = TextEditingController();
+
+  // Date filter variables
+  DateTime? startDate;
+  DateTime? endDate;
 
   @override
   void initState() {
     super.initState();
+    _dateController.text = 'เลือกช่วงวันที่';
     // Call getBills when page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       orderController.getBills();
@@ -82,8 +89,27 @@ class _TransportCostPageState extends State<TransportCostPage> {
         });
       }
 
-      // ✅ กรองตามสถานะ
-      final filteredData = selectedStatus == 'ทั้งหมด' ? displayOrders : displayOrders.where((e) => e['status'] == selectedStatus).toList();
+      // ✅ กรองตามสถานะและวันที่
+      var filteredData = selectedStatus == 'ทั้งหมด' ? displayOrders : displayOrders.where((e) => e['status'] == selectedStatus).toList();
+
+      // กรองตามช่วงวันที่
+      if (startDate != null && endDate != null) {
+        filteredData =
+            filteredData.where((item) {
+              final itemDateStr = item['date'] as String;
+              if (itemDateStr.isEmpty) return false;
+
+              try {
+                final itemDate = DateFormat('dd/MM/yyyy').parse(itemDateStr);
+                final startOfDay = DateTime(startDate!.year, startDate!.month, startDate!.day);
+                final endOfDay = DateTime(endDate!.year, endDate!.month, endDate!.day, 23, 59, 59);
+
+                return itemDate.isAfter(startOfDay.subtract(const Duration(days: 1))) && itemDate.isBefore(endOfDay.add(const Duration(days: 1)));
+              } catch (e) {
+                return false;
+              }
+            }).toList();
+      }
 
       // ✅ นับแต่ละสถานะ (เหลือ 3 สถานะ)
       final int totalCount = displayOrders.length;
@@ -110,27 +136,26 @@ class _TransportCostPageState extends State<TransportCostPage> {
                         child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
                       ),
                     ),
-                    const Expanded(child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                    GestureDetector(
-                      onTap: () {
-                        // TODO: Add date range picker
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentDetailPage()));
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset('assets/icons/calendar_icon.png', width: 18, height: 18),
-                            const SizedBox(width: 8),
-                            const Text('01/01/2024 - 01/07/2025', style: TextStyle(fontSize: 13)),
-                          ],
-                        ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          // TODO: Add date range picker
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentDetailPage()));
+                        },
+                        child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
+                    ),
+                    DateRangePickerWidget(
+                      controller: _dateController,
+                      hintText: 'เลือกช่วงวันที่',
+                      onDateRangeSelected: (DateTimeRange? picked) {
+                        if (picked != null) {
+                          setState(() {
+                            startDate = picked.start;
+                            endDate = picked.end;
+                          });
+                        }
+                      },
                     ),
                   ],
                 ),

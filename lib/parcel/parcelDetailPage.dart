@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/parcel/parcelSubDetailPage.dart';
 import 'package:gcargo/services/orderService.dart';
+import 'package:intl/intl.dart';
 
 class ParcelDetailPage extends StatefulWidget {
   final String status;
@@ -118,7 +119,7 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
               children: [
                 _buildSectionTitle('assets/icons/calendar.png', 'กำหนดการ'),
                 const SizedBox(height: 12),
-                _buildInfoRow('ถึงโกดังจีน', '-'),
+                _buildInfoRow('ถึงโกดังจีน', _formatDate(orderData?['created_at'] ?? '-')),
                 _buildInfoRow('ออกจากโกดังจีน', '-'),
                 _buildInfoRow('คาดจะถึงไทย', '-'),
                 _buildInfoRow('โกดังไทยรับสินค้า', '-'),
@@ -238,6 +239,25 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
 
   int _getDeliveryOrderListsCount() {
     return _getDeliveryOrderLists().length;
+  }
+
+  // ฟังก์ชั่นสำหรับ format วันที่
+  String _formatDate(dynamic dateInput) {
+    if (dateInput == null) return '-';
+
+    try {
+      DateTime dateTime;
+      if (dateInput is String) {
+        dateTime = DateTime.parse(dateInput);
+      } else if (dateInput is DateTime) {
+        dateTime = dateInput;
+      } else {
+        return '-';
+      }
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    } catch (e) {
+      return '-';
+    }
   }
 
   Widget _buildInfoRow(String label, String value) {

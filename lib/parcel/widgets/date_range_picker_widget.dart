@@ -6,12 +6,7 @@ class DateRangePickerWidget extends StatelessWidget {
   final String hintText;
   final Function(DateTimeRange?)? onDateRangeSelected;
 
-  const DateRangePickerWidget({
-    super.key,
-    required this.controller,
-    this.hintText = 'เลือกช่วงวันที่',
-    this.onDateRangeSelected,
-  });
+  const DateRangePickerWidget({super.key, required this.controller, this.hintText = 'เลือกช่วงวันที่', this.onDateRangeSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +19,23 @@ class DateRangePickerWidget extends StatelessWidget {
             context: context,
             firstDate: DateTime(2023),
             lastDate: DateTime(2030),
-            initialDateRange: DateTimeRange(
-              start: DateTime(2024, 1, 1), 
-              end: DateTime(2025, 7, 1)
-            ),
+            initialDateRange: DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(days: 7))),
+            builder: (context, child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: ColorScheme.light(primary: Colors.blue, onPrimary: Colors.white, surface: Colors.white, onSurface: Colors.black),
+                  dialogTheme: const DialogThemeData(backgroundColor: Colors.white),
+                  canvasColor: Colors.white,
+                ),
+                child: child!,
+              );
+            },
           );
-          
+
           if (picked != null) {
             String formatted = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
             controller.text = formatted;
-            
+
             // Callback เมื่อเลือกวันที่
             if (onDateRangeSelected != null) {
               onDateRangeSelected!(picked);
@@ -41,10 +43,7 @@ class DateRangePickerWidget extends StatelessWidget {
           }
         },
         decoration: InputDecoration(
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(12.0), 
-            child: Image.asset('assets/icons/calendar_icon.png', width: 18)
-          ),
+          prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 18)),
           hintText: hintText,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

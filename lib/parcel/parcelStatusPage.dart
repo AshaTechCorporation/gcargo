@@ -22,6 +22,10 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
   final List<String> statuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดตู้', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอจัดส่ง', 'สำเร็จ'];
   final TextEditingController _dateController = TextEditingController();
 
+  // Date filter variables
+  DateTime? startDate;
+  DateTime? endDate;
+
   // เพิ่ม state สำหรับ checkbox ของสถานะ "ถึงโกดังไทย"
   Set<String> selectedParcels = {};
 
@@ -35,7 +39,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
   @override
   void initState() {
     super.initState();
-    _dateController.text = '01/01/2024 - 01/07/2025'; // ค่าเริ่มต้น
+    //_dateController.text = '01/01/2024 - 01/07/2025'; // ค่าเริ่มต้น
 
     // Initialize OrderController และเรียก API
     orderController = Get.put(OrderController());
@@ -175,6 +179,8 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
     required bool showActionButton,
     required int orderId,
     required String orderCode,
+    required String warehouseCode,
+    required String totalPrice,
   }) {
     return GestureDetector(
       onTap: () {
@@ -214,7 +220,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('เลขบิลหน้าโกดัง'),
-                status == 'รอส่งไปโกดังจีน' ? SizedBox() : Text('000000', style: TextStyle(fontWeight: FontWeight.bold)),
+                status == 'รอส่งไปโกดังจีน' ? SizedBox() : Text(warehouseCode, style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: 8),
@@ -244,7 +250,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                     activeColor: const Color(0xFF427D9D),
                   ),
                   const SizedBox(width: 8),
-                  Text('8,516.00฿'),
+                  Text('$totalPrice฿'),
                 ],
               ],
             ),
@@ -310,9 +316,19 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         for (OrdersPageNew order in legalImport.delivery_orders!) {
           final orderStatus = _mapApiStatusToDisplayStatus(order.status ?? '');
 
-          if (status == 'ทั้งหมด' || orderStatus == status) {
-            filteredOrders.add(order);
+          // Filter by status
+          if (status != 'ทั้งหมด' && orderStatus != status) continue;
+
+          // Filter by date range
+          if (startDate != null && endDate != null && order.created_at != null) {
+            final orderDate = order.created_at!;
+            final startOfDay = DateTime(startDate!.year, startDate!.month, startDate!.day);
+            final endOfDay = DateTime(endDate!.year, endDate!.month, endDate!.day, 23, 59, 59);
+
+            if (orderDate.isBefore(startOfDay) || orderDate.isAfter(endOfDay)) continue;
           }
+
+          filteredOrders.add(order);
         }
       }
     }
@@ -342,6 +358,8 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
             showActionButton: orderStatus == 'สำเร็จ',
             orderId: order.id ?? 0,
             orderCode: order.order?.code ?? 'N/A',
+            warehouseCode: order.code ?? 'N/A',
+            totalPrice: order.order?.total_price ?? '0.00',
           ),
         );
       }
@@ -378,7 +396,8 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                 onDateRangeSelected: (DateTimeRange? picked) {
                   if (picked != null) {
                     setState(() {
-                      // อัปเดต UI หากต้องการ
+                      startDate = picked.start;
+                      endDate = picked.end;
                     });
                   }
                 },
