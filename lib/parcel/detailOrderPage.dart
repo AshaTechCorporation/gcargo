@@ -402,10 +402,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
             _buildPriceRow('ค่าส่งในจีน', '0.00฿'),
 
           // Deposit fee
-          if (depositFee > 0)
-            _buildPriceRow('ค่ามัดจำ', '¥${depositFee.toStringAsFixed(2)} (${depositBaht.toStringAsFixed(2)}฿)')
-          else
-            _buildPriceRow('ค่ามัดจำ', '0.00฿'),
+          if (depositFee > 0) _buildPriceRow('ค่ามัดจำ', ' (${depositFee.toStringAsFixed(2)}฿)') else _buildPriceRow('ค่ามัดจำ', '0.00฿'),
 
           // Service fee
           _buildPriceRow('ค่าบริการ (3%)', '${serviceFee.toStringAsFixed(2)}฿'),
