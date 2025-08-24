@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Form(
             key: _formKey,
             child: Column(
@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 4),
 
                 // 🔹 คำอธิบาย
-                Text('บริการขนส่งระหว่างประเทศรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน', style: TextStyle(fontSize: 14, color: kHintTextColor)),
+                Text('บริการขนส่งระหว่างประเทศรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน', style: TextStyle(fontSize: 16, color: kHintTextColor)),
                 SizedBox(height: 24),
 
                 // 🔹 Email
