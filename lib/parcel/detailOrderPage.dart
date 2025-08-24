@@ -161,7 +161,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                         : SizedBox(),
                     SizedBox(height: 12),
                     _buildInfoRow('ติดต่อ', '($memberCode)'),
-                    _buildInfoRow('รูปแบบการขนส่ง', transportType),
+                    _buildInfoRow('รูปแบบการขนส่ง', transportType == 'Ship' ? 'ทางเรือ' : 'ทางรถ'),
                     _buildInfoRow('หมายเหตุของลูกค้า', customerNote),
                     _buildInfoRow('CS หมายเหตุ', '-'),
                     _buildInfoRow('วันที่สั่งซื้อ', orderDate),
@@ -441,7 +441,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         const Text('ข้อมูลเพิ่มเติม', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
 
-        if (order?.shipping_type != null) _buildPriceRow('ประเภทการขนส่ง', order!.shipping_type!),
+        if (order?.shipping_type != null) _buildPriceRow('ประเภทการขนส่ง', order!.shipping_type! == 'Ship' ? 'ทางเรือ' : 'ทางรถ'),
 
         if (order?.created_at != null) _buildPriceRow('วันที่สร้างออเดอร์', _formatDate(order!.created_at.toString())),
 

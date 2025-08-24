@@ -71,6 +71,8 @@ class OrderController extends GetxController {
     }
   }
 
+  Future<void> getDeliveryOrderById(int id) async {}
+
   Future<void> getOrderById(int id) async {
     if (id <= 0) return;
 

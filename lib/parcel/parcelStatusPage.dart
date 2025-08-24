@@ -169,11 +169,17 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
     );
   }
 
-  Widget _buildParcelCard({required String parcelNo, required String status, required bool showActionButton}) {
+  Widget _buildParcelCard({
+    required String parcelNo,
+    required String status,
+    required bool showActionButton,
+    required int orderId,
+    required String orderCode,
+  }) {
     return GestureDetector(
       onTap: () {
-        // ไปหน้า parcel detail
-        Navigator.push(context, MaterialPageRoute(builder: (_) => ParcelDetailPage(status: status)));
+        // ไปหน้า parcel detail พร้อมส่ง ID
+        Navigator.push(context, MaterialPageRoute(builder: (_) => ParcelDetailPage(status: status, id: orderId)));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -200,7 +206,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [const Text('เลขบิลสั่งซื้อ'), const Text('167304', style: TextStyle(fontWeight: FontWeight.bold))],
+              children: [const Text('เลขบิลสั่งซื้อ'), Text(orderCode, style: const TextStyle(fontWeight: FontWeight.bold))],
             ),
 
             const SizedBox(height: 8),
@@ -329,7 +335,15 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
       List<Widget> cards = [];
       for (OrdersPageNew order in groupedOrders[date]!) {
         final orderStatus = _mapApiStatusToDisplayStatus(order.status ?? '');
-        cards.add(_buildParcelCard(parcelNo: order.code ?? 'N/A', status: orderStatus, showActionButton: orderStatus == 'สำเร็จ'));
+        cards.add(
+          _buildParcelCard(
+            parcelNo: order.po_no ?? 'N/A',
+            status: orderStatus,
+            showActionButton: orderStatus == 'สำเร็จ',
+            orderId: order.id ?? 0,
+            orderCode: order.order?.code ?? 'N/A',
+          ),
+        );
       }
       widgets.add(_buildDateGroup(date, cards));
     }

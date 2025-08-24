@@ -754,7 +754,10 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
             // 🔹 ปกติ
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text('การขนส่ง', style: TextStyle(fontSize: 16)), Text(order['transport'], style: TextStyle(fontSize: 16))],
+              children: [
+                Text('การขนส่ง', style: TextStyle(fontSize: 16)),
+                Text(order['transport'] == 'Ship' ? 'ทางเรือ' : 'ทางรถ', style: TextStyle(fontSize: 16)),
+              ],
             ),
             SizedBox(height: 4),
             Row(
