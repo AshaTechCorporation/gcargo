@@ -134,8 +134,8 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
               children: [
                 _buildSectionTitle('assets/icons/book.png', 'รายละเอียดสินค้า'),
                 const SizedBox(height: 12),
-                _buildInfoRow('เลขบิลสั่งซื้อ', orderData?['code'] ?? '-'),
-                _buildInfoRow('เลขบิลหน้าโกดัง', orderData?['po_no'] ?? '-'),
+                _buildInfoRow('เลขบิลสั่งซื้อ', orderData?['order']?['code'] ?? '-'),
+                _buildInfoRow('เลขบิลหน้าโกดัง', orderData?['code'] ?? '-'),
                 _buildInfoRow('ประเภทสินค้า', orderData?['store']?['name'] ?? '-'),
                 _buildInfoRow('หมายเหตุของลูกค้า', orderData?['note'] ?? '-'),
               ],
