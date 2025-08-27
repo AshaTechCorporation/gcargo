@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "385803265802",
+    "project_id": "gcargo-b2beb",
+    "storage_bucket": "gcargo-b2beb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385803265802:android:33900a3e001ec89cb27cf3",
+        "android_client_info": {
+          "package_name": "com.asha.gcargo.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6IacT2VhxW9WKen0CZqRLvRxMVTH7l28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyB772aasO7qcapg5ddmxUdCiI6I1NsbPgI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>385803265802</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.asha.gcargo.app</string>
+	<key>PROJECT_ID</key>
+	<string>gcargo-b2beb</string>
+	<key>STORAGE_BUCKET</key>
+	<string>gcargo-b2beb.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:385803265802:ios:39d76a64e872e353b27cf3</string>
+</dict>
+</plist>
