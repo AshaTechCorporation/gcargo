@@ -127,13 +127,14 @@ class HomeService {
   static Future getItemSearchImg({required String searchImg, required String type}) async {
     // 1) percent‐encode แล้วสร้าง URI
     final encodedImg = Uri.encodeComponent(searchImg);
-    final uri = Uri.https('api.icom.la', '/$type/api/call.php', {
-      'item_search_img': 'item_search_img',
-      'lang': 'zh-CN',
-      'imgid': encodedImg,
-      'page': '1',
-      'api_key': 'tegcargo06062024',
-    });
+    final uri = Uri.parse("https://api.icom.la/$type/api/call.php?api_key=tegcargo06062024&item_search_img&imgid=$encodedImg&lang=zh-CN&page=1");
+    // final uri = Uri.https('api.icom.la', '/$type/api/call.php', {
+    //   'item_search_img': 'item_search_img',
+    //   'lang': 'zh-CN',
+    //   'imgid': encodedImg,
+    //   'page': '1',
+    //   'api_key': 'tegcargo06062024',
+    // });
 
     final client =
         HttpClient()
