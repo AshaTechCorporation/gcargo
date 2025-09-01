@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD6IacT2VhxW9WKen0CZqRLvRxMVTH7l28',
-    appId: '1:385803265802:android:33900a3e001ec89cb27cf3',
+    appId: '1:385803265802:android:2e5b8c7f141da7e2b27cf3',
     messagingSenderId: '385803265802',
     projectId: 'gcargo-b2beb',
     storageBucket: 'gcargo-b2beb.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyB772aasO7qcapg5ddmxUdCiI6I1NsbPgI',
-    appId: '1:385803265802:ios:39d76a64e872e353b27cf3',
+    appId: '1:385803265802:ios:536088878a84ca14b27cf3',
     messagingSenderId: '385803265802',
     projectId: 'gcargo-b2beb',
     storageBucket: 'gcargo-b2beb.firebasestorage.app',
-    iosBundleId: 'com.asha.gcargo.app',
+    iosBundleId: 'com.gcargo.app.asha',
   );
+
 }
