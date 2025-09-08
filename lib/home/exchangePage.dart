@@ -397,7 +397,7 @@ class _ExchangePageState extends State<ExchangePage> {
                     Icon(Icons.currency_exchange, color: Colors.blue),
                     SizedBox(width: 8),
                     Text(
-                      'เรทแลกเปลี่ยน Alipay: ${rate != null ? "1 ¥ = $rate ฿" : "กำลังโหลด..."}',
+                      'เรทแลกเปลี่ยน บัญชี G-cargo-A: ${rate != null ? "1 ¥ = $rate ฿" : "กำลังโหลด..."}',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ],
@@ -470,9 +470,9 @@ class _ExchangePageState extends State<ExchangePage> {
                   ),
                   child: Row(
                     children: [
-                      Image.asset(icons[index], width: 28, height: 28),
+                      //Image.asset(icons[index], width: 28, height: 28),
                       SizedBox(width: 12),
-                      Expanded(child: Text(paymentMethods[index], style: TextStyle(fontSize: 16))),
+                      Expanded(child: Text(_getAccountName(paymentMethods[index]), style: TextStyle(fontSize: 16))),
                       Radio(value: index, groupValue: selectedMethod, onChanged: (_) => setState(() => selectedMethod = index)),
                     ],
                   ),
@@ -714,6 +714,18 @@ class _ExchangePageState extends State<ExchangePage> {
         ),
       ),
     );
+  }
+
+  // ฟังก์ชั่นสำหรับแปลงชื่อ payment method เป็นชื่อบัญชี
+  String _getAccountName(String paymentMethod) {
+    switch (paymentMethod) {
+      case 'Alipay':
+        return 'บัญชี G-cargo-A';
+      case 'Wechat pay':
+        return 'บัญชี G-cargo-W';
+      default:
+        return paymentMethod;
+    }
   }
 
   Widget _buildInputField(String label, {TextEditingController? controller, TextInputType? keyboardType}) {

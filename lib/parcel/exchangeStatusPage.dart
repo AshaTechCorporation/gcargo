@@ -342,14 +342,14 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
               children: [
                 Row(
                   children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF1F1F1)),
-                      child: Center(child: Image.asset(iconPath, width: 20, height: 20)),
-                    ),
+                    // Container(
+                    //   width: 36,
+                    //   height: 36,
+                    //   decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF1F1F1)),
+                    //   child: Center(child: Image.asset(iconPath, width: 20, height: 20)),
+                    // ),
                     const SizedBox(width: 8),
-                    Text(methodName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(_getAccountName(methodName), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ],
                 ),
                 Text(displayStatus, style: const TextStyle(fontSize: 16, color: Colors.grey)),
@@ -397,5 +397,17 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
         ),
       ),
     );
+  }
+
+  // ฟังก์ชั่นสำหรับแปลงชื่อ payment method เป็นชื่อบัญชี
+  String _getAccountName(String paymentMethod) {
+    switch (paymentMethod) {
+      case 'Alipay':
+        return 'บัญชี G-cargo-A';
+      case 'WeChat Pay':
+        return 'บัญชี G-cargo-W';
+      default:
+        return paymentMethod;
+    }
   }
 }
