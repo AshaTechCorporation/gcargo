@@ -13,7 +13,7 @@ class LoginService {
         .timeout(const Duration(minutes: 1));
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
-      final dataOut = {'token': data['token'], "userID": data['data']['id']};
+      final dataOut = {'token': data['token'], "userID": data['data']['id'], "point_balance": data['data']['point_balance']};
       return dataOut;
     } else {
       final data = convert.jsonDecode(response.body);

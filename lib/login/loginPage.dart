@@ -139,6 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                                     final SharedPreferences prefs = await _prefs;
                                     await prefs.setString('token', token['token']);
                                     await prefs.setInt('userID', token['userID']);
+                                    await prefs.setString('point_balance', token['point_balance']);
 
                                     // โหลดข้อมูลผู้ใช้ใน HomeController
                                     final homeController = Get.find<HomeController>();

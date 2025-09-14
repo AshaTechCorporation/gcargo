@@ -33,6 +33,7 @@ class HomeController extends GetxController {
   var alipayPayment = <Payment>[].obs;
   var currentUser = Rxn<User>();
   var alipayPaymentById = Rxn<Payment>();
+  var reward = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
@@ -250,6 +251,21 @@ class HomeController extends GetxController {
       final paymentData = await HomeService.getAlipayPaymentById(id: id);
       if (paymentData != null) {
         alipayPaymentById.value = paymentData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูล');
+      }
+    } catch (e) {
+      log('❌ Error in searchItems: $e');
+      _setErrorRate('$e');
+    }
+  }
+
+  // Method to fetch reward
+  Future<void> getRewardFromAPI() async {
+    try {
+      final rewardData = await HomeService.getReward();
+      if (rewardData != null) {
+        reward.value = rewardData;
       } else {
         _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูล');
       }

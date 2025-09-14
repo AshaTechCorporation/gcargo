@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/controllers/account_controller.dart';
+import 'package:get/get.dart';
 
 class CouponSelectionPage extends StatefulWidget {
   const CouponSelectionPage({super.key});
@@ -10,11 +12,17 @@ class CouponSelectionPage extends StatefulWidget {
 
 class _CouponSelectionPageState extends State<CouponSelectionPage> {
   int? selectedCouponIndex;
+  late final AccountController accountController;
 
-  final List<Map<String, String>> coupons = [
-    {'title': 'ส่วนลด 50฿', 'condition': 'เมื่อซื้อขั้นต่ำ 990฿', 'code': 'C20240605100001'},
-    {'title': 'ส่วนลด 50฿', 'condition': 'เมื่อซื้อขั้นต่ำ 0฿', 'code': 'C20240605100001'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    accountController = Get.put(AccountController());
+    // เรียกฟังก์ชั่น getCoupons เมื่อเข้าหน้า
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      accountController.getCoupons();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,34 +39,37 @@ class _CouponSelectionPageState extends State<CouponSelectionPage> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.separated(
-              itemCount: coupons.length,
-              separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey.shade300),
-              itemBuilder: (context, index) {
-                final coupon = coupons[index];
-                return ListTile(
-                  title: Text(coupon['title']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
-                      Text(coupon['condition']!),
-                      Text(coupon['code']!, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                    ],
-                  ),
-                  trailing: Radio<int>(
-                    value: index,
-                    groupValue: selectedCouponIndex,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCouponIndex = value;
-                      });
-                    },
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                );
-              },
-            ),
+            child: Obx(() {
+              final coupons = accountController.coupons;
+              return ListView.separated(
+                itemCount: coupons.length,
+                separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey.shade300),
+                itemBuilder: (context, index) {
+                  final coupon = coupons[index];
+                  return ListTile(
+                    title: Text(coupon['name']?.toString() ?? 'ไม่มีชื่อ', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(coupon['description']?.toString() ?? 'ไม่มีเงื่อนไข'),
+                        Text(coupon['code']?.toString() ?? 'ไม่มีรหัส', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      ],
+                    ),
+                    trailing: Radio<int>(
+                      value: index,
+                      groupValue: selectedCouponIndex,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCouponIndex = value;
+                        });
+                      },
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  );
+                },
+              );
+            }),
           ),
           // ✅ ปุ่มยืนยัน
           Container(
@@ -68,12 +79,19 @@ class _CouponSelectionPageState extends State<CouponSelectionPage> {
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: ใช้คูปอง
-                  Navigator.pop(context, selectedCouponIndex);
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: kButtonColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                child: const Text('ยืนยัน', style: TextStyle(fontSize: 16, color: Colors.white)),
+                onPressed:
+                    selectedCouponIndex != null
+                        ? () {
+                          // ส่งข้อมูลคูปองที่เลือกกลับไป
+                          final selectedCoupon = accountController.coupons[selectedCouponIndex!];
+                          Navigator.pop(context, selectedCoupon);
+                        }
+                        : null, // ถ้ายังไม่เลือกคูปองจะกดไม่ได้
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedCouponIndex != null ? kButtonColor : Colors.grey,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Text('ยืนยัน', style: TextStyle(fontSize: 16, color: selectedCouponIndex != null ? Colors.white : Colors.white70)),
               ),
             ),
           ),

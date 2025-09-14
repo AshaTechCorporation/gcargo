@@ -18,6 +18,7 @@ class AccountController extends GetxController {
   var aboutUs = Rxn<Tegaboutus>();
   var walletTrans = Rxn<WalletTrans>().obs;
   var listWalletTrans = <WalletTrans>[].obs;
+  var coupons = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
@@ -140,6 +141,29 @@ class AccountController extends GetxController {
     }
   }
 
+  // ฟังก์ชั่นสำหรับเรียก API คูปอง
+  Future<void> getCoupons() async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await AccountService.getCoupons();
+
+      if (data != null) {
+        coupons.value = data;
+        log('Coupons: $coupons');
+      } else {
+        _setError('ไม่สามารถโหลดข้อมูลคูปองได้');
+      }
+    } catch (e) {
+      log('❌ Error in getCoupons: $e');
+      _setError('ไม่สามารถโหลดข้อมูลคูปองได้');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void _setError(String message) {
     hasError.value = true;
     errorMessage.value = message;
@@ -150,5 +174,6 @@ class AccountController extends GetxController {
     await getFaqs();
     await getManuals();
     await getNews();
+    await getCoupons();
   }
 }

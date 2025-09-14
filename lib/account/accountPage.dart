@@ -101,7 +101,7 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                         ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   _buildSectionTitle('โปรโมชั่น'),
                   _buildMenuItem(
                     'ข่าวสาร & โปรโมชั่น',

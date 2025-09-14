@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/controllers/account_controller.dart';
+import 'package:get/get.dart';
 
-class CouponPage extends StatelessWidget {
+class CouponPage extends StatefulWidget {
   const CouponPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final coupons = [
-      {'title': 'ส่วนลด 50฿', 'condition': 'เมื่อซื้อเกิน 599฿', 'code': 'C20240605100001'},
-      {'title': 'ส่วนลด 50฿', 'condition': 'เมื่อซื้อเกิน 0฿', 'code': 'C20240605100001'},
-    ];
+  State<CouponPage> createState() => _CouponPageState();
+}
 
+class _CouponPageState extends State<CouponPage> {
+  late final AccountController accountController;
+
+  @override
+  void initState() {
+    super.initState();
+    accountController = Get.put(AccountController());
+    // เรียกฟังก์ชั่น getCoupons เมื่อเข้าหน้า
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      accountController.getCoupons();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -19,24 +33,54 @@ class CouponPage extends StatelessWidget {
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
       ),
       backgroundColor: Colors.white,
-      body: ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        itemCount: coupons.length,
-        separatorBuilder: (_, __) => const Divider(height: 24, color: Colors.grey),
-        itemBuilder: (context, index) {
-          final coupon = coupons[index];
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(coupon['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-              const SizedBox(height: 4),
-              Text(coupon['condition']!, style: const TextStyle(fontSize: 14, color: Colors.black87)),
-              const SizedBox(height: 4),
-              Text(coupon['code']!, style: const TextStyle(fontSize: 13, color: Colors.black45)),
-            ],
+      body: Obx(() {
+        if (accountController.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (accountController.hasError.value) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                const SizedBox(height: 16),
+                Text(accountController.errorMessage.value, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 16),
+                ElevatedButton(onPressed: () => accountController.getCoupons(), child: const Text('ลองใหม่')),
+              ],
+            ),
           );
-        },
-      ),
+        }
+
+        final coupons = accountController.coupons;
+
+        if (coupons.isEmpty) {
+          return const Center(child: Text('ไม่มีคูปองในขณะนี้', style: TextStyle(color: Colors.grey)));
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          itemCount: coupons.length,
+          itemBuilder: (context, index) {
+            final coupon = coupons[index];
+            return Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(coupon['name']?.toString() ?? 'ไม่มีชื่อ', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: 4),
+                  Text(coupon['description']?.toString() ?? 'ไม่มีเงื่อนไข', style: const TextStyle(fontSize: 14, color: Colors.black87)),
+                  const SizedBox(height: 4),
+                  Text(coupon['code']?.toString() ?? 'ไม่มีรหัส', style: const TextStyle(fontSize: 13, color: Colors.black45)),
+                ],
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 }

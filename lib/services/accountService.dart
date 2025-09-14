@@ -122,4 +122,33 @@ class AccountService {
       throw ApiException(data['message']);
     }
   }
+
+  //ดูรายการคูปอง
+  static Future<List<Map<String, dynamic>>> getCoupons() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/coupon_page');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "draw": 1,
+        "order": [
+          {"column": 0, "dir": "asc"},
+        ],
+        "start": 0,
+        "length": 10,
+        "search": {"value": "", "regex": false},
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data']['data'] as List;
+      return List<Map<String, dynamic>>.from(list);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
 }
