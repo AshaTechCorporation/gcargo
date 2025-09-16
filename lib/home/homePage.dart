@@ -6,6 +6,7 @@ import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 import 'package:gcargo/home/widgets/ServiceImageCard.dart';
 import 'package:gcargo/home/widgets/service_item_widget.dart';
 import 'package:gcargo/services/search_service.dart';
+import 'package:gcargo/services/homeService.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
@@ -23,6 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController searchController = TextEditingController();
+  final TextEditingController searchLinkController = TextEditingController();
 
   // Initialize HomeController
   final HomeController homeController = Get.put(HomeController());
@@ -51,6 +53,57 @@ class _HomePageState extends State<HomePage> {
     //_timer.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  // ฟังก์ชั่นสำหรับเรียก API searchLink
+  Future<void> extractIdFromUrl(String url) async {
+    try {
+      print('🔍 เริ่มเรียก API searchLink: $url');
+
+      // เรียก API searchLink จาก HomeService
+      final response = await HomeService.searchLink(textLink: url);
+
+      if (response != null) {
+        final productId = response['productId']?.toString();
+        final platform = response['platform']?.toString();
+
+        print('🔍 API Response - productId: $productId, platform: $platform');
+
+        if (productId != null && productId.isNotEmpty) {
+          // กำหนด type ตาม platform จาก API หรือ selectedItemType
+          String type;
+          if (platform != null && platform.isNotEmpty) {
+            type = platform.toLowerCase() == 'taobao' ? 'taobao' : '1688';
+          } else {
+            type = homeController.selectedItemType.value == 'shopgs1' ? 'taobao' : '1688';
+          }
+
+          print('🔍 ไปหน้า ProductDetailPage - ID: $productId, type: $type');
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: productId, name: 'Shirt', type: type)));
+        } else {
+          _showAlert('ไม่พบ Product ID จาก API');
+        }
+      } else {
+        _showAlert('ไม่สามารถเรียก API ได้\nกรุณาตรวจสอบ URL ที่กรอก');
+      }
+    } catch (e) {
+      print('❌ Error calling searchLink API: $e');
+      _showAlert('เกิดข้อผิดพลาดในการเรียก API');
+    }
+  }
+
+  // ฟังก์ชั่นสำหรับแสดง Alert Dialog
+  void _showAlert(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('แจ้งเตือน'),
+          content: Text(message),
+          actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('ตกลง'))],
+        );
+      },
+    );
   }
 
   @override
@@ -231,31 +284,59 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
-                  // 🔸 ช่องค้นหาแบบ overlay
+                  // 🔸 ช่องกรอกค้นหา
                   Positioned(
                     left: 32,
                     right: 32,
                     top: 16,
                     child: Container(
-                      height: 36,
+                      height: 42,
                       padding: EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigate to SearchPage for search
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage()));
-                          Get.snackbar(
-                            'แจ้งเตือน',
-                            'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                            backgroundColor: Colors.yellowAccent,
-                            colorText: Colors.black,
-                            snackPosition: SnackPosition.BOTTOM,
-                          );
-                        },
+                      child: Center(
                         child: Row(
                           children: [
-                            Expanded(child: Text('ค้นหาสินค้าจากคลัง', style: TextStyle(color: Colors.grey))),
-                            Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
+                            Expanded(
+                              child: Center(
+                                child: TextField(
+                                  controller: searchLinkController,
+                                  decoration: InputDecoration(
+                                    hintText: 'ค้นหาสินค้าจากคลัง',
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                  style: TextStyle(fontSize: 14),
+                                  textInputAction: TextInputAction.search,
+                                  onSubmitted: (value) {
+                                    // เมื่อกด Enter หรือ Submit
+                                    final inputUrl = value.trim();
+                                    if (inputUrl.isEmpty) {
+                                      _showAlert('กรุณากรอก URL ที่ต้องการค้นหา');
+                                      return;
+                                    }
+                                    extractIdFromUrl(inputUrl);
+                                  },
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                // เช็คว่ามีการกรอกข้อมูลหรือไม่
+                                final inputUrl = searchLinkController.text.trim();
+                                print('🔍 Input URL: $inputUrl');
+                                print('🔍 Selected Type: ${homeController.selectedItemType.value}');
+
+                                if (inputUrl.isEmpty) {
+                                  _showAlert('กรุณากรอก URL ที่ต้องการค้นหา');
+                                  return;
+                                }
+
+                                // ส่ง URL ที่กรอกไปยังฟังก์ชั่นตัด ID
+                                extractIdFromUrl(inputUrl);
+                              },
+                              child: Icon(Icons.send, color: Colors.grey.shade600, size: 20),
+                            ),
                           ],
                         ),
                       ),
@@ -265,7 +346,7 @@ class _HomePageState extends State<HomePage> {
                   // 🔸 ข้อความทับบนรูป (ใต้ช่องค้นหา)
                   Positioned(
                     left: 28,
-                    top: 64,
+                    top: 66,
                     child: Text(
                       'วางลิ้งก์์ของคุณที่นี่',
                       style: TextStyle(

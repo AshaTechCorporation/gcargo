@@ -122,7 +122,7 @@ class AccountHeaderWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _quickItem('100', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap, 'สถานะ'),
+              _quickItem('0', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap, 'สถานะ'),
               _quickItem(
                 '฿${_calculateWalletBalance().toStringAsFixed(2)}',
                 'Wallet ของฉัน',

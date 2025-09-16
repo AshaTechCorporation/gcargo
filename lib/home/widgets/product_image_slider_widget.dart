@@ -20,10 +20,10 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
 
   // Fallback images
   final List<String> fallbackImages = [
-    'assets/images/unsplash0.png',
-    'assets/images/unsplash1.png',
-    'assets/images/unsplash2.png',
-    'assets/images/unsplash3.png',
+    'assets/images/No_Image.jpg',
+    'assets/images/No_Image.jpg',
+    'assets/images/No_Image.jpg',
+    'assets/images/No_Image.jpg',
   ];
 
   @override

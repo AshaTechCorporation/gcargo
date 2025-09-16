@@ -468,4 +468,24 @@ class HomeService {
       throw ApiException(data['message']);
     }
   }
+
+  //ค้นหาด้วยลิ้ง
+  static Future<Map<String, dynamic>> searchLink({required String textLink}) async {
+    final url = Uri.https('dev-asha9.com', '/expand_unified.php', {"url": textLink});
+
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data;
+    } else {
+      try {
+        final data = convert.jsonDecode(response.body);
+        throw ApiException(data['message'] ?? 'ข้อผิดพลาดจากเซิร์ฟเวอร์');
+      } catch (_) {
+        throw ApiException('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ (${response.statusCode})');
+      }
+    }
+  }
 }
