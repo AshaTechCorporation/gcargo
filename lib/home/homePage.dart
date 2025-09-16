@@ -166,13 +166,6 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   ////go action
                   Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
-                  // Get.snackbar(
-                  //   'แจ้งเตือน',
-                  //   'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                  //   backgroundColor: Colors.yellowAccent,
-                  //   colorText: Colors.black,
-                  //   snackPosition: SnackPosition.BOTTOM,
-                  // );
                 },
                 child: Image.asset('assets/icons/bag.png', width: 20, height: 20, fit: BoxFit.fill),
               ),
