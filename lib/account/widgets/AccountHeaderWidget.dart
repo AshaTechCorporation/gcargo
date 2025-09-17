@@ -137,7 +137,7 @@ class AccountHeaderWidget extends StatelessWidget {
                   top: 10,
                   left: 25,
                   child: Text(
-                    '0.00',
+                    '${_calculateWalletBalance().toStringAsFixed(2)}',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,

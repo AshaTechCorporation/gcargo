@@ -34,6 +34,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
   bool isOrdering = false; // เพิ่ม loading state สำหรับการสั่งซื้อ
   TextEditingController noteController = TextEditingController();
   ServiceTransporterById? serviceSelected;
+  Map<String, dynamic>? selectedCoupon; // เก็บคูปองที่เลือก
 
   @override
   void initState() {
@@ -165,13 +166,35 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
 
                 const Divider(height: 24),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CouponSelectionPage()));
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CouponSelectionPage(selectedCoupon: selectedCoupon)),
+                    );
+
+                    if (result != null) {
+                      setState(() {
+                        selectedCoupon = result;
+                      });
+                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('คูปองส่วนลด', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('คูปองส่วนลด', style: TextStyle(fontWeight: FontWeight.bold)),
+                          if (selectedCoupon != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                selectedCoupon!['code'] ?? '',
+                                style: TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                        ],
+                      ),
                       Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black54),
                     ],
                   ),
@@ -282,6 +305,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                                 importer_code: '',
                                 member_address_id: selectedAddressId,
                                 products: orderProducts,
+                                coupon: selectedCoupon,
                               );
 
                               log('✅ Order created successfully: $result');

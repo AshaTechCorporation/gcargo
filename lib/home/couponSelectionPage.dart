@@ -4,7 +4,9 @@ import 'package:gcargo/controllers/account_controller.dart';
 import 'package:get/get.dart';
 
 class CouponSelectionPage extends StatefulWidget {
-  const CouponSelectionPage({super.key});
+  final Map<String, dynamic>? selectedCoupon;
+
+  const CouponSelectionPage({super.key, this.selectedCoupon});
 
   @override
   State<CouponSelectionPage> createState() => _CouponSelectionPageState();
@@ -18,9 +20,21 @@ class _CouponSelectionPageState extends State<CouponSelectionPage> {
   void initState() {
     super.initState();
     accountController = Get.put(AccountController());
+
     // เรียกฟังก์ชั่น getCoupons เมื่อเข้าหน้า
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      accountController.getCoupons();
+      accountController.getCoupons().then((_) {
+        // ตั้งค่าคูปองที่เลือกไว้หลังจากโหลดข้อมูลเสร็จ
+        if (widget.selectedCoupon != null) {
+          final coupons = accountController.coupons;
+          final index = coupons.indexWhere((coupon) => coupon['code'] == widget.selectedCoupon!['code']);
+          if (index != -1) {
+            setState(() {
+              selectedCouponIndex = index;
+            });
+          }
+        }
+      });
     });
   }
 
