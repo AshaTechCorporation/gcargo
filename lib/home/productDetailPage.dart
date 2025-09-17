@@ -537,22 +537,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
                   Column(
                     children: [
-                      Divider(),
-                      Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            // TODO: แสดงเนื้อหาเพิ่มเติม
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text('แสดงเพิ่มเติม', style: TextStyle(color: Colors.grey)),
-                              SizedBox(width: 4),
-                              Icon(Icons.expand_more, color: Colors.grey, size: 18),
-                            ],
-                          ),
-                        ),
-                      ),
+                      // Divider(),
+                      // Center(
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       // TODO: แสดงเนื้อหาเพิ่มเติม
+                      //     },
+                      //     child: Row(
+                      //       mainAxisSize: MainAxisSize.min,
+                      //       children: [
+                      //         Text('แสดงเพิ่มเติม', style: TextStyle(color: Colors.grey)),
+                      //         SizedBox(width: 4),
+                      //         Icon(Icons.expand_more, color: Colors.grey, size: 18),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                       Divider(),
                       SizedBox(height: 16),
                     ],
