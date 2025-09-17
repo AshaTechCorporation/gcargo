@@ -87,7 +87,13 @@ class _CartPageState extends State<CartPage> {
   void toggleDeleteMode() {
     setState(() {
       isDeleteMode = !isDeleteMode;
-      selectedItems = List.filled(cartItems.length, false);
+      if (isDeleteMode) {
+        // เข้าโหมดลบ - คัดลอกการเลือกจาก selectedForPurchase
+        selectedItems = List.from(selectedForPurchase);
+      } else {
+        // ออกจากโหมดลบ - รีเซ็ต
+        selectedItems = List.filled(cartItems.length, false);
+      }
     });
   }
 
@@ -119,6 +125,11 @@ class _CartPageState extends State<CartPage> {
         if (selectedItems[i]) {
           indicesToRemove.add(i);
         }
+      }
+
+      if (indicesToRemove.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณาเลือกสินค้าที่ต้องการลบ'), backgroundColor: Colors.orange));
+        return;
       }
 
       // Remove from cart service
