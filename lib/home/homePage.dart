@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/exchangePage.dart';
@@ -29,34 +31,42 @@ class _HomePageState extends State<HomePage> {
   // Initialize HomeController
   final HomeController homeController = Get.put(HomeController());
 
+  // Loading state สำหรับช่องค้นหา
+  bool isSearchLoading = false;
+
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  //late Timer _timer;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    // คอมเม้น Timer สำหรับ auto-slide เพราะใช้แบนเนอร์เดียว
+    homeController.searchItemsFromAPI('');
 
     if (!mounted) return;
-    // _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-    //   if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
-    //     int nextPage = (_currentPage + 1) % homeController.imgBanners.length;
-    //     _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
-    //   }
-    // });
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
+        int nextPage = (_currentPage + 1) % homeController.imgBanners.length;
+        _pageController.animateToPage(nextPage, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+      }
+    });
   }
 
   @override
   void dispose() {
     searchController.dispose();
-    //_timer.cancel();
+    _timer.cancel();
     _pageController.dispose();
     super.dispose();
   }
 
   // ฟังก์ชั่นสำหรับเรียก API searchLink
   Future<void> extractIdFromUrl(String url) async {
+    // เริ่ม loading
+    setState(() {
+      isSearchLoading = true;
+    });
+
     try {
       print('🔍 เริ่มเรียก API searchLink: $url');
 
@@ -89,6 +99,13 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       print('❌ Error calling searchLink API: $e');
       _showAlert('เกิดข้อผิดพลาดในการเรียก API');
+    } finally {
+      // หยุด loading
+      if (mounted) {
+        setState(() {
+          isSearchLoading = false;
+        });
+      }
     }
   }
 
@@ -186,83 +203,82 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔹 Image Slider
-              Image.asset('assets/images/slidpic.png', width: double.infinity, height: 140, fit: BoxFit.cover),
+              // Image.asset('assets/images/slidpic.png', width: double.infinity, height: 140, fit: BoxFit.cover),
+              Obx(() {
+                if (homeController.isLoading.value) {
+                  return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
+                }
 
-              // Obx(() {
-              //   if (homeController.isLoading.value) {
-              //     return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
-              //   }
+                if (homeController.imgBanners.isEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        height: 140,
+                        color: Colors.grey.shade200,
+                        child: Center(child: Text('ไม่มีรูปภาพแบนเนอร์', style: TextStyle(color: Colors.grey))),
+                      ),
+                    ),
+                  );
+                }
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      height: 140,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: homeController.imgBanners.length,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentPage = index;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          final banner = homeController.imgBanners[index];
+                          return Image.network(
+                            banner.image ?? 'assets/images/placeholder.png',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey.shade200,
+                                child: Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }),
 
-              //   if (homeController.imgBanners.isEmpty) {
-              //     return Padding(
-              //       padding: EdgeInsets.symmetric(horizontal: 16),
-              //       child: ClipRRect(
-              //         borderRadius: BorderRadius.circular(12),
-              //         child: Container(
-              //           height: 140,
-              //           color: Colors.grey.shade200,
-              //           child: Center(child: Text('ไม่มีรูปภาพแบนเนอร์', style: TextStyle(color: Colors.grey))),
-              //         ),
-              //       ),
-              //     );
-              //   }
-              //   return Padding(
-              //     padding: EdgeInsets.symmetric(horizontal: 16),
-              //     child: ClipRRect(
-              //       borderRadius: BorderRadius.circular(12),
-              //       child: SizedBox(
-              //         height: 140,
-              //         child: PageView.builder(
-              //           controller: _pageController,
-              //           itemCount: homeController.imgBanners.length,
-              //           onPageChanged: (index) {
-              //             setState(() {
-              //               _currentPage = index;
-              //             });
-              //           },
-              //           itemBuilder: (context, index) {
-              //             final banner = homeController.imgBanners[index];
-              //             return Image.network(
-              //               banner.image ?? 'assets/images/placeholder.png',
-              //               fit: BoxFit.cover,
-              //               width: double.infinity,
-              //               errorBuilder: (context, error, stackTrace) {
-              //                 return Container(
-              //                   color: Colors.grey.shade200,
-              //                   child: Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
-              //                 );
-              //               },
-              //             );
-              //           },
-              //         ),
-              //       ),
-              //     ),
-              //   );
-              // }),
+              SizedBox(height: 16),
 
-              // SizedBox(height: 16),
-
-              // Obx(() {
-              //   if (homeController.imgBanners.isEmpty) {
-              //     return const SizedBox.shrink();
-              //   }
-              //   return Row(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: List.generate(homeController.imgBanners.length, (index) {
-              //       final isActive = _currentPage == index;
-              //       return AnimatedContainer(
-              //         duration: Duration(milliseconds: 300),
-              //         margin: EdgeInsets.symmetric(horizontal: 4),
-              //         width: isActive ? 20 : 8,
-              //         height: 8,
-              //         decoration: BoxDecoration(
-              //           color: isActive ? Colors.blue.shade900 : Colors.grey.shade300,
-              //           borderRadius: BorderRadius.circular(4),
-              //         ),
-              //       );
-              //     }),
-              //   );
-              // }),
+              Obx(() {
+                if (homeController.imgBanners.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(homeController.imgBanners.length, (index) {
+                    final isActive = _currentPage == index;
+                    return AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      margin: EdgeInsets.symmetric(horizontal: 4),
+                      width: isActive ? 20 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: isActive ? Colors.blue.shade900 : Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    );
+                  }),
+                );
+              }),
               SizedBox(height: 16),
 
               // 🔹 Stack รูป + ช่องค้นหา + ข้อความ
@@ -301,33 +317,39 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   style: TextStyle(fontSize: 14),
                                   textInputAction: TextInputAction.search,
-                                  onSubmitted: (value) {
-                                    // เมื่อกด Enter หรือ Submit
-                                    final inputUrl = value.trim();
-                                    if (inputUrl.isEmpty) {
-                                      _showAlert('กรุณากรอก URL ที่ต้องการค้นหา');
-                                      return;
-                                    }
-                                    extractIdFromUrl(inputUrl);
-                                  },
+                                  onSubmitted:
+                                      isSearchLoading
+                                          ? null
+                                          : (value) {
+                                            // เมื่อกด Enter หรือ Submit
+                                            final inputUrl = value.trim();
+                                            if (inputUrl.isEmpty) {
+                                              _showAlert('กรุณากรอก URL ที่ต้องการค้นหา');
+                                              return;
+                                            }
+                                            extractIdFromUrl(inputUrl);
+                                          },
                                 ),
                               ),
                             ),
                             GestureDetector(
-                              onTap: () {
-                                // เช็คว่ามีการกรอกข้อมูลหรือไม่
-                                final inputUrl = searchLinkController.text.trim();
-                                print('🔍 Input URL: $inputUrl');
-                                print('🔍 Selected Type: ${homeController.selectedItemType.value}');
+                              onTap:
+                                  isSearchLoading
+                                      ? null
+                                      : () {
+                                        // เช็คว่ามีการกรอกข้อมูลหรือไม่
+                                        final inputUrl = searchLinkController.text.trim();
+                                        print('🔍 Input URL: $inputUrl');
+                                        print('🔍 Selected Type: ${homeController.selectedItemType.value}');
 
-                                if (inputUrl.isEmpty) {
-                                  _showAlert('กรุณากรอก URL ที่ต้องการค้นหา');
-                                  return;
-                                }
+                                        if (inputUrl.isEmpty) {
+                                          _showAlert('กรุณากรอก URL ที่ต้องการค้นหา');
+                                          return;
+                                        }
 
-                                // ส่ง URL ที่กรอกไปยังฟังก์ชั่นตัด ID
-                                extractIdFromUrl(inputUrl);
-                              },
+                                        // ส่ง URL ที่กรอกไปยังฟังก์ชั่นตัด ID
+                                        extractIdFromUrl(inputUrl);
+                                      },
                               child: Icon(Icons.send, color: Colors.grey.shade600, size: 20),
                             ),
                           ],

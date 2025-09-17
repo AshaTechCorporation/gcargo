@@ -67,6 +67,35 @@ class _AccountPageState extends State<AccountPage> {
     homeController.update(); // อัปเดต UI
   }
 
+  // ฟังก์ชั่นเช็คสถานะการล็อกอิน
+  bool _isLoggedIn() {
+    final homeController = Get.find<HomeController>();
+    return homeController.currentUser.value != null;
+  }
+
+  // ฟังก์ชั่นแสดง dialog เมื่อยังไม่ได้ล็อกอิน
+  void _showLoginRequiredDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('จำเป็นต้องเข้าสู่ระบบ'),
+          content: const Text('กรุณาเข้าสู่ระบบก่อนใช้งานฟีเจอร์นี้'),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('ยกเลิก')),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage()));
+              },
+              child: const Text('เข้าสู่ระบบ'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,10 +118,18 @@ class _AccountPageState extends State<AccountPage> {
                             onCreditTap: () {},
                             onPointTap: () {},
                             onParcelTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
+                              if (_isLoggedIn()) {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
+                              } else {
+                                _showLoginRequiredDialog();
+                              }
                             },
                             onWalletTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
+                              if (_isLoggedIn()) {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
+                              } else {
+                                _showLoginRequiredDialog();
+                              }
                             },
                             onTransferTap: () {},
                             user: homeController.currentUser.value,
@@ -150,22 +187,39 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                   _buildMenuItem(
                     'ที่อยู่ของฉัน',
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => AddressListPage()));
+                    onTap: () async {
+                      final homeController = Get.find<HomeController>();
+                      if (homeController.currentUser.value != null) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AddressListPage()));
+                      } else {
+                        // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่'), backgroundColor: Colors.orange));
+                      }
                     },
                   ),
                   _buildMenuItem(
                     'ยืนยันบัญชีธนาคาร',
                     showVerified: true,
-                    onTap: () {
-                      //Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
-                      Get.snackbar(
-                        'แจ้งเตือน',
-                        'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                        backgroundColor: Colors.yellowAccent,
-                        colorText: Colors.black,
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
+                    onTap: () async {
+                      final homeController = Get.find<HomeController>();
+                      if (homeController.currentUser.value != null) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
+                      } else {
+                        // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่'), backgroundColor: Colors.orange));
+                      }
+
+                      // Get.snackbar(
+                      //   'แจ้งเตือน',
+                      //   'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                      //   backgroundColor: Colors.yellowAccent,
+                      //   colorText: Colors.black,
+                      //   snackPosition: SnackPosition.BOTTOM,
+                      // );
                     },
                   ),
                   _buildMenuItem(
@@ -202,7 +256,7 @@ class _AccountPageState extends State<AccountPage> {
                       showQrDialog(
                         context,
                         handle: '@gcargo',
-                        avatarUrl: 'https://i.pravatar.cc/150?img=12', // หรือ avatarAsset: 'assets/images/avatar.png'
+                        //avatarUrl: 'https://i.pravatar.cc/150?img=12', // หรือ avatarAsset: 'assets/images/avatar.png'
                         onDownload: () {
                           // TODO: ทำฟังก์ชันบันทึกรูป/แชร์
                         },

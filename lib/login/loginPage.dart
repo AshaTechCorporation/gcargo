@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/firstPage.dart';
+import 'package:gcargo/login/forgetPassword.dart';
 import 'package:gcargo/login/pinEntryPage.dart';
 import 'package:gcargo/login/registerPage.dart';
 import 'package:gcargo/services/loginService.dart';
@@ -111,7 +112,9 @@ class _LoginPageState extends State<LoginPage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ForgetPasswordPage()));
+                    },
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     child: Text('ลืมรหัสผ่าน', style: TextStyle(color: kHintTextColor, fontSize: 14)),
                   ),
@@ -139,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                                     final SharedPreferences prefs = await _prefs;
                                     await prefs.setString('token', token['token']);
                                     await prefs.setInt('userID', token['userID']);
-                                    await prefs.setString('point_balance', token['point_balance']);
+                                    await prefs.setString('point_balance', token['point_balance'] ?? '0.00');
 
                                     // โหลดข้อมูลผู้ใช้ใน HomeController
                                     final homeController = Get.find<HomeController>();
@@ -237,6 +240,13 @@ class _LoginPageState extends State<LoginPage> {
                                   );
                                 } catch (e) {
                                   print(e);
+                                  Get.snackbar(
+                                    'แจ้งเตือน',
+                                    '$e',
+                                    backgroundColor: Colors.yellowAccent,
+                                    colorText: Colors.black,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
                                 } finally {
                                   setState(() {
                                     isLoading = false; // หยุด loading

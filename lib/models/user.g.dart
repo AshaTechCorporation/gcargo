@@ -54,6 +54,9 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       (json['ship_address'] as List<dynamic>?)
           ?.map((e) => Shipping.fromJson(e as Map<String, dynamic>))
           .toList(),
+      (json['member_banks'] as List<dynamic>?)
+          ?.map((e) => MemberBank.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -100,4 +103,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'language': instance.language,
       'detail': instance.detail,
       'ship_address': instance.ship_address,
+      'member_banks': instance.member_banks,
     };

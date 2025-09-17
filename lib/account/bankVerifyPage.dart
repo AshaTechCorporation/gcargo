@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:gcargo/account/bankVerifyHistory.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/models/memberbank.dart';
+import 'package:gcargo/services/accountService.dart';
+import 'package:gcargo/services/uploadService.dart';
 
 class BankVerifyPage extends StatefulWidget {
   const BankVerifyPage({super.key});
@@ -14,6 +18,38 @@ class _BankVerifyPageState extends State<BankVerifyPage> {
   bool submitted = false;
   File? selectedFile;
   String? fileName;
+  bool isLoading = false;
+  bool isLoadingStatus = true;
+  bool hasApprovedBank = false;
+  List<MemberBank> memberBanks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBankStatus();
+  }
+
+  Future<void> _checkBankStatus() async {
+    try {
+      setState(() {
+        isLoadingStatus = true;
+      });
+
+      final user = await AccountService.getUserById();
+      memberBanks = user.member_banks ?? [];
+
+      // เช็คว่ามีสถานะ approved หรือไม่
+      hasApprovedBank = memberBanks.any((bank) => bank.status?.toLowerCase() == 'approved');
+
+      setState(() {
+        isLoadingStatus = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoadingStatus = false;
+      });
+    }
+  }
 
   Future<void> pickFile() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
@@ -24,6 +60,29 @@ class _BankVerifyPageState extends State<BankVerifyPage> {
         fileName = result.files.single.name;
       });
     }
+  }
+
+  Widget _buildApprovedContent() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // ไอคอนสำเร็จ
+        Image.asset('assets/icons/iconsuccess.png', width: 80, height: 80),
+        const SizedBox(height: 24),
+
+        // ข้อความหลัก
+        const Text(
+          'ยินดีด้วย! การยืนยันบัญชีสำเร็จ',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 12),
+
+        // ข้อความรอง
+        const Text('เอกสารของคุณได้รับการอนุมัติเรียบร้อยแล้ว', style: TextStyle(fontSize: 16, color: Colors.grey), textAlign: TextAlign.center),
+        const SizedBox(height: 40),
+      ],
+    );
   }
 
   @override
@@ -46,7 +105,17 @@ class _BankVerifyPageState extends State<BankVerifyPage> {
         children: [
           const SizedBox(height: 12),
           Expanded(
-            child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: submitted ? _buildSubmittedContent() : _buildUploadContent()),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child:
+                  isLoadingStatus
+                      ? const Center(child: CircularProgressIndicator())
+                      : hasApprovedBank
+                      ? _buildApprovedContent()
+                      : memberBanks.isNotEmpty || submitted
+                      ? _buildSubmittedContent()
+                      : _buildUploadContent(),
+            ),
           ),
           const Divider(height: 1),
           Container(
@@ -58,10 +127,43 @@ class _BankVerifyPageState extends State<BankVerifyPage> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (submitted) {
                   Navigator.pop(context); // ✅ ออกจากหน้านี้
                 } else {
+                  try {
+                    if (!mounted) return;
+                    String? imageUrl;
+                    if (selectedFile != null) {
+                      imageUrl = await UoloadService.addImage(file: selectedFile!, path: 'uploads/asset/');
+                    }
+
+                    //เรียกเอพีไอบันทึกบัญชีธนาคาร
+                    if (imageUrl != null) {
+                      final user = await AccountService.addBankVerify(image: imageUrl);
+                      if (user != null) {
+                        setState(() {
+                          submitted = true;
+                        });
+                      }
+                    }
+
+                    setState(() {
+                      isLoading = false;
+                    });
+                  } catch (e) {
+                    print(e);
+
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: ${e.toString()}'), backgroundColor: Colors.red));
+                  } finally {
+                    if (mounted) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    }
+                  }
                   setState(() {
                     submitted = true;
                   });
@@ -164,7 +266,9 @@ class _BankVerifyPageState extends State<BankVerifyPage> {
           SizedBox(
             width: 180,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyHistoryPage()));
+              },
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

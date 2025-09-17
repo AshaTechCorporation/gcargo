@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:gcargo/models/faq.dart';
 import 'package:gcargo/models/manual.dart';
 import 'package:gcargo/models/tegaboutus.dart';
+import 'package:gcargo/models/user.dart';
 import 'package:gcargo/models/wallettrans.dart';
 import 'package:gcargo/services/accountService.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,7 @@ class AccountController extends GetxController {
   var walletTrans = Rxn<WalletTrans>().obs;
   var listWalletTrans = <WalletTrans>[].obs;
   var coupons = <Map<String, dynamic>>[].obs;
+  var user = Rxn<User>();
 
   @override
   void onInit() {
@@ -159,6 +161,100 @@ class AccountController extends GetxController {
     } catch (e) {
       log('❌ Error in getCoupons: $e');
       _setError('ไม่สามารถโหลดข้อมูลคูปองได้');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  //เรียกดูข้อมูลยูสเซอร์ตามไอดี
+  Future<void> getUserById() async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final data = await AccountService.getUserById();
+
+      if (data != null) {
+        user.value = data;
+        log('User: $user');
+      } else {
+        _setError('ไม่สามารถโหลดข้อมูล User ได้');
+      }
+    } catch (e) {
+      log('❌ Error in getUserById: $e');
+      _setError('ไม่สามารถโหลดข้อมูล User ได้');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ฟังก์ชั่นสำหรับเพิ่มที่อยู่
+  Future<void> addAddress(Map<String, dynamic> addressData) async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final result = await AccountService.addAddress(
+        contact_name: addressData['contact_name'] ?? '',
+        contact_phone: addressData['contact_phone'] ?? '',
+        address: addressData['address'] ?? '',
+        sub_district: addressData['sub_district'] ?? '',
+        district: addressData['district'] ?? '',
+        province: addressData['province'] ?? '',
+        postal_code: addressData['postal_code'] ?? '',
+        latitude: addressData['latitude'] ?? 0.0,
+        longitude: addressData['longitude'] ?? 0.0,
+      );
+
+      if (result != null) {
+        log('Address added successfully');
+        // Refresh user data
+        await getUserById();
+      } else {
+        _setError('ไม่สามารถเพิ่มที่อยู่ได้');
+      }
+    } catch (e) {
+      log('❌ Error in addAddress: $e');
+      _setError('ไม่สามารถเพิ่มที่อยู่ได้');
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ฟังก์ชั่นสำหรับแก้ไขที่อยู่
+  Future<void> editAddress(int id, Map<String, dynamic> addressData) async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final result = await AccountService.editAddress(
+        id: id,
+        contact_name: addressData['contact_name'] ?? '',
+        contact_phone: addressData['contact_phone'] ?? '',
+        address: addressData['address'] ?? '',
+        sub_district: addressData['sub_district'] ?? '',
+        district: addressData['district'] ?? '',
+        province: addressData['province'] ?? '',
+        postal_code: addressData['postal_code'] ?? '',
+        latitude: addressData['latitude'] ?? 0.0,
+        longitude: addressData['longitude'] ?? 0.0,
+      );
+
+      if (result != null) {
+        log('Address updated successfully');
+        // Refresh user data
+        await getUserById();
+      } else {
+        _setError('ไม่สามารถแก้ไขที่อยู่ได้');
+      }
+    } catch (e) {
+      log('❌ Error in editAddress: $e');
+      _setError('ไม่สามารถแก้ไขที่อยู่ได้');
+      rethrow;
     } finally {
       isLoading.value = false;
     }

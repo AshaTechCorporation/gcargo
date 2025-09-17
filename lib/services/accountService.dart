@@ -1,6 +1,7 @@
 import 'package:gcargo/models/faq.dart';
 import 'package:gcargo/models/manual.dart';
 import 'package:gcargo/models/tegaboutus.dart';
+import 'package:gcargo/models/user.dart';
 import 'package:gcargo/models/wallettrans.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -146,6 +147,195 @@ class AccountService {
       final data = convert.jsonDecode(response.body);
       final list = data['data']['data'] as List;
       return List<Map<String, dynamic>>.from(list);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  // ดูข้อมูลยูสเซอนร์ ตามไอดี
+  static Future<User> getUserById() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    var headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    final url = Uri.https(publicUrl, '/public/api/member/$userID');
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return User.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  // ดูข้อมูลยูสเซอนร์ ตามไอดี ตอนสมัคร
+  static Future<User> getUserByIdRegister({required int userID}) async {
+    var headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    final url = Uri.https(publicUrl, '/public/api/member/$userID');
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return User.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //แก้ใขที่อยู่ตอนสมัคร
+  static Future<User> editAddressRegister({
+    required int id,
+    required int idUser,
+    String? contact_name,
+    String? contact_phone,
+    required String address,
+    required String sub_district,
+    required String district,
+    required String province,
+    required String postal_code,
+    String? contact_phone2,
+    required double latitude,
+    required double longitude,
+  }) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    var headers = {'Content-Type': 'application/json'};
+    final url = Uri.https(publicUrl, '/public/api/update_member_address/$id');
+    final response = await http.put(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "member_id": idUser,
+        "contact_name": contact_name,
+        "contact_phone": contact_phone,
+        "address": address,
+        "sub_district": sub_district,
+        "district": district,
+        "province": province,
+        "postal_code": postal_code,
+        "contact_phone2": contact_phone2,
+        "latitude": latitude,
+        "longitude": longitude,
+        //"first": "Y",
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return User.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //แก้ใขที่อยู่
+  static Future<User> editAddress({
+    required int id,
+    String? code,
+    String? contact_name,
+    String? contact_phone,
+    required String address,
+    required String sub_district,
+    required String district,
+    required String province,
+    required String postal_code,
+    String? contact_phone2,
+    required double latitude,
+    required double longitude,
+  }) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    var headers = {'Content-Type': 'application/json'};
+    final url = Uri.https(publicUrl, '/public/api/update_member_address/$id');
+    final response = await http.put(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "member_id": userID,
+        "code": code,
+        "contact_name": contact_name,
+        "contact_phone": contact_phone,
+        "address": address,
+        "sub_district": sub_district,
+        "district": district,
+        "province": province,
+        "postal_code": postal_code,
+        "contact_phone2": contact_phone2,
+        "latitude": latitude,
+        "longitude": longitude,
+        //"first": "Y",
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return User.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //เพิ่มที่อยู่สมาชิก
+  static Future<User> addAddress({
+    required String contact_name,
+    required String contact_phone,
+    required String address,
+    required String sub_district,
+    required String district,
+    required String province,
+    required String postal_code,
+    String? contact_phone2,
+    required double latitude,
+    required double longitude,
+  }) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    var headers = {'Content-Type': 'application/json'};
+    final url = Uri.https(publicUrl, '/public/api/member_address');
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "member_id": userID,
+        "contact_name": contact_name,
+        "contact_phone": contact_phone,
+        "address": address,
+        "sub_district": sub_district,
+        "district": district,
+        "province": province,
+        "postal_code": postal_code,
+        "contact_phone2": contact_phone2,
+        "latitude": latitude,
+        "longitude": longitude,
+        //"first": "Y",
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return User.fromJson(data['data']);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //ยืนยันบัญชีธนาคาร
+  static Future<User> addBankVerify({required String image}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    var headers = {'Content-Type': 'application/json'};
+    final url = Uri.https(publicUrl, '/public/api/member_bank');
+    final response = await http.post(url, headers: headers, body: convert.jsonEncode({"member_id": userID, "image": image}));
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return User.fromJson(data['data']);
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);

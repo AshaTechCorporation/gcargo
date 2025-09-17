@@ -1,4 +1,5 @@
 import 'package:gcargo/models/company.dart';
+import 'package:gcargo/models/memberbank.dart';
 import 'package:gcargo/models/shipping.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -49,6 +50,7 @@ class User {
   String? language;
   Company? detail;
   List<Shipping>? ship_address;
+  List<MemberBank>? member_banks;
 
   User(
     this.id,
@@ -94,6 +96,7 @@ class User {
     this.language,
     this.detail,
     this.ship_address,
+    this.member_banks,
   );
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

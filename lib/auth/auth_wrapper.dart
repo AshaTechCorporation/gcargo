@@ -11,7 +11,7 @@ class AuthWrapper extends StatefulWidget {
   State<AuthWrapper> createState() => _AuthWrapperState();
 }
 
-class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
+class _AuthWrapperState extends State<AuthWrapper> {
   bool isAuthenticated = false;
   bool isLoading = true;
   AuthMethod preferredAuthMethod = AuthMethod.pin;
@@ -19,39 +19,7 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _checkAuthStatus();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    switch (state) {
-      case AppLifecycleState.paused:
-      case AppLifecycleState.inactive:
-        // แอปไปอยู่ background
-        AuthService.markAppBackground();
-        break;
-      case AppLifecycleState.resumed:
-        // แอปกลับมา foreground
-        _checkAuthStatus();
-        break;
-      case AppLifecycleState.detached:
-        // แอปถูกปิด
-        AuthService.markAppClosed();
-        break;
-      case AppLifecycleState.hidden:
-        // แอปถูกซ่อน (Android 10+)
-        AuthService.markAppBackground();
-        break;
-    }
   }
 
   Future<void> _checkAuthStatus() async {

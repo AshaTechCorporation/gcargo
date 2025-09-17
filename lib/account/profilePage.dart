@@ -136,11 +136,49 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // Pick image from gallery or camera
+  // Show image source selection dialog
   Future<void> _pickImage() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('ถ่ายรูป'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _getImageFromSource(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('เลือกจากไดร์'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _getImageFromSource(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.cancel),
+                title: const Text('ยกเลิก'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Pick image from selected source
+  Future<void> _getImageFromSource(ImageSource source) async {
     try {
       final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery, maxWidth: 1024, maxHeight: 1024, imageQuality: 80);
+      final XFile? image = await picker.pickImage(source: source, maxWidth: 1024, maxHeight: 1024, imageQuality: 80);
 
       if (image != null) {
         setState(() {
@@ -149,7 +187,9 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       print('Error picking image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('เกิดข้อผิดพลาดในการเลือกรูปภาพ'), backgroundColor: Colors.red));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('เกิดข้อผิดพลาดในการเลือกรูปภาพ'), backgroundColor: Colors.red));
+      }
     }
   }
 
@@ -353,9 +393,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                     fit: BoxFit.cover,
                                     errorBuilder:
                                         (context, error, stackTrace) =>
-                                            Image.asset('assets/images/Avatar.png', width: 100, height: 100, fit: BoxFit.cover),
+                                            Image.asset('assets/images/user.png', width: 100, height: 100, fit: BoxFit.cover),
                                   )
-                                  : Image.asset('assets/images/Avatar.png', width: 100, height: 100, fit: BoxFit.cover),
+                                  : Image.asset('assets/images/user.png', width: 100, height: 100, fit: BoxFit.cover),
                         ),
                         Positioned(
                           bottom: 0,

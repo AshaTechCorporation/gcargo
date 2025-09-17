@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/models/wallettrans.dart';
+import 'package:get/get.dart';
 
 class AccountHeaderWidget extends StatelessWidget {
   final VoidCallback onCreditTap;
@@ -40,6 +42,30 @@ class AccountHeaderWidget extends StatelessWidget {
     return total;
   }
 
+  // ฟังก์ชั่นสำหรับนับจำนวนพัสดุที่มีสถานะ "สำเร็จ"
+  int _getCompletedParcelCount() {
+    try {
+      final orderController = Get.find<OrderController>();
+      int count = 0;
+
+      for (var legalImport in orderController.deilveryOrders) {
+        if (legalImport.delivery_orders != null) {
+          for (var order in legalImport.delivery_orders!) {
+            final status = order.status?.toLowerCase();
+            if (status == 'completed' || status == 'สำเร็จ') {
+              count++;
+            }
+          }
+        }
+      }
+
+      return count;
+    } catch (e) {
+      // ถ้าไม่พบ OrderController หรือเกิดข้อผิดพลาด ให้คืนค่า 0
+      return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -63,7 +89,7 @@ class AccountHeaderWidget extends StatelessWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 // ถ้าโหลดรูปจาก network ไม่ได้ ให้แสดง Avatar default
-                                return Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover);
+                                return Image.asset('assets/images/user.png', width: 48, height: 48, fit: BoxFit.cover);
                               },
                               loadingBuilder: (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
@@ -76,7 +102,7 @@ class AccountHeaderWidget extends StatelessWidget {
                                 );
                               },
                             )
-                            : Image.asset('assets/images/Avatar.png', width: 48, height: 48, fit: BoxFit.cover),
+                            : Image.asset('assets/images/user.png', width: 48, height: 48, fit: BoxFit.cover),
                   ),
                   const SizedBox(width: 12),
                   isLoading
@@ -101,9 +127,26 @@ class AccountHeaderWidget extends StatelessWidget {
           // 🔹 Credit Card รูปเต็มใบ
           GestureDetector(
             onTap: onCreditTap,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset('assets/images/credit.png', height: 80, width: double.infinity, fit: BoxFit.cover),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset('assets/images/credit111.png', height: 80, width: double.infinity, fit: BoxFit.cover),
+                ),
+                Positioned(
+                  top: 10,
+                  left: 25,
+                  child: Text(
+                    '0.00',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      shadows: [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black.withOpacity(0.5))],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 12),
@@ -111,9 +154,28 @@ class AccountHeaderWidget extends StatelessWidget {
           // 🔹 Point Card รูปเต็มใบ
           GestureDetector(
             onTap: onPointTap,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset('assets/images/point.png', height: 80, width: double.infinity, fit: BoxFit.cover),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset('assets/images/point111.png', height: 80, width: double.infinity, fit: BoxFit.cover),
+                ),
+                Positioned(
+                  top: 10,
+                  left: 25,
+                  child: Text(
+                    user?.point_balance != null && user!.point_balance!.isNotEmpty
+                        ? double.tryParse(user!.point_balance!)?.toStringAsFixed(2) ?? '0.00'
+                        : '0.00',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      shadows: [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black.withOpacity(0.5))],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -122,7 +184,7 @@ class AccountHeaderWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _quickItem('0', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap, 'สถานะ'),
+              _quickItem('${_getCompletedParcelCount()}', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap, 'สถานะ'),
               _quickItem(
                 '฿${_calculateWalletBalance().toStringAsFixed(2)}',
                 'Wallet ของฉัน',

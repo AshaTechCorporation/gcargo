@@ -5,10 +5,12 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/login/otpVerificationPage.dart';
 import 'package:gcargo/login/widgets/TermsDialog.dart';
 import 'package:gcargo/models/provice.dart';
+import 'package:gcargo/services/accountService.dart';
 import 'package:gcargo/services/registerService.dart';
 import 'package:gcargo/widgets/CustomDropdownFormField.dart';
 import 'package:gcargo/widgets/CustomTextFormField.dart';
 import 'package:gcargo/widgets/DatePickerTextFormField.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -52,6 +54,8 @@ class _RegisterPageState extends State<RegisterPage> {
   // Filtered lists
   List<Provice> filteredDistricts = [];
   List<Provice> filteredSubdistricts = [];
+  double? lat;
+  double? long;
 
   @override
   void initState() {
@@ -79,9 +83,9 @@ class _RegisterPageState extends State<RegisterPage> {
       return false;
     }
 
-    // เช็ครหัสผ่านขั้นต่ำ 6 ตัวอักษร
-    if (_passwordController.text.length < 6) {
-      _showErrorSnackBar('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+    // เช็ครหัสผ่านขั้นต่ำ 8 ตัวอักษร
+    if (_passwordController.text.length < 8) {
+      _showErrorSnackBar('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร');
       return false;
     }
 
@@ -149,6 +153,24 @@ class _RegisterPageState extends State<RegisterPage> {
     // - จังหวัด/อำเภอ/ตำบล (selectedProvince, selectedDistrict, selectedSubdistrict)
 
     return true;
+  }
+
+  Future<void> getLatLongFromAddress({required String address}) async {
+    // String address = 'จังหัวด อำเภอ ตำบล 12345'; // ใส่ชื่อ/อำเภอ/ตำบล/รหัสไปรษณีย์
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        lat = locations.first.latitude;
+        long = locations.first.longitude;
+        print('Latitude: ${locations.first.latitude}');
+        print('Longitude: ${locations.first.longitude}');
+        setState(() {});
+      } else {
+        print('ไม่พบตำแหน่ง');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   void _showErrorSnackBar(String message) {
@@ -237,6 +259,10 @@ class _RegisterPageState extends State<RegisterPage> {
       selectedSubdistrict = subdistrict;
       if (subdistrict != null && subdistrict.postalCode != null) {
         _postalCodeController.text = subdistrict.postalCode.toString();
+        getLatLongFromAddress(
+          address:
+              '${selectedProvince?.nameTH ?? ''} ${selectedDistrict?.nameTH ?? ''}  ${selectedSubdistrict?.nameTH ?? ''} ${selectedSubdistrict?.postalCode.toString() ?? ''}',
+        );
       } else {
         _postalCodeController.clear();
       }
@@ -330,31 +356,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 CustomTextFormField(label: 'ไอดีไลน์', hintText: 'กรุณากรอกไอดีไลน์', controller: _lineController),
                 const SizedBox(height: 20),
 
-                // const Text('เพศ', style: TextStyle(fontSize: 16, color: kButtonColor)),
-                // const SizedBox(height: 8),
-                // Theme(
-                //   data: Theme.of(context).copyWith(
-                //     unselectedWidgetColor: kButtonColor,
-                //     radioTheme: RadioThemeData(fillColor: MaterialStateProperty.resolveWith<Color>((states) => kButtonColor)),
-                //   ),
-                //   child: Row(
-                //     children: [
-                //       Radio<bool>(value: false, groupValue: isMale, onChanged: (value) => setState(() => isMale = false)),
-                //       const Text('หญิง', style: TextStyle(color: kButtonColor)),
-                //       const SizedBox(width: 16),
-                //       Radio<bool>(value: true, groupValue: isMale, onChanged: (value) => setState(() => isMale = true)),
-                //       const Text('ชาย', style: TextStyle(color: kButtonColor)),
-                //     ],
-                //   ),
-                // ),
-                // const SizedBox(height: 20),
-
-                // // 🔹 วันเดือนปีเกิด
-                // DatePickerTextFormField(label: 'วันเดือนปีเกิด', hintText: 'กรุณากรอกวันเดือนปีเกิด', controller: _birthdateController),
-
-                // const SizedBox(height: 12),
-
-                // เบอร์โทรศัพท์มือถือ (จำกัดไม่เกิน 10 ตัว)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -532,7 +533,21 @@ class _RegisterPageState extends State<RegisterPage> {
                             postal_code: _postalCodeController.text,
                           );
                           if (_register != null) {
-                            //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));
+                            final user = await AccountService.getUserByIdRegister(userID: _register.id!);
+                            await AccountService.editAddressRegister(
+                              id: user.ship_address![0].id!,
+                              idUser: user.id!,
+                              address: user.address ?? '',
+                              province: selectedProvince?.nameTH ?? '',
+                              district: selectedDistrict?.nameTH ?? '',
+                              sub_district: selectedSubdistrict?.nameTH ?? '',
+                              postal_code: _postalCodeController.text,
+                              latitude: lat ?? 0.0,
+                              longitude: long ?? 0.0,
+                              contact_name: '${user.fname} ${user.lname}',
+                              contact_phone: user.phone,
+                              contact_phone2: '',
+                            );
                             ScaffoldMessenger.of(
                               currentContext,
                             ).showSnackBar(const SnackBar(content: Text('สมัคสมาชิกสำเร็จ!'), backgroundColor: Colors.green));
