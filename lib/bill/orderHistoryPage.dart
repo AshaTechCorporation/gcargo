@@ -15,8 +15,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   final TextEditingController _dateController = TextEditingController(text: '1/01/2024 - 01/07/2025');
 
   final List<Map<String, dynamic>> allOrders = [
-    {'date': '01/07/2025', 'code': '00001', 'status': 'สำเร็จ', 'total': 550.00, 'box': 2, 'type': 'แบบทั่วไป', 'note': 'ทดสอบระบบ'},
-    {'date': '30/06/2025', 'code': '00002', 'status': 'ยกเลิก', 'total': 230.00, 'box': 1, 'type': 'แบบพิเศษ', 'note': 'ไม่มีหมายเหตุ'},
+    // {'date': '01/07/2025', 'code': '00001', 'status': 'สำเร็จ', 'total': 550.00, 'box': 2, 'type': 'แบบทั่วไป', 'note': 'ทดสอบระบบ'},
+    // {'date': '30/06/2025', 'code': '00002', 'status': 'ยกเลิก', 'total': 230.00, 'box': 1, 'type': 'แบบพิเศษ', 'note': 'ไม่มีหมายเหตุ'},
   ];
 
   @override
@@ -88,11 +88,11 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             // 🟢 Status filter
             Row(
               children: [
-                _buildStatusChip('ทั้งหมด', 2),
+                _buildStatusChip('ทั้งหมด', 0),
                 const SizedBox(width: 8),
-                _buildStatusChip('สำเร็จ', 1),
+                _buildStatusChip('สำเร็จ', 0),
                 const SizedBox(width: 8),
-                _buildStatusChip('ยกเลิก', 1),
+                _buildStatusChip('ยกเลิก', 0),
               ],
             ),
             const SizedBox(height: 16),

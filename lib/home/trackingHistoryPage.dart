@@ -18,43 +18,43 @@ class _TrackingHistoryPageState extends State<TrackingHistoryPage> {
 
   // Mock data สำหรับแต่ละสถานะ
   final Map<String, List<Map<String, dynamic>>> mockData = {
-    'ทั้งหมด': [
-      {'trackingNo': 'TH001', 'status': 'สำเร็จ', 'date': '2025-01-31', 'items': 3},
-      {'trackingNo': 'TH002', 'status': 'รอตัดส่ง', 'date': '2025-01-30', 'items': 2},
-      {'trackingNo': 'TH003', 'status': 'กำลังตรวจสอบ', 'date': '2025-01-29', 'items': 1},
-      {'trackingNo': 'TH004', 'status': 'ถึงโกดังไทย', 'date': '2025-01-28', 'items': 4},
-      {'trackingNo': 'TH005', 'status': 'ปิดถุง', 'date': '2025-01-27', 'items': 2},
-      {'trackingNo': 'TH006', 'status': 'ถึงโกดังจีน', 'date': '2025-01-26', 'items': 3},
-      {'trackingNo': 'TH007', 'status': 'รอส่งไปโกดังจีน', 'date': '2025-01-25', 'items': 1},
-    ],
-    'รอส่งไปโกดังจีน': [
-      {'trackingNo': 'TH007', 'status': 'รอส่งไปโกดังจีน', 'date': '2025-01-25', 'items': 1},
-      {'trackingNo': 'TH008', 'status': 'รอส่งไปโกดังจีน', 'date': '2025-01-24', 'items': 2},
-    ],
-    'ถึงโกดังจีน': [
-      {'trackingNo': 'TH006', 'status': 'ถึงโกดังจีน', 'date': '2025-01-26', 'items': 3},
-      {'trackingNo': 'TH009', 'status': 'ถึงโกดังจีน', 'date': '2025-01-23', 'items': 1},
-    ],
-    'ปิดถุง': [
-      {'trackingNo': 'TH005', 'status': 'ปิดถุง', 'date': '2025-01-27', 'items': 2},
-      {'trackingNo': 'TH010', 'status': 'ปิดถุง', 'date': '2025-01-22', 'items': 3},
-    ],
-    'ถึงโกดังไทย': [
-      {'trackingNo': 'TH004', 'status': 'ถึงโกดังไทย', 'date': '2025-01-28', 'items': 4},
-      {'trackingNo': 'TH011', 'status': 'ถึงโกดังไทย', 'date': '2025-01-21', 'items': 2},
-    ],
-    'กำลังตรวจสอบ': [
-      {'trackingNo': 'TH003', 'status': 'กำลังตรวจสอบ', 'date': '2025-01-29', 'items': 1},
-      {'trackingNo': 'TH012', 'status': 'กำลังตรวจสอบ', 'date': '2025-01-20', 'items': 3},
-    ],
-    'รอตัดส่ง': [
-      {'trackingNo': 'TH002', 'status': 'รอตัดส่ง', 'date': '2025-01-30', 'items': 2},
-      {'trackingNo': 'TH013', 'status': 'รอตัดส่ง', 'date': '2025-01-19', 'items': 1},
-    ],
-    'สำเร็จ': [
-      {'trackingNo': 'TH001', 'status': 'สำเร็จ', 'date': '2025-01-31', 'items': 3},
-      {'trackingNo': 'TH014', 'status': 'สำเร็จ', 'date': '2025-01-18', 'items': 2},
-    ],
+    // 'ทั้งหมด': [
+    //   {'trackingNo': 'TH001', 'status': 'สำเร็จ', 'date': '2025-01-31', 'items': 3},
+    //   {'trackingNo': 'TH002', 'status': 'รอตัดส่ง', 'date': '2025-01-30', 'items': 2},
+    //   {'trackingNo': 'TH003', 'status': 'กำลังตรวจสอบ', 'date': '2025-01-29', 'items': 1},
+    //   {'trackingNo': 'TH004', 'status': 'ถึงโกดังไทย', 'date': '2025-01-28', 'items': 4},
+    //   {'trackingNo': 'TH005', 'status': 'ปิดถุง', 'date': '2025-01-27', 'items': 2},
+    //   {'trackingNo': 'TH006', 'status': 'ถึงโกดังจีน', 'date': '2025-01-26', 'items': 3},
+    //   {'trackingNo': 'TH007', 'status': 'รอส่งไปโกดังจีน', 'date': '2025-01-25', 'items': 1},
+    // ],
+    // 'รอส่งไปโกดังจีน': [
+    //   {'trackingNo': 'TH007', 'status': 'รอส่งไปโกดังจีน', 'date': '2025-01-25', 'items': 1},
+    //   {'trackingNo': 'TH008', 'status': 'รอส่งไปโกดังจีน', 'date': '2025-01-24', 'items': 2},
+    // ],
+    // 'ถึงโกดังจีน': [
+    //   {'trackingNo': 'TH006', 'status': 'ถึงโกดังจีน', 'date': '2025-01-26', 'items': 3},
+    //   {'trackingNo': 'TH009', 'status': 'ถึงโกดังจีน', 'date': '2025-01-23', 'items': 1},
+    // ],
+    // 'ปิดถุง': [
+    //   {'trackingNo': 'TH005', 'status': 'ปิดถุง', 'date': '2025-01-27', 'items': 2},
+    //   {'trackingNo': 'TH010', 'status': 'ปิดถุง', 'date': '2025-01-22', 'items': 3},
+    // ],
+    // 'ถึงโกดังไทย': [
+    //   {'trackingNo': 'TH004', 'status': 'ถึงโกดังไทย', 'date': '2025-01-28', 'items': 4},
+    //   {'trackingNo': 'TH011', 'status': 'ถึงโกดังไทย', 'date': '2025-01-21', 'items': 2},
+    // ],
+    // 'กำลังตรวจสอบ': [
+    //   {'trackingNo': 'TH003', 'status': 'กำลังตรวจสอบ', 'date': '2025-01-29', 'items': 1},
+    //   {'trackingNo': 'TH012', 'status': 'กำลังตรวจสอบ', 'date': '2025-01-20', 'items': 3},
+    // ],
+    // 'รอตัดส่ง': [
+    //   {'trackingNo': 'TH002', 'status': 'รอตัดส่ง', 'date': '2025-01-30', 'items': 2},
+    //   {'trackingNo': 'TH013', 'status': 'รอตัดส่ง', 'date': '2025-01-19', 'items': 1},
+    // ],
+    // 'สำเร็จ': [
+    //   {'trackingNo': 'TH001', 'status': 'สำเร็จ', 'date': '2025-01-31', 'items': 3},
+    //   {'trackingNo': 'TH014', 'status': 'สำเร็จ', 'date': '2025-01-18', 'items': 2},
+    // ],
   };
 
   // คำนวณจำนวนแต่ละสถานะ

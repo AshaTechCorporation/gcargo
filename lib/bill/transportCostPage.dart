@@ -118,48 +118,89 @@ class _TransportCostPageState extends State<TransportCostPage> {
 
       return Scaffold(
         backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.black),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+              SizedBox(width: 20),
+              Expanded(
+                child: TextFormField(
+                  controller: _dateController,
+                  readOnly: true,
+                  onTap: () async {
+                    DateTimeRange? picked = await showDateRangePicker(
+                      context: context,
+                      firstDate: DateTime(2023),
+                      lastDate: DateTime(2030),
+                      initialDateRange: DateTimeRange(start: DateTime(2024, 1, 1), end: DateTime(2025, 7, 1)),
+                    );
+                    if (picked != null) {
+                      String formatted = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
+                      setState(() {
+                        _dateController.text = formatted;
+                      });
+                    }
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 18)),
+                    hintText: 'เลือกช่วงวันที่',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+        ),
         body: SafeArea(
           child: Column(
             children: [
               // 🔹 Header Row: ค่าขนส่ง + ช่องเลือกวันที่
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Row(
-                  children: [
-                    // 🔙 ปุ่มกลับ
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
-                        child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          // TODO: Add date range picker
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentDetailPage()));
-                        },
-                        child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                    DateRangePickerWidget(
-                      controller: _dateController,
-                      hintText: 'เลือกช่วงวันที่',
-                      onDateRangeSelected: (DateTimeRange? picked) {
-                        if (picked != null) {
-                          setState(() {
-                            startDate = picked.start;
-                            endDate = picked.end;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              //   child: Row(
+              //     children: [
+              //       // 🔙 ปุ่มกลับ
+              //       GestureDetector(
+              //         onTap: () => Navigator.pop(context),
+              //         child: Container(
+              //           width: 36,
+              //           height: 36,
+              //           decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
+              //           child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
+              //         ),
+              //       ),
+              //       Expanded(
+              //         child: GestureDetector(
+              //           onTap: () {
+              //             // TODO: Add date range picker
+              //             Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentDetailPage()));
+              //           },
+              //           child: Text('ค่าขนส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              //         ),
+              //       ),
+              //       DateRangePickerWidget(
+              //         controller: _dateController,
+              //         hintText: 'เลือกช่วงวันที่',
+              //         onDateRangeSelected: (DateTimeRange? picked) {
+              //           if (picked != null) {
+              //             setState(() {
+              //               startDate = picked.start;
+              //               endDate = picked.end;
+              //             });
+              //           }
+              //         },
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
               // 🔹 Body
               Expanded(

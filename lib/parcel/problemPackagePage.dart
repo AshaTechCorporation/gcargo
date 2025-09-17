@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/claimDetailPage.dart';
 import 'package:gcargo/parcel/claimRefundDetailPage.dart';
+import 'package:gcargo/parcel/widgets/date_range_picker_widget.dart';
 
 class ProblemPackagePage extends StatefulWidget {
   const ProblemPackagePage({super.key});
@@ -16,17 +17,17 @@ class _ProblemPackagePageState extends State<ProblemPackagePage> {
   final List<String> statusList = ['ทั้งหมด', 'รอตรวจสอบ', 'กำลังดำเนินการ', 'สำเร็จ', 'ยกเลิก'];
 
   final List<Map<String, dynamic>> items = [
-    {
-      'date': '02/07/2025',
-      'deliveryNo': '00044',
-      'orderNo': '167304',
-      'frontBill': '000000',
-      'documentNo': 'X2504290002',
-      'status': 'กำลังดำเนินการ',
-    },
-    {'date': '02/07/2025', 'deliveryNo': '00043', 'orderNo': '167303', 'frontBill': '000000', 'documentNo': 'X2504290002', 'status': 'รอตรวจสอบ'},
-    {'date': '01/07/2025', 'deliveryNo': '00045', 'orderNo': '167305', 'frontBill': '000001', 'documentNo': 'X2504290003', 'status': 'สำเร็จ'},
-    {'date': '01/07/2025', 'deliveryNo': '00046', 'orderNo': '167305', 'frontBill': '000005', 'documentNo': 'X2504290005', 'status': 'ยกเลิก'},
+    // {
+    //   'date': '02/07/2025',
+    //   'deliveryNo': '00044',
+    //   'orderNo': '167304',
+    //   'frontBill': '000000',
+    //   'documentNo': 'X2504290002',
+    //   'status': 'กำลังดำเนินการ',
+    // },
+    // {'date': '02/07/2025', 'deliveryNo': '00043', 'orderNo': '167303', 'frontBill': '000000', 'documentNo': 'X2504290002', 'status': 'รอตรวจสอบ'},
+    // {'date': '01/07/2025', 'deliveryNo': '00045', 'orderNo': '167305', 'frontBill': '000001', 'documentNo': 'X2504290003', 'status': 'สำเร็จ'},
+    // {'date': '01/07/2025', 'deliveryNo': '00046', 'orderNo': '167305', 'frontBill': '000005', 'documentNo': 'X2504290005', 'status': 'ยกเลิก'},
   ];
 
   @override
@@ -51,16 +52,18 @@ class _ProblemPackagePageState extends State<ProblemPackagePage> {
           children: [
             const Text('แจ้งเคลมพัสดุ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
             const Spacer(),
-            Container(
-              height: 36,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6), color: Colors.white),
-              child: Row(
-                children: [
-                  Image.asset('assets/icons/calendar_icon.png', width: 18),
-                  const SizedBox(width: 4),
-                  Text(_dateController.text, style: const TextStyle(fontSize: 12)),
-                ],
+            SizedBox(
+              width: 180,
+              child: DateRangePickerWidget(
+                controller: _dateController,
+                hintText: 'เลือกช่วงวันที่',
+                onDateRangeSelected: (DateTimeRange? picked) {
+                  if (picked != null) {
+                    setState(() {
+                      // อัปเดตการแสดงผลตามวันที่ที่เลือก
+                    });
+                  }
+                },
               ),
             ),
           ],
@@ -68,6 +71,20 @@ class _ProblemPackagePageState extends State<ProblemPackagePage> {
       ),
       body: Column(
         children: [
+          // SizedBox(
+          //   width: 200,
+          //   child: DateRangePickerWidget(
+          //     controller: _dateController,
+          //     hintText: 'เลือกช่วงวันที่',
+          //     onDateRangeSelected: (DateTimeRange? picked) {
+          //       if (picked != null) {
+          //         setState(() {
+          //           // อัปเดตการแสดงผลตามวันที่ที่เลือก
+          //         });
+          //       }
+          //     },
+          //   ),
+          // ),
           // 🔹 แถบสถานะ (ดีไซน์เหมือน OrderStatusPage)
           Padding(
             padding: const EdgeInsets.all(8.0),
