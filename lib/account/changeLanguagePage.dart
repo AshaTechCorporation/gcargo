@@ -11,11 +11,12 @@ class ChangeLanguagePage extends StatefulWidget {
 
 class _ChangeLanguagePageState extends State<ChangeLanguagePage> {
   String selectedLang = 'ไทย';
+  bool isLoading = false;
 
   final List<Map<String, String>> languages = [
     {'name': 'ไทย', 'code': 'th'},
-    {'name': 'จีน', 'code': 'zh'},
-    {'name': 'อังกฤษ', 'code': 'en'},
+    {'name': '中文', 'code': 'zh'},
+    {'name': 'English', 'code': 'en'},
   ];
 
   @override
@@ -71,29 +72,61 @@ class _ChangeLanguagePageState extends State<ChangeLanguagePage> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-                onPressed: () async {
-                  // หาภาษาที่เลือก
-                  final selectedLanguage = languages.firstWhere((lang) => lang['name'] == selectedLang);
-                  final languageCode = selectedLanguage['code']!;
+                onPressed:
+                    isLoading
+                        ? null
+                        : () async {
+                          setState(() {
+                            isLoading = true;
+                          });
 
-                  // เปลี่ยนภาษาผ่าน LanguageController
-                  final languageController = Get.find<LanguageController>();
-                  await languageController.changeLanguage(languageCode);
+                          try {
+                            // หาภาษาที่เลือก
+                            final selectedLanguage = languages.firstWhere((lang) => lang['name'] == selectedLang);
+                            final languageCode = selectedLanguage['code']!;
 
-                  // แสดงข้อความสำเร็จ
-                  Get.snackbar(
-                    'สำเร็จ',
-                    'เปลี่ยนภาษาเรียบร้อยแล้ว',
-                    backgroundColor: Colors.green,
-                    colorText: Colors.white,
-                    snackPosition: SnackPosition.BOTTOM,
-                    duration: Duration(seconds: 2),
-                  );
+                            // เปลี่ยนภาษาผ่าน LanguageController
+                            final languageController = Get.find<LanguageController>();
+                            await languageController.changeLanguage(languageCode);
 
-                  // กลับไปหน้าก่อนหน้า
-                  Get.back();
-                },
-                child: Text('Common.confirm'.tr, style: const TextStyle(fontSize: 16, color: Colors.white)),
+                            // รอสักครู่เพื่อให้เห็น loading
+                            await Future.delayed(Duration(milliseconds: 500));
+
+                            // แสดงข้อความสำเร็จ
+                            Get.snackbar(
+                              'สำเร็จ',
+                              'เปลี่ยนภาษาเรียบร้อยแล้ว',
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                              snackPosition: SnackPosition.BOTTOM,
+                              duration: Duration(seconds: 2),
+                            );
+
+                            // กลับไปหน้าก่อนหน้า
+                            Get.back();
+                          } finally {
+                            if (mounted) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          }
+                        },
+                child:
+                    isLoading
+                        ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                            ),
+                            SizedBox(width: 8),
+                            Text('กำลังเปลี่ยนภาษา...', style: TextStyle(fontSize: 16, color: Colors.white)),
+                          ],
+                        )
+                        : Text('Common.confirm'.tr, style: const TextStyle(fontSize: 16, color: Colors.white)),
               ),
             ),
           ),

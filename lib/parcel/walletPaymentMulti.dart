@@ -5,18 +5,19 @@ import 'package:gcargo/services/orderService.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class WalletPaymentPage extends StatefulWidget {
+class WalletPaymentMulti extends StatefulWidget {
   final double totalPrice;
-  final String ref_no;
   final String orderType;
+  final List<Map<String, dynamic>> items;
+  bool vat;
 
-  const WalletPaymentPage({super.key, required this.totalPrice, required this.ref_no, required this.orderType});
+  WalletPaymentMulti({super.key, required this.totalPrice, required this.orderType, required this.items, required this.vat});
 
   @override
-  State<WalletPaymentPage> createState() => _WalletPaymentPageState();
+  State<WalletPaymentMulti> createState() => _WalletPaymentMultiState();
 }
 
-class _WalletPaymentPageState extends State<WalletPaymentPage> {
+class _WalletPaymentMultiState extends State<WalletPaymentMulti> {
   final OrderController orderController = Get.put(OrderController());
 
   @override
@@ -117,14 +118,12 @@ class _WalletPaymentPageState extends State<WalletPaymentPage> {
                             );
 
                             String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-                            await OrderService.paymentOrder(
+                            await OrderService.paymentOrderMultiple(
                               payment_type: 'wallet',
-                              ref_no: widget.ref_no,
-                              date: formattedDate,
+                              vat: widget.vat,
                               total_price: widget.totalPrice,
-                              note: '',
-                              image: '',
                               order_type: widget.orderType,
+                              item: widget.items,
                             );
 
                             // Check if widget is still mounted

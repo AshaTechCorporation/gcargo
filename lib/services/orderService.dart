@@ -107,6 +107,33 @@ class OrderService {
     }
   }
 
+  //ชำระเงินหลานรายการ
+  static Future paymentOrderMultiple({
+    String? payment_type,
+    double? total_price,
+    String? order_type,
+    List<Map<String, dynamic>>? item,
+    bool? vat,
+  }) async {
+    final url = Uri.https(publicUrl, '/public/api/payment_order_multi');
+    var headers = {'Content-Type': 'application/json'};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({'payment_type': payment_type, 'member_id': userID.toString(), 'order_type': order_type, 'items': item}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
   ///ดูยอดเงิน wallet ตามรหัสสมาชิก
   static Future<List<WalletTrans>> getWalletTrans() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

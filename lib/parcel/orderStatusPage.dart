@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/parcel/detailOrderPage.dart';
+import 'package:gcargo/parcel/paymentMethodMulti.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -647,17 +650,39 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                   const Text('เลือกทั้งหมด', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 ],
               ),
-              Container(
-                decoration: BoxDecoration(color: const Color(0xFF1E3C72), borderRadius: BorderRadius.circular(16)),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  children: [
-                    Text('${selectedOrders.length}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 8),
-                    const Text('ค่าสินค้า', style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 12),
-                    Text('${_calculateTotalPrice()}฿', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ],
+              GestureDetector(
+                onTap: () async {
+                  // นำ selectedOrders ไปยังหน้าชำระเงิน
+                  if (selectedOrders.isNotEmpty) {
+                    // จัดฟอร์แมตข้อมูลตามที่ต้องการ
+                    final paymentData = _preparePaymentData();
+                    inspect(paymentData);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (_) => PaymentMethodMulti(
+                              vat: paymentData['vat'],
+                              orderType: paymentData['order_type'],
+                              totalPrice: paymentData['total_price'],
+                              items: paymentData['items'],
+                            ),
+                      ),
+                    );
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(color: const Color(0xFF1E3C72), borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    children: [
+                      Text('${selectedOrders.length}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      const SizedBox(width: 8),
+                      const Text('ค่าสินค้า', style: TextStyle(color: Colors.white)),
+                      const SizedBox(width: 12),
+                      Text('${_calculateTotalPrice()}฿', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -668,11 +693,58 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
   }
 
   String _calculateTotalPrice() {
-    // ใช้ราคาเฉลี่ย 550 บาทต่อรายการ (mock data)
-    double pricePerOrder = 550.0;
-    double total = selectedOrders.length * pricePerOrder;
+    double total = 0.0;
+
+    // วนลูปหาออเดอร์ที่เลือกและรวมราคา
+    for (String selectedOrderId in selectedOrders) {
+      // หาออเดอร์จาก orderController.orders
+      for (var parentOrder in orderController.orders) {
+        if (parentOrder.orders != null) {
+          for (var nestedOrder in parentOrder.orders!) {
+            if (nestedOrder.id?.toString() == selectedOrderId) {
+              // เพิ่มราคาของออเดอร์นี้
+              double orderPrice = double.tryParse(nestedOrder.total_price ?? '0') ?? 0.0;
+              total += orderPrice;
+              break;
+            }
+          }
+        }
+      }
+    }
 
     return total.toStringAsFixed(2);
+  }
+
+  // จัดเตรียมข้อมูลสำหรับส่งไปหน้า PaymentMethodMulti
+  Map<String, dynamic> _preparePaymentData() {
+    double totalPrice = 0.0;
+    List<Map<String, dynamic>> items = [];
+
+    // วนลูปหาออเดอร์ที่เลือกและสร้าง items
+    for (String selectedOrderId in selectedOrders) {
+      for (var parentOrder in orderController.orders) {
+        if (parentOrder.orders != null) {
+          for (var nestedOrder in parentOrder.orders!) {
+            if (nestedOrder.id?.toString() == selectedOrderId) {
+              double orderPrice = double.tryParse(nestedOrder.total_price ?? '0') ?? 0.0;
+              totalPrice += orderPrice;
+
+              // สร้าง item สำหรับออเดอร์นี้
+              items.add({
+                'ref_no': nestedOrder.code ?? '',
+                'date': nestedOrder.date ?? '',
+                'total_price': orderPrice,
+                'note': nestedOrder.note ?? '',
+                'image': '', // ถ้ามีรูปภาพสามารถเพิ่มได้
+              });
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return {'vat': needVatReceipt, 'order_type': 'order', 'total_price': totalPrice, 'items': items};
   }
 
   Widget _buildOrderCard(Map<String, dynamic> order) {
