@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/models/wallettrans.dart';
@@ -25,6 +26,31 @@ class AccountHeaderWidget extends StatelessWidget {
     this.isLoading = false,
     this.walletTrans,
   });
+
+  String getTranslation(String key) {
+    final languageController = Get.find<LanguageController>();
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'user_not_logged_in': 'ผู้ใช้ยังไม่เข้าสู่ระบบ',
+        'my_parcel': 'พัสดุของฉัน',
+        'status': 'สถานะ',
+        'transfer_money': 'โอนเงิน',
+        'my_wallet': 'Wallet ของฉัน',
+      },
+      'en': {
+        'user_not_logged_in': 'User not logged in',
+        'my_parcel': 'My Parcel',
+        'status': 'Status',
+        'transfer_money': 'Transfer Money',
+        'my_wallet': 'My Wallet',
+      },
+      'zh': {'user_not_logged_in': '用户未登录', 'my_parcel': '我的包裹', 'status': '状态', 'transfer_money': '转账', 'my_wallet': '我的钱包'},
+    };
+
+    return translations[currentLang]?[key] ?? translations['th']?[key] ?? key;
+  }
 
   // คำนวณยอดเงิน wallet
   double _calculateWalletBalance() {
@@ -68,134 +94,147 @@ class AccountHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 🔹 Avatar + Name + Code
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  ClipOval(
-                    child:
-                        (user?.image != null && user!.image!.isNotEmpty)
-                            ? Image.network(
-                              user!.image!,
-                              width: 48,
-                              height: 48,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                // ถ้าโหลดรูปจาก network ไม่ได้ ให้แสดง Avatar default
-                                return Image.asset('assets/images/user.png', width: 48, height: 48, fit: BoxFit.cover);
-                              },
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                // แสดง loading indicator ขณะโหลดรูป
-                                return Container(
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
-                                  child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                                );
-                              },
+    return GetBuilder<LanguageController>(
+      builder:
+          (controller) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 🔹 Avatar + Name + Code
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        ClipOval(
+                          child:
+                              (user?.image != null && user!.image!.isNotEmpty)
+                                  ? Image.network(
+                                    user!.image!,
+                                    width: 48,
+                                    height: 48,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      // ถ้าโหลดรูปจาก network ไม่ได้ ให้แสดง Avatar default
+                                      return Image.asset('assets/images/user.png', width: 48, height: 48, fit: BoxFit.cover);
+                                    },
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      // แสดง loading indicator ขณะโหลดรูป
+                                      return Container(
+                                        width: 48,
+                                        height: 48,
+                                        decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
+                                        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                      );
+                                    },
+                                  )
+                                  : Image.asset('assets/images/user.png', width: 48, height: 48, fit: BoxFit.cover),
+                        ),
+                        const SizedBox(width: 12),
+                        isLoading
+                            ? Container(
+                              width: 100,
+                              height: 16,
+                              decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
                             )
-                            : Image.asset('assets/images/user.png', width: 48, height: 48, fit: BoxFit.cover),
-                  ),
-                  const SizedBox(width: 12),
-                  isLoading
-                      ? Container(
-                        width: 100,
-                        height: 16,
-                        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
-                      )
-                      : Text(
-                        user?.fname ?? 'ผู้ใช้ยังไม่เข้าสู่ระบบ',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                            : Text(
+                              user?.fname ?? getTranslation('user_not_logged_in'),
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                            ),
+                      ],
+                    ),
+                    isLoading
+                        ? Container(
+                          width: 50,
+                          height: 14,
+                          decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                        )
+                        : Text(user?.code ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+                // 🔹 Credit Card รูปเต็มใบ
+                GestureDetector(
+                  onTap: onCreditTap,
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset('assets/images/credit111.png', height: 80, width: double.infinity, fit: BoxFit.cover),
                       ),
-                ],
-              ),
-              isLoading
-                  ? Container(width: 50, height: 14, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)))
-                  : Text(user?.code ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500)),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-          // 🔹 Credit Card รูปเต็มใบ
-          GestureDetector(
-            onTap: onCreditTap,
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset('assets/images/credit111.png', height: 80, width: double.infinity, fit: BoxFit.cover),
-                ),
-                Positioned(
-                  top: 10,
-                  left: 25,
-                  child: Text(
-                    '${_calculateWalletBalance().toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      shadows: [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black.withOpacity(0.5))],
-                    ),
+                      Positioned(
+                        top: 10,
+                        left: 25,
+                        child: Text(
+                          '${_calculateWalletBalance().toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            shadows: [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black.withOpacity(0.5))],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+                const SizedBox(height: 12),
+
+                // 🔹 Point Card รูปเต็มใบ
+                GestureDetector(
+                  onTap: onPointTap,
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset('assets/images/point111.png', height: 80, width: double.infinity, fit: BoxFit.cover),
+                      ),
+                      Positioned(
+                        top: 10,
+                        left: 25,
+                        child: Text(
+                          user?.point_balance != null && user!.point_balance!.isNotEmpty
+                              ? double.tryParse(user!.point_balance!)?.toStringAsFixed(2) ?? '0.00'
+                              : '0.00',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            shadows: [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black.withOpacity(0.5))],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // 🔹 Quick Menu (3 items)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _quickItem(
+                      '${_getCompletedParcelCount()}',
+                      getTranslation('my_parcel'),
+                      'assets/icons/box-blusee.png',
+                      onParcelTap,
+                      getTranslation('status'),
+                    ),
+                    _quickItem(
+                      '฿${_calculateWalletBalance().toStringAsFixed(2)}',
+                      getTranslation('my_wallet'),
+                      'assets/icons/empty-wallet.png',
+                      onWalletTap,
+                      getTranslation('transfer_money'),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
-
-          // 🔹 Point Card รูปเต็มใบ
-          GestureDetector(
-            onTap: onPointTap,
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset('assets/images/point111.png', height: 80, width: double.infinity, fit: BoxFit.cover),
-                ),
-                Positioned(
-                  top: 10,
-                  left: 25,
-                  child: Text(
-                    user?.point_balance != null && user!.point_balance!.isNotEmpty
-                        ? double.tryParse(user!.point_balance!)?.toStringAsFixed(2) ?? '0.00'
-                        : '0.00',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      shadows: [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black.withOpacity(0.5))],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // 🔹 Quick Menu (3 items)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _quickItem('${_getCompletedParcelCount()}', 'พัสดุของฉัน', 'assets/icons/box-blusee.png', onParcelTap, 'สถานะ'),
-              _quickItem(
-                '฿${_calculateWalletBalance().toStringAsFixed(2)}',
-                'Wallet ของฉัน',
-                'assets/icons/empty-wallet.png',
-                onWalletTap,
-                'โอนเงิน',
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 

@@ -1,0 +1,114 @@
+{
+  "app_name": "G-Cargo",
+  "First": {
+    "home": "หน้าแรก",
+    "parcel": "พัสดุ",
+    "bill": "ค่าขนส่ง",
+    "account": "บัญชี"
+  },
+  "Home": {
+    "title": "หน้าแรก",
+    "search_placeholder": "ค้นหาสินค้า",
+    "services": {
+      "shipping_rate": "อัตราค่าขนส่ง",
+      "exchange_rate": "อัตราแลกเปลี่ยน",
+      "calculate_service": "คำนวณค่าบริการ",
+      "track_parcel": "ตามพัสดุของฉัน"
+    },
+    "notifications": "แจ้งเตือน",
+    "package_deposit": "ฝากพัสดุ",
+    "reward_redeem": "แลกของรางวัล"
+  },
+  "Account": {
+    "title": "บัญชี",
+    "profile": "ข้อมูลส่วนตัว",
+    "wallet": "กระเป๋าเงิน",
+    "address_list": "ที่อยู่จัดส่ง",
+    "bank_verify": "ยืนยันบัญชีธนาคาร",
+    "security": "ความปลอดภัย",
+    "favorite": "รายการโปรด",
+    "coupon": "คูปองส่วนลด",
+    "news_promotion": "ข่าวสาร & โปรโมชั่น",
+    "contact_staff": "ติดต่อเจ้าหน้าที่",
+    "user_manual": "คู่มือการใช้งาน",
+    "faq": "คำถามที่พบบ่อย",
+    "about_us": "เกี่ยวกับเรา",
+    "login": "เข้าสู่ระบบ",
+    "logout": "ออกจากระบบ"
+  },
+  "Parcel": {
+    "title": "สถานะ",
+    "order_status": "สถานะออเดอร์",
+    "parcel_status": "สถานะพัสดุ",
+    "problem_package": "แจ้งพัสดุมีปัญหา",
+    "exchange_status": "แลกเปลี่ยนเงินบาทเป็นหยวน",
+    "claim_package": "แจ้งเคลมพัสดุ",
+    "shipping_method": "วิธีการขนส่ง",
+    "search_placeholder": "ค้นหาเลขที่เอกสาร",
+    "select_date_range": "เลือกช่วงวันที่",
+    "all": "ทั้งหมด",
+    "shipping": "กำลังส่ง",
+    "completed": "เสร็จสิ้น",
+    "waiting_payment": "รอชำระเงิน",
+    "success": "สำเร็จ",
+    "cancelled": "ยกเลิก",
+    "under_review": "รอตรวจสอบ",
+    "processing": "กำลังดำเนินการ"
+  },
+  "Bill": {
+    "title": "บิล",
+    "order_history": "ประวัติคำสั่งสินค้า",
+    "transport_cost": "ค่าขนส่ง",
+    "document_detail": "เลขที่เอกสาร",
+    "box_shipping_detail": "เลขขนส่งจีน",
+    "china_shipping_detail": "เลขขนส่งจีน",
+    "transport_cost_detail": "เลขที่เอกสาร",
+    "order_detail": "เลขบิลสั่งซื้อ"
+  },
+  "Cart": {
+    "title": "ตะกร้าสินค้า",
+    "select_all": "เลือกทั้งหมด",
+    "cancel_all": "ยกเลิกทั้งหมด",
+    "cancel": "ยกเลิก",
+    "delete_items": "ลบสินค้า",
+    "order": "สั่งซื้อ",
+    "select_items_to_order": "เลือกสินค้าที่ต้องการสั่งซื้อ"
+  },
+  "Product": {
+    "product_detail": "รายละเอียดสินค้า",
+    "add_to_cart": "เพิ่มลงตะกร้า",
+    "buy_now": "ซื้อเลย",
+    "price": "ราคา",
+    "quantity": "จำนวน",
+    "description": "รายละเอียด"
+  },
+  "Purchase": {
+    "purchase_bill": "ใบสั่งซื้อ",
+    "delivery_method": "วิธีการจัดส่ง",
+    "coupon_selection": "เลือกคูปอง",
+    "shipping_address": "ที่อยู่จัดส่ง",
+    "payment_method": "วิธีการชำระเงิน",
+    "order_summary": "สรุปคำสั่งซื้อ",
+    "confirm_order": "ยืนยันคำสั่งซื้อ"
+  },
+  "Common": {
+    "search": "ค้นหา",
+    "confirm": "ยืนยัน",
+    "cancel": "ยกเลิก",
+    "save": "บันทึก",
+    "edit": "แก้ไข",
+    "delete": "ลบ",
+    "back": "กลับ",
+    "next": "ถัดไป",
+    "previous": "ก่อนหน้า",
+    "loading": "กำลังโหลด...",
+    "no_data": "ไม่พบข้อมูล",
+    "error": "เกิดข้อผิดพลาด",
+    "success": "สำเร็จ",
+    "try_again": "ลองใหม่",
+    "close": "ปิด",
+    "select": "เลือก",
+    "submit": "ส่ง",
+    "update": "อัปเดต"
+  }
+}

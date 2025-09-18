@@ -1,0 +1,114 @@
+{
+  "app_name": "G-Cargo",
+  "First": {
+    "home": "首页",
+    "parcel": "包裹",
+    "bill": "运费",
+    "account": "账户"
+  },
+  "Home": {
+    "title": "首页",
+    "search_placeholder": "搜索商品",
+    "services": {
+      "shipping_rate": "运费价格",
+      "exchange_rate": "汇率",
+      "calculate_service": "计算服务费",
+      "track_parcel": "追踪我的包裹"
+    },
+    "notifications": "通知",
+    "package_deposit": "包裹寄存",
+    "reward_redeem": "兑换奖励"
+  },
+  "Account": {
+    "title": "账户",
+    "profile": "个人资料",
+    "wallet": "钱包",
+    "address_list": "收货地址",
+    "bank_verify": "银行账户验证",
+    "security": "安全",
+    "favorite": "收藏夹",
+    "coupon": "优惠券",
+    "news_promotion": "新闻与促销",
+    "contact_staff": "联系客服",
+    "user_manual": "使用手册",
+    "faq": "常见问题",
+    "about_us": "关于我们",
+    "login": "登录",
+    "logout": "退出登录"
+  },
+  "Parcel": {
+    "title": "状态",
+    "order_status": "订单状态",
+    "parcel_status": "包裹状态",
+    "problem_package": "举报包裹问题",
+    "exchange_status": "泰铢兑换人民币",
+    "claim_package": "包裹理赔",
+    "shipping_method": "运输方式",
+    "search_placeholder": "搜索单据号码",
+    "select_date_range": "选择日期范围",
+    "all": "全部",
+    "shipping": "运输中",
+    "completed": "已完成",
+    "waiting_payment": "等待付款",
+    "success": "成功",
+    "cancelled": "已取消",
+    "under_review": "审核中",
+    "processing": "处理中"
+  },
+  "Bill": {
+    "title": "账单",
+    "order_history": "订单历史",
+    "transport_cost": "运输费用",
+    "document_detail": "单据号码",
+    "box_shipping_detail": "中国运单号",
+    "china_shipping_detail": "中国运单号",
+    "transport_cost_detail": "单据号码",
+    "order_detail": "订单账单号"
+  },
+  "Cart": {
+    "title": "购物车",
+    "select_all": "全选",
+    "cancel_all": "取消全选",
+    "cancel": "取消",
+    "delete_items": "删除商品",
+    "order": "下单",
+    "select_items_to_order": "选择要下单的商品"
+  },
+  "Product": {
+    "product_detail": "商品详情",
+    "add_to_cart": "加入购物车",
+    "buy_now": "立即购买",
+    "price": "价格",
+    "quantity": "数量",
+    "description": "描述"
+  },
+  "Purchase": {
+    "purchase_bill": "采购订单",
+    "delivery_method": "配送方式",
+    "coupon_selection": "选择优惠券",
+    "shipping_address": "收货地址",
+    "payment_method": "付款方式",
+    "order_summary": "订单摘要",
+    "confirm_order": "确认订单"
+  },
+  "Common": {
+    "search": "搜索",
+    "confirm": "确认",
+    "cancel": "取消",
+    "save": "保存",
+    "edit": "编辑",
+    "delete": "删除",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "loading": "加载中...",
+    "no_data": "未找到数据",
+    "error": "发生错误",
+    "success": "成功",
+    "try_again": "重试",
+    "close": "关闭",
+    "select": "选择",
+    "submit": "提交",
+    "update": "更新"
+  }
+}

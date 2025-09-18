@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gcargo/auth/auth_wrapper.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/firebase_options.dart';
 import 'package:gcargo/services/cart_service.dart';
+import 'package:gcargo/translations/app_translations.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -24,7 +26,8 @@ void main() async {
   // Initialize Cart Service
   await CartService.init();
 
-  // ✅ Register HomeController ใน GetX dependency injection
+  // ✅ Register Controllers ใน GetX dependency injection
+  Get.put(LanguageController());
   Get.put(HomeController());
 
   runApp(const MyApp());
@@ -39,6 +42,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'G-Cargo',
       debugShowCheckedModeBanner: false,
+      translations: AppTranslations(),
+      locale: const Locale('th', 'TH'),
+      fallbackLocale: const Locale('th', 'TH'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         appBarTheme: AppBarTheme(

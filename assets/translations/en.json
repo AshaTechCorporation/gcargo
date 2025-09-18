@@ -1,0 +1,114 @@
+{
+  "app_name": "G-Cargo",
+  "First": {
+    "home": "Home",
+    "parcel": "Parcel",
+    "bill": "Shipping Cost",
+    "account": "Account"
+  },
+  "Home": {
+    "title": "Home",
+    "search_placeholder": "Search products",
+    "services": {
+      "shipping_rate": "Shipping Rate",
+      "exchange_rate": "Exchange Rate",
+      "calculate_service": "Calculate Service",
+      "track_parcel": "Track My Parcel"
+    },
+    "notifications": "Notifications",
+    "package_deposit": "Package Deposit",
+    "reward_redeem": "Redeem Rewards"
+  },
+  "Account": {
+    "title": "Account",
+    "profile": "Profile",
+    "wallet": "Wallet",
+    "address_list": "Shipping Address",
+    "bank_verify": "Bank Account Verification",
+    "security": "Security",
+    "favorite": "Favorites",
+    "coupon": "Coupons",
+    "news_promotion": "News & Promotions",
+    "contact_staff": "Contact Staff",
+    "user_manual": "User Manual",
+    "faq": "FAQ",
+    "about_us": "About Us",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "Parcel": {
+    "title": "Status",
+    "order_status": "Order Status",
+    "parcel_status": "Parcel Status",
+    "problem_package": "Report Package Problem",
+    "exchange_status": "Exchange THB to CNY",
+    "claim_package": "Claim Package",
+    "shipping_method": "Shipping Method",
+    "search_placeholder": "Search document number",
+    "select_date_range": "Select date range",
+    "all": "All",
+    "shipping": "Shipping",
+    "completed": "Completed",
+    "waiting_payment": "Waiting Payment",
+    "success": "Success",
+    "cancelled": "Cancelled",
+    "under_review": "Under Review",
+    "processing": "Processing"
+  },
+  "Bill": {
+    "title": "Bill",
+    "order_history": "Order History",
+    "transport_cost": "Transport Cost",
+    "document_detail": "Document Number",
+    "box_shipping_detail": "China Shipping Number",
+    "china_shipping_detail": "China Shipping Number",
+    "transport_cost_detail": "Document Number",
+    "order_detail": "Order Bill Number"
+  },
+  "Cart": {
+    "title": "Shopping Cart",
+    "select_all": "Select All",
+    "cancel_all": "Cancel All",
+    "cancel": "Cancel",
+    "delete_items": "Delete Items",
+    "order": "Order",
+    "select_items_to_order": "Select items to order"
+  },
+  "Product": {
+    "product_detail": "Product Details",
+    "add_to_cart": "Add to Cart",
+    "buy_now": "Buy Now",
+    "price": "Price",
+    "quantity": "Quantity",
+    "description": "Description"
+  },
+  "Purchase": {
+    "purchase_bill": "Purchase Order",
+    "delivery_method": "Delivery Method",
+    "coupon_selection": "Select Coupon",
+    "shipping_address": "Shipping Address",
+    "payment_method": "Payment Method",
+    "order_summary": "Order Summary",
+    "confirm_order": "Confirm Order"
+  },
+  "Common": {
+    "search": "Search",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading...",
+    "no_data": "No data found",
+    "error": "Error occurred",
+    "success": "Success",
+    "try_again": "Try Again",
+    "close": "Close",
+    "select": "Select",
+    "submit": "Submit",
+    "update": "Update"
+  }
+}
