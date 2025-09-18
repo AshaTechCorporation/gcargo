@@ -467,7 +467,24 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
               const SizedBox(height: 24),
 
               // 📦 Parcel List
-              Expanded(child: ListView(children: _getCardsForStatus(statuses[selectedStatusIndex]))),
+              Expanded(
+                child: () {
+                  final cards = _getCardsForStatus(statuses[selectedStatusIndex]);
+                  if (cards.isEmpty) {
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.inbox_outlined, size: 64, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text('ไม่พบข้อมูล', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                        ],
+                      ),
+                    );
+                  }
+                  return ListView(children: cards);
+                }(),
+              ),
             ],
           ),
         );
@@ -616,7 +633,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                       const Text('สินค้าทั้งหมด', style: TextStyle(fontSize: 16, color: Colors.white)),
                     ],
                   ),
-                  const Text('8,566.00฿', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                  //const Text('8,566.00฿', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                 ],
               ),
             ),

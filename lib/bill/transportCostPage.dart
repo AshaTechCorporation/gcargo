@@ -237,7 +237,10 @@ class _TransportCostPageState extends State<TransportCostPage> {
                       ),
                       const SizedBox(height: 20),
                       // 🔹 Group by date
-                      ..._buildGroupedList(filteredData),
+                      if (filteredData.isEmpty)
+                        const Center(child: Text('ไม่พบข้อมูล', style: TextStyle(fontSize: 16, color: Colors.grey)))
+                      else
+                        ..._buildGroupedList(filteredData),
                     ],
                   ),
                 ),

@@ -137,21 +137,33 @@ class _ProblemPackagePageState extends State<ProblemPackagePage> {
 
           // 🔹 รายการพัสดุ
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children:
-                  grouped.entries.map((e) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        ...e.value.map((item) => _buildDeliveryCard(item)),
-                        const SizedBox(height: 12),
-                      ],
-                    );
-                  }).toList(),
-            ),
+            child:
+                grouped.isEmpty
+                    ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.inbox_outlined, size: 64, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text('ไม่พบข้อมูล', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                        ],
+                      ),
+                    )
+                    : ListView(
+                      padding: const EdgeInsets.all(16),
+                      children:
+                          grouped.entries.map((e) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 8),
+                                ...e.value.map((item) => _buildDeliveryCard(item)),
+                                const SizedBox(height: 12),
+                              ],
+                            );
+                          }).toList(),
+                    ),
           ),
         ],
       ),

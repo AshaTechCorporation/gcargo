@@ -98,16 +98,19 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             const SizedBox(height: 16),
 
             // 🧾 Order List
-            ...filteredOrders.map((order) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(order['date'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  _buildOrderCard(order),
-                ],
-              );
-            }).toList(),
+            if (filteredOrders.isEmpty)
+              const Center(child: Text('ไม่พบข้อมูล', style: TextStyle(fontSize: 16, color: Colors.grey)))
+            else
+              ...filteredOrders.map((order) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(order['date'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    _buildOrderCard(order),
+                  ],
+                );
+              }).toList(),
           ],
         ),
       ),
