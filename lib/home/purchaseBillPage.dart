@@ -70,8 +70,8 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
 
   // Helper methods for price calculations
   double getExchangeRateValue(Map<String, dynamic> rateData) {
-    if (rateData.isNotEmpty && rateData.containsKey('product_payment_rate')) {
-      final rate = rateData['product_payment_rate'];
+    if (rateData.isNotEmpty && rateData.containsKey('deposit_order_rate')) {
+      final rate = rateData['deposit_order_rate'];
       if (rate is num) {
         return rate.toDouble();
       } else if (rate is String) {

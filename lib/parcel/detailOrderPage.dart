@@ -3,6 +3,7 @@ import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/models/orders/productsTrack.dart';
 import 'package:gcargo/parcel/paymentMethodPage.dart';
+import 'package:gcargo/services/homeService.dart';
 import 'package:gcargo/services/orderService.dart';
 import 'package:gcargo/utils/helpers.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,7 @@ class DetailOrderPage extends StatefulWidget {
 
 class _DetailOrderPageState extends State<DetailOrderPage> {
   final OrderController orderController = Get.put(OrderController());
+  double depositOrderRate = 4.0; // Default rate
 
   @override
   void initState() {
@@ -26,7 +28,23 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     // Call getOrderById when page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       orderController.getOrderById(widget.orderId);
+      _loadExchangeRate();
     });
+  }
+
+  // Load exchange rate from API
+  Future<void> _loadExchangeRate() async {
+    try {
+      final exchangeData = await HomeService.getExchageRate();
+      if (exchangeData != null && exchangeData['deposit_order_rate'] != null) {
+        setState(() {
+          depositOrderRate = double.tryParse(exchangeData['deposit_order_rate'].toString()) ?? 4.0;
+        });
+      }
+    } catch (e) {
+      print('Error loading exchange rate: $e');
+      // Keep default rate if API fails
+    }
   }
 
   // Helper methods to get data safely from API response
@@ -126,7 +144,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
             children: [
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   children: [
                     orderStatus == 'สำเร็จ'
                         ? Container(
@@ -209,7 +227,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                               children: [
                                 Builder(
                                   builder: (context) {
-                                    final exchangeRate = double.tryParse(orderController.order.value?.exchange_rate ?? '4.00') ?? 4.00;
+                                    final exchangeRate =
+                                        double.tryParse(orderController.order.value?.exchange_rate ?? depositOrderRate.toString()) ??
+                                        depositOrderRate;
                                     final chinaShippingFee = double.tryParse(orderController.order.value?.china_shipping_fee ?? '0') ?? 0.0;
                                     final chinaShippingBaht = chinaShippingFee * exchangeRate;
 
@@ -371,7 +391,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     final totalBahtPrice = _calculateTotalBahtPrice();
 
     // Get data from API
-    final exchangeRate = double.tryParse(order?.exchange_rate ?? '4.00') ?? 4.00;
+    final exchangeRate = double.tryParse(order?.exchange_rate ?? depositOrderRate.toString()) ?? depositOrderRate;
     final chinaShippingFee = double.tryParse(order?.china_shipping_fee ?? '0') ?? 0.0;
     final depositFee = double.tryParse(order?.deposit_fee ?? '0') ?? 0.0;
     final totalPriceFromAPI = double.tryParse(order?.total_price ?? '0') ?? 0.0;
@@ -467,7 +487,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   }
 
   double _calculateTotalBahtPrice() {
-    return _calculateTotalProductPrice() * 4.0; // Assuming 1 Yuan = 4 Baht
+    return _calculateTotalProductPrice() * depositOrderRate; // Use API exchange rate
   }
 
   Widget _buildPriceRow(String label, String value, {bool isBold = false}) {
@@ -553,7 +573,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     } else if (status == 'awaiting_payment') {
       // For "รอชำระเงิน" - show price button with API total
       final order = orderController.order.value;
-      final exchangeRate = double.tryParse(order?.exchange_rate ?? '4.00') ?? 4.00;
+      final exchangeRate = double.tryParse(order?.exchange_rate ?? depositOrderRate.toString()) ?? depositOrderRate;
       final totalPriceFromAPI = double.tryParse(order?.total_price ?? '0') ?? 0.0;
 
       // Use API total if available, otherwise use calculated total

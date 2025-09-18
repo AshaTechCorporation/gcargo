@@ -383,7 +383,7 @@ class _ExchangePageState extends State<ExchangePage> {
           children: [
             // Exchange rate display (Alipay)
             Obx(() {
-              final alipayRate = homeController.exchangeRate['alipay'];
+              final alipayRate = homeController.exchangeRate['alipay_topup_rate'];
               final rate = alipayRate?.toString();
               return Container(
                 padding: EdgeInsets.all(12),
