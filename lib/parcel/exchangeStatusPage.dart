@@ -260,35 +260,47 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
 
             // 🔹 รายการ
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: () {
-                  // เรียงวันที่ล่าสุดขึ้นก่อน (descending order)
-                  final sortedEntries = grouped.entries.toList();
-                  sortedEntries.sort((a, b) {
-                    try {
-                      final dateA = DateTime.parse(a.key);
-                      final dateB = DateTime.parse(b.key);
-                      return dateB.compareTo(dateA); // วันที่ล่าสุดก่อน
-                    } catch (e) {
-                      // ถ้า parse วันที่ไม่ได้ ให้เรียงตาม string
-                      return b.key.compareTo(a.key);
-                    }
-                  });
+              child:
+                  grouped.isEmpty
+                      ? const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.inbox_outlined, size: 64, color: Colors.grey),
+                            SizedBox(height: 16),
+                            Text('ไม่พบข้อมูล', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                          ],
+                        ),
+                      )
+                      : ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: () {
+                          // เรียงวันที่ล่าสุดขึ้นก่อน (descending order)
+                          final sortedEntries = grouped.entries.toList();
+                          sortedEntries.sort((a, b) {
+                            try {
+                              final dateA = DateTime.parse(a.key);
+                              final dateB = DateTime.parse(b.key);
+                              return dateB.compareTo(dateA); // วันที่ล่าสุดก่อน
+                            } catch (e) {
+                              // ถ้า parse วันที่ไม่ได้ ให้เรียงตาม string
+                              return b.key.compareTo(a.key);
+                            }
+                          });
 
-                  return sortedEntries.map((e) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        const SizedBox(height: 8),
-                        ...e.value.map((payment) => _buildPaymentCard(payment)),
-                        const SizedBox(height: 12),
-                      ],
-                    );
-                  }).toList();
-                }(),
-              ),
+                          return sortedEntries.map((e) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                const SizedBox(height: 8),
+                                ...e.value.map((payment) => _buildPaymentCard(payment)),
+                                const SizedBox(height: 12),
+                              ],
+                            );
+                          }).toList();
+                        }(),
+                      ),
             ),
           ],
         ),
