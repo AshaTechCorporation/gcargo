@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/parcel/exchangeDetailPage.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -14,20 +15,112 @@ class ExchangeStatusPage extends StatefulWidget {
 }
 
 class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
-  String selectedStatus = 'ทั้งหมด';
+  late LanguageController languageController;
+  String selectedStatus = 'all';
   final HomeController homeController = Get.put(HomeController());
-
-  final List<String> statusList = ['ทั้งหมด', 'รอชำระเงิน', 'สำเร็จ'];
   final TextEditingController _dateController = TextEditingController();
 
   // Date filter variables
   DateTime? startDate;
   DateTime? endDate;
 
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'exchange_status': 'สถานะแลกเงิน',
+        'all': 'ทั้งหมด',
+        'pending_payment': 'รอชำระเงิน',
+        'completed': 'สำเร็จ',
+        'select_date_range': 'เลือกช่วงวันที่',
+        'search_order': 'ค้นหาเลขที่ออเดอร์',
+        'no_exchanges_found': 'ไม่พบรายการแลกเงิน',
+        'no_exchanges_status': 'ไม่มีรายการในสถานะ',
+        'exchanges_will_show_here': 'เมื่อคุณแลกเงิน รายการจะแสดงที่นี่',
+        'order_number': 'เลขที่ออเดอร์',
+        'exchange_rate': 'อัตราแลกเงิน',
+        'service_fee': 'ค่าบริการ',
+        'total_amount': 'จำนวนเงินรวม',
+        'yuan': 'หยวน',
+        'baht': 'บาท',
+        'view_details': 'ดูรายละเอียด',
+        'try_again': 'ลองใหม่',
+        'loading': 'กำลังโหลด...',
+        'error': 'เกิดข้อผิดพลาด',
+        'phone_number': 'เบอร์โทรศัพท์',
+        'not_specified': 'ไม่ระบุ',
+        'yuan_amount_to_transfer': 'ยอดเงินหยวนที่ต้องการโอน',
+        'amount_to_pay': 'ยอดเงินที่ต้องชำระ:',
+        'account_gcargo_a': 'บัญชี G-cargo-A',
+        'account_gcargo_w': 'บัญชี G-cargo-W',
+      },
+      'en': {
+        'exchange_status': 'Exchange Status',
+        'all': 'All',
+        'pending_payment': 'Pending Payment',
+        'completed': 'Completed',
+        'select_date_range': 'Select Date Range',
+        'search_order': 'Search Order Number',
+        'no_exchanges_found': 'No Exchanges Found',
+        'no_exchanges_status': 'No exchanges in status',
+        'exchanges_will_show_here': 'When you exchange money, it will appear here',
+        'order_number': 'Order Number',
+        'exchange_rate': 'Exchange Rate',
+        'service_fee': 'Service Fee',
+        'total_amount': 'Total Amount',
+        'yuan': 'Yuan',
+        'baht': 'Baht',
+        'view_details': 'View Details',
+        'try_again': 'Try Again',
+        'loading': 'Loading...',
+        'error': 'Error Occurred',
+        'phone_number': 'Phone Number',
+        'not_specified': 'Not Specified',
+        'yuan_amount_to_transfer': 'Yuan Amount to Transfer',
+        'amount_to_pay': 'Amount to Pay:',
+        'account_gcargo_a': 'G-cargo-A Account',
+        'account_gcargo_w': 'G-cargo-W Account',
+      },
+      'zh': {
+        'exchange_status': '兑换状态',
+        'all': '全部',
+        'pending_payment': '等待付款',
+        'completed': '已完成',
+        'select_date_range': '选择日期范围',
+        'search_order': '搜索订单号',
+        'no_exchanges_found': '未找到兑换记录',
+        'no_exchanges_status': '该状态下无兑换记录',
+        'exchanges_will_show_here': '兑换记录将显示在这里',
+        'order_number': '订单号',
+        'exchange_rate': '汇率',
+        'service_fee': '服务费',
+        'total_amount': '总金额',
+        'yuan': '元',
+        'baht': '泰铢',
+        'view_details': '查看详情',
+        'try_again': '重试',
+        'loading': '加载中...',
+        'error': '发生错误',
+        'phone_number': '电话号码',
+        'not_specified': '未指定',
+        'yuan_amount_to_transfer': '要转账的人民币金额',
+        'amount_to_pay': '应付金额:',
+        'account_gcargo_a': 'G-cargo-A账户',
+        'account_gcargo_w': 'G-cargo-W账户',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
+
+  List<String> get statusList => [getTranslation('all'), getTranslation('pending_payment'), getTranslation('completed')];
+
   @override
   void initState() {
     super.initState();
-    _dateController.text = 'เลือกช่วงวันที่'; // ไม่ตั้งค่าเริ่มต้น
+    languageController = Get.find<LanguageController>();
+    _dateController.text = getTranslation('select_date_range');
 
     // ไม่ตั้งค่าวันที่เริ่มต้น - ให้ผู้ใช้เลือกเอง
     startDate = null;
@@ -98,11 +191,11 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
   String _getDisplayStatus(String apiStatus) {
     switch (apiStatus) {
       case 'awaiting_payment':
-        return 'รอชำระเงิน';
+        return getTranslation('pending_payment');
       case 'completed':
-        return 'สำเร็จ';
+        return getTranslation('completed');
       default:
-        return 'รอชำระเงิน';
+        return getTranslation('pending_payment');
     }
   }
 
@@ -154,11 +247,12 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
       }
 
       // ฟิลเตอร์ตามสถานะ
-      if (selectedStatus != 'ทั้งหมด') {
+      if (selectedStatus != 'all') {
+        final targetStatus = getTranslation(selectedStatus);
         filteredPayments =
             filteredPayments.where((payment) {
               final displayStatus = _getDisplayStatus(payment.status ?? '');
-              return displayStatus == selectedStatus;
+              return displayStatus == targetStatus;
             }).toList();
       }
 
@@ -171,9 +265,9 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
 
       // นับจำนวนตามสถานะ (ใช้ข้อมูลทั้งหมดไม่ใช่ข้อมูลที่ถูกฟิลเตอร์)
       final Map<String, int> statusCounts = {
-        'ทั้งหมด': payments.length,
-        'รอชำระเงิน': payments.where((p) => _getDisplayStatus(p.status ?? '') == 'รอชำระเงิน').length,
-        'สำเร็จ': payments.where((p) => _getDisplayStatus(p.status ?? '') == 'สำเร็จ').length,
+        getTranslation('all'): payments.length,
+        getTranslation('pending_payment'): payments.where((p) => _getDisplayStatus(p.status ?? '') == getTranslation('pending_payment')).length,
+        getTranslation('completed'): payments.where((p) => _getDisplayStatus(p.status ?? '') == getTranslation('completed')).length,
       };
 
       return Scaffold(
@@ -182,7 +276,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-          title: Text('แลกเปลี่ยนเงินบาทเป็นหยวน', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
+          title: Text(getTranslation('exchange_status'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         body: Column(
           children: [
@@ -195,7 +289,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                 readOnly: true,
                 decoration: InputDecoration(
                   prefixIcon: Padding(padding: EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 20)),
-                  hintText: 'เลือกช่วงวันที่',
+                  hintText: getTranslation('select_date_range'),
                   contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
                   filled: true,
                   fillColor: Colors.white,
@@ -216,11 +310,12 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                 separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final status = statusList[i];
-                  final isSelected = status == selectedStatus;
+                  final statusKey = ['all', 'pending_payment', 'completed'][i];
+                  final isSelected = statusKey == selectedStatus;
                   final count = statusCounts[status] ?? 0;
 
                   return GestureDetector(
-                    onTap: () => setState(() => selectedStatus = status),
+                    onTap: () => setState(() => selectedStatus = statusKey),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                       decoration: BoxDecoration(
@@ -262,13 +357,13 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
             Expanded(
               child:
                   grouped.isEmpty
-                      ? const Center(
+                      ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.inbox_outlined, size: 64, color: Colors.grey),
                             SizedBox(height: 16),
-                            Text('ไม่พบข้อมูล', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                            Text(getTranslation('no_exchanges_found'), style: TextStyle(fontSize: 16, color: Colors.grey)),
                           ],
                         ),
                       )
@@ -370,9 +465,9 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
             const SizedBox(height: 12),
 
             // 🔹 Ref
-            Text('เบอร์โทรศัพท์', style: const TextStyle(fontSize: 16, color: Colors.grey)),
+            Text(getTranslation('phone_number'), style: const TextStyle(fontSize: 16, color: Colors.grey)),
             const SizedBox(height: 2),
-            Text(payment.phone ?? 'ไม่ระบุ', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(payment.phone ?? getTranslation('not_specified'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
 
             const SizedBox(height: 12),
 
@@ -383,7 +478,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('ยอดเงินหยวนที่ต้องการโอน', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                      Text(getTranslation('yuan_amount_to_transfer'), style: TextStyle(fontSize: 14, color: Colors.grey)),
                       const SizedBox(height: 4),
                       Text(NumberFormatter.formatCNY(cnyAmount), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     ],
@@ -394,7 +489,7 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text('ยอดเงินที่ต้องชำระ:', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                      Text(getTranslation('amount_to_pay'), style: TextStyle(fontSize: 14, color: Colors.grey)),
                       const SizedBox(height: 4),
                       Text(
                         NumberFormatter.formatTHB(thbAmount),
@@ -415,9 +510,9 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
   String _getAccountName(String paymentMethod) {
     switch (paymentMethod) {
       case 'Alipay':
-        return 'บัญชี G-cargo-A';
+        return getTranslation('account_gcargo_a');
       case 'WeChat Pay':
-        return 'บัญชี G-cargo-W';
+        return getTranslation('account_gcargo_w');
       default:
         return paymentMethod;
     }

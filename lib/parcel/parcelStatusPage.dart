@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gcargo/account/couponPage.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/models/legalimport.dart';
 import 'package:gcargo/models/orders/ordersPageNew.dart';
 import 'package:gcargo/parcel/claimPackagePage.dart';
@@ -19,7 +20,7 @@ class ParcelStatusPage extends StatefulWidget {
 }
 
 class _ParcelStatusPageState extends State<ParcelStatusPage> {
-  final List<String> statuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดตู้', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอจัดส่ง', 'สำเร็จ'];
+  late LanguageController languageController;
   final TextEditingController _dateController = TextEditingController();
 
   // Date filter variables
@@ -36,10 +37,136 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
   bool isRequestTaxCertificate = false; // สำหรับ radio button ขอใบรับรองภาษี
   bool isSelectAll = false; // สำหรับ checkbox เลือกทั้งหมด
 
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'parcel_status': 'สถานะพัสดุ',
+        'all': 'ทั้งหมด',
+        'pending_send_china': 'รอส่งไปโกดังจีน',
+        'arrived_china': 'ถึงโกดังจีน',
+        'container_closed': 'ปิดตู้',
+        'arrived_thailand': 'ถึงโกดังไทย',
+        'under_inspection': 'กำลังตรวจสอบ',
+        'ready_delivery': 'รอจัดส่ง',
+        'completed': 'สำเร็จ',
+        'select_date_range': 'เลือกช่วงวันที่',
+        'search_tracking': 'ค้นหาเลขติดตาม',
+        'no_parcels_found': 'ไม่พบพัสดุ',
+        'no_parcels_status': 'ไม่มีพัสดุในสถานะ',
+        'parcels_will_show_here': 'เมื่อคุณมีพัสดุ จะแสดงที่นี่',
+        'tracking_number': 'เลขติดตาม',
+        'weight': 'น้ำหนัก',
+        'kg': 'กก.',
+        'select_all': 'เลือกทั้งหมด',
+        'request_tax_certificate': 'ขอใบรับรองภาษี',
+        'confirm_delivery': 'ยืนยันการจัดส่ง',
+        'claim_package': 'เคลมพัสดุ',
+        'shipping_method': 'วิธีการจัดส่ง',
+        'view_details': 'ดูรายละเอียด',
+        'coupon_discount': 'คูปองส่วนลด',
+        'shipping_thailand': 'ขนส่งไทย รถเหมาบริษัท',
+        'tax_warning': 'หากต้องการหัก ณ ที่จ่าย กรุณายืนยันก่อนชำระเงิน',
+        'order_bill_number': 'เลขบิลสั่งซื้อ',
+        'warehouse_bill_number': 'เลขบิลหน้าโกดัง',
+        'document_number': 'เลขที่เอกสาร',
+        'thailand_shipping_company': 'บริษัทขนส่งในไทย',
+        'thailand_tracking_number': 'หมายเลขขนส่งในไทย',
+        'report_problem': 'แจ้งพัสดุมีปัญหา',
+        'try_again': 'ลองใหม่',
+      },
+      'en': {
+        'parcel_status': 'Parcel Status',
+        'all': 'All',
+        'pending_send_china': 'Pending Send to China',
+        'arrived_china': 'Arrived China Warehouse',
+        'container_closed': 'Container Closed',
+        'arrived_thailand': 'Arrived Thailand Warehouse',
+        'under_inspection': 'Under Inspection',
+        'ready_delivery': 'Ready for Delivery',
+        'completed': 'Completed',
+        'select_date_range': 'Select Date Range',
+        'search_tracking': 'Search Tracking Number',
+        'no_parcels_found': 'No Parcels Found',
+        'no_parcels_status': 'No parcels in status',
+        'parcels_will_show_here': 'When you have parcels, they will appear here',
+        'tracking_number': 'Tracking Number',
+        'weight': 'Weight',
+        'kg': 'kg',
+        'select_all': 'Select All',
+        'request_tax_certificate': 'Request Tax Certificate',
+        'confirm_delivery': 'Confirm Delivery',
+        'claim_package': 'Claim Package',
+        'shipping_method': 'Shipping Method',
+        'view_details': 'View Details',
+        'coupon_discount': 'Coupon Discount',
+        'shipping_thailand': 'Thailand Shipping - Company Truck',
+        'tax_warning': 'Please confirm before payment if you need tax withholding',
+        'order_bill_number': 'Order Bill Number',
+        'warehouse_bill_number': 'Warehouse Bill Number',
+        'document_number': 'Document Number',
+        'thailand_shipping_company': 'Thailand Shipping Company',
+        'thailand_tracking_number': 'Thailand Tracking Number',
+        'report_problem': 'Report Problem',
+        'try_again': 'Try Again',
+      },
+      'zh': {
+        'parcel_status': '包裹状态',
+        'all': '全部',
+        'pending_send_china': '等待发往中国仓库',
+        'arrived_china': '到达中国仓库',
+        'container_closed': '封柜',
+        'arrived_thailand': '到达泰国仓库',
+        'under_inspection': '正在检查',
+        'ready_delivery': '等待配送',
+        'completed': '已完成',
+        'select_date_range': '选择日期范围',
+        'search_tracking': '搜索跟踪号',
+        'no_parcels_found': '未找到包裹',
+        'no_parcels_status': '该状态下无包裹',
+        'parcels_will_show_here': '有包裹时将显示在这里',
+        'tracking_number': '跟踪号',
+        'weight': '重量',
+        'kg': '公斤',
+        'select_all': '全选',
+        'request_tax_certificate': '申请税务证明',
+        'confirm_delivery': '确认配送',
+        'claim_package': '申请理赔',
+        'shipping_method': '配送方式',
+        'view_details': '查看详情',
+        'coupon_discount': '优惠券折扣',
+        'shipping_thailand': '泰国运输 - 公司卡车',
+        'tax_warning': '如需代扣税款请在付款前确认',
+        'order_bill_number': '订单账单号',
+        'warehouse_bill_number': '仓库账单号',
+        'document_number': '文件编号',
+        'thailand_shipping_company': '泰国运输公司',
+        'thailand_tracking_number': '泰国跟踪号',
+        'report_problem': '报告问题',
+        'try_again': '重试',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
+
+  List<String> get statuses => [
+    getTranslation('all'),
+    getTranslation('pending_send_china'),
+    getTranslation('arrived_china'),
+    getTranslation('container_closed'),
+    getTranslation('arrived_thailand'),
+    getTranslation('under_inspection'),
+    getTranslation('ready_delivery'),
+    getTranslation('completed'),
+  ];
+
   @override
   void initState() {
     super.initState();
-    //_dateController.text = '01/01/2024 - 01/07/2025'; // ค่าเริ่มต้น
+    languageController = Get.find<LanguageController>();
+    _dateController.text = getTranslation('select_date_range');
 
     // Initialize OrderController และเรียก API
     orderController = Get.put(OrderController());
@@ -75,7 +202,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
       }
     }
 
-    counts['ทั้งหมด'] = totalCount;
+    counts[getTranslation('all')] = totalCount;
     return counts;
   }
 
@@ -84,27 +211,27 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
     switch (apiStatus.toLowerCase()) {
       case 'pending_send_to_china':
       case 'รอส่งไปโกดังจีน':
-        return 'รอส่งไปโกดังจีน';
+        return getTranslation('pending_send_china');
       case 'arrived_china_warehouse':
       case 'ถึงโกดังจีน':
-        return 'ถึงโกดังจีน';
+        return getTranslation('arrived_china');
       case 'in_transit':
       case 'ปิดตู้':
-        return 'ปิดตู้';
+        return getTranslation('container_closed');
       case 'arrived_thailand_warehouse':
       case 'ถึงโกดังไทย':
-        return 'ถึงโกดังไทย';
+        return getTranslation('arrived_thailand');
       case 'awaiting_payment':
       case 'กำลังตรวจสอบ':
-        return 'กำลังตรวจสอบ';
+        return getTranslation('under_inspection');
       case 'delivered':
       case 'รอจัดส่ง':
-        return 'รอจัดส่ง';
+        return getTranslation('ready_delivery');
       case 'completed':
       case 'สำเร็จ':
-        return 'สำเร็จ';
+        return getTranslation('completed');
       default:
-        return 'รอส่งไปโกดังจีน'; // default status
+        return getTranslation('pending_send_china'); // default status
     }
   }
 
@@ -117,7 +244,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
       if (legalImport.delivery_orders != null) {
         for (OrdersPageNew order in legalImport.delivery_orders!) {
           final orderStatus = _mapApiStatusToDisplayStatus(order.status ?? '');
-          if (orderStatus == 'ถึงโกดังไทย') {
+          if (orderStatus == getTranslation('arrived_thailand')) {
             allThailandParcels.add(order.code ?? '');
           }
         }
@@ -203,7 +330,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                   child: Center(child: Image.asset('assets/icons/box.png', width: 18, height: 18)),
                 ),
                 const SizedBox(width: 8),
-                Expanded(child: Text('เลขขนส่งจีน $parcelNo', style: const TextStyle(fontWeight: FontWeight.bold))),
+                Expanded(child: Text('${getTranslation('tracking_number')} $parcelNo', style: const TextStyle(fontWeight: FontWeight.bold))),
                 //Text(status, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF427D9D))),
               ],
             ),
@@ -212,29 +339,29 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [const Text('เลขบิลสั่งซื้อ'), Text(orderCode, style: const TextStyle(fontWeight: FontWeight.bold))],
+              children: [Text(getTranslation('order_bill_number')), Text(orderCode, style: const TextStyle(fontWeight: FontWeight.bold))],
             ),
 
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('เลขบิลหน้าโกดัง'),
-                status == 'รอส่งไปโกดังจีน' ? SizedBox() : Text(warehouseCode, style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(getTranslation('warehouse_bill_number')),
+                status == getTranslation('pending_send_china') ? SizedBox() : Text(warehouseCode, style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: 8),
-            status == 'กำลังตรวจสอบ' || status == 'รอจัดส่ง'
+            status == getTranslation('under_inspection') || status == getTranslation('ready_delivery')
                 ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [const Text('เลขที่เอกสาร'), const Text(' X2504290002', style: TextStyle(fontWeight: FontWeight.bold))],
+                  children: [Text(getTranslation('document_number')), const Text(' X2504290002', style: TextStyle(fontWeight: FontWeight.bold))],
                 )
                 : SizedBox(),
 
             // เพิ่ม checkbox เฉพาะสถานะ "ถึงโกดังไทย"
             Row(
               children: [
-                if (status == 'ถึงโกดังไทย') ...[
+                if (status == getTranslation('arrived_thailand')) ...[
                   Checkbox(
                     value: selectedParcels.contains(parcelNo),
                     onChanged: (bool? value) {
@@ -259,19 +386,19 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [const Text('เลขที่เอกสาร'), const Text('X2504290002', style: TextStyle(fontWeight: FontWeight.bold))],
+                children: [Text(getTranslation('document_number')), const Text('X2504290002', style: TextStyle(fontWeight: FontWeight.bold))],
               ),
 
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [const Text('บริษัทขนส่งในไทย'), const Text('-', style: TextStyle(fontWeight: FontWeight.bold))],
+                children: [Text(getTranslation('thailand_shipping_company')), const Text('-', style: TextStyle(fontWeight: FontWeight.bold))],
               ),
 
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [const Text('หมายเลขขนส่งในไทย'), const Text('-', style: TextStyle(fontWeight: FontWeight.bold))],
+                children: [Text(getTranslation('thailand_tracking_number')), const Text('-', style: TextStyle(fontWeight: FontWeight.bold))],
               ),
 
               const SizedBox(height: 12),
@@ -288,7 +415,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                       foregroundColor: const Color(0xFF427D9D),
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
-                    child: const Text('แจ้งพัสดุมีปัญหา'),
+                    child: Text(getTranslation('report_problem')),
                   ),
                 ],
               ),
@@ -317,7 +444,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
           final orderStatus = _mapApiStatusToDisplayStatus(order.status ?? '');
 
           // Filter by status
-          if (status != 'ทั้งหมด' && orderStatus != status) continue;
+          if (status != getTranslation('all') && orderStatus != status) continue;
 
           // Filter by date range
           if (startDate != null && endDate != null && order.created_at != null) {
@@ -355,7 +482,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
           _buildParcelCard(
             parcelNo: order.po_no ?? 'N/A',
             status: orderStatus,
-            showActionButton: orderStatus == 'สำเร็จ',
+            showActionButton: orderStatus == getTranslation('completed'),
             orderId: order.id ?? 0,
             orderCode: order.order?.code ?? 'N/A',
             warehouseCode: order.code ?? 'N/A',
@@ -388,11 +515,11 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('สถานะพัสดุ', style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
+              Text(getTranslation('parcel_status'), style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
               SizedBox(width: 20),
               DateRangePickerWidget(
                 controller: _dateController,
-                hintText: 'เลือกช่วงวันที่',
+                hintText: getTranslation('select_date_range'),
                 onDateRangeSelected: (DateTimeRange? picked) {
                   if (picked != null) {
                     setState(() {
@@ -423,7 +550,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                 SizedBox(height: 16),
                 Text(orderController.errorMessage.value, style: TextStyle(color: Colors.grey)),
                 SizedBox(height: 16),
-                ElevatedButton(onPressed: () => orderController.getDeliveryOrders(), child: Text('ลองใหม่')),
+                ElevatedButton(onPressed: () => orderController.getDeliveryOrders(), child: Text(getTranslation('try_again'))),
               ],
             ),
           );
@@ -438,7 +565,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
               // 🔍 Search Box
               TextFormField(
                 decoration: InputDecoration(
-                  hintText: 'ค้นหาเลขที่ออเดอร์/เลขขนส่งจีน',
+                  hintText: getTranslation('search_tracking'),
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -471,13 +598,13 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                 child: () {
                   final cards = _getCardsForStatus(statuses[selectedStatusIndex]);
                   if (cards.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.inbox_outlined, size: 64, color: Colors.grey),
                           SizedBox(height: 16),
-                          Text('ไม่พบข้อมูล', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                          Text(getTranslation('no_parcels_found'), style: TextStyle(fontSize: 16, color: Colors.grey)),
                         ],
                       ),
                     );
@@ -509,8 +636,8 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text('คูปองส่วนลด', style: TextStyle(fontWeight: FontWeight.bold)),
+              children: [
+                Text(getTranslation('coupon_discount'), style: TextStyle(fontWeight: FontWeight.bold)),
                 Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF999999)),
               ],
             ),
@@ -521,7 +648,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('ขนส่งไทย  รถเหมาบริษัท', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(getTranslation('shipping_thailand'), style: TextStyle(fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: () {
                   // ไปหน้าเลือกขนส่ง
@@ -561,12 +688,12 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                   child: isRequestTaxCertificate ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
                 ),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('ขอใบรับรองภาษีหัก ณ ที่จ่าย 1%', style: TextStyle(fontSize: 13)),
-                      Text('หากต้องการหัก ณ ที่จ่าย กรุณายืนยันก่อนชำระเงิน', style: TextStyle(fontSize: 12, color: Colors.red)),
+                      Text(getTranslation('request_tax_certificate'), style: TextStyle(fontSize: 13)),
+                      Text(getTranslation('tax_warning'), style: TextStyle(fontSize: 12, color: Colors.red)),
                     ],
                   ),
                 ),
@@ -597,7 +724,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                     _updateAllParcelsSelection();
                   });
                 },
-                child: const Text('เลือกทั้งหมด'),
+                child: Text(getTranslation('select_all')),
               ),
             ],
           ),
@@ -630,7 +757,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Text('สินค้าทั้งหมด', style: TextStyle(fontSize: 16, color: Colors.white)),
+                      Text(getTranslation('confirm_delivery'), style: TextStyle(fontSize: 16, color: Colors.white)),
                     ],
                   ),
                   //const Text('8,566.00฿', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
