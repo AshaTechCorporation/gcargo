@@ -235,138 +235,135 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<LanguageController>(
-      builder:
-          (controller) => Scaffold(
-            extendBody: true,
-            body: Stack(
-              children: [
-                PageStorage(bucket: bucket, child: pages[_pageIndex]),
+    return Scaffold(
+      extendBody: true,
+      body: Stack(
+        children: [
+          PageStorage(bucket: bucket, child: pages[_pageIndex]),
 
-                if (_showStatusPanel)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 64, // เหนือ BottomNavBar
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _statusActionItem(
-                              icon: 'assets/icons/task-square.png',
-                              label: getStatusTranslation('order_status'),
-                              backgroundColor: const Color(0xFFE6F2FF),
-                              iconBackground: const Color(0xFFD0E7FF),
-                              onTap: () {
-                                setState(() {
-                                  _showStatusPanel = false;
-                                });
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => OrderStatusPage()));
-                              },
-                            ),
-                            _statusActionItem(
-                              icon: 'assets/icons/boxGreen.png',
-                              label: getStatusTranslation('parcel_status'),
-                              backgroundColor: const Color(0xFFE9F7EF),
-                              iconBackground: const Color(0xFFC8E6C9),
-                              onTap: () {
-                                setState(() {
-                                  _showStatusPanel = false;
-                                });
-                                //Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelPage()));
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
-                              },
-                            ),
-                            _statusActionItem(
-                              icon: 'assets/icons/bitcoin-convert.png',
-                              label: getStatusTranslation('exchange_status'),
-                              backgroundColor: const Color(0xFFFFF9E6),
-                              iconBackground: const Color(0xFFFFF3CD),
-                              onTap: () {
-                                setState(() {
-                                  _showStatusPanel = false;
-                                });
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeStatusPage()));
-                              },
-                            ),
-                            _statusActionItem(
-                              icon: 'assets/icons/boxRed.png',
-                              label: getStatusTranslation('problem_package'),
-                              backgroundColor: const Color(0xFFFFEBEE),
-                              iconBackground: const Color(0xFFFFCDD2),
-                              onTap: () {
-                                setState(() {
-                                  _showStatusPanel = false;
-                                });
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProblemPackagePage()));
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+          if (_showStatusPanel)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 64, // เหนือ BottomNavBar
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
                   ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _statusActionItem(
+                        icon: 'assets/icons/task-square.png',
+                        label: getStatusTranslation('order_status'),
+                        backgroundColor: const Color(0xFFE6F2FF),
+                        iconBackground: const Color(0xFFD0E7FF),
+                        onTap: () {
+                          setState(() {
+                            _showStatusPanel = false;
+                          });
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => OrderStatusPage()));
+                        },
+                      ),
+                      _statusActionItem(
+                        icon: 'assets/icons/boxGreen.png',
+                        label: getStatusTranslation('parcel_status'),
+                        backgroundColor: const Color(0xFFE9F7EF),
+                        iconBackground: const Color(0xFFC8E6C9),
+                        onTap: () {
+                          setState(() {
+                            _showStatusPanel = false;
+                          });
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
+                        },
+                      ),
+                      _statusActionItem(
+                        icon: 'assets/icons/bitcoin-convert.png',
+                        label: getStatusTranslation('exchange_status'),
+                        backgroundColor: const Color(0xFFFFF9E6),
+                        iconBackground: const Color(0xFFFFF3CD),
+                        onTap: () {
+                          setState(() {
+                            _showStatusPanel = false;
+                          });
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeStatusPage()));
+                        },
+                      ),
+                      _statusActionItem(
+                        icon: 'assets/icons/boxRed.png',
+                        label: getStatusTranslation('problem_package'),
+                        backgroundColor: const Color(0xFFFFEBEE),
+                        iconBackground: const Color(0xFFFFCDD2),
+                        onTap: () {
+                          setState(() {
+                            _showStatusPanel = false;
+                          });
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProblemPackagePage()));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
-                if (_showBillPanel)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 70,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _billActionItem(
-                              icon: 'assets/icons/task-square.png',
-                              label: getStatusTranslation('product_history'),
-                              isSelected: false,
-                              onTap: () {
-                                setState(() {
-                                  _showBillPanel = false;
-                                });
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistoryPage()));
-                              },
-                            ),
-                            _billActionItem(
-                              icon: 'assets/icons/menu-board.png',
-                              label: getStatusTranslation('transport_cost'),
-                              isSelected: true,
-                              onTap: () {
-                                setState(() {
-                                  _showBillPanel = false;
-                                });
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const TransportCostPage()));
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+          if (_showBillPanel)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 70,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
                   ),
-              ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _billActionItem(
+                        icon: 'assets/icons/task-square.png',
+                        label: getStatusTranslation('product_history'),
+                        isSelected: false,
+                        onTap: () {
+                          setState(() {
+                            _showBillPanel = false;
+                          });
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistoryPage()));
+                        },
+                      ),
+                      _billActionItem(
+                        icon: 'assets/icons/menu-board.png',
+                        label: getStatusTranslation('transport_cost'),
+                        isSelected: true,
+                        onTap: () {
+                          setState(() {
+                            _showBillPanel = false;
+                          });
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const TransportCostPage()));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            bottomNavigationBar: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: const BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)]),
-              child: Row(children: List.generate(4, (index) => buildNavItem(index))),
-            ),
-          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: const BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)]),
+        child: Row(children: List.generate(4, (index) => buildNavItem(index))),
+      ),
     );
   }
 }

@@ -122,7 +122,14 @@ class OrderService {
     final response = await http.post(
       url,
       headers: headers,
-      body: convert.jsonEncode({'payment_type': payment_type, 'member_id': userID.toString(), 'order_type': order_type, 'items': item}),
+      body: convert.jsonEncode({
+        'payment_type': payment_type,
+        'member_id': userID.toString(),
+        'order_type': order_type,
+        'items': item,
+        'vat': vat,
+        'total_price': total_price,
+      }),
     );
 
     if (response.statusCode == 200) {

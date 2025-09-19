@@ -25,8 +25,11 @@ class LanguageController extends GetxController {
     currentLanguage.value = languageCode;
     Get.updateLocale(Locale(languageCode));
 
-    // Force update all widgets
+    // Force update all widgets that use GetBuilder<LanguageController>
     update();
+
+    // Also trigger reactive updates
+    currentLanguage.refresh();
   }
 
   String getNavLabel(String key) {
