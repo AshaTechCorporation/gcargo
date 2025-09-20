@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/home/trackingDetailPage.dart';
+import 'package:get/get.dart';
 
 class TrackingHistoryPage extends StatefulWidget {
   const TrackingHistoryPage({super.key});
@@ -11,10 +13,130 @@ class TrackingHistoryPage extends StatefulWidget {
 
 class _TrackingHistoryPageState extends State<TrackingHistoryPage> {
   int selectedTab = 0;
-  String selectedStatus = 'ทั้งหมด';
-  final List<String> statuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดถุง', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอตัดส่ง', 'สำเร็จ'];
+  String selectedStatus = 'ทั้งหมด'; // Keep original for functionality
+  late LanguageController languageController;
+
+  // Original statuses for functionality (never changes)
+  final List<String> originalStatuses = ['ทั้งหมด', 'รอส่งไปโกดังจีน', 'ถึงโกดังจีน', 'ปิดถุง', 'ถึงโกดังไทย', 'กำลังตรวจสอบ', 'รอตัดส่ง', 'สำเร็จ'];
+
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'tracking_history': 'ประวัติการติดตาม',
+        'all': 'ทั้งหมด',
+        'waiting_to_china': 'รอส่งไปโกดังจีน',
+        'arrived_china': 'ถึงโกดังจีน',
+        'bag_closed': 'ปิดถุง',
+        'arrived_thailand': 'ถึงโกดังไทย',
+        'inspecting': 'กำลังตรวจสอบ',
+        'ready_to_ship': 'รอตัดส่ง',
+        'completed': 'สำเร็จ',
+        'tracking_number': 'หมายเลขติดตาม',
+        'status': 'สถานะ',
+        'date': 'วันที่',
+        'items': 'รายการ',
+        'no_tracking_history': 'ไม่มีประวัติการติดตาม',
+        'start_tracking': 'เริ่มติดตามพัสดุ',
+        'loading': 'กำลังโหลด...',
+        'error_occurred': 'เกิดข้อผิดพลาด',
+        'try_again': 'ลองใหม่อีกครั้ง',
+        'refresh': 'รีเฟรช',
+        'view_details': 'ดูรายละเอียด',
+        'search_tracking': 'ค้นหาหมายเลขติดตาม',
+        'filter_by_status': 'กรองตามสถานะ',
+        'clear_filter': 'ล้างตัวกรอง',
+      },
+      'en': {
+        'tracking_history': 'Tracking History',
+        'all': 'All',
+        'waiting_to_china': 'Waiting to China Warehouse',
+        'arrived_china': 'Arrived China Warehouse',
+        'bag_closed': 'Bag Closed',
+        'arrived_thailand': 'Arrived Thailand Warehouse',
+        'inspecting': 'Inspecting',
+        'ready_to_ship': 'Ready to Ship',
+        'completed': 'Completed',
+        'tracking_number': 'Tracking Number',
+        'status': 'Status',
+        'date': 'Date',
+        'items': 'Items',
+        'no_tracking_history': 'No Tracking History',
+        'start_tracking': 'Start Tracking Parcels',
+        'loading': 'Loading...',
+        'error_occurred': 'An Error Occurred',
+        'try_again': 'Try Again',
+        'refresh': 'Refresh',
+        'view_details': 'View Details',
+        'search_tracking': 'Search Tracking Number',
+        'filter_by_status': 'Filter by Status',
+        'clear_filter': 'Clear Filter',
+      },
+      'zh': {
+        'tracking_history': '追踪历史',
+        'all': '全部',
+        'waiting_to_china': '等待发往中国仓库',
+        'arrived_china': '到达中国仓库',
+        'bag_closed': '封袋',
+        'arrived_thailand': '到达泰国仓库',
+        'inspecting': '检查中',
+        'ready_to_ship': '准备发货',
+        'completed': '已完成',
+        'tracking_number': '追踪号码',
+        'status': '状态',
+        'date': '日期',
+        'items': '项目',
+        'no_tracking_history': '无追踪历史',
+        'start_tracking': '开始追踪包裹',
+        'loading': '加载中...',
+        'error_occurred': '发生错误',
+        'try_again': '重试',
+        'refresh': '刷新',
+        'view_details': '查看详情',
+        'search_tracking': '搜索追踪号码',
+        'filter_by_status': '按状态筛选',
+        'clear_filter': '清除筛选',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
+
+  // Display statuses with translations
+  List<String> get displayStatuses => [
+    getTranslation('all'),
+    getTranslation('waiting_to_china'),
+    getTranslation('arrived_china'),
+    getTranslation('bag_closed'),
+    getTranslation('arrived_thailand'),
+    getTranslation('inspecting'),
+    getTranslation('ready_to_ship'),
+    getTranslation('completed'),
+  ];
+
+  // Get translated status for display
+  String getStatusTranslation(String originalStatus) {
+    final statusMap = {
+      'ทั้งหมด': getTranslation('all'),
+      'รอส่งไปโกดังจีน': getTranslation('waiting_to_china'),
+      'ถึงโกดังจีน': getTranslation('arrived_china'),
+      'ปิดถุง': getTranslation('bag_closed'),
+      'ถึงโกดังไทย': getTranslation('arrived_thailand'),
+      'กำลังตรวจสอบ': getTranslation('inspecting'),
+      'รอตัดส่ง': getTranslation('ready_to_ship'),
+      'สำเร็จ': getTranslation('completed'),
+    };
+    return statusMap[originalStatus] ?? originalStatus;
+  }
 
   final Color kButtonColor = const Color(0xFF427D9D);
+
+  @override
+  void initState() {
+    super.initState();
+    languageController = Get.find<LanguageController>();
+  }
 
   // Mock data สำหรับแต่ละสถานะ
   final Map<String, List<Map<String, dynamic>>> mockData = {
@@ -77,7 +199,7 @@ class _TrackingHistoryPageState extends State<TrackingHistoryPage> {
       onTap: () {
         setState(() {
           selectedTab = index;
-          selectedStatus = statuses[index];
+          selectedStatus = originalStatuses[index]; // Use original for functionality
         });
       },
       child: Container(
@@ -153,7 +275,18 @@ class _TrackingHistoryPageState extends State<TrackingHistoryPage> {
     List<Map<String, dynamic>> currentData = mockData[selectedStatus] ?? [];
 
     if (currentData.isEmpty) {
-      return [const SizedBox(height: 50), const Center(child: Text('ไม่มีข้อมูล', style: TextStyle(color: Colors.grey, fontSize: 16)))];
+      return [
+        const SizedBox(height: 50),
+        Center(
+          child: Column(
+            children: [
+              Icon(Icons.history, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(getTranslation('no_tracking_history'), style: TextStyle(color: Colors.grey, fontSize: 16)),
+            ],
+          ),
+        ),
+      ];
     }
 
     // จัดกลุ่มตามวันที่
@@ -196,12 +329,12 @@ class _TrackingHistoryPageState extends State<TrackingHistoryPage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(color: statusColor.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-                  child: Text(item['status'], style: TextStyle(color: statusColor, fontSize: 12)),
+                  child: Text(getStatusTranslation(item['status']), style: TextStyle(color: statusColor, fontSize: 12)),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Text('จำนวนสินค้า: ${item['items']} ชิ้น', style: const TextStyle(color: Colors.grey)),
+            Text('${getTranslation('items')}: ${item['items']} ชิ้น', style: const TextStyle(color: Colors.grey)),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -209,7 +342,7 @@ class _TrackingHistoryPageState extends State<TrackingHistoryPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('วันที่: ${item['date']}', style: const TextStyle(color: Colors.grey)),
+                      Text('${getTranslation('date')}: ${item['date']}', style: const TextStyle(color: Colors.grey)),
                       const SizedBox(height: 4),
                       const Text('ผู้ส่ง: นาย ก', style: TextStyle(color: Colors.grey)),
                     ],
@@ -250,37 +383,40 @@ class _TrackingHistoryPageState extends State<TrackingHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
-      appBar: AppBar(
-        title: const Text('ประวัติตามหาเจ้าของ', style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20)),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            // 🔹 Tabs
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children:
-                    statuses.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      String status = entry.value;
-                      int count = statusCounts[status] ?? 0;
-                      return _buildTab(status, count, index);
-                    }).toList(),
+    return Obx(
+      () => Scaffold(
+        backgroundColor: const Color(0xFFF7F7F7),
+        appBar: AppBar(
+          title: Text(getTranslation('tracking_history'), style: TextStyle(color: Colors.black)),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.black),
+          leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20)),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ListView(
+            children: [
+              // 🔹 Tabs
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children:
+                      displayStatuses.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        String displayStatus = entry.value;
+                        String originalStatus = originalStatuses[index];
+                        int count = statusCounts[originalStatus] ?? 0;
+                        return _buildTab(displayStatus, count, index);
+                      }).toList(),
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // 🔹 รายการข้อมูล
-            ...(_buildFilteredList()),
-          ],
+              // 🔹 รายการข้อมูล
+              ...(_buildFilteredList()),
+            ],
+          ),
         ),
       ),
     );
