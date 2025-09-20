@@ -9,8 +9,9 @@ import 'package:get/get.dart';
 class ServiceItemWidget extends StatelessWidget {
   final String iconPath;
   final String label;
+  final String serviceKey; // เพิ่ม serviceKey เพื่อระบุประเภทของ service
 
-  const ServiceItemWidget({super.key, required this.iconPath, required this.label});
+  const ServiceItemWidget({super.key, required this.iconPath, required this.label, required this.serviceKey});
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +19,14 @@ class ServiceItemWidget extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        if (label == 'อัตราค่าขนส่ง') {
+        // ใช้ serviceKey แทนการเปรียบเทียบ label
+        if (serviceKey == 'shipping_rate') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => ShippingRatePage()));
-        } else if (label == 'อัตราแลกเปลี่ยน') {
+        } else if (serviceKey == 'exchange_rate') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangeRatePage(exchangeRate: homeController.exchangeRate)));
-        } else if (label == 'คำนวณค่าบริการ') {
+        } else if (serviceKey == 'calculate_service') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => TransportCalculatePage()));
-        } else if (label == 'ตามพัสดุของฉัน') {
+        } else if (serviceKey == 'track_package') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => TrackingOwnerPage()));
         }
       },

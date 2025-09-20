@@ -488,13 +488,29 @@ class _HomePageState extends State<HomePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ServiceItemWidget(iconPath: 'assets/icons/tran1.png', label: getTranslation('Home.services.shipping_rate')),
+                              ServiceItemWidget(
+                                iconPath: 'assets/icons/tran1.png',
+                                label: getTranslation('Home.services.shipping_rate'),
+                                serviceKey: 'shipping_rate',
+                              ),
                               VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                              ServiceItemWidget(iconPath: 'assets/icons/monny.png', label: getTranslation('Home.services.exchange_rate')),
+                              ServiceItemWidget(
+                                iconPath: 'assets/icons/monny.png',
+                                label: getTranslation('Home.services.exchange_rate'),
+                                serviceKey: 'exchange_rate',
+                              ),
                               VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                              ServiceItemWidget(iconPath: 'assets/icons/cal1.png', label: getTranslation('Home.services.calculate_service')),
+                              ServiceItemWidget(
+                                iconPath: 'assets/icons/cal1.png',
+                                label: getTranslation('Home.services.calculate_service'),
+                                serviceKey: 'calculate_service',
+                              ),
                               VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                              ServiceItemWidget(iconPath: 'assets/icons/box1.png', label: getTranslation('Home.services.track_parcel')),
+                              ServiceItemWidget(
+                                iconPath: 'assets/icons/box1.png',
+                                label: getTranslation('Home.services.track_parcel'),
+                                serviceKey: 'track_package',
+                              ),
                             ],
                           ),
                         ),

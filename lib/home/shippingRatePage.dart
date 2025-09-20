@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
 
@@ -13,10 +14,51 @@ class ShippingRatePage extends StatefulWidget {
 
 class _ShippingRatePageState extends State<ShippingRatePage> {
   final HomeController homeController = Get.put(HomeController());
+  late LanguageController languageController;
+
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'shipping_rate': 'อัตราค่าขนส่ง',
+        'land_transport': 'ขนส่งทางรถ',
+        'sea_transport': 'ขนส่งทางเรือ',
+        'weight_kg': 'น้ำหนัก (กก.)',
+        'price_cbm': 'ราคา/ลบ.ม.',
+        'baht': 'บาท',
+        'loading': 'กำลังโหลด...',
+        'no_data': 'ไม่มีข้อมูล',
+      },
+      'en': {
+        'shipping_rate': 'Shipping Rate',
+        'land_transport': 'Land Transport',
+        'sea_transport': 'Sea Transport',
+        'weight_kg': 'Weight (kg)',
+        'price_cbm': 'Price/CBM',
+        'baht': 'Baht',
+        'loading': 'Loading...',
+        'no_data': 'No Data',
+      },
+      'zh': {
+        'shipping_rate': '运费',
+        'land_transport': '陆运',
+        'sea_transport': '海运',
+        'weight_kg': '重量 (公斤)',
+        'price_cbm': '价格/立方米',
+        'baht': '泰铢',
+        'loading': '加载中...',
+        'no_data': '无数据',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
 
   @override
   void initState() {
     super.initState();
+    languageController = Get.find<LanguageController>();
     // Call getRateShipFromAPI when page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.getRateShipFromAPI();
@@ -25,63 +67,65 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('อัตราค่าขนส่ง', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 24)),
+    return Obx(
+      () => Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+        appBar: AppBar(
+          title: Text(getTranslation('shipping_rate'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 24)),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+        ),
+        body: Obx(() {
+          // Separate data by vehicle type
+          List<RateItem> truckRateItems =
+              homeController.rateShip.where((rateShip) => rateShip.vehicle?.toLowerCase() == 'car' || rateShip.vehicle?.toLowerCase() == 'รถ').map((
+                rateShip,
+              ) {
+                return RateItem(
+                  image: _getImageByType(rateShip.type ?? ''),
+                  label: rateShip.name ?? '',
+                  kg: NumberFormatter.formatNumber(rateShip.kg, decimalPlaces: 0),
+                  price: NumberFormatter.formatNumber(rateShip.cbm, decimalPlaces: 0),
+                );
+              }).toList();
+
+          List<RateItem> shipRateItems =
+              homeController.rateShip.where((rateShip) => rateShip.vehicle?.toLowerCase() == 'ship' || rateShip.vehicle?.toLowerCase() == 'เรือ').map(
+                (rateShip) {
+                  return RateItem(
+                    image: _getImageByType(rateShip.type ?? ''),
+                    label: rateShip.name ?? '',
+                    kg: NumberFormatter.formatNumber(rateShip.kg, decimalPlaces: 0),
+                    price: NumberFormatter.formatNumber(rateShip.cbm, decimalPlaces: 0),
+                  );
+                },
+              ).toList();
+
+          // Use API data if available, otherwise use mock data
+          List<RateItem> firstSectionItems = truckRateItems.isNotEmpty ? truckRateItems : [];
+
+          List<RateItem> secondSectionItems = shipRateItems.isNotEmpty ? shipRateItems : [];
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 🔷 รูปภาพหัวข้อ section แรก (รถ)
+                Image.asset('assets/images/Frame10.png', fit: BoxFit.fitWidth),
+                SizedBox(height: 12),
+                _buildGrid(firstSectionItems),
+                SizedBox(height: 24),
+                // 🔷 รูปภาพหัวข้อ section สอง (เรือ)
+                Image.asset('assets/images/Frame11.png', fit: BoxFit.fitWidth),
+                SizedBox(height: 12),
+                _buildGrid(secondSectionItems),
+              ],
+            ),
+          );
+        }),
       ),
-      body: Obx(() {
-        // Separate data by vehicle type
-        List<RateItem> truckRateItems =
-            homeController.rateShip.where((rateShip) => rateShip.vehicle?.toLowerCase() == 'car' || rateShip.vehicle?.toLowerCase() == 'รถ').map((
-              rateShip,
-            ) {
-              return RateItem(
-                image: _getImageByType(rateShip.type ?? ''),
-                label: rateShip.name ?? '',
-                kg: NumberFormatter.formatNumber(rateShip.kg, decimalPlaces: 0),
-                price: NumberFormatter.formatNumber(rateShip.cbm, decimalPlaces: 0),
-              );
-            }).toList();
-
-        List<RateItem> shipRateItems =
-            homeController.rateShip.where((rateShip) => rateShip.vehicle?.toLowerCase() == 'ship' || rateShip.vehicle?.toLowerCase() == 'เรือ').map((
-              rateShip,
-            ) {
-              return RateItem(
-                image: _getImageByType(rateShip.type ?? ''),
-                label: rateShip.name ?? '',
-                kg: NumberFormatter.formatNumber(rateShip.kg, decimalPlaces: 0),
-                price: NumberFormatter.formatNumber(rateShip.cbm, decimalPlaces: 0),
-              );
-            }).toList();
-
-        // Use API data if available, otherwise use mock data
-        List<RateItem> firstSectionItems = truckRateItems.isNotEmpty ? truckRateItems : [];
-
-        List<RateItem> secondSectionItems = shipRateItems.isNotEmpty ? shipRateItems : [];
-
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 🔷 รูปภาพหัวข้อ section แรก (รถ)
-              Image.asset('assets/images/Frame10.png', fit: BoxFit.fitWidth),
-              SizedBox(height: 12),
-              _buildGrid(firstSectionItems),
-              SizedBox(height: 24),
-              // 🔷 รูปภาพหัวข้อ section สอง (เรือ)
-              Image.asset('assets/images/Frame11.png', fit: BoxFit.fitWidth),
-              SizedBox(height: 12),
-              _buildGrid(secondSectionItems),
-            ],
-          ),
-        );
-      }),
     );
   }
 
@@ -165,7 +209,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('กิโลกรัม', style: TextStyle(fontSize: 16, color: Colors.black54)),
+                          Text(getTranslation('weight_kg'), style: TextStyle(fontSize: 16, color: Colors.black54)),
                           SizedBox(height: 2),
                           Text(
                             item.kg,
@@ -185,7 +229,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('ปริมาณ', style: TextStyle(fontSize: 16, color: Colors.black54)),
+                          Text(getTranslation('price_cbm'), style: TextStyle(fontSize: 16, color: Colors.black54)),
                           SizedBox(height: 2),
                           Text(
                             item.price,

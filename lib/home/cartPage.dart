@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
 import 'package:gcargo/models/cart_item.dart';
 import 'package:gcargo/services/cart_service.dart';
@@ -21,11 +22,122 @@ class _CartPageState extends State<CartPage> {
   List<CartItem> cartItems = [];
   bool isLoading = true;
   late HomeController homeController;
+  late LanguageController languageController;
   bool isLoadingServices = true;
+
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'cart': 'ตะกร้าสินค้า',
+        'shopping_cart': 'ตะกร้าสินค้า',
+        'edit': 'แก้ไข',
+        'done': 'เสร็จสิ้น',
+        'delete': 'ลบ',
+        'select_all': 'เลือกทั้งหมด',
+        'deselect_all': 'ยกเลิกการเลือก',
+        'empty_cart': 'ตะกร้าสินค้าว่างเปล่า',
+        'start_shopping': 'เริ่มช้อปปิ้ง',
+        'loading': 'กำลังโหลด...',
+        'quantity': 'จำนวน',
+        'price': 'ราคา',
+        'total': 'รวม',
+        'subtotal': 'ยอดรวม',
+        'extra_services': 'บริการเสริม',
+        'wooden_crate': 'ตีลังไม้',
+        'plastic_wrap': 'พันพลาสติก',
+        'bubble_wrap': 'พันฟองอากาศ',
+        'checkout': 'ชำระเงิน',
+        'go_to_checkout': 'ไปหน้าชำระเงิน',
+        'remove_selected': 'ลบรายการที่เลือก',
+        'confirm_delete': 'ยืนยันการลบ',
+        'delete_confirmation': 'คุณต้องการลบสินค้าที่เลือกหรือไม่?',
+        'cancel': 'ยกเลิก',
+        'confirm': 'ยืนยัน',
+        'item_removed': 'ลบสินค้าแล้ว',
+        'error_occurred': 'เกิดข้อผิดพลาด',
+        'select_items_first': 'กรุณาเลือกสินค้าก่อน',
+        'baht': 'บาท',
+        'items_selected': 'รายการที่เลือก',
+        'no_items_selected': 'ไม่มีรายการที่เลือก',
+      },
+      'en': {
+        'cart': 'Cart',
+        'shopping_cart': 'Shopping Cart',
+        'edit': 'Edit',
+        'done': 'Done',
+        'delete': 'Delete',
+        'select_all': 'Select All',
+        'deselect_all': 'Deselect All',
+        'empty_cart': 'Your cart is empty',
+        'start_shopping': 'Start Shopping',
+        'loading': 'Loading...',
+        'quantity': 'Quantity',
+        'price': 'Price',
+        'total': 'Total',
+        'subtotal': 'Subtotal',
+        'extra_services': 'Extra Services',
+        'wooden_crate': 'Wooden Crate',
+        'plastic_wrap': 'Plastic Wrap',
+        'bubble_wrap': 'Bubble Wrap',
+        'checkout': 'Checkout',
+        'go_to_checkout': 'Go to Checkout',
+        'remove_selected': 'Remove Selected',
+        'confirm_delete': 'Confirm Delete',
+        'delete_confirmation': 'Do you want to delete selected items?',
+        'cancel': 'Cancel',
+        'confirm': 'Confirm',
+        'item_removed': 'Item removed',
+        'error_occurred': 'An error occurred',
+        'select_items_first': 'Please select items first',
+        'baht': 'Baht',
+        'items_selected': 'Items Selected',
+        'no_items_selected': 'No Items Selected',
+      },
+      'zh': {
+        'cart': '购物车',
+        'shopping_cart': '购物车',
+        'edit': '编辑',
+        'done': '完成',
+        'delete': '删除',
+        'select_all': '全选',
+        'deselect_all': '取消全选',
+        'empty_cart': '购物车为空',
+        'start_shopping': '开始购物',
+        'loading': '加载中...',
+        'quantity': '数量',
+        'price': '价格',
+        'total': '总计',
+        'subtotal': '小计',
+        'extra_services': '额外服务',
+        'wooden_crate': '木箱包装',
+        'plastic_wrap': '塑料包装',
+        'bubble_wrap': '气泡包装',
+        'checkout': '结账',
+        'go_to_checkout': '去结账',
+        'remove_selected': '删除选中项',
+        'confirm_delete': '确认删除',
+        'delete_confirmation': '您要删除选中的商品吗？',
+        'cancel': '取消',
+        'confirm': '确认',
+        'item_removed': '商品已删除',
+        'error_occurred': '发生错误',
+        'select_items_first': '请先选择商品',
+        'baht': '泰铢',
+        'items_selected': '已选择商品',
+        'no_items_selected': '未选择商品',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
 
   @override
   void initState() {
     super.initState();
+    languageController = Get.find<LanguageController>();
+
     // Get HomeController
     try {
       homeController = Get.find<HomeController>();
@@ -128,7 +240,7 @@ class _CartPageState extends State<CartPage> {
       }
 
       if (indicesToRemove.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณาเลือกสินค้าที่ต้องการลบ'), backgroundColor: Colors.orange));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('select_items_first')), backgroundColor: Colors.orange));
         return;
       }
 
@@ -144,12 +256,12 @@ class _CartPageState extends State<CartPage> {
 
       // Show success message
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว'), backgroundColor: Colors.green));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('item_removed')), backgroundColor: Colors.green));
       }
     } catch (e) {
       // Show error message
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e'), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${getTranslation('error_occurred')}: $e'), backgroundColor: Colors.red));
       }
     }
   }
@@ -293,19 +405,24 @@ class _CartPageState extends State<CartPage> {
 
   Widget _buildBody() {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [CircularProgressIndicator(), SizedBox(height: 16), Text(getTranslation('loading'))],
+        ),
+      );
     }
 
     if (cartItems.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text('ตะกร้าสินค้าว่างเปล่า', style: TextStyle(fontSize: 18, color: Colors.grey)),
+            Text(getTranslation('empty_cart'), style: TextStyle(fontSize: 18, color: Colors.grey)),
             SizedBox(height: 8),
-            Text('เพิ่มสินค้าลงตะกร้าเพื่อเริ่มต้นการสั่งซื้อ', style: TextStyle(fontSize: 14, color: Colors.grey)),
+            Text(getTranslation('start_shopping'), style: TextStyle(fontSize: 14, color: Colors.grey)),
           ],
         ),
       );
@@ -336,7 +453,7 @@ class _CartPageState extends State<CartPage> {
               removeSelectedItems();
             } else if (hasSelectedItems) {
               // TODO: Navigate to checkout or purchase page
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไปหน้าชำระเงิน'), backgroundColor: Colors.green));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('go_to_checkout')), backgroundColor: Colors.green));
 
               final selectedItemsMapList = <Map<String, dynamic>>[];
 
@@ -367,10 +484,10 @@ class _CartPageState extends State<CartPage> {
           },
           child: Text(
             isDeleteMode
-                ? 'ลบสินค้า'
+                ? getTranslation('remove_selected')
                 : hasSelectedItems
-                ? 'สั่งซื้อ ${_getTotalText()}'
-                : 'เลือกสินค้าที่ต้องการสั่งซื้อ',
+                ? '${getTranslation('checkout')} ${_getTotalText()}'
+                : getTranslation('select_items_first'),
           ),
         ),
       ),
@@ -379,26 +496,31 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('ตะกร้าสินค้า', style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
-        actions: [
-          if (isDeleteMode)
-            TextButton(onPressed: toggleDeleteMode, child: const Text('ยกเลิก', style: TextStyle(color: Colors.black)))
-          else ...[
-            TextButton(
-              onPressed: _toggleSelectAll,
-              child: Text(_isAllSelected() ? 'ยกเลิกทั้งหมด' : 'เลือกทั้งหมด', style: const TextStyle(color: Colors.black)),
-            ),
-            IconButton(onPressed: toggleDeleteMode, icon: const Icon(Icons.delete_outline, color: Colors.black)),
+    return Obx(
+      () => Scaffold(
+        appBar: AppBar(
+          title: Text(getTranslation('shopping_cart'), style: TextStyle(color: Colors.black)),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
+          actions: [
+            if (isDeleteMode)
+              TextButton(onPressed: toggleDeleteMode, child: Text(getTranslation('cancel'), style: TextStyle(color: Colors.black)))
+            else ...[
+              TextButton(
+                onPressed: _toggleSelectAll,
+                child: Text(
+                  _isAllSelected() ? getTranslation('deselect_all') : getTranslation('select_all'),
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
+              IconButton(onPressed: toggleDeleteMode, icon: const Icon(Icons.delete_outline, color: Colors.black)),
+            ],
           ],
-        ],
+        ),
+        backgroundColor: Colors.white,
+        body: Column(children: [Expanded(child: _buildBody()), buildBottomBar()]),
       ),
-      backgroundColor: Colors.white,
-      body: Column(children: [Expanded(child: _buildBody()), buildBottomBar()]),
     );
   }
 }

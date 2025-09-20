@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/home/widgets/QrCodeDialog.dart';
 import 'package:gcargo/utils/number_formatter.dart';
 import 'package:get/get.dart';
@@ -15,9 +16,10 @@ class TransportCalculatePage extends StatefulWidget {
 class _TransportCalculatePageState extends State<TransportCalculatePage> with TickerProviderStateMixin {
   late final TabController _tabController;
   final HomeController homeController = Get.put(HomeController());
+  late LanguageController languageController;
 
   String? selectedProductType;
-  String selectedMethod = 'ทางรถ';
+  String selectedMethod = '';
   final TextEditingController widthCtrl = TextEditingController();
   final TextEditingController lengthCtrl = TextEditingController();
   final TextEditingController heightCtrl = TextEditingController();
@@ -31,10 +33,117 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   double calculatedCost = 0.0;
   double woodBoxCost = 0.0;
 
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'calculate_service': 'คำนวณค่าบริการ',
+        'shipping_cost': 'ค่าขนส่ง',
+        'wooden_box': 'ลังไม้',
+        'land_transport': 'ทางรถ',
+        'sea_transport': 'ทางเรือ',
+        'product_type': 'ประเภทสินค้า',
+        'select_product_type': 'เลือกประเภทสินค้า',
+        'width': 'กว้าง',
+        'length': 'ยาว',
+        'height': 'สูง',
+        'weight': 'น้ำหนัก',
+        'cm': 'ซม.',
+        'kg': 'กก.',
+        'calculate': 'คำนวณ',
+        'total_cost': 'ค่าใช้จ่ายรวม',
+        'baht': 'บาท',
+        'please_fill_all': 'กรุณากรอกข้อมูลให้ครบถ้วน',
+        'electronics': 'อิเล็กทรอนิกส์',
+        'clothing': 'เสื้อผ้า',
+        'cosmetics': 'เครื่องสำอาง',
+        'food': 'อาหาร',
+        'books': 'หนังสือ',
+        'toys': 'ของเล่น',
+        'others': 'อื่นๆ',
+        'clear_data': 'ล้างข้อมูล',
+        'select_transport_method': 'เลือกรูปแบบขนส่ง',
+        'calculation_result': 'ผลการคำนวณ',
+        'shipping_cost_result': 'ค่าขนส่ง',
+        'wooden_box_cost': 'ค่าตีลังไม้',
+        'formula_text': '(กว้าง × ยาว × สูง) × 1,500',
+      },
+      'en': {
+        'calculate_service': 'Calculate Service',
+        'shipping_cost': 'Shipping Cost',
+        'wooden_box': 'Wooden Box',
+        'land_transport': 'Land Transport',
+        'sea_transport': 'Sea Transport',
+        'product_type': 'Product Type',
+        'select_product_type': 'Select Product Type',
+        'width': 'Width',
+        'length': 'Length',
+        'height': 'Height',
+        'weight': 'Weight',
+        'cm': 'cm',
+        'kg': 'kg',
+        'calculate': 'Calculate',
+        'total_cost': 'Total Cost',
+        'baht': 'Baht',
+        'please_fill_all': 'Please fill in all information',
+        'electronics': 'Electronics',
+        'clothing': 'Clothing',
+        'cosmetics': 'Cosmetics',
+        'food': 'Food',
+        'books': 'Books',
+        'toys': 'Toys',
+        'others': 'Others',
+        'clear_data': 'Clear Data',
+        'select_transport_method': 'Select Transport Method',
+        'calculation_result': 'Calculation Result',
+        'shipping_cost_result': 'Shipping Cost',
+        'wooden_box_cost': 'Wooden Box Cost',
+        'formula_text': '(Width × Length × Height) × 1,500',
+      },
+      'zh': {
+        'calculate_service': '计算服务费',
+        'shipping_cost': '运费',
+        'wooden_box': '木箱',
+        'land_transport': '陆运',
+        'sea_transport': '海运',
+        'product_type': '产品类型',
+        'select_product_type': '选择产品类型',
+        'width': '宽度',
+        'length': '长度',
+        'height': '高度',
+        'weight': '重量',
+        'cm': '厘米',
+        'kg': '公斤',
+        'calculate': '计算',
+        'total_cost': '总费用',
+        'baht': '泰铢',
+        'please_fill_all': '请填写完整信息',
+        'electronics': '电子产品',
+        'clothing': '服装',
+        'cosmetics': '化妆品',
+        'food': '食品',
+        'books': '书籍',
+        'toys': '玩具',
+        'others': '其他',
+        'clear_data': '清除数据',
+        'select_transport_method': '选择运输方式',
+        'calculation_result': '计算结果',
+        'shipping_cost_result': '运费',
+        'wooden_box_cost': '木箱费用',
+        'formula_text': '(宽 × 长 × 高) × 1,500',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
+    languageController = Get.find<LanguageController>();
+    selectedMethod = getTranslation('land_transport'); // Set default transport method
 
     // เพิ่ม listener สำหรับ real-time calculation
     woodWidthCtrl.addListener(_calculateWoodBoxRealTime);
@@ -175,35 +284,37 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
     // Debug log
     print('🔧 Build - selectedMethod: $selectedMethod, selectedProductType: $selectedProductType, isBlocked: $isBlocked');
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false, // ป้องกัน overflow เมื่อ keyboard ขึ้น
-      appBar: AppBar(
-        title: const Text('คำนวณ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
+    return Obx(
+      () => Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black), onPressed: () => Navigator.pop(context)),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.black,
-          indicatorWeight: 3,
-          labelColor: kButtonColor,
-          unselectedLabelColor: Colors.grey,
-          labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
-          tabs: [
-            Tab(child: Text('วิธีคำนวณค่าขนส่ง', style: TextStyle(fontFamily: 'SukhumvitSet'))),
-            Tab(child: Text('วิธีคำนวณตู้ลังไม้', style: TextStyle(fontFamily: 'SukhumvitSet'))),
-          ],
+        resizeToAvoidBottomInset: false, // ป้องกัน overflow เมื่อ keyboard ขึ้น
+        appBar: AppBar(
+          title: Text(getTranslation('calculate_service'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black), onPressed: () => Navigator.pop(context)),
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.black,
+            indicatorWeight: 3,
+            labelColor: kButtonColor,
+            unselectedLabelColor: Colors.grey,
+            labelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+            tabs: [
+              Tab(child: Text(getTranslation('shipping_cost'), style: TextStyle(fontFamily: 'SukhumvitSet'))),
+              Tab(child: Text(getTranslation('wooden_box'), style: TextStyle(fontFamily: 'SukhumvitSet'))),
+            ],
+          ),
         ),
-      ),
-      body: TabBarView(controller: _tabController, children: [_buildNormalTab(context, isBlocked), _buildWoodBoxTab()]),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, -2))],
+        body: TabBarView(controller: _tabController, children: [_buildNormalTab(context, isBlocked), _buildWoodBoxTab()]),
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, -2))],
+          ),
+          child: SafeArea(child: _buildCalculateButton()),
         ),
-        child: SafeArea(child: _buildCalculateButton()),
       ),
     );
   }
@@ -233,7 +344,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                 side: const BorderSide(color: Color(0xFFD0D0D0)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor)),
+              child: Text(getTranslation('clear_data'), style: TextStyle(fontSize: 20, color: kHintTextColor)),
             ),
           ),
           const SizedBox(width: 12),
@@ -252,7 +363,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 20)),
+              child: Text(getTranslation('calculate'), style: TextStyle(color: Colors.white, fontSize: 20)),
             ),
           ),
         ],
@@ -277,7 +388,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                 side: const BorderSide(color: Color(0xFFD0D0D0)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text('ล้างข้อมูล', style: TextStyle(fontSize: 20, color: kHintTextColor, fontWeight: FontWeight.bold)),
+              child: Text(getTranslation('clear_data'), style: TextStyle(fontSize: 20, color: kHintTextColor, fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(width: 12),
@@ -290,7 +401,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text('คำนวณ', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              child: Text(getTranslation('calculate'), style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -304,7 +415,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
       child: Column(
         children: [
           const SizedBox(height: 8),
-          Row(children: [const Text('ประเภทสินค้า', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
+          Row(children: [Text(getTranslation('product_type'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
           const SizedBox(height: 6),
           Obx(() {
             List<String> availableProductTypes = _getProductTypesByMethod(selectedMethod);
@@ -319,7 +430,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
             return DropdownButtonFormField<String>(
               value: selectedProductType,
               decoration: InputDecoration(
-                hintText: 'เลือกประเภทสินค้า',
+                hintText: getTranslation('select_product_type'),
                 hintStyle: const TextStyle(fontSize: 14),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -336,14 +447,14 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
             );
           }),
           const SizedBox(height: 14),
-          Row(children: [const Text('เลือกรูปแบบขนส่ง', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
+          Row(children: [Text(getTranslation('select_transport_method'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
           const SizedBox(height: 6),
           Row(
             children: [
               Expanded(
                 child: RadioListTile(
-                  title: const Text('ทางรถ', style: TextStyle(fontSize: 16)),
-                  value: 'ทางรถ',
+                  title: Text(getTranslation('land_transport'), style: TextStyle(fontSize: 16)),
+                  value: getTranslation('land_transport'),
                   groupValue: selectedMethod,
                   onChanged: (val) {
                     setState(() {
@@ -358,8 +469,8 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               ),
               Expanded(
                 child: RadioListTile(
-                  title: const Text('ทางเรือ', style: TextStyle(fontSize: 16)),
-                  value: 'ทางเรือ',
+                  title: Text(getTranslation('sea_transport'), style: TextStyle(fontSize: 16)),
+                  value: getTranslation('sea_transport'),
                   groupValue: selectedMethod,
                   onChanged: (val) {
                     setState(() {
@@ -377,17 +488,17 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildInputField(widthCtrl, 'กรอกความกว้าง', 'cm')),
+              Expanded(child: _buildInputField(widthCtrl, '${getTranslation('width')} (${getTranslation('cm')})', 'cm')),
               const SizedBox(width: 12),
-              Expanded(child: _buildInputField(lengthCtrl, 'กรอกความยาว', 'cm')),
+              Expanded(child: _buildInputField(lengthCtrl, '${getTranslation('length')} (${getTranslation('cm')})', 'cm')),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildInputField(heightCtrl, 'กรอกความสูง', 'cm')),
+              Expanded(child: _buildInputField(heightCtrl, '${getTranslation('height')} (${getTranslation('cm')})', 'cm')),
               const SizedBox(width: 12),
-              Expanded(child: _buildInputField(weightCtrl, 'กรอกน้ำหนัก', 'kg')),
+              Expanded(child: _buildInputField(weightCtrl, '${getTranslation('weight')} (${getTranslation('kg')})', 'kg')),
             ],
           ),
           const SizedBox(height: 16),
@@ -430,9 +541,12 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('ผลการคำนวณ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(getTranslation('calculation_result'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 8),
-                  Text('ค่าขนส่ง: ${NumberFormatter.formatTHB(calculatedCost)}', style: const TextStyle(fontSize: 14)),
+                  Text(
+                    '${getTranslation('shipping_cost_result')}: ${NumberFormatter.formatTHB(calculatedCost)}',
+                    style: const TextStyle(fontSize: 14),
+                  ),
                 ],
               ),
             ),
@@ -477,7 +591,7 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
           const SizedBox(height: 12),
           Row(
             children: [
-              const Expanded(child: Text('(กว้าง × ยาว × สูง) × 1,500', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
+              Expanded(child: Text(getTranslation('formula_text'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
               Image.asset('assets/icons/boxGroup.png', width: 60, height: 60),
             ],
           ),
@@ -485,14 +599,14 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
           const Divider(height: 1, color: Color(0xFFE0E0E0)),
           const SizedBox(height: 24),
 
-          _buildLabeledInput('ความกว้าง', woodWidthCtrl, 'cm'),
+          _buildLabeledInput(getTranslation('width'), woodWidthCtrl, getTranslation('cm')),
           const SizedBox(height: 16),
-          _buildLabeledInput('ความยาว', woodLengthCtrl, 'cm'),
+          _buildLabeledInput(getTranslation('length'), woodLengthCtrl, getTranslation('cm')),
           const SizedBox(height: 16),
-          _buildLabeledInput('ความสูง', woodHeightCtrl, 'cm'),
+          _buildLabeledInput(getTranslation('height'), woodHeightCtrl, getTranslation('cm')),
 
           const SizedBox(height: 24),
-          const Text('ค่าตีลังไม้', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(getTranslation('wooden_box_cost'), style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
           Container(
             width: double.infinity,
@@ -568,9 +682,9 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
   List<String> _getProductTypesByMethod(String method) {
     // Determine vehicle type based on method
     String vehicleType = '';
-    if (method == 'ทางรถ') {
+    if (method == getTranslation('land_transport')) {
       vehicleType = 'car';
-    } else if (method == 'ทางเรือ') {
+    } else if (method == getTranslation('sea_transport')) {
       vehicleType = 'ship';
     }
 
@@ -592,6 +706,19 @@ class _TransportCalculatePageState extends State<TransportCalculatePage> with Ti
     print('🔢 Total rateShip items: ${homeController.rateShip.length}');
 
     // Use API data if available, otherwise use default product types
-    return apiProductTypes.isNotEmpty ? apiProductTypes : [];
+    if (apiProductTypes.isNotEmpty) {
+      return apiProductTypes;
+    } else {
+      // Return translated default product types
+      return [
+        getTranslation('electronics'),
+        getTranslation('clothing'),
+        getTranslation('cosmetics'),
+        getTranslation('food'),
+        getTranslation('books'),
+        getTranslation('toys'),
+        getTranslation('others'),
+      ];
+    }
   }
 }
