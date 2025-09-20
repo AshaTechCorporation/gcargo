@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/product_detail_controller.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/controllers/showImagePickerBottomSheet.dart' as controller;
 import 'package:gcargo/home/cartPage.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
@@ -42,9 +43,152 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   // Initialize HomeController to get search items
   late final HomeController homeController;
 
+  // Initialize LanguageController
+  late LanguageController languageController;
+
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'product_details': 'รายละเอียดสินค้า',
+        'quantity': 'จำนวน',
+        'size': 'ขนาด',
+        'color': 'สี',
+        'add_to_cart': 'เพิ่มลงตะกร้า',
+        'buy_now': 'ซื้อเลย',
+        'description': 'รายละเอียด',
+        'specifications': 'ข้อมูลจำเพาะ',
+        'reviews': 'รีวิว',
+        'recommended': 'สินค้าแนะนำ',
+        'price': 'ราคา',
+        'original_price': 'ราคาเดิม',
+        'discount': 'ส่วนลด',
+        'in_stock': 'มีสินค้า',
+        'out_of_stock': 'สินค้าหมด',
+        'select_size': 'เลือกขนาด',
+        'select_color': 'เลือกสี',
+        'added_to_cart': 'เพิ่มลงตะกร้าแล้ว',
+        'error_occurred': 'เกิดข้อผิดพลาด',
+        'loading': 'กำลังโหลด...',
+        'no_description': 'ไม่มีรายละเอียด',
+        'share': 'แชร์',
+        'favorite': 'รายการโปรด',
+        'search_hint': 'ค้นหาสินค้า...',
+        'related_products': 'สินค้าที่เกี่ยวข้อง',
+        'product_images': 'รูปภาพสินค้า',
+        'zoom_image': 'ขยายรูป',
+        'select_options': 'เลือกตัวเลือก',
+        'total_price': 'ราคารวม',
+        'shipping_info': 'ข้อมูลการจัดส่ง',
+        'return_policy': 'นโยบายการคืนสินค้า',
+        'seller_info': 'ข้อมูลผู้ขาย',
+        'customer_reviews': 'รีวิวลูกค้า',
+        'rating': 'คะแนน',
+        'view_all_reviews': 'ดูรีวิวทั้งหมด',
+        'not_logged_in': 'ยังไม่ได้เข้าสู่ระบบ',
+        'please_login_first': 'กรุณาเข้าสู่ระบบก่อนสั่งซื้อสินค้า',
+        'ok': 'ตกลง',
+        'order_now': 'สั่งซื้อสินค้า',
+        'you_might_like': 'สิ่งที่คุณอาจสนใจ',
+        'search_products': 'ค้นหาสินค้า',
+      },
+      'en': {
+        'product_details': 'Product Details',
+        'quantity': 'Quantity',
+        'size': 'Size',
+        'color': 'Color',
+        'add_to_cart': 'Add to Cart',
+        'buy_now': 'Buy Now',
+        'description': 'Description',
+        'specifications': 'Specifications',
+        'reviews': 'Reviews',
+        'recommended': 'Recommended',
+        'price': 'Price',
+        'original_price': 'Original Price',
+        'discount': 'Discount',
+        'in_stock': 'In Stock',
+        'out_of_stock': 'Out of Stock',
+        'select_size': 'Select Size',
+        'select_color': 'Select Color',
+        'added_to_cart': 'Added to Cart',
+        'error_occurred': 'An Error Occurred',
+        'loading': 'Loading...',
+        'no_description': 'No Description',
+        'share': 'Share',
+        'favorite': 'Favorite',
+        'search_hint': 'Search products...',
+        'related_products': 'Related Products',
+        'product_images': 'Product Images',
+        'zoom_image': 'Zoom Image',
+        'select_options': 'Select Options',
+        'total_price': 'Total Price',
+        'shipping_info': 'Shipping Info',
+        'return_policy': 'Return Policy',
+        'seller_info': 'Seller Info',
+        'customer_reviews': 'Customer Reviews',
+        'rating': 'Rating',
+        'view_all_reviews': 'View All Reviews',
+        'not_logged_in': 'Not Logged In',
+        'please_login_first': 'Please log in before placing an order',
+        'ok': 'OK',
+        'order_now': 'Order Now',
+        'you_might_like': 'You Might Like',
+        'search_products': 'Search products',
+      },
+      'zh': {
+        'product_details': '商品详情',
+        'quantity': '数量',
+        'size': '尺寸',
+        'color': '颜色',
+        'add_to_cart': '加入购物车',
+        'buy_now': '立即购买',
+        'description': '描述',
+        'specifications': '规格',
+        'reviews': '评价',
+        'recommended': '推荐',
+        'price': '价格',
+        'original_price': '原价',
+        'discount': '折扣',
+        'in_stock': '有库存',
+        'out_of_stock': '缺货',
+        'select_size': '选择尺寸',
+        'select_color': '选择颜色',
+        'added_to_cart': '已加入购物车',
+        'error_occurred': '发生错误',
+        'loading': '加载中...',
+        'no_description': '无描述',
+        'share': '分享',
+        'favorite': '收藏',
+        'search_hint': '搜索商品...',
+        'related_products': '相关商品',
+        'product_images': '商品图片',
+        'zoom_image': '放大图片',
+        'select_options': '选择选项',
+        'total_price': '总价',
+        'shipping_info': '配送信息',
+        'return_policy': '退货政策',
+        'seller_info': '卖家信息',
+        'customer_reviews': '客户评价',
+        'rating': '评分',
+        'view_all_reviews': '查看所有评价',
+        'not_logged_in': '未登录',
+        'please_login_first': '请先登录再下单',
+        'ok': '确定',
+        'order_now': '立即下单',
+        'you_might_like': '您可能喜欢',
+        'search_products': '搜索商品',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
+
   @override
   void initState() {
     super.initState();
+    languageController = Get.find<LanguageController>();
+
     // สร้าง controller และเรียก API
     productController = Get.put(ProductDetailController(), tag: widget.num_iid);
     productController.getItemDetail(widget.num_iid, widget.type);
@@ -77,9 +221,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('ยังไม่ได้เข้าสู่ระบบ'),
-              content: const Text('กรุณาเข้าสู่ระบบก่อนสั่งซื้อสินค้า'),
-              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))],
+              title: Text(getTranslation('not_logged_in')),
+              content: Text(getTranslation('please_login_first')),
+              actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(getTranslation('ok')))],
             );
           },
         );
@@ -95,7 +239,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       final availableSizes = productController.availableSizes;
 
       if (availableSizes.isEmpty) {
-        return const Text('ไม่มีข้อมูลไซส์', style: TextStyle(color: Colors.grey));
+        return Text(getTranslation('select_size'), style: TextStyle(color: Colors.grey));
       }
 
       return Wrap(
@@ -126,7 +270,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       final availableColors = productController.availableColors;
 
       if (availableColors.isEmpty) {
-        return const Text('ไม่มีข้อมูลสี', style: TextStyle(color: Colors.grey));
+        return Text(getTranslation('select_color'), style: TextStyle(color: Colors.grey));
       }
 
       return Wrap(
@@ -321,7 +465,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData])));
               }
             },
-            child: Text('สั่งซื้อสินค้า', style: TextStyle(fontSize: 16, color: Colors.white)),
+            child: Text(getTranslation('order_now'), style: TextStyle(fontSize: 16, color: Colors.white)),
           ),
         ),
         const SizedBox(width: 10),
@@ -366,7 +510,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 // Show success message
                 if (mounted) {
                   ScaffoldMessenger.of(currentContext).showSnackBar(
-                    const SnackBar(content: Text('เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)),
+                    SnackBar(content: Text(getTranslation('added_to_cart')), backgroundColor: Colors.green, duration: Duration(seconds: 2)),
                   );
 
                   // Navigate to cart page
@@ -375,13 +519,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               } catch (e) {
                 // Show error message
                 if (mounted) {
-                  ScaffoldMessenger.of(
-                    currentContext,
-                  ).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e'), backgroundColor: Colors.red, duration: const Duration(seconds: 2)));
+                  ScaffoldMessenger.of(currentContext).showSnackBar(
+                    SnackBar(
+                      content: Text('${getTranslation('error_occurred')}: $e'),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
                 }
               }
             },
-            child: Text('เพิ่มลงตะกร้า', style: TextStyle(color: Colors.white, fontSize: 16)),
+            child: Text(getTranslation('add_to_cart'), style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
         ),
       ],
@@ -390,217 +538,222 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
+    return Obx(
+      () => Scaffold(
+        backgroundColor: Colors.white,
 
-      // ✅ AppBar ที่เหมือนหน้า Home
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(56),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-            onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false),
-          ),
-          title: SearchHeaderWidget(
-            searchController: searchController,
-            onFieldSubmitted: (query) {
-              SearchService.handleTextSearch(context: context, query: query, selectedType: widget.type);
-            },
-            onImagePicked: (XFile image) {
-              SearchService.handleImageSearch(context: context, image: image, selectedType: widget.type);
-            },
-            onBagTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
-            },
-            onNotificationTap: () {
-              // TODO: ไปหน้า notification
-              Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
-            },
+        // ✅ AppBar ที่เหมือนหน้า Home
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(56),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+              onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false),
+            ),
+            title: SearchHeaderWidget(
+              searchController: searchController,
+              onFieldSubmitted: (query) {
+                SearchService.handleTextSearch(context: context, query: query, selectedType: widget.type);
+              },
+              onImagePicked: (XFile image) {
+                SearchService.handleImageSearch(context: context, image: image, selectedType: widget.type);
+              },
+              onBagTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+              },
+              onNotificationTap: () {
+                // TODO: ไปหน้า notification
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
+              },
+            ),
           ),
         ),
-      ),
 
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                controller: _scrollController,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                children: [
-                  Stack(
-                    children: [
-                      ProductImageSliderWidget(productController: productController),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Obx(
-                          () => GestureDetector(
-                            onTap: () async {
-                              await productController.toggleFavorite();
-                            },
-                            child: Icon(
-                              productController.isFavorite.value ? Icons.favorite : Icons.favorite_border,
-                              color: productController.isFavorite.value ? kButtonColor : Colors.grey,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  controller: _scrollController,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  children: [
+                    Stack(
+                      children: [
+                        ProductImageSliderWidget(productController: productController),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Obx(
+                            () => GestureDetector(
+                              onTap: () async {
+                                await productController.toggleFavorite();
+                              },
+                              child: Icon(
+                                productController.isFavorite.value ? Icons.favorite : Icons.favorite_border,
+                                color: productController.isFavorite.value ? kButtonColor : Colors.grey,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
+                      ],
+                    ),
+                    SizedBox(height: 16),
 
-                  // แสดงข้อมูลสินค้าจาก API
-                  Obx(() {
-                    if (productController.isLoading.value) {
+                    // แสดงข้อมูลสินค้าจาก API
+                    Obx(() {
+                      if (productController.isLoading.value) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 20,
+                              width: 200,
+                              decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                            ),
+                            SizedBox(height: 8),
+                            Container(
+                              height: 24,
+                              width: 100,
+                              decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                            ),
+                          ],
+                        );
+                      }
+
+                      if (productController.hasError.value) {
+                        return Column(
+                          children: [
+                            Icon(Icons.error_outline, color: Colors.red, size: 48),
+                            SizedBox(height: 8),
+                            Text(productController.errorMessage.value, style: TextStyle(color: Colors.red), textAlign: TextAlign.center),
+                            SizedBox(height: 8),
+                            ElevatedButton(onPressed: () => productController.refreshData(), child: Text('ลองใหม่')),
+                          ],
+                        );
+                      }
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            height: 20,
-                            width: 200,
-                            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                          Text(productController.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          SizedBox(height: 6),
+                          Text(
+                            '¥${productController.originalPrice.toStringAsFixed(0)}',
+                            style: TextStyle(fontSize: 32, color: Colors.black, fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(height: 8),
-                          Container(
-                            height: 24,
-                            width: 100,
-                            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
-                          ),
+                          if (productController.area.isNotEmpty) ...[
+                            SizedBox(height: 4),
+                            Text('จาก: ${productController.area}', style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
+                          ],
                         ],
                       );
-                    }
+                    }),
+                    SizedBox(height: 16),
 
-                    if (productController.hasError.value) {
-                      return Column(
-                        children: [
-                          Icon(Icons.error_outline, color: Colors.red, size: 48),
-                          SizedBox(height: 8),
-                          Text(productController.errorMessage.value, style: TextStyle(color: Colors.red), textAlign: TextAlign.center),
-                          SizedBox(height: 8),
-                          ElevatedButton(onPressed: () => productController.refreshData(), child: Text('ลองใหม่')),
-                        ],
-                      );
-                    }
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Text(productController.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 6),
-                        Text(
-                          '¥${productController.originalPrice.toStringAsFixed(0)}',
-                          style: TextStyle(fontSize: 32, color: Colors.black, fontWeight: FontWeight.bold),
+                        Text(getTranslation('quantity')),
+                        Spacer(),
+                        IconButton(
+                          icon: Icon(Icons.remove),
+                          onPressed:
+                              () => setState(() {
+                                if (quantity > 1) quantity--;
+                              }),
                         ),
-                        if (productController.area.isNotEmpty) ...[
-                          SizedBox(height: 4),
-                          Text('จาก: ${productController.area}', style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
-                        ],
+                        Text(quantity.toString(), style: const TextStyle(fontSize: 16)),
+                        IconButton(icon: const Icon(Icons.add), onPressed: () => setState(() => quantity++)),
                       ],
-                    );
-                  }),
-                  SizedBox(height: 16),
+                    ),
+                    Divider(height: 32),
 
-                  Row(
-                    children: [
-                      Text('จำนวน'),
-                      Spacer(),
-                      IconButton(
-                        icon: Icon(Icons.remove),
-                        onPressed:
-                            () => setState(() {
-                              if (quantity > 1) quantity--;
-                            }),
-                      ),
-                      Text(quantity.toString(), style: const TextStyle(fontSize: 16)),
-                      IconButton(icon: const Icon(Icons.add), onPressed: () => setState(() => quantity++)),
-                    ],
-                  ),
-                  Divider(height: 32),
+                    Text(getTranslation('size'), style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8),
+                    buildSizeSelector(),
 
-                  Text('ไซต์', style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
-                  buildSizeSelector(),
+                    SizedBox(height: 20),
+                    Text(getTranslation('color'), style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8),
+                    buildColorOptions(),
 
-                  SizedBox(height: 20),
-                  Text('สี', style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
-                  buildColorOptions(),
+                    SizedBox(height: 20),
 
-                  SizedBox(height: 20),
+                    // แสดงคำอธิบายสินค้า
+                    ProductDescriptionWidget(productController: productController),
 
-                  // แสดงคำอธิบายสินค้า
-                  ProductDescriptionWidget(productController: productController),
+                    // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
+                    Column(
+                      children: [
+                        // Divider(),
+                        // Center(
+                        //   child: GestureDetector(
+                        //     onTap: () {
+                        //       // TODO: แสดงเนื้อหาเพิ่มเติม
+                        //     },
+                        //     child: Row(
+                        //       mainAxisSize: MainAxisSize.min,
+                        //       children: [
+                        //         Text('แสดงเพิ่มเติม', style: TextStyle(color: Colors.grey)),
+                        //         SizedBox(width: 4),
+                        //         Icon(Icons.expand_more, color: Colors.grey, size: 18),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                        Divider(),
+                        SizedBox(height: 16),
+                      ],
+                    ),
 
-                  // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
-                  Column(
-                    children: [
-                      // Divider(),
-                      // Center(
-                      //   child: GestureDetector(
-                      //     onTap: () {
-                      //       // TODO: แสดงเนื้อหาเพิ่มเติม
-                      //     },
-                      //     child: Row(
-                      //       mainAxisSize: MainAxisSize.min,
-                      //       children: [
-                      //         Text('แสดงเพิ่มเติม', style: TextStyle(color: Colors.grey)),
-                      //         SizedBox(width: 4),
-                      //         Icon(Icons.expand_more, color: Colors.grey, size: 18),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      Divider(),
-                      SizedBox(height: 16),
-                    ],
-                  ),
+                    SizedBox(height: 24),
+                    Text(getTranslation('you_might_like'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    SizedBox(height: 12),
 
-                  SizedBox(height: 24),
-                  Text('สิ่งที่คุณอาจสนใจ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  SizedBox(height: 12),
+                    // แสดงข้อมูลจาก homeController.searchItems
+                    Obx(() {
+                      if (homeController.isLoading.value) {
+                        return Container(height: 200, child: Center(child: CircularProgressIndicator()));
+                      }
 
-                  // แสดงข้อมูลจาก homeController.searchItems
-                  Obx(() {
-                    if (homeController.isLoading.value) {
-                      return Container(height: 200, child: Center(child: CircularProgressIndicator()));
-                    }
+                      if (homeController.hasError.value) {
+                        return Container(
+                          height: 100,
+                          child: Center(child: Text(getTranslation('error_occurred'), style: TextStyle(color: Colors.grey))),
+                        );
+                      }
 
-                    if (homeController.hasError.value) {
-                      return Container(
-                        height: 100,
-                        child: Center(child: Text('ไม่สามารถโหลดสินค้าที่แนะนำได้', style: TextStyle(color: Colors.grey))),
+                      final searchItems = homeController.searchItems;
+                      if (searchItems.isEmpty) {
+                        return Container(
+                          height: 100,
+                          child: Center(child: Text(getTranslation('recommended'), style: TextStyle(color: Colors.grey))),
+                        );
+                      }
+
+                      // แสดงสินค้าสูงสุด 6 รายการ
+                      final itemsToShow = searchItems.take(6).toList();
+
+                      return GridView.count(
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        childAspectRatio: 0.75,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        children:
+                            itemsToShow.map((item) {
+                              return _buildRecommendedItem(item);
+                            }).toList(),
                       );
-                    }
-
-                    final searchItems = homeController.searchItems;
-                    if (searchItems.isEmpty) {
-                      return Container(height: 100, child: Center(child: Text('ไม่มีสินค้าที่แนะนำ', style: TextStyle(color: Colors.grey))));
-                    }
-
-                    // แสดงสินค้าสูงสุด 6 รายการ
-                    final itemsToShow = searchItems.take(6).toList();
-
-                    return GridView.count(
-                      crossAxisCount: 2,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      childAspectRatio: 0.75,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      children:
-                          itemsToShow.map((item) {
-                            return _buildRecommendedItem(item);
-                          }).toList(),
-                    );
-                  }),
-                ],
+                    }),
+                  ],
+                ),
               ),
-            ),
-            Padding(padding: EdgeInsets.fromLTRB(16, 0, 16, 16), child: buildBottomBar()),
-          ],
+              Padding(padding: EdgeInsets.fromLTRB(16, 0, 16, 16), child: buildBottomBar()),
+            ],
+          ),
         ),
       ),
     );

@@ -9,6 +9,7 @@ import 'package:gcargo/models/products.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/home/couponSelectionPage.dart';
 import 'package:gcargo/home/deliveryMethodPage.dart';
 import 'package:gcargo/services/cart_service.dart';
@@ -28,6 +29,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
   bool taxChecked = false;
   int? selectedExtraServiceIndex;
   late HomeController homeController;
+  late LanguageController languageController;
   List<Map<String, dynamic>> products = [];
   Map<String, dynamic> deliveryOptions = {'id': 1, 'name': 'ขนส่งทางรถ', 'nameEng': 'car'};
   bool isLoadingServices = true;
@@ -36,9 +38,145 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
   ServiceTransporterById? serviceSelected;
   Map<String, dynamic>? selectedCoupon; // เก็บคูปองที่เลือก
 
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'purchase_bill': 'ใบสั่งซื้อ',
+        'order_summary': 'สรุปการสั่งซื้อ',
+        'product_list': 'รายการสินค้า',
+        'quantity': 'จำนวน',
+        'price': 'ราคา',
+        'total': 'รวม',
+        'subtotal': 'ยอดรวม',
+        'shipping_method': 'วิธีการจัดส่ง',
+        'extra_services': 'บริการเสริม',
+        'coupon': 'คูปอง',
+        'select_coupon': 'เลือกคูปอง',
+        'discount': 'ส่วนลด',
+        'tax': 'ภาษี',
+        'grand_total': 'ยอดรวมทั้งสิ้น',
+        'notes': 'หมายเหตุ',
+        'add_notes': 'เพิ่มหมายเหตุ',
+        'place_order': 'สั่งซื้อ',
+        'confirm_order': 'ยืนยันการสั่งซื้อ',
+        'order_success': 'สร้างออเดอร์สำเร็จ!',
+        'order_failed': 'เกิดข้อผิดพลาด',
+        'loading': 'กำลังโหลด...',
+        'processing_order': 'กำลังดำเนินการสั่งซื้อ...',
+        'select_shipping': 'เลือกวิธีการจัดส่ง',
+        'no_products': 'ไม่มีสินค้า',
+        'error_occurred': 'เกิดข้อผิดพลาด',
+        'try_again': 'ลองใหม่อีกครั้ง',
+        'baht': 'บาท',
+        'free': 'ฟรี',
+        'shipping_fee': 'ค่าจัดส่ง',
+        'service_fee': 'ค่าบริการ',
+        'coupon_discount': 'ส่วนลดคูปอง',
+        'vat': 'ภาษีมูลค่าเพิ่ม',
+        'including_vat': 'รวมภาษี',
+        'excluding_vat': 'ไม่รวมภาษี',
+        'exchange_rate': 'อัตราแลกเปลี่ยน',
+        'yuan_to_baht': 'หยวนต่อบาท',
+        'no_services': 'ไม่มีบริการ',
+        'land_transport': 'ขนส่งทางรถ',
+        'sea_transport': 'ขนส่งทางเรือ',
+        'air_transport': 'ขนส่งทางอากาศ',
+      },
+      'en': {
+        'purchase_bill': 'Purchase Bill',
+        'order_summary': 'Order Summary',
+        'product_list': 'Product List',
+        'quantity': 'Quantity',
+        'price': 'Price',
+        'total': 'Total',
+        'subtotal': 'Subtotal',
+        'shipping_method': 'Shipping Method',
+        'extra_services': 'Extra Services',
+        'coupon': 'Coupon',
+        'select_coupon': 'Select Coupon',
+        'discount': 'Discount',
+        'tax': 'Tax',
+        'grand_total': 'Grand Total',
+        'notes': 'Notes',
+        'add_notes': 'Add Notes',
+        'place_order': 'Place Order',
+        'confirm_order': 'Confirm Order',
+        'order_success': 'Order Created Successfully!',
+        'order_failed': 'An Error Occurred',
+        'loading': 'Loading...',
+        'processing_order': 'Processing Order...',
+        'select_shipping': 'Select Shipping Method',
+        'no_products': 'No Products',
+        'error_occurred': 'An Error Occurred',
+        'try_again': 'Try Again',
+        'baht': 'Baht',
+        'free': 'Free',
+        'shipping_fee': 'Shipping Fee',
+        'service_fee': 'Service Fee',
+        'coupon_discount': 'Coupon Discount',
+        'vat': 'VAT',
+        'including_vat': 'Including VAT',
+        'excluding_vat': 'Excluding VAT',
+        'exchange_rate': 'Exchange Rate',
+        'yuan_to_baht': 'Yuan to Baht',
+        'no_services': 'No Services',
+        'land_transport': 'Land Transport',
+        'sea_transport': 'Sea Transport',
+        'air_transport': 'Air Transport',
+      },
+      'zh': {
+        'purchase_bill': '购买单',
+        'order_summary': '订单摘要',
+        'product_list': '商品列表',
+        'quantity': '数量',
+        'price': '价格',
+        'total': '总计',
+        'subtotal': '小计',
+        'shipping_method': '配送方式',
+        'extra_services': '额外服务',
+        'coupon': '优惠券',
+        'select_coupon': '选择优惠券',
+        'discount': '折扣',
+        'tax': '税费',
+        'grand_total': '总金额',
+        'notes': '备注',
+        'add_notes': '添加备注',
+        'place_order': '下单',
+        'confirm_order': '确认订单',
+        'order_success': '订单创建成功！',
+        'order_failed': '发生错误',
+        'loading': '加载中...',
+        'processing_order': '正在处理订单...',
+        'select_shipping': '选择配送方式',
+        'no_products': '无商品',
+        'error_occurred': '发生错误',
+        'try_again': '重试',
+        'baht': '泰铢',
+        'free': '免费',
+        'shipping_fee': '运费',
+        'service_fee': '服务费',
+        'coupon_discount': '优惠券折扣',
+        'vat': '增值税',
+        'including_vat': '含税',
+        'excluding_vat': '不含税',
+        'exchange_rate': '汇率',
+        'yuan_to_baht': '人民币对泰铢',
+        'no_services': '无服务',
+        'land_transport': '陆运',
+        'sea_transport': '海运',
+        'air_transport': '空运',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
+
   @override
   void initState() {
     super.initState();
+    languageController = Get.find<LanguageController>();
 
     // Get HomeController
     try {
@@ -107,284 +245,290 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
     final exchangeRate = getExchangeRateValue(exchangeRateData);
     final totalYuan = calculateTotalYuan();
     final totalBaht = totalYuan * exchangeRate;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return Obx(
+      () => Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: GestureDetector(onTap: () => Navigator.pop(context), child: Icon(Icons.arrow_back_ios_new, color: Colors.black)),
-        title: Text('บิลสั่งซื้อสินค้า', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-      ),
-      body: Column(
-        children: [
-          Divider(height: 1),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                SizedBox(height: 16),
-                GestureDetector(
-                  onTap: () async {
-                    final selectedOption = await Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryMethodPage()));
-                    if (selectedOption != null) {
-                      setState(() {
-                        deliveryOptions = selectedOption;
-                      });
-                    }
-                  },
-                  child: Text('รูปแบบการขนส่ง', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                const SizedBox(height: 4),
-                Text('${deliveryOptions['name']}', style: TextStyle(color: Colors.grey)),
-                const Divider(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('สินค้าทั้งหมด', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text(
-                      '${products.fold(0, (sum, product) => sum + (product['quantity'] ?? 1) as int)} ชิ้น',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildProductSection(),
-                const SizedBox(height: 24),
-                const Divider(height: 24, color: Colors.orange),
-                const Text('หมายเหตุ', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: noteController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    hintText: 'กรอกหมายเหตุเพิ่มเติม...',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: GestureDetector(onTap: () => Navigator.pop(context), child: Icon(Icons.arrow_back_ios_new, color: Colors.black)),
+          title: Text(getTranslation('purchase_bill'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        ),
+        body: Column(
+          children: [
+            Divider(height: 1),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () async {
+                      final selectedOption = await Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryMethodPage()));
+                      if (selectedOption != null) {
+                        setState(() {
+                          deliveryOptions = selectedOption;
+                        });
+                      }
+                    },
+                    child: Text(getTranslation('shipping_method'), style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
-                ),
-                const SizedBox(height: 24),
-
-                const Divider(height: 24),
-                GestureDetector(
-                  onTap: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CouponSelectionPage(selectedCoupon: selectedCoupon)),
-                    );
-
-                    if (result != null) {
-                      setState(() {
-                        selectedCoupon = result;
-                      });
-                    }
-                  },
-                  child: Row(
+                  const SizedBox(height: 4),
+                  Text('${deliveryOptions['name']}', style: TextStyle(color: Colors.grey)),
+                  const Divider(height: 32),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('คูปองส่วนลด', style: TextStyle(fontWeight: FontWeight.bold)),
-                          if (selectedCoupon != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(
-                                selectedCoupon!['code'] ?? '',
-                                style: TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                        ],
+                      Text(getTranslation('product_list'), style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        '${products.fold(0, (sum, product) => sum + (product['quantity'] ?? 1) as int)} ชิ้น',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
-                      Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black54),
                     ],
                   ),
-                ),
-                const Divider(height: 24),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-          // ✅ ด้านล่างสุด สรุปยอดสินค้า ตามภาพจริง
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 🔹 แถบอัตราแลกเปลี่ยน
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                alignment: Alignment.centerLeft,
-                color: Colors.white,
-                child: Text(
-                  'อัตราแลกเปลี่ยน  1 ¥ = ${exchangeRate.toStringAsFixed(4)} หยวนต่อบาท',
-                  style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
-                ),
-              ),
+                  const SizedBox(height: 16),
+                  _buildProductSection(),
+                  const SizedBox(height: 24),
+                  const Divider(height: 24, color: Colors.orange),
+                  Text(getTranslation('notes'), style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: noteController,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      hintText: getTranslation('add_notes'),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
-              // 🔻 ด้านล่างสุด ตามภาพเป๊ะ
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: GestureDetector(
-                  onTap:
-                      isOrdering
-                          ? null
-                          : () async {
-                            // ป้องกันการกดซ้ำ
-                            if (isOrdering) return;
+                  const Divider(height: 24),
+                  GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CouponSelectionPage(selectedCoupon: selectedCoupon)),
+                      );
 
-                            setState(() {
-                              isOrdering = true;
-                            });
-
-                            // Store context before async operations
-                            final currentContext = context;
-
-                            try {
-                              List<OptionsItem> optionsItems = [];
-                              List<PartService> addOnServices = [];
-                              List<Products> orderProducts = [];
-
-                              // Create options for each product
-                              if (products.isNotEmpty) {
-                                for (var i = 0; i < products.length; i++) {
-                                  final product = products[i];
-
-                                  // Add selectedSize if available
-                                  if (product['selectedSize'] != null && product['selectedSize'].toString().isNotEmpty) {
-                                    final sizeOption = OptionsItem(product['selectedSize'], '', 'size');
-                                    optionsItems.add(sizeOption);
-                                  }
-
-                                  // Add selectedColor if available
-                                  if (product['selectedColor'] != null && product['selectedColor'].toString().isNotEmpty) {
-                                    final colorOption = OptionsItem(product['selectedColor'], '', 'color');
-                                    optionsItems.add(colorOption);
-                                  }
-                                }
-                              }
-
-                              // Add selected extra service
-                              if (serviceSelected != null) {
-                                final addOnService = PartService(serviceSelected!.id, serviceSelected!.standard_price);
-                                addOnServices.add(addOnService);
-                              }
-
-                              // Create products for order
-                              for (var i = 0; i < products.length; i++) {
-                                final product = products[i];
-                                final orderProduct = Products(
-                                  product['nick'] ?? '', // product_shop
-                                  product['num_iid'] ?? '', // product_code
-                                  product['title'] ?? '', // product_name
-                                  product['detail_url'] ?? '', // product_url
-                                  product['pic_url'] ?? '', // product_image
-                                  product['name'] ?? '', // product_category
-                                  'shopgs1', // product_store_type
-                                  noteController.text, // product_note
-                                  product['price']?.toString() ?? '0', // product_price
-                                  product['quantity']?.toString() ?? '1', // product_qty
-                                  addOnServices, // add_on_services
-                                  optionsItems, // options
-                                );
-                                orderProducts.add(orderProduct);
-                              }
-                              inspect(orderProducts);
-
-                              // Calculate total price
-                              final totalYuan = calculateTotalYuan();
-
-                              // Get selected shipping address ID
-                              final selectedAddressId = homeController.select_ship_address?.id;
-                              print(selectedAddressId);
-
-                              //Create order via API
-                              final result = await HomeService.createOrder(
-                                date: DateTime.now().toIso8601String(),
-                                total_price: totalYuan,
-                                shipping_type: deliveryOptions['nameEng'] ?? 'car',
-                                payment_term: 'prepaid',
-                                note: noteController.text,
-                                importer_code: '',
-                                member_address_id: selectedAddressId,
-                                products: orderProducts,
-                                coupon: selectedCoupon,
-                              );
-
-                              log('✅ Order created successfully: $result');
-
-                              // Remove ordered items from cart
-                              await _removeOrderedItemsFromCart();
-
-                              // Show success message
-                              if (mounted) {
-                                ScaffoldMessenger.of(
-                                  currentContext,
-                                ).showSnackBar(const SnackBar(content: Text('สร้างออเดอร์สำเร็จ!'), backgroundColor: Colors.green));
-
-                                // Navigate back or to order confirmation page
-                                Navigator.pushAndRemoveUntil(currentContext, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
-                              }
-                            } catch (e) {
-                              log('❌ Error creating order: $e');
-
-                              if (mounted) {
-                                ScaffoldMessenger.of(
-                                  currentContext,
-                                ).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e'), backgroundColor: Colors.red));
-                              }
-                            } finally {
-                              // รีเซ็ต loading state
-                              if (mounted) {
-                                setState(() {
-                                  isOrdering = false;
-                                });
-                              }
-                            }
-                          },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(color: isOrdering ? Colors.grey : kButtonColor, borderRadius: BorderRadius.circular(12)),
+                      if (result != null) {
+                        setState(() {
+                          selectedCoupon = result;
+                        });
+                      }
+                    },
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // 🔵 วงกลมมีเลข หรือ loading spinner
-                        Container(
-                          padding: EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: isOrdering ? Colors.grey.shade600 : Color(0xFF2E73B9), // ฟ้าอ่อน
-                            shape: BoxShape.circle,
-                          ),
-                          child:
-                              isOrdering
-                                  ? SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-                                  )
-                                  : Text(
-                                    '${widget.productDataList!.length}',
-                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                                  ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(getTranslation('coupon'), style: TextStyle(fontWeight: FontWeight.bold)),
+                            if (selectedCoupon != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  selectedCoupon!['code'] ?? '',
+                                  style: TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                          ],
                         ),
-                        const SizedBox(width: 12),
-                        Text(
-                          isOrdering ? 'กำลังสั่งซื้อ...' : 'สินค้าทั้งหมด',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                        ),
-                        const Spacer(),
-                        if (!isOrdering)
-                          Text(
-                            '¥${totalYuan.toStringAsFixed(2)} (฿ ${totalBaht.toStringAsFixed(2)})',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
+                        Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black54),
                       ],
                     ),
                   ),
-                ),
+                  const Divider(height: 24),
+                  const SizedBox(height: 20),
+                ],
               ),
+            ),
+            // ✅ ด้านล่างสุด สรุปยอดสินค้า ตามภาพจริง
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 🔹 แถบอัตราแลกเปลี่ยน
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  alignment: Alignment.centerLeft,
+                  color: Colors.white,
+                  child: Text(
+                    '${getTranslation('exchange_rate')}  1 ¥ = ${exchangeRate.toStringAsFixed(4)} ${getTranslation('yuan_to_baht')}',
+                    style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
+                  ),
+                ),
 
-              // 🔹 แถบสีขาวบาง ๆ ด้านล่างสุด (ไม่กินพื้นที่)
-              Container(height: 8, color: Colors.white),
-            ],
-          ),
-        ],
+                // 🔻 ด้านล่างสุด ตามภาพเป๊ะ
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: GestureDetector(
+                    onTap:
+                        isOrdering
+                            ? null
+                            : () async {
+                              // ป้องกันการกดซ้ำ
+                              if (isOrdering) return;
+
+                              setState(() {
+                                isOrdering = true;
+                              });
+
+                              // Store context before async operations
+                              final currentContext = context;
+
+                              try {
+                                List<OptionsItem> optionsItems = [];
+                                List<PartService> addOnServices = [];
+                                List<Products> orderProducts = [];
+
+                                // Create options for each product
+                                if (products.isNotEmpty) {
+                                  for (var i = 0; i < products.length; i++) {
+                                    final product = products[i];
+
+                                    // Add selectedSize if available
+                                    if (product['selectedSize'] != null && product['selectedSize'].toString().isNotEmpty) {
+                                      final sizeOption = OptionsItem(product['selectedSize'], '', 'size');
+                                      optionsItems.add(sizeOption);
+                                    }
+
+                                    // Add selectedColor if available
+                                    if (product['selectedColor'] != null && product['selectedColor'].toString().isNotEmpty) {
+                                      final colorOption = OptionsItem(product['selectedColor'], '', 'color');
+                                      optionsItems.add(colorOption);
+                                    }
+                                  }
+                                }
+
+                                // Add selected extra service
+                                if (serviceSelected != null) {
+                                  final addOnService = PartService(serviceSelected!.id, serviceSelected!.standard_price);
+                                  addOnServices.add(addOnService);
+                                }
+
+                                // Create products for order
+                                for (var i = 0; i < products.length; i++) {
+                                  final product = products[i];
+                                  final orderProduct = Products(
+                                    product['nick'] ?? '', // product_shop
+                                    product['num_iid'] ?? '', // product_code
+                                    product['title'] ?? '', // product_name
+                                    product['detail_url'] ?? '', // product_url
+                                    product['pic_url'] ?? '', // product_image
+                                    product['name'] ?? '', // product_category
+                                    'shopgs1', // product_store_type
+                                    noteController.text, // product_note
+                                    product['price']?.toString() ?? '0', // product_price
+                                    product['quantity']?.toString() ?? '1', // product_qty
+                                    addOnServices, // add_on_services
+                                    optionsItems, // options
+                                  );
+                                  orderProducts.add(orderProduct);
+                                }
+                                inspect(orderProducts);
+
+                                // Calculate total price
+                                final totalYuan = calculateTotalYuan();
+
+                                // Get selected shipping address ID
+                                final selectedAddressId = homeController.select_ship_address?.id;
+                                print(selectedAddressId);
+
+                                //Create order via API
+                                final result = await HomeService.createOrder(
+                                  date: DateTime.now().toIso8601String(),
+                                  total_price: totalYuan,
+                                  shipping_type: deliveryOptions['nameEng'] ?? 'car',
+                                  payment_term: 'prepaid',
+                                  note: noteController.text,
+                                  importer_code: '',
+                                  member_address_id: selectedAddressId,
+                                  products: orderProducts,
+                                  coupon: selectedCoupon,
+                                );
+
+                                log('✅ Order created successfully: $result');
+
+                                // Remove ordered items from cart
+                                await _removeOrderedItemsFromCart();
+
+                                // Show success message
+                                if (mounted) {
+                                  ScaffoldMessenger.of(
+                                    currentContext,
+                                  ).showSnackBar(SnackBar(content: Text(getTranslation('order_success')), backgroundColor: Colors.green));
+
+                                  // Navigate back or to order confirmation page
+                                  Navigator.pushAndRemoveUntil(
+                                    currentContext,
+                                    MaterialPageRoute(builder: (context) => FirstPage()),
+                                    (route) => false,
+                                  );
+                                }
+                              } catch (e) {
+                                log('❌ Error creating order: $e');
+
+                                if (mounted) {
+                                  ScaffoldMessenger.of(
+                                    currentContext,
+                                  ).showSnackBar(SnackBar(content: Text('${getTranslation('error_occurred')}: $e'), backgroundColor: Colors.red));
+                                }
+                              } finally {
+                                // รีเซ็ต loading state
+                                if (mounted) {
+                                  setState(() {
+                                    isOrdering = false;
+                                  });
+                                }
+                              }
+                            },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(color: isOrdering ? Colors.grey : kButtonColor, borderRadius: BorderRadius.circular(12)),
+                      child: Row(
+                        children: [
+                          // 🔵 วงกลมมีเลข หรือ loading spinner
+                          Container(
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: isOrdering ? Colors.grey.shade600 : Color(0xFF2E73B9), // ฟ้าอ่อน
+                              shape: BoxShape.circle,
+                            ),
+                            child:
+                                isOrdering
+                                    ? SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                                    )
+                                    : Text(
+                                      '${widget.productDataList!.length}',
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                                    ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            isOrdering ? getTranslation('processing_order') : getTranslation('place_order'),
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                          ),
+                          const Spacer(),
+                          if (!isOrdering)
+                            Text(
+                              '¥${totalYuan.toStringAsFixed(2)} (฿ ${totalBaht.toStringAsFixed(2)})',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // 🔹 แถบสีขาวบาง ๆ ด้านล่างสุด (ไม่กินพื้นที่)
+                Container(height: 8, color: Colors.white),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -399,7 +543,11 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
           // ✅ บริการเสริม (Row เดียวกับตัวเลือก)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('บริการเสริม', style: TextStyle(fontWeight: FontWeight.bold)), Spacer(), Expanded(child: _buildExtraServicesSection())],
+            children: [
+              Text(getTranslation('extra_services'), style: TextStyle(fontWeight: FontWeight.bold)),
+              Spacer(),
+              Expanded(child: _buildExtraServicesSection()),
+            ],
           ),
           const SizedBox(height: 12),
 
@@ -555,7 +703,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
     }
 
     if (homeController.extraServices.isEmpty) {
-      return const Text('ไม่มีบริการ', style: TextStyle(fontSize: 12, color: Colors.grey));
+      return Text(getTranslation('no_services'), style: TextStyle(fontSize: 12, color: Colors.grey));
     }
 
     return SingleChildScrollView(

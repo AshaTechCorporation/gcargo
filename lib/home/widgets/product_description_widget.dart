@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/controllers/product_detail_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:get/get.dart';
 
 class ProductDescriptionWidget extends StatelessWidget {
   final ProductDetailController productController;
 
   const ProductDescriptionWidget({super.key, required this.productController});
+
+  String getTranslation(String key) {
+    final languageController = Get.find<LanguageController>();
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {'product_details': 'รายละเอียดสินค้า', 'no_description': 'ไม่มีรายละเอียด', 'product_link': 'ลิงก์สินค้า'},
+      'en': {'product_details': 'Product Details', 'no_description': 'No Description', 'product_link': 'Product Link'},
+      'zh': {'product_details': '商品详情', 'no_description': '无描述', 'product_link': '商品链接'},
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +41,7 @@ class ProductDescriptionWidget extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('รายละเอียดสินค้า', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(getTranslation('product_details'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 8),
           Text(productController.title, style: TextStyle(color: Colors.grey.shade700)),
           // if (productController.detailUrl.isNotEmpty) ...[
