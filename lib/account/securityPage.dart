@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/changePinPage.dart';
 import 'package:gcargo/auth/pinAuthPage.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/services/auth_service.dart';
 import 'package:gcargo/services/biometric_service.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SecurityPage extends StatefulWidget {
@@ -17,10 +19,24 @@ class _SecurityPageState extends State<SecurityPage> {
   bool isFaceIDEnabled = false;
   bool isFingerprintEnabled = true;
   bool isLoading = true;
+  late LanguageController languageController;
+
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {'security': 'ความปลอดภัย'},
+      'en': {'security': 'Security'},
+      'zh': {'security': '安全'},
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
 
   @override
   void initState() {
     super.initState();
+    languageController = Get.find<LanguageController>();
     _loadSecuritySettings();
   }
 
@@ -181,54 +197,56 @@ class _SecurityPageState extends State<SecurityPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    return Obx(() {
+      if (isLoading) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(getTranslation('security')),
+            leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+            backgroundColor: Colors.white,
+            elevation: 0,
+          ),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      }
       return Scaffold(
         appBar: AppBar(
-          title: const Text('ความปลอดภัย'),
+          title: Text(getTranslation('security')),
           leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
           backgroundColor: Colors.white,
           elevation: 0,
         ),
-        body: const Center(child: CircularProgressIndicator()),
+        body: ListView(
+          children: [
+            _buildSwitchTile(
+              title: 'เข้าสู่ระบบด้วยรหัส PIN',
+              subtitle: 'ใช้สำหรับอุปกรณ์นี้เพื่อยืนยันตัวตนก่อนการป้อนรหัสผ่านทุกครั้งที่เข้าสู่ระบบ',
+              value: isPinEnabled,
+              onChanged: _savePinSetting,
+            ),
+            _buildArrowTile(
+              title: 'เปลี่ยนรหัส PIN',
+              onTap: () {
+                // TODO: ไปหน้าเปลี่ยน PIN
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePinPage()));
+              },
+            ),
+            _buildSwitchTile(
+              title: 'เข้าสู่ระบบด้วย Face ID',
+              subtitle: 'ใช้สำหรับอุปกรณ์นี้เพื่อยืนยันตัวตนก่อนการป้อนรหัสผ่านทุกครั้งที่เข้าสู่ระบบ',
+              value: isFaceIDEnabled,
+              onChanged: _saveFaceIDSetting,
+            ),
+            _buildSwitchTile(
+              title: 'เข้าสู่ระบบด้วย Fingerprint',
+              subtitle: 'ใช้สำหรับอุปกรณ์นี้เพื่อยืนยันตัวตนก่อนการป้อนรหัสผ่านทุกครั้งที่เข้าสู่ระบบ',
+              value: isFingerprintEnabled,
+              onChanged: _saveFingerprintSetting,
+            ),
+          ],
+        ),
       );
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('ความปลอดภัย'),
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: ListView(
-        children: [
-          _buildSwitchTile(
-            title: 'เข้าสู่ระบบด้วยรหัส PIN',
-            subtitle: 'ใช้สำหรับอุปกรณ์นี้เพื่อยืนยันตัวตนก่อนการป้อนรหัสผ่านทุกครั้งที่เข้าสู่ระบบ',
-            value: isPinEnabled,
-            onChanged: _savePinSetting,
-          ),
-          _buildArrowTile(
-            title: 'เปลี่ยนรหัส PIN',
-            onTap: () {
-              // TODO: ไปหน้าเปลี่ยน PIN
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePinPage()));
-            },
-          ),
-          _buildSwitchTile(
-            title: 'เข้าสู่ระบบด้วย Face ID',
-            subtitle: 'ใช้สำหรับอุปกรณ์นี้เพื่อยืนยันตัวตนก่อนการป้อนรหัสผ่านทุกครั้งที่เข้าสู่ระบบ',
-            value: isFaceIDEnabled,
-            onChanged: _saveFaceIDSetting,
-          ),
-          _buildSwitchTile(
-            title: 'เข้าสู่ระบบด้วย Fingerprint',
-            subtitle: 'ใช้สำหรับอุปกรณ์นี้เพื่อยืนยันตัวตนก่อนการป้อนรหัสผ่านทุกครั้งที่เข้าสู่ระบบ',
-            value: isFingerprintEnabled,
-            onChanged: _saveFingerprintSetting,
-          ),
-        ],
-      ),
-    );
+    }); // ปิด Obx
   }
 
   Widget _buildSwitchTile({required String title, required String subtitle, required bool value, required ValueChanged<bool> onChanged}) {

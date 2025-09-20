@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/models/memberbank.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/services/accountService.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class BankVerifyHistoryPage extends StatefulWidget {
@@ -14,10 +16,69 @@ class BankVerifyHistoryPage extends StatefulWidget {
 class _BankVerifyHistoryPageState extends State<BankVerifyHistoryPage> {
   List<MemberBank> memberBanks = [];
   bool isLoading = true;
+  late LanguageController languageController;
+
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'bank_verify_history': 'ประวัติการยืนยันบัญชีธนาคาร',
+        'no_bank_history': 'ไม่มีประวัติการยืนยันบัญชีธนาคาร',
+        'bank_name': 'ธนาคาร',
+        'account_number': 'เลขบัญชี',
+        'account_name': 'ชื่อบัญชี',
+        'status': 'สถานะ',
+        'date': 'วันที่',
+        'pending': 'รอดำเนินการ',
+        'approved': 'อนุมัติแล้ว',
+        'rejected': 'ปฏิเสธ',
+        'error': 'เกิดข้อผิดพลาด',
+        'loading': 'กำลังโหลด...',
+        'no_image': 'ไม่มีรูปภาพ',
+        'no_photo': 'ไม่มีรูป',
+      },
+      'en': {
+        'bank_verify_history': 'Bank Verification History',
+        'no_bank_history': 'No Bank Verification History',
+        'bank_name': 'Bank',
+        'account_number': 'Account Number',
+        'account_name': 'Account Name',
+        'status': 'Status',
+        'date': 'Date',
+        'pending': 'Pending',
+        'approved': 'Approved',
+        'rejected': 'Rejected',
+        'error': 'Error',
+        'loading': 'Loading...',
+        'no_image': 'No Image',
+        'no_photo': 'No Photo',
+      },
+      'zh': {
+        'bank_verify_history': '银行验证历史',
+        'no_bank_history': '暂无银行验证历史',
+        'bank_name': '银行',
+        'account_number': '账号',
+        'account_name': '账户名',
+        'status': '状态',
+        'date': '日期',
+        'pending': '待处理',
+        'approved': '已批准',
+        'rejected': '已拒绝',
+        'error': '错误',
+        'loading': '加载中...',
+        'no_image': '无图片',
+        'no_photo': '无照片',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
 
   @override
   void initState() {
     super.initState();
+    languageController = Get.find<LanguageController>();
     _loadBankVerifyHistory();
   }
 
@@ -39,52 +100,54 @@ class _BankVerifyHistoryPageState extends State<BankVerifyHistoryPage> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${getTranslation('error')}: $e')));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
+    return Obx(
+      () => Scaffold(
         backgroundColor: Colors.white,
-        centerTitle: false,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
-        title: const Text('ประวัติการอัปโหลด', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600)),
-      ),
-      body: SafeArea(
-        child:
-            isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : memberBanks.isEmpty
-                ? const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.account_balance, size: 64, color: Colors.grey),
-                      SizedBox(height: 16),
-                      Text('ไม่มีประวัติการอัปโหลด', style: TextStyle(fontSize: 16, color: Colors.grey)),
-                    ],
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          centerTitle: false,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+          title: Text(getTranslation('bank_verify_history'), style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600)),
+        ),
+        body: SafeArea(
+          child:
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : memberBanks.isEmpty
+                  ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.account_balance, size: 64, color: Colors.grey),
+                        SizedBox(height: 16),
+                        Text(getTranslation('no_bank_history'), style: TextStyle(fontSize: 16, color: Colors.grey)),
+                      ],
+                    ),
+                  )
+                  : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: memberBanks.length,
+                    itemBuilder: (context, index) {
+                      final bank = memberBanks[index];
+                      return _BankVerifyItem(bank: bank, onImageTap: () => _showImageDialog(bank), getTranslation: getTranslation);
+                    },
                   ),
-                )
-                : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  itemCount: memberBanks.length,
-                  itemBuilder: (context, index) {
-                    final bank = memberBanks[index];
-                    return _BankVerifyItem(bank: bank, onImageTap: () => _showImageDialog(bank));
-                  },
-                ),
+        ),
       ),
     );
   }
 
   void _showImageDialog(MemberBank bank) {
     if (bank.image == null || bank.image!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่มีรูปภาพ')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('no_image'))));
       return;
     }
 
@@ -148,10 +211,11 @@ class _BankVerifyHistoryPageState extends State<BankVerifyHistoryPage> {
 }
 
 class _BankVerifyItem extends StatelessWidget {
-  const _BankVerifyItem({required this.bank, required this.onImageTap});
+  const _BankVerifyItem({required this.bank, required this.onImageTap, required this.getTranslation});
 
   final MemberBank bank;
   final VoidCallback onImageTap;
+  final String Function(String) getTranslation;
 
   @override
   Widget build(BuildContext context) {
@@ -161,23 +225,23 @@ class _BankVerifyItem extends StatelessWidget {
 
     switch (bank.status?.toLowerCase()) {
       case 'approved':
-        statusText = 'ได้รับการอนุมัติ';
+        statusText = getTranslation('approved');
         statusColor = const Color(0xFF2EB872);
         break;
       case 'rejected':
-        statusText = 'ไม่ได้รับการอนุมัติ';
+        statusText = getTranslation('rejected');
         statusColor = const Color(0xFFE24C4B);
         break;
       case 'pending':
-        statusText = 'รอการอนุมัติ';
+        statusText = getTranslation('pending');
         statusColor = const Color(0xFFF39C12);
         break;
       case 'request':
-        statusText = 'รอการอนุมัติ';
+        statusText = getTranslation('pending');
         statusColor = const Color(0xFFF39C12);
         break;
       default:
-        statusText = 'ไม่ทราบสถานะ';
+        statusText = getTranslation('pending');
         statusColor = const Color(0xFF6C6C6C);
     }
 
@@ -214,12 +278,12 @@ class _BankVerifyItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 child:
                     imageUrl.isEmpty
-                        ? const Center(
+                        ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.image_not_supported, color: Colors.grey, size: 32),
-                              Text('ไม่มีรูป', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                              Text(getTranslation('no_photo'), style: TextStyle(fontSize: 10, color: Colors.grey)),
                             ],
                           ),
                         )
