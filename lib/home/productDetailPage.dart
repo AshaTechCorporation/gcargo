@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gcargo/home/firstPage.dart';
 import 'package:gcargo/home/notificationPage.dart';
+import 'package:gcargo/login/loginPage.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:gcargo/utils/helpers.dart';
 import 'package:get/get.dart';
@@ -100,6 +101,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         'not_logged_in': 'ยังไม่ได้เข้าสู่ระบบ',
         'please_login_first': 'กรุณาเข้าสู่ระบบก่อนสั่งซื้อสินค้า',
         'ok': 'ตกลง',
+        'cancel': 'ยกเลิก',
         'order_now': 'สั่งซื้อสินค้า',
         'you_might_like': 'สิ่งที่คุณอาจสนใจ',
         'search_products': 'ค้นหาสินค้า',
@@ -143,6 +145,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         'not_logged_in': 'Not Logged In',
         'please_login_first': 'Please log in before placing an order',
         'ok': 'OK',
+        'cancel': 'Cancel',
         'order_now': 'Order Now',
         'you_might_like': 'You Might Like',
         'search_products': 'Search products',
@@ -186,6 +189,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         'not_logged_in': '未登录',
         'please_login_first': '请先登录再下单',
         'ok': '确定',
+        'cancel': '取消',
         'order_now': '立即下单',
         'you_might_like': '您可能喜欢',
         'search_products': '搜索商品',
@@ -382,16 +386,34 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     if (userID == null) {
       // แสดงแจ้งเตือนให้เข้าสู่ระบบ
       if (mounted) {
-        showDialog(
+        final result = await showDialog<bool>(
           context: context,
+          barrierDismissible: false, // ป้องกันการปิดโดยการแตะข้างนอก
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(getTranslation('not_logged_in')),
               content: Text(getTranslation('please_login_first')),
-              actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(getTranslation('ok')))],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false), // ยกเลิก
+                  child: Text(getTranslation('cancel')),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true); // ตกลง
+                    // ไปหน้าล็อกอินแบบ removeUntil
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
+                  },
+                  child: Text(getTranslation('ok')),
+                ),
+              ],
             );
           },
         );
+
+        // ถ้าผู้ใช้กดตกลง จะไปหน้าล็อกอินแล้ว ไม่ต้อง return อะไร
+        // ถ้าผู้ใช้กดยกเลิก ให้ return false
+        return false;
       }
       return false;
     }

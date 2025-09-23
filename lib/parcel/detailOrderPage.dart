@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/order_controller.dart';
+import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/models/orders/productsTrack.dart';
 import 'package:gcargo/parcel/paymentMethodPage.dart';
 import 'package:gcargo/services/homeService.dart';
@@ -20,7 +21,15 @@ class DetailOrderPage extends StatefulWidget {
 
 class _DetailOrderPageState extends State<DetailOrderPage> {
   final OrderController orderController = Get.put(OrderController());
+  final LanguageController languageController = Get.find<LanguageController>();
   double depositOrderRate = 4.0; // Default rate
+
+  // สำหรับเก็บไตเติ๊ลที่แปลแล้ว
+  Map<String, String> translatedProductTitles = {};
+  bool isTranslatingTitles = false;
+
+  // Worker สำหรับ dispose
+  late Worker orderWorker;
 
   @override
   void initState() {
@@ -30,6 +39,101 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       orderController.getOrderById(widget.orderId);
       _loadExchangeRate();
     });
+
+    // Listen to order changes and translate titles
+    orderWorker = ever(orderController.order, (order) {
+      if (order != null && order.order_lists != null && order.order_lists!.isNotEmpty) {
+        _translateProductTitles();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    orderWorker.dispose();
+    super.dispose();
+  }
+
+  // ฟังก์ชันสำหรับแปลไตเติ๊ลสินค้า
+  Future<void> _translateProductTitles() async {
+    final order = orderController.order.value;
+    if (order?.order_lists == null || order!.order_lists!.isEmpty || isTranslatingTitles) return;
+
+    setState(() {
+      isTranslatingTitles = true;
+    });
+
+    try {
+      // รวบรวมไตเติ๊ลทั้งหมดเพื่อส่งแปลครั้งเดียว
+      final List<String> originalTitles = [];
+
+      for (final product in order.order_lists!) {
+        final originalTitle = product.product_name ?? '';
+        if (originalTitle.isNotEmpty && !translatedProductTitles.containsKey(originalTitle)) {
+          originalTitles.add(originalTitle);
+        }
+      }
+
+      if (originalTitles.isNotEmpty) {
+        final Map<String, String> titleMap = Map.from(translatedProductTitles);
+
+        // ครั้งที่ 1: ส่งแปลทั้งหมด
+        await _translateTitlesRound(originalTitles, titleMap, 1);
+
+        // เช็คว่าได้แปลครบหรือไม่
+        final List<String> missingTitles = originalTitles.where((title) => !titleMap.containsKey(title)).toList();
+
+        if (missingTitles.isNotEmpty) {
+          print('🔄 Round 2: Translating ${missingTitles.length} missing product titles');
+          await _translateTitlesRound(missingTitles, titleMap, 2);
+        }
+
+        if (mounted) {
+          setState(() {
+            translatedProductTitles = titleMap;
+          });
+        }
+
+        print('🎉 Product titles translation completed. Total translated: ${titleMap.length}/${originalTitles.length}');
+      }
+    } catch (e) {
+      print('❌ Error translating product titles: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isTranslatingTitles = false;
+        });
+      }
+    }
+  }
+
+  // ฟังก์ชันช่วยสำหรับแปลแต่ละรอบ
+  Future<void> _translateTitlesRound(List<String> titlesToTranslate, Map<String, String> titleMap, int round) async {
+    try {
+      // รวมไตเติ๊ลด้วย separator
+      final String combinedText = titlesToTranslate.join('|||');
+      print('📝 Round $round - Combined product titles to translate: ${combinedText.length} characters');
+
+      // ส่งแปลครั้งเดียว
+      final String? translatedText = await HomeService.translate(text: combinedText, from: 'zh-CN', to: 'th');
+
+      if (translatedText != null && translatedText.isNotEmpty) {
+        // แยกผลลัพธ์ที่แปลแล้ว
+        final List<String> translatedTitles = translatedText.split('|||');
+
+        // จับคู่ไตเติ๊ลต้นฉบับกับที่แปลแล้ว
+        for (int i = 0; i < titlesToTranslate.length && i < translatedTitles.length; i++) {
+          final original = titlesToTranslate[i];
+          final translated = translatedTitles[i].trim();
+          if (translated.isNotEmpty) {
+            titleMap[original] = translated;
+            print('✅ Round $round - Product translated: "$original" -> "$translated"');
+          }
+        }
+      }
+    } catch (e) {
+      print('❌ Error in product translation round $round: $e');
+    }
   }
 
   // Load exchange rate from API
@@ -47,6 +151,162 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     }
   }
 
+  String getTranslation(String key) {
+    final currentLang = languageController.currentLanguage.value;
+
+    final translations = {
+      'th': {
+        'order_details': 'รายละเอียดคำสั่งซื้อ',
+        'contact': 'ติดต่อ',
+        'shipping_type': 'รูปแบบการขนส่ง',
+        'by_ship': 'ทางเรือ',
+        'by_truck': 'ทางรถ',
+        'customer_note': 'หมายเหตุของลูกค้า',
+        'cs_note': 'CS หมายเหตุ',
+        'order_date': 'วันที่สั่งซื้อ',
+        'status': 'สถานะ',
+        'total_price': 'ราคารวม',
+        'all_products': 'สินค้าทั้งหมด',
+        'no_products': 'ไม่มีรายการสินค้า',
+        'price_summary': 'สรุปราคารวมสินค้า',
+        'exchange_rate': 'เรทแลกเปลี่ยน',
+        'product_total': 'รวมราคาสินค้า',
+        'china_shipping': 'ค่าส่งในจีน',
+        'service_fee': 'ค่าบริการ (3%)',
+        'payment_term': 'เงื่อนไขการชำระ',
+        'other_fees': 'ค่าบริการอื่น ๆ',
+        'discount': 'ส่วนลด',
+        'payment': 'การชำระเงิน',
+        'calculated_total': 'ราคารวม (คำนวณ)',
+        'deposit_fee': 'ค่ามัดจำ',
+        'additional_info': 'ข้อมูลเพิ่มเติม',
+        'order_created_date': 'วันที่สร้างออเดอร์',
+        'member_code': 'รหัสสมาชิก',
+        'total_amount': 'ราคารวม',
+        'shipping_type_text': 'ประเภทการขนส่ง',
+        'product_count_text': 'จำนวนสินค้า',
+        'items_text': 'รายการ',
+        'shipping_type_label': 'ประเภทการขนส่ง',
+        'order_created': 'วันที่สร้างออเดอร์',
+        'product_count': 'จำนวนสินค้า',
+        'items': 'รายการ',
+        'cancel': 'ยกเลิก',
+        'buy_again': 'ซื้ออีกครั้ง',
+        'cancel_success': 'ยกเลิกคำสั่งซื้อสำเร็จ',
+        'awaiting_review': 'รอตรวจสอบ',
+        'awaiting_payment': 'รอชำระเงิน',
+        'in_progress': 'รอดำเนินการ',
+        'preparing_shipment': 'เตรียมจัดส่ง',
+        'shipped': 'สำเร็จ',
+        'cancelled': 'ยกเลิก',
+        'unknown_status': 'ไม่ทราบสถานะ',
+        'document_notice': 'เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ',
+        'cancel_reason': 'ร้านค้าไม่มีสีตามที่สั่งซื้อจึงต้องยกเลิกรายการสินค้านี้',
+        'unknown_product': 'ไม่ระบุชื่อสินค้า',
+      },
+      'en': {
+        'order_details': 'Order Details',
+        'contact': 'Contact',
+        'shipping_type': 'Shipping Type',
+        'by_ship': 'By Ship',
+        'by_truck': 'By Truck',
+        'customer_note': 'Customer Note',
+        'cs_note': 'CS Note',
+        'order_date': 'Order Date',
+        'status': 'Status',
+        'total_price': 'Total Price',
+        'all_products': 'All Products',
+        'no_products': 'No Products',
+        'price_summary': 'Price Summary',
+        'exchange_rate': 'Exchange Rate',
+        'product_total': 'Product Total',
+        'china_shipping': 'China Shipping',
+        'service_fee': 'Service Fee (3%)',
+        'payment_term': 'Payment Term',
+        'other_fees': 'Other Fees',
+        'discount': 'Discount',
+        'payment': 'Payment',
+        'calculated_total': 'Total (Calculated)',
+        'deposit_fee': 'Deposit Fee',
+        'additional_info': 'Additional Information',
+        'order_created_date': 'Order Created Date',
+        'member_code': 'Member Code',
+        'total_amount': 'Total Amount',
+        'shipping_type_text': 'Shipping Type',
+        'product_count_text': 'Product Count',
+        'items_text': 'Items',
+        'shipping_type_label': 'Shipping Type',
+        'order_created': 'Order Created',
+        'product_count': 'Product Count',
+        'items': 'Items',
+        'cancel': 'Cancel',
+        'buy_again': 'Buy Again',
+        'cancel_success': 'Order cancelled successfully',
+        'awaiting_review': 'Awaiting Review',
+        'awaiting_payment': 'Awaiting Payment',
+        'in_progress': 'In Progress',
+        'preparing_shipment': 'Preparing Shipment',
+        'shipped': 'Shipped',
+        'cancelled': 'Cancelled',
+        'unknown_status': 'Unknown Status',
+        'document_notice': 'Documents will be sent via Line within 24 hours\nafter successful payment',
+        'cancel_reason': 'Store does not have the color as ordered, so this item must be cancelled',
+        'unknown_product': 'Unknown Product',
+      },
+      'zh': {
+        'order_details': '订单详情',
+        'contact': '联系',
+        'shipping_type': '运输方式',
+        'by_ship': '海运',
+        'by_truck': '陆运',
+        'customer_note': '客户备注',
+        'cs_note': '客服备注',
+        'order_date': '订单日期',
+        'status': '状态',
+        'total_price': '总价',
+        'all_products': '所有商品',
+        'no_products': '无商品',
+        'price_summary': '价格汇总',
+        'exchange_rate': '汇率',
+        'product_total': '商品总价',
+        'china_shipping': '中国运费',
+        'service_fee': '服务费 (3%)',
+        'payment_term': '付款条件',
+        'other_fees': '其他费用',
+        'discount': '折扣',
+        'payment': '付款',
+        'calculated_total': '总计 (计算)',
+        'deposit_fee': '押金',
+        'additional_info': '附加信息',
+        'order_created_date': '订单创建日期',
+        'member_code': '会员代码',
+        'total_amount': '总金额',
+        'shipping_type_text': '运输类型',
+        'product_count_text': '商品数量',
+        'items_text': '项',
+        'shipping_type_label': '运输类型',
+        'order_created': '订单创建',
+        'product_count': '商品数量',
+        'items': '项',
+        'cancel': '取消',
+        'buy_again': '再次购买',
+        'cancel_success': '订单取消成功',
+        'awaiting_review': '等待审核',
+        'awaiting_payment': '等待付款',
+        'in_progress': '进行中',
+        'preparing_shipment': '准备发货',
+        'shipped': '已发货',
+        'cancelled': '已取消',
+        'unknown_status': '未知状态',
+        'document_notice': '文件将在付款成功后24小时内\n通过Line发送',
+        'cancel_reason': '店铺没有订购的颜色，因此必须取消此商品',
+        'unknown_product': '未知商品',
+      },
+    };
+
+    return translations[currentLang]?[key] ?? key;
+  }
+
   // Helper methods to get data safely from API response
   String get orderCode => orderController.order.value?.code ?? 'N/A';
   String get orderStatus => _getStatusInThai(orderController.order.value?.status);
@@ -61,19 +321,19 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   String _getStatusInThai(String? apiStatus) {
     switch (apiStatus) {
       case 'awaiting_summary':
-        return 'รอตรวจสอบ';
+        return getTranslation('awaiting_review');
       case 'awaiting_payment':
-        return 'รอชำระเงิน';
+        return getTranslation('awaiting_payment');
       case 'in_progress':
-        return 'รอดำเนินการ';
+        return getTranslation('in_progress');
       case 'preparing_shipment':
-        return 'เตรียมจัดส่ง';
+        return getTranslation('preparing_shipment');
       case 'shipped':
-        return 'สำเร็จ';
+        return getTranslation('shipped');
       case 'cancelled':
-        return 'ยกเลิก';
+        return getTranslation('cancelled');
       default:
-        return 'ไม่ทราบสถานะ';
+        return getTranslation('unknown_status');
     }
   }
 
@@ -93,7 +353,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
-        title: Obx(() => Text('เลขบิลสั่งซื้อ $orderCode', style: const TextStyle(color: Colors.black, fontSize: 24))),
+        title: Obx(() => Text('${getTranslation('order_details')} $orderCode', style: const TextStyle(color: Colors.black, fontSize: 24))),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -172,23 +432,23 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                             children: [
                               Image.asset('assets/icons/info-circle.png', width: 20, height: 20),
                               const SizedBox(width: 8),
-                              const Text('ร้านค้าไม่มีสีตามที่สั่งซื้อจึงต้องยกเลิกรายการสินค้านี้', style: TextStyle(fontWeight: FontWeight.w500)),
+                              Text(getTranslation('cancel_reason'), style: TextStyle(fontWeight: FontWeight.w500)),
                             ],
                           ),
                         )
                         : SizedBox(),
                     SizedBox(height: 12),
-                    _buildInfoRow('ติดต่อ', '($memberCode)'),
-                    _buildInfoRow('รูปแบบการขนส่ง', transportType == 'Ship' ? 'ทางเรือ' : 'ทางรถ'),
-                    _buildInfoRow('หมายเหตุของลูกค้า', customerNote),
-                    _buildInfoRow('CS หมายเหตุ', '-'),
-                    _buildInfoRow('วันที่สั่งซื้อ', orderDate),
-                    _buildInfoRow('สถานะ', orderStatus),
-                    _buildInfoRow('ราคารวม', '¥${orderTotal.toStringAsFixed(2)}'),
+                    _buildInfoRow(getTranslation('contact'), '($memberCode)'),
+                    _buildInfoRow(getTranslation('shipping_type'), transportType == 'Ship' ? getTranslation('by_ship') : getTranslation('by_truck')),
+                    _buildInfoRow(getTranslation('customer_note'), customerNote),
+                    _buildInfoRow(getTranslation('cs_note'), '-'),
+                    _buildInfoRow(getTranslation('order_date'), orderDate),
+                    _buildInfoRow(getTranslation('status'), orderStatus),
+                    _buildInfoRow(getTranslation('total_price'), '¥${orderTotal.toStringAsFixed(2)}'),
                     SizedBox(height: 16),
                     Divider(),
                     SizedBox(height: 12),
-                    Text('สินค้าทั้งหมด', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: kTextTitleHeadColor)),
+                    Text(getTranslation('all_products'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: kTextTitleHeadColor)),
                     SizedBox(height: 12),
 
                     // 🔹 การ์ดสินค้า
@@ -259,7 +519,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                        child: const Center(child: Text('ไม่มีรายการสินค้า', style: TextStyle(color: Colors.grey, fontSize: 16))),
+                        child: Center(child: Text(getTranslation('no_products'), style: TextStyle(color: Colors.grey, fontSize: 16))),
                       ),
                     ],
                     const SizedBox(height: 20),
@@ -294,7 +554,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   Widget _buildProductItemFromTrack(ProductsTrack product) {
     final productPrice = product.product_price ?? '0';
     final productQty = product.product_qty ?? 1;
-    final productName = product.product_name ?? 'ไม่ระบุชื่อสินค้า';
+    final productName = product.product_name ?? getTranslation('unknown_product');
+    final translatedProductName = translatedProductTitles[product.product_name] ?? '';
     //final productImage = product.product_image;
     final productImage = formatImageUrl(product.product_image ?? '');
 
@@ -311,7 +572,18 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
               Text('¥$productPrice x$productQty', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               Text('(${_calculateBahtPrice(productPrice)} ฿)', style: const TextStyle(fontSize: 12, color: Colors.grey)),
               const SizedBox(height: 4),
+              // แสดงชื่อสินค้าต้นฉบับ
               Text(productName, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14)),
+              // แสดงชื่อสินค้าที่แปลแล้ว (ถ้ามี)
+              if (translatedProductName.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  translatedProductName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700, fontWeight: FontWeight.w500),
+                ),
+              ],
               const SizedBox(height: 4),
               // แสดง options ถ้ามี
               if (product.options != null && product.options!.isNotEmpty)
@@ -363,7 +635,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   String _calculateBahtPrice(String yuanPrice) {
     try {
       final yuan = double.parse(yuanPrice);
-      final baht = yuan * 4.0; // Assuming 1 Yuan = 4 Baht
+      final baht = yuan * depositOrderRate; // Assuming 1 Yuan = 4 Baht
       return baht.toStringAsFixed(2);
     } catch (e) {
       return '0.00';
@@ -409,38 +681,41 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildPriceRow('สรุปราคารวมสินค้า', 'เรทแลกเปลี่ยน ${exchangeRate.toStringAsFixed(2)}'),
+          _buildPriceRow(getTranslation('price_summary'), '${getTranslation('exchange_rate')} ${exchangeRate.toStringAsFixed(2)}'),
           const Divider(),
 
           // Product details
-          _buildPriceRow('รวมราคาสินค้า', '¥${totalProductPrice.toStringAsFixed(2)} (${totalBahtPrice.toStringAsFixed(2)}฿)'),
+          _buildPriceRow(getTranslation('product_total'), '¥${totalProductPrice.toStringAsFixed(2)} (${totalBahtPrice.toStringAsFixed(2)}฿)'),
 
           // China shipping fee
           if (chinaShippingFee > 0)
-            _buildPriceRow('ค่าส่งในจีน', '¥${chinaShippingFee.toStringAsFixed(2)} (${chinaShippingBaht.toStringAsFixed(2)}฿)')
+            _buildPriceRow(getTranslation('china_shipping'), '¥${chinaShippingFee.toStringAsFixed(2)} (${chinaShippingBaht.toStringAsFixed(2)}฿)')
           else
-            _buildPriceRow('ค่าส่งในจีน', '0.00฿'),
+            _buildPriceRow(getTranslation('china_shipping'), '0.00฿'),
 
           // Deposit fee
-          if (depositFee > 0) _buildPriceRow('ค่ามัดจำ', ' (${depositFee.toStringAsFixed(2)}฿)') else _buildPriceRow('ค่ามัดจำ', '0.00฿'),
+          if (depositFee > 0)
+            _buildPriceRow(getTranslation('deposit_fee'), ' (${depositFee.toStringAsFixed(2)}฿)')
+          else
+            _buildPriceRow(getTranslation('deposit_fee'), '0.00฿'),
 
           // Service fee
-          _buildPriceRow('ค่าบริการ (3%)', '${serviceFee.toStringAsFixed(2)}฿'),
+          // _buildPriceRow(getTranslation('service_fee'), '${serviceFee.toStringAsFixed(2)}฿'),
 
           // Payment term
-          if (order?.payment_term != null && order!.payment_term!.isNotEmpty) _buildPriceRow('เงื่อนไขการชำระ', order.payment_term!),
+          if (order?.payment_term != null && order!.payment_term!.isNotEmpty) _buildPriceRow(getTranslation('payment_term'), order.payment_term!),
 
-          _buildPriceRow('ค่าบริการอื่น ๆ', '0.00฿'),
-          _buildPriceRow('ส่วนลด', '0.00฿'),
-          _buildPriceRow('การชำระเงิน ', '-'),
+          _buildPriceRow(getTranslation('other_fees'), '0.00฿'),
+          _buildPriceRow(getTranslation('discount'), '0.00฿'),
+          _buildPriceRow(getTranslation('payment'), '-'),
 
           const Divider(),
 
           // Total from API vs calculated
           if (totalPriceFromAPI > 0)
-            _buildPriceRow('ราคารวม (จาก API)', '${totalPriceFromAPI.toStringAsFixed(2)}}฿)', isBold: true)
+            _buildPriceRow(getTranslation('total_amount'), '${totalPriceFromAPI.toStringAsFixed(2)}¥)', isBold: true)
           else
-            _buildPriceRow('ราคารวม (คำนวณ)', '${totalWithFees.toStringAsFixed(2)}฿', isBold: true),
+            _buildPriceRow(getTranslation('calculated_total'), '${totalWithFees.toStringAsFixed(2)}฿', isBold: true),
 
           // Order info
           const SizedBox(height: 8),
@@ -458,16 +733,20 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Divider(),
-        const Text('ข้อมูลเพิ่มเติม', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(getTranslation('additional_info'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
 
-        if (order?.shipping_type != null) _buildPriceRow('ประเภทการขนส่ง', order!.shipping_type! == 'Ship' ? 'ทางเรือ' : 'ทางรถ'),
+        if (order?.shipping_type != null)
+          _buildPriceRow(
+            getTranslation('shipping_type_text'),
+            order!.shipping_type! == 'Ship' ? getTranslation('by_ship') : getTranslation('by_truck'),
+          ),
 
-        if (order?.created_at != null) _buildPriceRow('วันที่สร้างออเดอร์', _formatDate(order!.created_at.toString())),
+        if (order?.created_at != null) _buildPriceRow(getTranslation('order_created_date'), _formatDate(order!.created_at.toString())),
 
-        _buildPriceRow('จำนวนสินค้า', '${productList.length} รายการ'),
+        _buildPriceRow(getTranslation('product_count_text'), '${productList.length} ${getTranslation('items_text')}'),
 
-        if (order?.member?.code != null) _buildPriceRow('รหัสสมาชิก', order!.member!.code!),
+        if (order?.member?.code != null) _buildPriceRow(getTranslation('member_code'), order!.member!.code!),
       ],
     );
   }
@@ -535,7 +814,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                   side: BorderSide(color: Colors.grey.shade400),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-                child: const Text('ยกเลิก', style: TextStyle(fontSize: 16)),
+                child: Text(getTranslation('cancel'), style: TextStyle(fontSize: 16)),
               ),
             ),
             const SizedBox(width: 12),
@@ -568,7 +847,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: const Text('ซื้ออีกครั้ง', style: TextStyle(fontSize: 16)),
+        child: Text(getTranslation('buy_again'), style: TextStyle(fontSize: 16)),
       );
     } else if (status == 'awaiting_payment') {
       // For "รอชำระเงิน" - show price button with API total
@@ -596,7 +875,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('ราคารวม', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+            Text(getTranslation('total_amount'), style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
             SizedBox(width: 5),
             if (totalPriceFromAPI > 0)
               Text('${totalPriceFromAPI.toStringAsFixed(2)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
@@ -627,7 +906,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         Navigator.pop(context);
 
         // แสดงข้อความสำเร็จ
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ยกเลิกคำสั่งซื้อสำเร็จ'), backgroundColor: Colors.green));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('cancel_success')), backgroundColor: Colors.green));
 
         // รีเฟรชข้อมูล orders
         await orderController.getOrders();
