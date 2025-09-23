@@ -11,7 +11,7 @@ class AuthWrapper extends StatefulWidget {
   State<AuthWrapper> createState() => _AuthWrapperState();
 }
 
-class _AuthWrapperState extends State<AuthWrapper> {
+class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
   bool isAuthenticated = false;
   bool isLoading = true;
   AuthMethod preferredAuthMethod = AuthMethod.pin;
@@ -19,22 +19,51 @@ class _AuthWrapperState extends State<AuthWrapper> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkAuthStatus();
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed) {
+      // เมื่อแอปกลับมาจาก background ให้ตรวจสอบ auth ใหม่
+      _checkAuthStatus();
+    }
+  }
+
   Future<void> _checkAuthStatus() async {
+    print('🔍 AuthWrapper: Checking auth status...');
     final shouldAuth = await AuthService.shouldRequireAuth();
     final authMethod = await AuthService.getPreferredAuthMethod();
+
+    print('🔍 AuthWrapper: shouldAuth=$shouldAuth, authMethod=$authMethod');
 
     setState(() {
       isAuthenticated = !shouldAuth;
       preferredAuthMethod = authMethod;
       isLoading = false;
     });
+
+    print('🔍 AuthWrapper: isAuthenticated=$isAuthenticated');
+
+    // หลังจากตรวจสอบ auth เสร็จแล้ว ให้ mark app เป็น active
+    if (!shouldAuth) {
+      print('🔍 AuthWrapper: No auth required, marking app as active');
+      await AuthService.markAppActive();
+    }
   }
 
   void _onAuthSuccess() {
     AuthService.markAuthSuccess();
+    AuthService.markAppActive(); // Mark app as active เมื่อ auth สำเร็จ
     setState(() {
       isAuthenticated = true;
     });

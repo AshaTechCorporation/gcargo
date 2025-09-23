@@ -17,34 +17,49 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
 
       // ตรวจสอบว่าเปิดใช้งาน authentication ใดๆ หรือไม่
-      final isPinEnabled = prefs.getBool(_pinEnabledKey) ?? true;
+      final isPinEnabled = prefs.getBool(_pinEnabledKey) ?? false;
       final isFaceIdEnabled = prefs.getBool(_faceIdEnabledKey) ?? false;
-      final isFingerprintEnabled = prefs.getBool(_fingerprintEnabledKey) ?? true;
+      final isFingerprintEnabled = prefs.getBool(_fingerprintEnabledKey) ?? false;
+
+      print('🔐 Auth Check - PIN enabled: $isPinEnabled, FaceID: $isFaceIdEnabled, Fingerprint: $isFingerprintEnabled');
 
       final hasAnyAuthEnabled = isPinEnabled || isFaceIdEnabled || isFingerprintEnabled;
-      if (!hasAnyAuthEnabled) return false;
+      if (!hasAnyAuthEnabled) {
+        print('🔐 No auth enabled, skipping auth');
+        return false;
+      }
 
       // ตรวจสอบว่ามี PIN ตั้งไว้หรือไม่ (ถ้าเปิดใช้ PIN)
       if (isPinEnabled) {
         final hasPin = prefs.getString(_pinKey) != null;
-        if (!hasPin) return false;
+        print('🔐 PIN check - has PIN set: $hasPin');
+        if (!hasPin) {
+          print('🔐 PIN enabled but not set, skipping auth');
+          return false;
+        }
       }
 
       // ตรวจสอบว่าแอปถูกปิดแล้วเปิดใหม่หรือไม่
-      final appState = prefs.getString(_appStateKey) ?? 'background';
+      final appState = prefs.getString(_appStateKey) ?? 'closed';
       final lastAuthTime = prefs.getInt(_lastAuthTimeKey) ?? 0;
       final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final timeDiff = currentTime - lastAuthTime;
+
+      print('🔐 App state: $appState, time diff: ${timeDiff}ms');
 
       // ถ้าแอปอยู่ใน background เกิน 30 วินาที ให้ต้อง auth ใหม่
-      if (appState == 'background' && (currentTime - lastAuthTime) > 30000) {
+      if (appState == 'background' && timeDiff > 30000) {
+        print('🔐 App was in background too long, requiring auth');
         return true;
       }
 
       // ถ้าเป็นการเปิดแอปครั้งแรก
       if (appState == 'closed') {
+        print('🔐 App was closed, requiring auth');
         return true;
       }
 
+      print('🔐 No auth required');
       return false;
     } catch (e) {
       print('Error checking auth requirement: $e');
@@ -57,8 +72,8 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final isFaceIdEnabled = prefs.getBool(_faceIdEnabledKey) ?? false;
-      final isFingerprintEnabled = prefs.getBool(_fingerprintEnabledKey) ?? true;
-      final isPinEnabled = prefs.getBool(_pinEnabledKey) ?? true;
+      final isFingerprintEnabled = prefs.getBool(_fingerprintEnabledKey) ?? false;
+      final isPinEnabled = prefs.getBool(_pinEnabledKey) ?? false;
 
       // ลำดับความสำคัญ: Face ID > Fingerprint > PIN
       if (isFaceIdEnabled && await BiometricService.hasFaceID()) {
@@ -87,11 +102,37 @@ class AuthService {
     }
   }
 
+  // บันทึกสถานะแอปเป็น active
+  static Future<void> markAppActive() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_appStateKey, 'active');
+      print('🔄 AuthService: App marked as active');
+    } catch (e) {
+      print('Error marking app active: $e');
+    }
+  }
+
+  // ลบข้อมูล SharedPreferences ทั้งหมด (สำหรับทดสอบ)
+  static Future<void> clearAllData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      print('🔄 AuthService: Before clear - keys: ${prefs.getKeys()}');
+      await prefs.clear();
+      print('🔄 AuthService: After clear - keys: ${prefs.getKeys()}');
+      print('🔄 AuthService: All data cleared successfully');
+    } catch (e) {
+      print('Error clearing data: $e');
+    }
+  }
+
   // บันทึกสถานะแอปเป็น background
   static Future<void> markAppBackground() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_appStateKey, 'background');
+      await prefs.setInt(_lastAuthTimeKey, DateTime.now().millisecondsSinceEpoch);
+      print('🔄 AuthService: App marked as background');
     } catch (e) {
       print('Error marking app background: $e');
     }
@@ -102,6 +143,7 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_appStateKey, 'closed');
+      print('🔄 AuthService: App marked as closed');
     } catch (e) {
       print('Error marking app closed: $e');
     }
@@ -159,13 +201,13 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       return {
-        'pin_enabled': prefs.getBool(_pinEnabledKey) ?? true,
+        'pin_enabled': prefs.getBool(_pinEnabledKey) ?? false,
         'faceid_enabled': prefs.getBool(_faceIdEnabledKey) ?? false,
-        'fingerprint_enabled': prefs.getBool(_fingerprintEnabledKey) ?? true,
+        'fingerprint_enabled': prefs.getBool(_fingerprintEnabledKey) ?? false,
       };
     } catch (e) {
       print('Error getting security settings: $e');
-      return {'pin_enabled': true, 'faceid_enabled': false, 'fingerprint_enabled': true};
+      return {'pin_enabled': false, 'faceid_enabled': false, 'fingerprint_enabled': false};
     }
   }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gcargo/home/firstPage.dart';
 import 'package:gcargo/home/notificationPage.dart';
+import 'package:gcargo/services/homeService.dart';
 import 'package:gcargo/utils/helpers.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/constants.dart';
@@ -36,6 +37,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   final TextEditingController searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingRecommendedItem = false;
+  double depositOrderRate = 4.0; // Default rate
 
   // Initialize ProductDetailController
   late final ProductDetailController productController;
@@ -45,6 +47,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   // Initialize LanguageController
   late LanguageController languageController;
+
+  // สำหรับเก็บไตเติ๊ลที่แปลแล้ว
+  String translatedTitle = '';
+  bool isTranslatingTitle = false;
+
+  // สำหรับเก็บไตเติ๊ลที่แปลแล้วของ recommended items
+  Map<String, String> translatedRecommendedTitles = {};
+  bool isTranslatingRecommendedTitles = false;
+  List<String> lastTranslatedItemIds = []; // เก็บ ID ของ items ที่แปลไปแล้ว
 
   String getTranslation(String key) {
     final currentLang = languageController.currentLanguage.value;
@@ -191,7 +202,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
     // สร้าง controller และเรียก API
     productController = Get.put(ProductDetailController(), tag: widget.num_iid);
-    productController.getItemDetail(widget.num_iid, widget.type);
+    productController.getItemDetail(widget.num_iid, widget.type).then((_) {
+      // หลังจากโหลดข้อมูลสินค้าเสร็จแล้ว ให้แปลไตเติ๊ล
+      _translateTitle();
+    });
 
     // Get existing HomeController or create new one
     try {
@@ -199,6 +213,142 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     } catch (e) {
       homeController = Get.put(HomeController());
     }
+    //_loadExchangeRate();
+  }
+
+  // ฟังก์ชันสำหรับแปลไตเติ๊ล
+  Future<void> _translateTitle() async {
+    if (productController.title.isEmpty || isTranslatingTitle || translatedTitle.isNotEmpty) return;
+
+    setState(() {
+      isTranslatingTitle = true;
+    });
+
+    try {
+      // ใช้ฟังก์ชัน extractTitlesToTranslate เพื่อดึงไตเติ๊ล
+      final titleToTranslate = productController.extractTitlesToTranslate([
+        {'title': productController.title},
+      ]);
+
+      if (titleToTranslate.isNotEmpty) {
+        // เรียก translate API
+        final translated = await HomeService.translate(text: titleToTranslate, from: 'zh-CN', to: 'th');
+
+        if (translated != null && translated.isNotEmpty) {
+          setState(() {
+            translatedTitle = translated;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error translating title: $e');
+    } finally {
+      setState(() {
+        isTranslatingTitle = false;
+      });
+    }
+  }
+
+  // ฟังก์ชันสำหรับแปลไตเติ๊ลของ recommended items
+  Future<void> _translateRecommendedTitles(List<Map<String, dynamic>> items) async {
+    if (items.isEmpty || isTranslatingRecommendedTitles) return;
+
+    // บันทึก item IDs ที่กำลังจะแปล
+    lastTranslatedItemIds = items.map((item) => item['num_iid']?.toString() ?? '').toList();
+
+    setState(() {
+      isTranslatingRecommendedTitles = true;
+    });
+
+    try {
+      // รวบรวมไตเติ๊ลทั้งหมดเพื่อส่งแปลครั้งเดียว
+      final List<String> originalTitles = [];
+
+      for (int i = 0; i < items.length; i++) {
+        final originalTitle = items[i]['title']?.toString() ?? '';
+        if (originalTitle.isNotEmpty) {
+          originalTitles.add(originalTitle);
+        }
+      }
+
+      if (originalTitles.isNotEmpty) {
+        final Map<String, String> titleMap = {};
+
+        // ครั้งที่ 1: ส่งแปลทั้งหมด
+        await _translateRecommendedTitlesRound(originalTitles, titleMap, 1);
+
+        // เช็คว่าได้แปลครบหรือไม่
+        final List<String> missingTitles = originalTitles.where((title) => !titleMap.containsKey(title)).toList();
+
+        if (missingTitles.isNotEmpty) {
+          print('🔄 Round 2: Translating ${missingTitles.length} missing recommended titles');
+          await _translateRecommendedTitlesRound(missingTitles, titleMap, 2);
+        }
+
+        if (mounted) {
+          setState(() {
+            translatedRecommendedTitles = titleMap;
+          });
+        }
+
+        print('🎉 Recommended titles translation completed. Total translated: ${titleMap.length}/${originalTitles.length}');
+      }
+
+      // ถ้าการแปลไม่สำเร็จ ให้ reset เพื่อให้ลองใหม่ได้
+      if (mounted && translatedRecommendedTitles.isEmpty) {
+        lastTranslatedItemIds = [];
+      }
+    } catch (e) {
+      print('Error translating recommended titles: $e');
+      // Reset เมื่อเกิด error
+      if (mounted) {
+        lastTranslatedItemIds = [];
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isTranslatingRecommendedTitles = false;
+        });
+      }
+    }
+  }
+
+  // ฟังก์ชันช่วยสำหรับแปลแต่ละรอบของ recommended titles
+  Future<void> _translateRecommendedTitlesRound(List<String> titlesToTranslate, Map<String, String> titleMap, int round) async {
+    try {
+      // รวมไตเติ๊ลด้วย separator
+      final String combinedText = titlesToTranslate.join('|||');
+      print('📝 Round $round - Combined recommended titles to translate: ${combinedText.length} characters');
+
+      // ส่งแปลครั้งเดียว
+      final String? translatedText = await HomeService.translate(text: combinedText, from: 'zh-CN', to: 'th');
+
+      if (translatedText != null && translatedText.isNotEmpty) {
+        // แยกผลลัพธ์ที่แปลแล้ว
+        final List<String> translatedTitles = translatedText.split('|||');
+
+        // จับคู่ไตเติ๊ลต้นฉบับกับที่แปลแล้ว
+        for (int i = 0; i < titlesToTranslate.length && i < translatedTitles.length; i++) {
+          final original = titlesToTranslate[i];
+          final translated = translatedTitles[i].trim();
+          if (translated.isNotEmpty) {
+            titleMap[original] = translated;
+            print('✅ Round $round - Recommended translated: "$original" -> "$translated"');
+          }
+        }
+      }
+    } catch (e) {
+      print('❌ Error in recommended translation round $round: $e');
+    }
+  }
+
+  // ฟังก์ชันเปรียบเทียบ list
+  bool _listEquals(List<String> list1, List<String> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
   }
 
   @override
@@ -207,6 +357,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     // ลบ controller เมื่อออกจากหน้า
     Get.delete<ProductDetailController>(tag: widget.num_iid);
     super.dispose();
+  }
+
+  // Load exchange rate from API
+  Future<void> _loadExchangeRate() async {
+    try {
+      final exchangeData = await HomeService.getExchageRate();
+      if (exchangeData != null && exchangeData['deposit_order_rate'] != null) {
+        setState(() {
+          depositOrderRate = double.tryParse(exchangeData['deposit_order_rate'].toString()) ?? 4.0;
+        });
+      }
+    } catch (e) {
+      print('Error loading exchange rate: $e');
+      // Keep default rate if API fails
+    }
   }
 
   // เช็ค userID ว่าเข้าสู่ระบบแล้วหรือไม่
@@ -298,7 +463,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget _buildRecommendedItem(Map<String, dynamic> item) {
-    final title = item['title'] ?? 'ไม่มีชื่อสินค้า';
+    final originalTitle = item['title'] ?? 'ไม่มีชื่อสินค้า';
+    final itemTranslatedTitle = translatedRecommendedTitles[originalTitle] ?? originalTitle;
     final picUrl = formatImageUrl(item['pic_url'] ?? '');
     final price = item['price']?.toString() ?? '0';
     final promotionPrice = item['promotion_price']?.toString() ?? '';
@@ -316,6 +482,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         try {
           // เรียก API เพื่อดึงข้อมูลสินค้าใหม่
           await productController.getItemDetail(numIid, widget.type);
+
+          // รีเซ็ตการแปลและแปลใหม่
+          setState(() {
+            translatedTitle = '';
+            translatedRecommendedTitles.clear();
+            lastTranslatedItemIds.clear();
+          });
+
+          // แปลไตเติ๊ลหลักใหม่
+          _translateTitle();
 
           // เลื่อนขึ้นด้านบนหลังจาก API เสร็จ
           if (_scrollController.hasClients) {
@@ -395,7 +571,29 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // ไตเติ๊ลต้นฉบับ
+                            Text(
+                              originalTitle,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+
+                            // ไตเติ๊ลที่แปลแล้ว (ถ้ามี)
+                            if (itemTranslatedTitle != originalTitle) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                itemTranslatedTitle,
+                                style: const TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.w500),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ],
+                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -449,9 +647,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               final productData = {
                 'num_iid': productController.numIidValue,
                 'title': productController.title,
+                'translatedTitle': translatedTitle.isNotEmpty ? translatedTitle : null,
                 'price': productController.price,
                 'orginal_price': productController.originalPrice,
                 'nick': productController.nick,
+
                 'detail_url': productController.detailUrl,
                 'pic_url': productController.picUrl,
                 'brand': productController.brand,
@@ -491,6 +691,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               final productData = {
                 'num_iid': productController.numIidValue,
                 'title': productController.title,
+                'translatedTitle': translatedTitle.isNotEmpty ? translatedTitle : null,
                 'price': productController.price,
                 'orginal_price': productController.originalPrice,
                 'nick': productController.nick,
@@ -637,7 +838,24 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // ไตเติ๊ลต้นฉบับ
                           Text(productController.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+                          // ไตเติ๊ลที่แปลแล้ว
+                          if (isTranslatingTitle) ...[
+                            SizedBox(height: 4),
+                            Row(
+                              children: [
+                                SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+                                SizedBox(width: 8),
+                                Text('กำลังแปล...', style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontStyle: FontStyle.italic)),
+                              ],
+                            ),
+                          ] else if (translatedTitle.isNotEmpty) ...[
+                            SizedBox(height: 4),
+                            Text(translatedTitle, style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontWeight: FontWeight.w500)),
+                          ],
+
                           SizedBox(height: 6),
                           Text(
                             '¥${productController.originalPrice.toStringAsFixed(0)}',
@@ -681,7 +899,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     SizedBox(height: 20),
 
                     // แสดงคำอธิบายสินค้า
-                    ProductDescriptionWidget(productController: productController),
+                    ProductDescriptionWidget(
+                      productController: productController,
+                      translatedTitle: translatedTitle.isNotEmpty ? translatedTitle : null,
+                    ),
 
                     // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
                     Column(
@@ -734,6 +955,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                       // แสดงสินค้าสูงสุด 6 รายการ
                       final itemsToShow = searchItems.take(6).toList();
+
+                      // สร้าง list ของ item IDs สำหรับเปรียบเทียบ
+                      final currentItemIds = itemsToShow.map((item) => item['num_iid']?.toString() ?? '').toList();
+
+                      // แปลไตเติ๊ลของ recommended items ถ้ายังไม่ได้แปลหรือ items เปลี่ยน
+                      final itemsChanged = !_listEquals(currentItemIds, lastTranslatedItemIds);
+
+                      // ถ้าการแปลล้มเหลว (ไม่มีผลลัพธ์) ให้ลองใหม่
+                      final shouldRetry = translatedRecommendedTitles.isEmpty && lastTranslatedItemIds.isNotEmpty;
+
+                      if (!isTranslatingRecommendedTitles && (itemsChanged || shouldRetry)) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _translateRecommendedTitles(itemsToShow);
+                        });
+                      }
 
                       return GridView.count(
                         crossAxisCount: 2,

@@ -8,6 +8,7 @@ class ProductCardFromAPI extends StatelessWidget {
   final String price;
   final String detailUrl;
   final VoidCallback onTap;
+  final String? translatedTitle;
 
   const ProductCardFromAPI({
     super.key,
@@ -17,6 +18,7 @@ class ProductCardFromAPI extends StatelessWidget {
     required this.price,
     required this.detailUrl,
     required this.onTap,
+    this.translatedTitle,
   });
 
   @override
@@ -71,31 +73,38 @@ class ProductCardFromAPI extends StatelessWidget {
                 //Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 4),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: 32, maxHeight: 32),
-                    child: Text(
-                      seller,
-                      style: TextStyle(fontSize: 12, color: Colors.black),
-                      maxLines: 2,
-                      overflow: TextOverflow.visible,
-                      softWrap: true,
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // แสดงชื่อสินค้าต้นฉบับ
+                    Text(
+                      title,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(price, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black)),
-                ],
+
+                    // แสดงชื่อสินค้าที่แปลแล้ว (ถ้ามี)
+                    if (translatedTitle != null && translatedTitle!.isNotEmpty) ...[
+                      SizedBox(height: 1),
+                      Text(
+                        translatedTitle!,
+                        style: TextStyle(fontSize: 11, color: Colors.blue.shade700, fontWeight: FontWeight.w500),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    SizedBox(height: 2),
+                    Expanded(
+                      child: Text(seller, style: TextStyle(fontSize: 11, color: Colors.grey.shade600), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    ),
+                    Text(price, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black)),
+                  ],
+                ),
               ),
             ),
           ],

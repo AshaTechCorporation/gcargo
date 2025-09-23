@@ -43,6 +43,9 @@ class CartItem extends HiveObject {
   @HiveField(12)
   DateTime addedAt;
 
+  @HiveField(13)
+  String? translatedTitle;
+
   CartItem({
     required this.numIid,
     required this.title,
@@ -57,6 +60,7 @@ class CartItem extends HiveObject {
     required this.selectedColor,
     required this.name,
     required this.addedAt,
+    this.translatedTitle,
   });
 
   factory CartItem.fromMap(Map<String, dynamic> map) {
@@ -74,6 +78,7 @@ class CartItem extends HiveObject {
       selectedColor: map['selectedColor'] ?? '',
       name: map['name'] ?? '',
       addedAt: DateTime.now(),
+      translatedTitle: map['translatedTitle'],
     );
   }
 
@@ -81,6 +86,7 @@ class CartItem extends HiveObject {
     return {
       'num_iid': numIid,
       'title': title,
+      'translatedTitle': translatedTitle,
       'price': price,
       'orginal_price': originalPrice,
       'nick': nick,

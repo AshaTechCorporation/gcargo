@@ -5,6 +5,7 @@ import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
 import 'package:gcargo/models/cart_item.dart';
 import 'package:gcargo/services/cart_service.dart';
+import 'package:gcargo/services/homeService.dart';
 import 'package:gcargo/utils/helpers.dart';
 import 'package:get/get.dart';
 
@@ -24,6 +25,7 @@ class _CartPageState extends State<CartPage> {
   late HomeController homeController;
   late LanguageController languageController;
   bool isLoadingServices = true;
+  double depositOrderRate = 4.0; // Default rate
 
   String getTranslation(String key) {
     final currentLang = languageController.currentLanguage.value;
@@ -148,6 +150,23 @@ class _CartPageState extends State<CartPage> {
     // Fetch extra services
     _loadExtraServices();
     _loadCartItems();
+    // หลังจากโหลดข้อมูลสินค้าเสร็จแล้ว ให้แปลไตเติ๊ล
+    _loadExchangeRate();
+  }
+
+  // Load exchange rate from API
+  Future<void> _loadExchangeRate() async {
+    try {
+      final exchangeData = await HomeService.getExchageRate();
+      if (exchangeData != null && exchangeData['deposit_order_rate'] != null) {
+        setState(() {
+          depositOrderRate = double.tryParse(exchangeData['deposit_order_rate'].toString()) ?? 4.0;
+        });
+      }
+    } catch (e) {
+      print('Error loading exchange rate: $e');
+      // Keep default rate if API fails
+    }
   }
 
   Future<void> _loadExtraServices() async {
@@ -325,14 +344,31 @@ class _CartPageState extends State<CartPage> {
                 children: [
                   Row(
                     children: [
-                      Text('¥${item.priceAsDouble.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('¥${item.priceAsDouble.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('฿${(item.priceAsDouble * depositOrderRate).toStringAsFixed(2)}', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        ],
+                      ),
                       Spacer(),
                       IconButton(icon: Icon(Icons.add, size: 18), onPressed: () => updateQuantity(index, item.quantity + 1)),
                       Text(item.quantity.toString()),
                       IconButton(icon: Icon(Icons.remove, size: 18), onPressed: () => updateQuantity(index, item.quantity - 1)),
                     ],
                   ),
-                  Text(item.title, style: TextStyle(color: Colors.grey), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  // แสดงชื่อสินค้าต้นฉบับ
+                  Text(item.title, style: TextStyle(color: Colors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  // แสดงชื่อสินค้าที่แปลแล้ว (ถ้ามี)
+                  if (item.translatedTitle != null && item.translatedTitle!.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      item.translatedTitle!,
+                      style: TextStyle(color: Colors.blue.shade700, fontSize: 12, fontWeight: FontWeight.w500),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                   SizedBox(height: 6),
                   Row(
                     children: [
@@ -395,10 +431,8 @@ class _CartPageState extends State<CartPage> {
       }
     }
 
-    // You can add exchange rate calculation here if needed
-    final exchangeRateData = homeController.exchangeRate;
-    final exchangeRate = getExchangeRateValue(exchangeRateData);
-    final totalBaht = totalYuan * exchangeRate; // Assuming 1 Yuan = 4 Baht
+    // ใช้ depositOrderRate ในการคำนวณราคาเงินบาท
+    final totalBaht = totalYuan * depositOrderRate;
 
     return '¥${totalYuan.toStringAsFixed(2)} (฿ ${totalBaht.toStringAsFixed(2)})';
   }
@@ -463,6 +497,7 @@ class _CartPageState extends State<CartPage> {
                   selectedItemsMapList.add({
                     'num_iid': item.numIid,
                     'title': item.title,
+                    'translatedTitle': item.translatedTitle,
                     'price': item.price,
                     'orginal_price': item.originalPrice,
                     'nick': item.nick,

@@ -15,9 +15,9 @@ class SecurityPage extends StatefulWidget {
 }
 
 class _SecurityPageState extends State<SecurityPage> {
-  bool isPinEnabled = true;
+  bool isPinEnabled = false;
   bool isFaceIDEnabled = false;
-  bool isFingerprintEnabled = true;
+  bool isFingerprintEnabled = false;
   bool isLoading = true;
   late LanguageController languageController;
 
@@ -45,9 +45,9 @@ class _SecurityPageState extends State<SecurityPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       setState(() {
-        isPinEnabled = prefs.getBool('security_pin_enabled') ?? true;
+        isPinEnabled = prefs.getBool('security_pin_enabled') ?? false;
         isFaceIDEnabled = prefs.getBool('security_faceid_enabled') ?? false;
-        isFingerprintEnabled = prefs.getBool('security_fingerprint_enabled') ?? true;
+        isFingerprintEnabled = prefs.getBool('security_fingerprint_enabled') ?? false;
         isLoading = false;
       });
     } catch (e) {

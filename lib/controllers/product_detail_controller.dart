@@ -58,9 +58,13 @@ class ProductDetailController extends GetxController {
         // เช็คว่าอยู่ในรายการโปรดหรือไม่
         await checkIfFavorite();
 
-        // Debug: Log desc_img and props_list data
+        // Debug: Log all available fields
+        log('🔍 All product data fields: ${data.keys.toList()}');
         log('🖼️ desc_img data: ${data['desc_img']}');
         log('📋 props_list data: ${data['props_list']}');
+        log('📝 description data: ${data['description']}');
+        log('📄 detail data: ${data['detail']}');
+        log('📄 content data: ${data['content']}');
       } else {
         _setError('ไม่สามารถเชื่อมต่อ API หรือไม่พบสินค้าที่ค้นหา');
       }
@@ -70,6 +74,55 @@ class ProductDetailController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  String extractTitlesToTranslate(List<Map<String, dynamic>> items, {String separator = '|||'}) {
+    return items.map((item) => item['title'] ?? '').join(separator);
+  }
+
+  List<Map<String, dynamic>> applyTranslatedTitlesToItems(
+    List<Map<String, dynamic>> originalItems,
+    String translatedText, {
+    String separator = '|||',
+  }) {
+    final translatedTitles = translatedText.split(separator);
+
+    return List.generate(originalItems.length, (i) {
+      final newItem = Map<String, dynamic>.from(originalItems[i]);
+      if (i < translatedTitles.length) {
+        newItem['title'] = translatedTitles[i].trim();
+      }
+      return newItem;
+    });
+  }
+
+  String extractTitlesToTranslatePops(List<Map<String, dynamic>> items, {String separator = '|||'}) {
+    return items.map((item) => '${item['name'] ?? ''}:${item['value'] ?? ''}').join(separator);
+  }
+
+  List<Map<String, dynamic>> applyTranslatedTitlesToItemsPops(
+    List<Map<String, dynamic>> originalItems,
+    String translatedText, {
+    String separator = '|||',
+  }) {
+    print(translatedText);
+    final translatedTitles = translatedText.split(separator);
+
+    return List.generate(originalItems.length, (i) {
+      final newItem = Map<String, dynamic>.from(originalItems[i]);
+      if (i < translatedTitles.length) {
+        final data = translatedTitles[i].split(': ');
+        if (data.length >= 2) {
+          newItem['name'] = data[0].trim();
+          newItem['value'] = data[1].trim();
+        } else if (data.length == 1) {
+          // ถ้าไม่<|im_start|> ': ' ให้ใช้ข้อมูล<|im_start|>
+          newItem['name'] = data[0].trim();
+          newItem['value'] = originalItems[i]['value'] ?? '';
+        }
+      }
+      return newItem;
+    });
   }
 
   bool _isValidResponseStructure(dynamic responseBody) {

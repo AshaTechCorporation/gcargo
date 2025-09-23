@@ -35,6 +35,10 @@ class HomeController extends GetxController {
   var alipayPaymentById = Rxn<Payment>();
   var reward = <Map<String, dynamic>>[].obs;
 
+  // สำหรับเก็บไตเติ๊ลที่แปลแล้วของสินค้าในหน้าโฮม
+  var translatedHomeTitles = <String, String>{}.obs;
+  var isTranslatingHomeTitles = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -69,6 +73,8 @@ class HomeController extends GetxController {
 
         if (items.isNotEmpty) {
           searchItems.value = items;
+          // แปลไตเติ๊ลหลังจากได้ข้อมูลสินค้า
+          translateHomeTitles();
         } else {
           _setError('ไม่พบสินค้าที่ค้นหา');
         }
@@ -129,6 +135,77 @@ class HomeController extends GetxController {
   // Method สำหรับค้นหาใหม่
   Future<void> newSearch(String query) async {
     await searchItemsFromAPI(query);
+  }
+
+  // ฟังก์ชันสำหรับแปลไตเติ๊ลของสินค้าในหน้าโฮม
+  Future<void> translateHomeTitles() async {
+    if (searchItems.isEmpty || isTranslatingHomeTitles.value) return;
+
+    log('🔄 Starting home titles translation for ${searchItems.length} items');
+    isTranslatingHomeTitles.value = true;
+
+    try {
+      // รวบรวมไตเติ๊ลทั้งหมดเพื่อส่งแปลครั้งเดียว
+      final List<String> originalTitles = [];
+
+      for (int i = 0; i < searchItems.length; i++) {
+        final originalTitle = searchItems[i]['title']?.toString() ?? '';
+        if (originalTitle.isNotEmpty) {
+          originalTitles.add(originalTitle);
+        }
+      }
+
+      if (originalTitles.isNotEmpty) {
+        final Map<String, String> titleMap = {};
+
+        // ครั้งที่ 1: ส่งแปลทั้งหมด
+        await _translateTitlesRound(originalTitles, titleMap, 1);
+
+        // เช็คว่าได้แปลครบหรือไม่
+        final List<String> missingTitles = originalTitles.where((title) => !titleMap.containsKey(title)).toList();
+
+        if (missingTitles.isNotEmpty) {
+          log('🔄 Round 2: Translating ${missingTitles.length} missing titles');
+          await _translateTitlesRound(missingTitles, titleMap, 2);
+        }
+
+        translatedHomeTitles.value = titleMap;
+        log('🎉 Home titles translation completed. Total translated: ${titleMap.length}/${originalTitles.length}');
+      }
+    } catch (e) {
+      log('❌ Error translating home titles: $e');
+    } finally {
+      isTranslatingHomeTitles.value = false;
+    }
+  }
+
+  // ฟังก์ชันช่วยสำหรับแปลแต่ละรอบ
+  Future<void> _translateTitlesRound(List<String> titlesToTranslate, Map<String, String> titleMap, int round) async {
+    try {
+      // รวมไตเติ๊ลด้วย separator
+      final String combinedText = titlesToTranslate.join('|||');
+      log('📝 Round $round - Combined text to translate: ${combinedText.length} characters');
+
+      // ส่งแปลครั้งเดียว
+      final String? translatedText = await HomeService.translate(text: combinedText, from: 'zh-CN', to: 'th');
+
+      if (translatedText != null && translatedText.isNotEmpty) {
+        // แยกผลลัพธ์ที่แปลแล้ว
+        final List<String> translatedTitles = translatedText.split('|||');
+
+        // จับคู่ไตเติ๊ลต้นฉบับกับที่แปลแล้ว
+        for (int i = 0; i < titlesToTranslate.length && i < translatedTitles.length; i++) {
+          final original = titlesToTranslate[i];
+          final translated = translatedTitles[i].trim();
+          if (translated.isNotEmpty) {
+            titleMap[original] = translated;
+            log('✅ Round $round - Translated: "$original" -> "$translated"');
+          }
+        }
+      }
+    } catch (e) {
+      log('❌ Error in translation round $round: $e');
+    }
   }
 
   void _setErrorRate(String message) {

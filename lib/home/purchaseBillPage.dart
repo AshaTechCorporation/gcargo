@@ -568,6 +568,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                   qty: (product['quantity'] ?? 1).toInt(),
                   selectedSize: product['selectedSize'] ?? '',
                   selectedColor: product['selectedColor'] ?? '',
+                  translatedTitle: product['translatedTitle'],
                   onAdd: () => updateProductQuantity(index, (product['quantity'] ?? 1) + 1),
                   onRemove: () => updateProductQuantity(index, (product['quantity'] ?? 1) - 1),
                 ),
@@ -590,6 +591,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
     double? originalPrice,
     String selectedSize = '',
     String selectedColor = '',
+    String? translatedTitle,
   }) {
     return Container(
       padding: const EdgeInsets.all(10),
@@ -633,7 +635,18 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                   ],
                 ),
                 const SizedBox(height: 4),
+                // แสดงชื่อสินค้าต้นฉบับ
                 Text(name, style: const TextStyle(fontSize: 14)),
+                // แสดงชื่อสินค้าที่แปลแล้ว (ถ้ามี)
+                if (translatedTitle != null && translatedTitle.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    translatedTitle,
+                    style: TextStyle(fontSize: 12, color: Colors.blue.shade700, fontWeight: FontWeight.w500),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
                 const SizedBox(height: 8),
                 Row(
                   children: [

@@ -104,6 +104,28 @@ class HomeService {
     }
   }
 
+  //แปลภาษา
+  static Future translate({required String text, required String from, required String to}) async {
+    // return;
+    final url = Uri.https(publicUrl, '/public/api/translate');
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    // final token = prefs.getString('token');
+    var headers = {
+      // 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    final response = await http.post(url, headers: headers, body: convert.jsonEncode({"text": text, "from": from, "to": to}));
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data['translated'];
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+      // throw ApiException(data['message']);
+    }
+  }
+
   //อัปโหลดรูป
   static Future uploadImage({required String imgcode}) async {
     //final url = Uri.https('kongcrdv.com', '/ima/index.php', {"imgcode": '${imgcode}', "key": 'tegcargo06062024'});

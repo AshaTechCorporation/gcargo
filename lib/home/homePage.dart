@@ -17,6 +17,7 @@ import 'package:gcargo/home/notificationPage.dart';
 import 'package:gcargo/home/packageDepositPage.dart';
 import 'package:gcargo/home/productDetailPage.dart';
 import 'package:gcargo/home/rewardRedeemPage.dart';
+import 'package:gcargo/widgets/upgrade_test_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -192,6 +193,14 @@ class _HomePageState extends State<HomePage> {
       builder:
           (controller) => Scaffold(
             backgroundColor: Colors.white,
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () {
+            //     Navigator.push(context, MaterialPageRoute(builder: (context) => const UpgradeTestWidget()));
+            //   },
+            //   backgroundColor: Colors.blue,
+            //   tooltip: 'ทดสอบ Upgrader',
+            //   child: const Icon(Icons.system_update, color: Colors.white),
+            // ),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(60),
               child: AppBar(
@@ -554,6 +563,9 @@ class _HomePageState extends State<HomePage> {
 
                     // ใช้ Obx เพื่อ listen การเปลี่ยนแปลงข้อมูล
                     Obx(() {
+                      // Listen to translatedHomeTitles เพื่อให้ UI อัปเดตเมื่อแปลเสร็จ
+                      homeController.translatedHomeTitles.length;
+
                       if (homeController.isLoading.value) {
                         return Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
                       }
@@ -611,12 +623,15 @@ class _HomePageState extends State<HomePage> {
                           itemCount: homeController.searchItems.length,
                           itemBuilder: (context, index) {
                             final item = homeController.searchItems[index];
+                            final originalTitle = item['title'] ?? 'ไม่มีชื่อสินค้า';
+                            final translatedTitle = homeController.translatedHomeTitles[originalTitle];
                             return ProductCardFromAPI(
                               imageUrl: item['pic_url'] ?? '',
-                              title: item['title'] ?? 'ไม่มีชื่อสินค้า',
+                              title: originalTitle,
                               seller: item['seller_nick'] ?? 'ไม่มีข้อมูลร้านค้า',
                               price: '¥${item['price'] ?? 0}',
                               detailUrl: item['detail_url'] ?? '',
+                              translatedTitle: translatedTitle,
                               onTap: () {
                                 final rawNumIid = item['num_iid'];
                                 final String numIidStr = (rawNumIid is int || rawNumIid is String) ? rawNumIid.toString() : '0';

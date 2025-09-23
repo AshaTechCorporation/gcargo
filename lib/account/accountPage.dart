@@ -318,20 +318,21 @@ class _AccountPageState extends State<AccountPage> {
                                 context,
                               ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
                             }
-
-                            // Get.snackbar(
-                            //   'แจ้งเตือน',
-                            //   'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                            //   backgroundColor: Colors.yellowAccent,
-                            //   colorText: Colors.black,
-                            //   snackPosition: SnackPosition.BOTTOM,
-                            // );
                           },
                         ),
                         _buildMenuItem(
                           getTranslation('Account.security'),
-                          onTap: () {
-                            //Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
+                          onTap: () async {
+                            // final homeController = Get.find<HomeController>();
+                            // if (homeController.currentUser.value != null) {
+                            //   Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
+                            // } else {
+                            //   // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                            //   ScaffoldMessenger.of(
+                            //     context,
+                            //   ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                            // }
+
                             Get.snackbar(
                               'แจ้งเตือน',
                               'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',

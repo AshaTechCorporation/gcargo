@@ -4,11 +4,14 @@ import 'package:gcargo/auth/auth_wrapper.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/firebase_options.dart';
+import 'package:gcargo/services/auth_service.dart';
 import 'package:gcargo/services/cart_service.dart';
+import 'package:gcargo/services/upgrader_service.dart';
 import 'package:gcargo/translations/app_translations.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,10 +36,51 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.paused:
+        // แอปไปอยู่ใน background
+        AuthService.markAppBackground();
+        break;
+      case AppLifecycleState.detached:
+        // แอปถูกปิด
+        AuthService.markAppClosed();
+        break;
+      case AppLifecycleState.resumed:
+        // แอปกลับมาจาก background - AuthWrapper จะจัดการเอง
+        break;
+      case AppLifecycleState.inactive:
+        // แอปไม่ active (เช่น มีการแจ้งเตือนมา)
+        break;
+      case AppLifecycleState.hidden:
+        // แอปถูกซ่อน
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -53,7 +97,58 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'SukhumvitSet',
       ),
-      home: const AuthWrapper(),
+      home: const AppLifecycleWrapper(),
     );
+  }
+}
+
+class AppLifecycleWrapper extends StatefulWidget {
+  const AppLifecycleWrapper({super.key});
+
+  @override
+  State<AppLifecycleWrapper> createState() => _AppLifecycleWrapperState();
+}
+
+class _AppLifecycleWrapperState extends State<AppLifecycleWrapper> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    print('🔄 AppLifecycleWrapper: initState - NOT marking as active yet');
+    // ไม่เรียก markAppActive() ที่นี่ เพื่อให้ AuthWrapper ตรวจสอบ auth ก่อน
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print('🔄 AppLifecycleWrapper: App state changed to $state');
+
+    switch (state) {
+      case AppLifecycleState.paused:
+        print('🔄 App paused - marking as background');
+        AuthService.markAppBackground();
+        break;
+      case AppLifecycleState.detached:
+        print('🔄 App detached - marking as closed');
+        AuthService.markAppClosed();
+        break;
+      case AppLifecycleState.resumed:
+        print('🔄 App resumed - marking as active');
+        AuthService.markAppActive();
+        break;
+      default:
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return UpgradeAlert(upgrader: UpgraderService.createUpgrader(), child: const AuthWrapper());
   }
 }

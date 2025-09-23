@@ -180,8 +180,11 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
+    return Obx(() {
+      // Listen to translatedHomeTitles เพื่อให้ UI อัปเดตเมื่อแปลเสร็จ
+      homeController.translatedHomeTitles.length;
+
+      return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Padding(
@@ -315,12 +318,15 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                       itemBuilder: (context, index) {
                         final item = currentSearchResults[index];
+                        final originalTitle = item['title'] ?? 'ไม่มีชื่อสินค้า';
+                        final translatedTitle = homeController.translatedHomeTitles[originalTitle];
                         return ProductCardFromAPI(
                           imageUrl: item['pic_url'] ?? '',
-                          title: item['title'] ?? 'ไม่มีชื่อสินค้า',
+                          title: originalTitle,
                           seller: item['seller_nick'] ?? 'ไม่มีข้อมูลร้านค้า',
                           price: '¥${item['price'] ?? 0}',
                           detailUrl: item['detail_url'] ?? '',
+                          translatedTitle: translatedTitle,
                           onTap: () {
                             final rawNumIid = item['num_iid'];
                             final String numIidStr = (rawNumIid is int || rawNumIid is String) ? rawNumIid.toString() : '0';
@@ -355,7 +361,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

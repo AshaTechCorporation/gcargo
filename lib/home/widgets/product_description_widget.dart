@@ -5,8 +5,9 @@ import 'package:get/get.dart';
 
 class ProductDescriptionWidget extends StatelessWidget {
   final ProductDetailController productController;
+  final String? translatedTitle;
 
-  const ProductDescriptionWidget({super.key, required this.productController});
+  const ProductDescriptionWidget({super.key, required this.productController, this.translatedTitle});
 
   String getTranslation(String key) {
     final languageController = Get.find<LanguageController>();
@@ -43,7 +44,15 @@ class ProductDescriptionWidget extends StatelessWidget {
         children: [
           Text(getTranslation('product_details'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 8),
+
+          // แสดงชื่อสินค้าต้นฉบับ
           Text(productController.title, style: TextStyle(color: Colors.grey.shade700)),
+
+          // แสดงชื่อสินค้าที่แปลแล้ว (ถ้ามี)
+          if (translatedTitle != null && translatedTitle!.isNotEmpty && translatedTitle != productController.title) ...[
+            const SizedBox(height: 4),
+            Text(translatedTitle!, style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w500, fontSize: 14)),
+          ],
           // if (productController.detailUrl.isNotEmpty) ...[
           //   const SizedBox(height: 8),
           //   Text(
