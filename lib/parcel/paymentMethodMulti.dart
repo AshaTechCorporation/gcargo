@@ -36,7 +36,7 @@ class PaymentMethodMulti extends StatelessWidget {
               },
               child: _buildPaymentOption('Wallet (${totalPrice.toStringAsFixed(2)}฿)'),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -46,7 +46,7 @@ class PaymentMethodMulti extends StatelessWidget {
               },
               child: _buildPaymentOption('QR พร้อมเพย์ / โอน'),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             GestureDetector(
               onTap: () {
                 Get.snackbar(
