@@ -29,6 +29,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
     getTranslation('pending_review'),
     getTranslation('pending_payment'),
     getTranslation('processing'),
+    getTranslation('confirm_payment'),
     getTranslation('preparing_shipment'),
     getTranslation('completed'),
     getTranslation('cancelled'),
@@ -47,6 +48,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
         'preparing_shipment': 'เตรียมจัดส่ง',
         'completed': 'สำเร็จ',
         'cancelled': 'ยกเลิก',
+        'confirm_payment': 'ชำระเงินสำเร็จ',
         'search_orders': 'ค้นหาออเดอร์',
         'select_date_range': 'เลือกช่วงวันที่',
         'select_all': 'เลือกทั้งหมด',
@@ -80,6 +82,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
         'preparing_shipment': 'Preparing Shipment',
         'completed': 'Completed',
         'cancelled': 'Cancelled',
+        'confirm_payment': 'Payment Confirmed',
         'search_orders': 'Search Orders',
         'select_date_range': 'Select Date Range',
         'select_all': 'Select All',
@@ -113,6 +116,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
         'preparing_shipment': '准备发货',
         'completed': '已完成',
         'cancelled': '已取消',
+        'confirm_payment': '付款确认',
         'search_orders': '搜索订单',
         'select_date_range': '选择日期范围',
         'select_all': '全选',
@@ -161,6 +165,8 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
         return 'pending_payment';
       case 'in_progress':
         return 'processing';
+      case 'confirm_payment':
+        return 'confirm_payment';
       case 'preparing_shipment':
         return 'preparing_shipment';
       case 'shipped':
@@ -656,6 +662,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                                         'pending_review',
                                         'pending_payment',
                                         'processing',
+                                        'confirm_payment',
                                         'preparing_shipment',
                                         'completed',
                                         'cancelled',

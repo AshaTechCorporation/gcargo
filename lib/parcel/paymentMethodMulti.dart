@@ -44,7 +44,7 @@ class PaymentMethodMulti extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => QRPaymentMulti(totalPrice: totalPrice, orderType: orderType, items: items, vat: vat)),
                 );
               },
-              child: _buildPaymentOption('QR พร้อมเพย์'),
+              child: _buildPaymentOption('QR พร้อมเพย์ / โอน'),
             ),
             const SizedBox(height: 12),
             GestureDetector(

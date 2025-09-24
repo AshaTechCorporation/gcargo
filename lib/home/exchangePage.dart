@@ -610,7 +610,12 @@ class _ExchangePageState extends State<ExchangePage> {
                         //Image.asset(icons[index], width: 28, height: 28),
                         SizedBox(width: 12),
                         Expanded(child: Text(_getAccountName(paymentMethods[index]), style: TextStyle(fontSize: 16))),
-                        Radio(value: index, groupValue: selectedMethod, onChanged: (_) => setState(() => selectedMethod = index)),
+                        Radio(
+                          activeColor: kSubButtonColor,
+                          value: index,
+                          groupValue: selectedMethod,
+                          onChanged: (_) => setState(() => selectedMethod = index),
+                        ),
                       ],
                     ),
                   ),

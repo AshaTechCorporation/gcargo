@@ -39,7 +39,7 @@ class PaymentMethodPage extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => QRPaymentPage(totalPrice: totalPrice, ref_no: ref_no, orderType: orderType)),
                 );
               },
-              child: _buildPaymentOption('QR พร้อมเพย์'),
+              child: _buildPaymentOption('QR พร้อมเพย์ / โอน'),
             ),
             const SizedBox(height: 12),
             _buildPaymentOption('เครดิต'),

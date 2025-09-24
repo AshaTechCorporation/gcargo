@@ -341,4 +341,21 @@ class AccountService {
       throw ApiException(data['message']);
     }
   }
+
+  //เรียกดูข้อมูล บัญชีธนาคาร
+  static Future getBankVerify() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/get_bank');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data'] as List;
+      return list;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
 }

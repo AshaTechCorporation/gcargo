@@ -713,7 +713,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
           // Total from API vs calculated
           if (totalPriceFromAPI > 0)
-            _buildPriceRow(getTranslation('total_amount'), '${totalPriceFromAPI.toStringAsFixed(2)}¥', isBold: true)
+            _buildPriceRow(getTranslation('total_amount'), '${totalPriceFromAPI.toStringAsFixed(2)}฿', isBold: true)
           else
             _buildPriceRow(getTranslation('calculated_total'), '${totalWithFees.toStringAsFixed(2)}฿', isBold: true),
 
