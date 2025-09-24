@@ -689,7 +689,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
           // China shipping fee
           if (chinaShippingFee > 0)
-            _buildPriceRow(getTranslation('china_shipping'), '¥${chinaShippingFee.toStringAsFixed(2)} (${chinaShippingBaht.toStringAsFixed(2)}฿)')
+            _buildPriceRow(getTranslation('china_shipping'), '¥${chinaShippingFee.toStringAsFixed(2)} (${chinaShippingBaht.toStringAsFixed(2)}฿')
           else
             _buildPriceRow(getTranslation('china_shipping'), '0.00฿'),
 
@@ -713,7 +713,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
           // Total from API vs calculated
           if (totalPriceFromAPI > 0)
-            _buildPriceRow(getTranslation('total_amount'), '${totalPriceFromAPI.toStringAsFixed(2)}¥)', isBold: true)
+            _buildPriceRow(getTranslation('total_amount'), '${totalPriceFromAPI.toStringAsFixed(2)}¥', isBold: true)
           else
             _buildPriceRow(getTranslation('calculated_total'), '${totalWithFees.toStringAsFixed(2)}฿', isBold: true),
 
