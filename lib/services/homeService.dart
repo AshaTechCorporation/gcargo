@@ -312,6 +312,7 @@ class HomeService {
     int? member_address_id,
     List<Products>? products,
     Map<String, dynamic>? coupon,
+    String? paymentType,
   }) async {
     final url = Uri.https(publicUrl, '/public/api/orders');
     var headers = {'Content-Type': 'application/json'};
@@ -333,6 +334,7 @@ class HomeService {
         "bill_vat": "N",
         'products': products,
         'coupon': coupon?['code']?.toString() ?? '',
+        'payment_type': paymentType,
       }),
     );
 

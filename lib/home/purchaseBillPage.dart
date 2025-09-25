@@ -83,6 +83,15 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
         'land_transport': 'ขนส่งทางรถ',
         'sea_transport': 'ขนส่งทางเรือ',
         'air_transport': 'ขนส่งทางอากาศ',
+        'select_payment_type': 'เลือกรูปแบบการชำระเงิน',
+        'full_payment': 'ชำระเต็มจำนวน',
+        'pay_full_amount': 'ชำระเงินครบทั้งหมดในครั้งเดียว',
+        'split_70_30': 'แยกชำระ 70-30',
+        'pay_70_percent_first': 'ชำระ 70% ก่อน ส่วนที่เหลือชำระทีหลัง',
+        'split_50_50': 'แยกชำระ 50-50',
+        'pay_50_percent_first': 'ชำระ 50% ก่อน ส่วนที่เหลือชำระทีหลัง',
+        'cancel': 'ยกเลิก',
+        'confirm': 'ตกลง',
       },
       'en': {
         'purchase_bill': 'Purchase Bill',
@@ -125,6 +134,15 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
         'land_transport': 'Land Transport',
         'sea_transport': 'Sea Transport',
         'air_transport': 'Air Transport',
+        'select_payment_type': 'Select Payment Type',
+        'full_payment': 'Full Payment',
+        'pay_full_amount': 'Pay the full amount at once',
+        'split_70_30': 'Split Payment 70-30',
+        'pay_70_percent_first': 'Pay 70% first, remaining later',
+        'split_50_50': 'Split Payment 50-50',
+        'pay_50_percent_first': 'Pay 50% first, remaining later',
+        'cancel': 'Cancel',
+        'confirm': 'Confirm',
       },
       'zh': {
         'purchase_bill': '购买单',
@@ -167,6 +185,15 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
         'land_transport': '陆运',
         'sea_transport': '海运',
         'air_transport': '空运',
+        'select_payment_type': '选择付款方式',
+        'full_payment': '全额付款',
+        'pay_full_amount': '一次性支付全部金额',
+        'split_70_30': '分期付款 70-30',
+        'pay_70_percent_first': '先付70%，余款稍后支付',
+        'split_50_50': '分期付款 50-50',
+        'pay_50_percent_first': '先付50%，余款稍后支付',
+        'cancel': '取消',
+        'confirm': '确认',
       },
     };
 
@@ -192,6 +219,75 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
 
     // Fetch extra services
     _loadExtraServices();
+  }
+
+  // แสดงไดอะล็อกเลือกรูปแบบการชำระเงิน
+  Future<String?> _showPaymentTypeDialog(BuildContext context) async {
+    String? selectedPaymentType;
+
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(getTranslation('select_payment_type')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(
+                    activeColor: kSubButtonColor,
+                    title: Text(getTranslation('full_payment')),
+                    subtitle: Text(getTranslation('pay_full_amount')),
+                    value: 'full',
+                    groupValue: selectedPaymentType,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPaymentType = value;
+                      });
+                    },
+                  ),
+                  const Divider(),
+                  RadioListTile<String>(
+                    activeColor: kSubButtonColor,
+                    title: Text(getTranslation('split_70_30')),
+                    subtitle: Text(getTranslation('pay_70_percent_first')),
+                    value: '70-30',
+                    groupValue: selectedPaymentType,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPaymentType = value;
+                      });
+                    },
+                  ),
+                  const Divider(),
+                  RadioListTile<String>(
+                    activeColor: kSubButtonColor,
+                    title: Text(getTranslation('split_50_50')),
+                    subtitle: Text(getTranslation('pay_50_percent_first')),
+                    value: '50-50',
+                    groupValue: selectedPaymentType,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPaymentType = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(getTranslation('cancel'))),
+                ElevatedButton(
+                  onPressed: selectedPaymentType != null ? () => Navigator.of(context).pop(selectedPaymentType) : null,
+                  child: Text(getTranslation('confirm')),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   Future<void> _loadExtraServices() async {
@@ -377,28 +473,17 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                               final currentContext = context;
 
                               try {
-                                List<OptionsItem> optionsItems = [];
+                                // แสดงไดอะล็อกเลือกรูปแบบการชำระเงิน
+                                final paymentType = await _showPaymentTypeDialog(currentContext);
+                                if (paymentType == null) {
+                                  setState(() {
+                                    isOrdering = false;
+                                  });
+                                  return;
+                                }
+
                                 List<PartService> addOnServices = [];
                                 List<Products> orderProducts = [];
-
-                                // Create options for each product
-                                if (products.isNotEmpty) {
-                                  for (var i = 0; i < products.length; i++) {
-                                    final product = products[i];
-
-                                    // Add selectedSize if available
-                                    if (product['selectedSize'] != null && product['selectedSize'].toString().isNotEmpty) {
-                                      final sizeOption = OptionsItem(product['selectedSize'], '', 'size');
-                                      optionsItems.add(sizeOption);
-                                    }
-
-                                    // Add selectedColor if available
-                                    if (product['selectedColor'] != null && product['selectedColor'].toString().isNotEmpty) {
-                                      final colorOption = OptionsItem(product['selectedColor'], '', 'color');
-                                      optionsItems.add(colorOption);
-                                    }
-                                  }
-                                }
 
                                 // Add selected extra service
                                 if (serviceSelected != null) {
@@ -409,6 +494,22 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                                 // Create products for order
                                 for (var i = 0; i < products.length; i++) {
                                   final product = products[i];
+
+                                  // Create options for this specific product
+                                  List<OptionsItem> productOptionsItems = [];
+
+                                  // Add selectedSize if available for this product
+                                  if (product['selectedSize'] != null && product['selectedSize'].toString().isNotEmpty) {
+                                    final sizeOption = OptionsItem(product['selectedSize'], '', 'size');
+                                    productOptionsItems.add(sizeOption);
+                                  }
+
+                                  // Add selectedColor if available for this product
+                                  if (product['selectedColor'] != null && product['selectedColor'].toString().isNotEmpty) {
+                                    final colorOption = OptionsItem(product['selectedColor'], '', 'color');
+                                    productOptionsItems.add(colorOption);
+                                  }
+
                                   final orderProduct = Products(
                                     product['nick'] ?? '', // product_shop
                                     product['num_iid'] ?? '', // product_code
@@ -421,7 +522,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                                     product['price']?.toString() ?? '0', // product_price
                                     product['quantity']?.toString() ?? '1', // product_qty
                                     addOnServices, // add_on_services
-                                    optionsItems, // options
+                                    productOptionsItems, // options specific to this product
                                   );
                                   orderProducts.add(orderProduct);
                                 }
@@ -439,12 +540,13 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                                   date: DateTime.now().toIso8601String(),
                                   total_price: totalYuan,
                                   shipping_type: deliveryOptions['nameEng'] ?? 'car',
-                                  payment_term: 'prepaid',
+                                  payment_term: paymentType,
                                   note: noteController.text,
                                   importer_code: '',
                                   member_address_id: selectedAddressId,
                                   products: orderProducts,
                                   coupon: selectedCoupon,
+                                  paymentType: paymentType,
                                 );
 
                                 log('✅ Order created successfully: $result');

@@ -717,18 +717,41 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                             const SizedBox(height: 16),
                             Expanded(
                               child: ListView(
-                                children:
-                                    groupedOrders.entries.map((entry) {
-                                      return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(entry.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                          const SizedBox(height: 8),
-                                          ...entry.value.map((order) => _buildOrderCard(order)),
-                                          const SizedBox(height: 16),
-                                        ],
-                                      );
-                                    }).toList(),
+                                children: () {
+                                  final sortedEntries = groupedOrders.entries.toList();
+                                  sortedEntries.sort((a, b) {
+                                    // เรียงลำดับวันที่จากล่าสุดไปเก่าสุด โดยใช้ created_at
+                                    try {
+                                      // หาวันที่ล่าสุดในแต่ละกลุ่ม
+                                      final latestDateA = a.value
+                                          .map((order) => order['created_at'] as String?)
+                                          .where((date) => date != null && date.isNotEmpty)
+                                          .map((date) => DateTime.parse(date!))
+                                          .reduce((a, b) => a.isAfter(b) ? a : b);
+
+                                      final latestDateB = b.value
+                                          .map((order) => order['created_at'] as String?)
+                                          .where((date) => date != null && date.isNotEmpty)
+                                          .map((date) => DateTime.parse(date!))
+                                          .reduce((a, b) => a.isAfter(b) ? a : b);
+
+                                      return latestDateB.compareTo(latestDateA); // วันที่ล่าสุดขึ้นบนสุด
+                                    } catch (e) {
+                                      return a.key.compareTo(b.key);
+                                    }
+                                  });
+                                  return sortedEntries.map((entry) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(entry.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                        const SizedBox(height: 8),
+                                        ...entry.value.map((order) => _buildOrderCard(order)),
+                                        const SizedBox(height: 16),
+                                      ],
+                                    );
+                                  }).toList();
+                                }(),
                               ),
                             ),
                           ],

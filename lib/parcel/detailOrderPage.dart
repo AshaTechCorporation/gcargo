@@ -552,7 +552,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   }
 
   Widget _buildProductItemFromTrack(ProductsTrack product) {
-    final productPrice = product.product_price ?? '0';
+    final rawPrice = product.product_price ?? '0';
+    final parsedPrice = double.tryParse(rawPrice);
+    final productPrice = parsedPrice != null ? parsedPrice.toStringAsFixed(2) : rawPrice;
     final productQty = product.product_qty ?? 1;
     final productName = product.product_name ?? getTranslation('unknown_product');
     final translatedProductName = translatedProductTitles[product.product_name] ?? '';
