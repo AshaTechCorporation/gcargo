@@ -127,6 +127,49 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
     }
   }
 
+  // สร้างส่วนแสดง PromptPay
+  Widget _buildPromptPaySection() {
+    // หาธนาคารที่เป็น PromptPay
+    final promptPayBank = bankAccounts.firstWhere((bank) {
+      final bankName = (bank['bank_name'] ?? '').toString().toLowerCase();
+      return bankName.contains('พร้อมเพย์') || bankName.contains('promptpay') || bankName.contains('prompt pay');
+    }, orElse: () => null);
+
+    if (promptPayBank != null) {
+      return Column(
+        children: [
+          // แสดงรูป icon ของ PromptPay
+          Container(
+            width: 400,
+            height: 400,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade300)),
+            child:
+                promptPayBank['icon'] != null && promptPayBank['icon'].isNotEmpty
+                    ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        _getFullImageUrl(promptPayBank['icon']),
+                        width: 400,
+                        height: 400,
+                        fit: BoxFit.fill,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.qr_code, size: 200, color: Colors.grey),
+                      ),
+                    )
+                    : ClipOval(child: Image.asset('assets/images/No_Image.jpg', width: 400, height: 400, fit: BoxFit.fill)),
+          ),
+          const SizedBox(height: 12),
+          // แสดงข้อมูลบัญชี
+          Text(promptPayBank['account_name'] ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+          const SizedBox(height: 4),
+          Text(promptPayBank['account_number'] ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey), textAlign: TextAlign.center),
+        ],
+      );
+    } else {
+      // ถ้าไม่มี PromptPay ให้แสดง QR Code เดิม (แต่ตอนนี้ comment ไว้)
+      return SizedBox.shrink();
+    }
+  }
+
   // เลือกรูปจากแกลเลอรี่
   Future<void> _pickImageFromGallery() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -410,7 +453,7 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
           const SizedBox(height: 16),
           const SizedBox(height: 12),
           const Divider(),
-          QRCodeGenerate(promptPayId: "0923709961", amount: widget.totalPrice, width: 400, height: 400),
+          _buildPromptPaySection(),
           const SizedBox(height: 12),
           Align(
             alignment: Alignment.center,
