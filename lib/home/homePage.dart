@@ -422,7 +422,17 @@ class _HomePageState extends State<HomePage> {
                                               // ส่ง URL ที่กรอกไปยังฟังก์ชั่นตัด ID
                                               extractIdFromUrl(inputUrl);
                                             },
-                                    child: Icon(Icons.send, color: Colors.grey.shade600, size: 20),
+                                    child:
+                                        isSearchLoading
+                                            ? SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.grey.shade600),
+                                              ),
+                                            )
+                                            : Icon(Icons.send, color: Colors.grey.shade600, size: 20),
                                   ),
                                 ],
                               ),
