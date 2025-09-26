@@ -105,6 +105,7 @@ class ProductDetailController extends GetxController {
     String translatedText, {
     String separator = '|||',
   }) {
+    print(translatedText);
     final translatedTitles = translatedText.split(separator);
 
     return List.generate(originalItems.length, (i) {
@@ -115,6 +116,7 @@ class ProductDetailController extends GetxController {
           newItem['name'] = data[0].trim();
           newItem['value'] = data[1].trim();
         } else if (data.length == 1) {
+          // ถ้าไม่<|im_start|> ': ' ให้ใช้ข้อมูล<|im_start|>
           newItem['name'] = data[0].trim();
           newItem['value'] = originalItems[i]['value'] ?? '';
         }
@@ -227,140 +229,158 @@ class ProductDetailController extends GetxController {
     return {};
   }
 
-  // ------------------------- FLEX PARSER (ไม่สร้างคลาส) -------------------------
-
-  /// แยก props_list เป็นกลุ่มตามด้านซ้ายของ key (เช่น "0", "1")
-  /// คืนค่าเป็น Map<categoryId, List<Map<String,String>>> โดยรายการเก็บ {'key','value','raw'}
-  Map<String, List<Map<String, String>>> get _optionsByCategory {
-    final Map<String, List<Map<String, String>>> bucket = {};
-
-    propsList.forEach((k, v) {
-      if (v is! String || !k.contains(':')) return;
-      final kp = k.split(':');
-      if (kp.length != 2) return;
-      final catId = kp[0].trim(); // "0", "1", ...
-      // value เช่น "颜色:S23外置笔黑色【16+1T】" -> เก็บเฉพาะส่วนหลังเป็น value
-      final vp = v.split(':');
-      final cleaned = (vp.length >= 2 ? vp.sublist(1).join(':') : v).trim();
-
-      final item = {'key': k, 'value': cleaned, 'raw': v};
-      final list = bucket[catId] ?? <Map<String, String>>[];
-      // กันซ้ำด้วย value
-      final exists = list.any((e) => e['value'] == cleaned);
-      if (!exists) list.add(item);
-      bucket[catId] = list;
-    });
-
-    // sort catId ตามตัวเลขถ้าทำได้
-    final sortedKeys =
-        bucket.keys.toList()..sort((a, b) {
-          final ai = int.tryParse(a);
-          final bi = int.tryParse(b);
-          if (ai == null || bi == null) return a.compareTo(b);
-          return ai.compareTo(bi);
-        });
-
-    final Map<String, List<Map<String, String>>> out = {};
-    for (final k in sortedKeys) {
-      out[k] = bucket[k]!;
-    }
-    return out;
-  }
-
-  /// เดาชื่อกลุ่มจากข้อมูลภายใน (ยืดหยุ่น ไม่ฟิก)
-  String _inferCategoryLabel(String categoryId, List<Map<String, String>> items) {
-    final combined =
-        (items.map((e) => e['raw']).whereType<String>().join(' | ') + ' ' + items.map((e) => e['value']).whereType<String>().join(' | '))
-            .toLowerCase();
-
-    bool _hasAny(List<String> hints) => hints.any((h) => combined.contains(h.toLowerCase()));
-
-    // hints
-    const colorHints = [
-      '颜色',
-      '顏色',
-      'color',
-      'สี',
-      'black',
-      'white',
-      'red',
-      'blue',
-      'green',
-      'yellow',
-      'pink',
-      'purple',
-      'orange',
-      'brown',
-      'gray',
-      'grey',
-      '金色',
-      '银色',
-      '咖啡',
-      '米色',
-      '深蓝',
-      '浅蓝',
-      '深灰',
-      '浅灰',
-    ];
-    const sizeHints = ['尺码', '尺寸', 'size', 'ไซส์', 'ขนาด', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', '均码', 'free size', 'one size'];
-    const capacityHints = ['容量', '内存', '存储', 'storage', 'memory', 'ram', 'rom', 'gb', 'tb'];
-
-    if (_hasAny(colorHints)) return 'สี';
-    if (_hasAny(sizeHints)) return 'ขนาด/ไซส์';
-    if (_hasAny(capacityHints)) return 'ความจุ/สเปก';
-
-    // fallback: ตั้งชื่อทั่วไป + running number
-    final idx = int.tryParse(categoryId);
-    return 'ตัวเลือก ${idx != null ? (idx + 1) : categoryId}';
-  }
-
-  /// กลุ่มตัวเลือกทั้งหมด แบบพร้อมแปลไทย (ใช้เรนเดอร์ UI ได้เลย)
-  /// โครงสร้าง: [{'id': '0', 'label': 'สี', 'options': ['ดำ','ขาว',...]}]
-  List<Map<String, dynamic>> get optionGroups {
-    final List<Map<String, dynamic>> out = [];
-    _optionsByCategory.forEach((catId, items) {
-      out.add({'id': catId, 'label': _inferCategoryLabel(catId, items), 'options': items.map((e) => translateToThai(e['value'] ?? '')).toList()});
-    });
-    return out;
-  }
-
-  /// หา key จริง ("0:0", "1:2", ...) จาก (categoryId, optionValue ที่ผู้ใช้เลือก)
-  String? getOptionKeyByCategoryAndValue(String categoryId, String optionValue) {
-    final items = _optionsByCategory[categoryId];
-    if (items == null) return null;
-    String norm(String s) => s.trim();
-    final picked = norm(optionValue);
-    for (final it in items) {
-      final rawVal = norm(it['value'] ?? '');
-      final thVal = norm(translateToThai(it['value'] ?? ''));
-      if (picked == rawVal || picked == thVal) return it['key'];
-    }
-    return null;
-  }
-
-  // ----------------- Helper: availableSizes / availableColors (แบบยืดหยุ่น) -----------------
-
-  /// ถ้าเจอกลุ่ม label == 'สี' ก็ใช้เลย, ไม่งั้นลองเดาจาก catId '0'
-  List<String> get availableColors {
-    // หา label == 'สี'
-    final matchLabel = optionGroups.firstWhereOrNull((g) => g['label'] == 'สี');
-    if (matchLabel != null) return List<String>.from(matchLabel['options'] ?? const []);
-
-    // fallback: ลอง catId '0'
-    final zero = optionGroups.firstWhereOrNull((g) => g['id'] == '0');
-    return zero != null ? List<String>.from(zero['options'] ?? const []) : <String>[];
-  }
-
-  /// ถ้าเจอกลุ่ม label == 'ขนาด/ไซส์' ก็ใช้เลย, ไม่งั้นลองเดาจาก catId '1'
+  // Get sizes from props_list
   List<String> get availableSizes {
-    final matchLabel = optionGroups.firstWhereOrNull((g) => g['label'] == 'ขนาด/ไซส์');
-    if (matchLabel != null) return List<String>.from(matchLabel['options'] ?? const []);
+    List<String> sizes = [];
 
-    final one = optionGroups.firstWhereOrNull((g) => g['id'] == '1');
-    return one != null ? List<String>.from(one['options'] ?? const []) : <String>[];
+    propsList.forEach((key, value) {
+      if (value is String) {
+        // Check if this property is related to size (尺码)
+        if (value.contains('尺码:')) {
+          final sizeName = value.split(':').last.trim();
+          if (sizeName.isNotEmpty && !sizes.contains(sizeName)) {
+            sizes.add(sizeName);
+          }
+        }
+      }
+    });
+
+    return sizes;
   }
 
-  // ------------------------- แปลข้อความ (จีน/อังกฤษ -> ไทย) -------------------------
+  // Get colors from props_list
+  List<String> get availableColors {
+    List<String> colors = [];
+
+    propsList.forEach((key, value) {
+      if (value is String) {
+        // Check if this property is related to color (颜色)
+        if (value.contains('颜色:')) {
+          final colorName = value.split(':').last.trim();
+          if (colorName.isNotEmpty && !colors.contains(colorName)) {
+            colors.add(colorName);
+          }
+        }
+      }
+    });
+
+    return colors;
+  }
+
+  // Get all available options with enhanced parsing for format like "0:0" -> "颜色:S23外置笔黑色【16+1T】"
+  Map<String, List<String>> get availableOptions {
+    Map<String, List<String>> options = {};
+
+    propsList.forEach((key, value) {
+      if (value is String && key.contains(':')) {
+        // Handle format like "0:0" -> "颜色:S23外置笔黑色【16+1T】"
+        final valueParts = value.split(':');
+        if (valueParts.length >= 2) {
+          final optionType = valueParts[0].trim(); // 颜色, 机身内存, etc.
+          final optionValue = valueParts.sublist(1).join(':').trim(); // S23外置笔黑色【16+1T】, etc.
+
+          if (optionType.isNotEmpty && optionValue.isNotEmpty) {
+            if (!options.containsKey(optionType)) {
+              options[optionType] = [];
+            }
+            if (!options[optionType]!.contains(optionValue)) {
+              options[optionType]!.add(optionValue);
+            }
+          }
+        }
+      }
+    });
+
+    return options;
+  }
+
+  // Get options by type (颜色, 机身内存, etc.) - enhanced version
+  Map<String, List<Map<String, String>>> get optionsByType {
+    Map<String, List<Map<String, String>>> optionsByType = {};
+
+    propsList.forEach((key, value) {
+      if (value is String && key.contains(':')) {
+        // Handle format like "0:0" -> "颜色:S23外置笔黑色【16+1T】"
+        final valueParts = value.split(':');
+        if (valueParts.length >= 2) {
+          final optionType = valueParts[0].trim(); // 颜色, 机身内存
+          final optionValue = valueParts.sublist(1).join(':').trim(); // S23外置笔黑色【16+1T】
+
+          if (!optionsByType.containsKey(optionType)) {
+            optionsByType[optionType] = [];
+          }
+
+          // เก็บทั้ง key และ value
+          final optionData = {
+            'key': key, // "0:0", "0:1", "1:0", etc.
+            'value': optionValue, // "S23外置笔黑色【16+1T】", etc.
+            'type': optionType, // "颜色", "机身内存", etc.
+          };
+
+          // เช็คว่ามี value นี้อยู่แล้วหรือไม่
+          final exists = optionsByType[optionType]!.any((item) => item['value'] == optionValue);
+          if (!exists) {
+            optionsByType[optionType]!.add(optionData);
+          }
+        }
+      }
+    });
+
+    return optionsByType;
+  }
+
+  // Get option key for specific type and value
+  String? getOptionKey(String optionType, String optionValue) {
+    String? foundKey;
+
+    propsList.forEach((key, value) {
+      if (value is String && key.contains(':')) {
+        // Handle format like "0:0" -> "颜色:S23外置笔黑色【16+1T】"
+        final valueParts = value.split(':');
+        if (valueParts.length >= 2) {
+          final type = valueParts[0].trim(); // 颜色, 机身内存
+          final val = valueParts.sublist(1).join(':').trim(); // S23外置笔黑色【16+1T】
+
+          if (type == optionType && val == optionValue) {
+            foundKey = key; // Return "0:0", "0:1", etc.
+          }
+        }
+      }
+    });
+
+    return foundKey;
+  }
+
+  // Get grouped options by category (enhanced version)
+  Map<String, Map<String, String>> get groupedOptions {
+    Map<String, Map<String, String>> grouped = {};
+
+    propsList.forEach((key, value) {
+      if (value is String && key.contains(':')) {
+        // Parse key format like "0:0", "0:1", "1:0", "1:1"
+        final keyParts = key.split(':');
+        if (keyParts.length == 2) {
+          final categoryIndex = keyParts[0]; // "0", "1"
+          final optionIndex = keyParts[1]; // "0", "1", "2", etc.
+
+          // Parse value format like "颜色:S23外置笔黑色【16+1T】"
+          final valueParts = value.split(':');
+          if (valueParts.length >= 2) {
+            final optionType = valueParts[0].trim(); // "颜色", "机身内存"
+            final optionValue = valueParts.sublist(1).join(':').trim(); // "S23外置笔黑色【16+1T】"
+
+            final groupKey = '${optionType}_$categoryIndex';
+            if (!grouped.containsKey(groupKey)) {
+              grouped[groupKey] = {};
+            }
+            grouped[groupKey]![optionIndex] = optionValue;
+          }
+        }
+      }
+    });
+
+    return grouped;
+  }
 
   // Helper method to translate complex color descriptions
   String _translateComplexColorDescription(String text) {
@@ -410,7 +430,7 @@ class ProductDetailController extends GetxController {
       'Free Size': 'ไซส์เดียว',
       'One Size': 'ไซส์เดียว',
 
-      // Colors (EN)
+      // Colors
       'black': 'ดำ',
       'white': 'ขาว',
       'red': 'แดง',

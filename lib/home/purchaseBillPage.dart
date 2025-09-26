@@ -86,8 +86,8 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
         'select_payment_type': 'เลือกรูปแบบการชำระเงิน',
         'full_payment': 'ชำระเต็มจำนวน',
         'pay_full_amount': 'ชำระเงินครบทั้งหมดในครั้งเดียว',
-        'split_70_30': 'แยกชำระ 70-30',
-        'pay_70_percent_first': 'ชำระ 70% ก่อน ส่วนที่เหลือชำระทีหลัง',
+        'split_70_30': 'แยกชำระ 30-70',
+        'pay_70_percent_first': 'ชำระ 30% ก่อน ส่วนที่เหลือชำระทีหลัง',
         'split_50_50': 'แยกชำระ 50-50',
         'pay_50_percent_first': 'ชำระ 50% ก่อน ส่วนที่เหลือชำระทีหลัง',
         'cancel': 'ยกเลิก',
@@ -232,6 +232,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
+              backgroundColor: Colors.white,
               title: Text(getTranslation('select_payment_type')),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -240,20 +241,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                     activeColor: kSubButtonColor,
                     title: Text(getTranslation('full_payment')),
                     subtitle: Text(getTranslation('pay_full_amount')),
-                    value: 'full',
-                    groupValue: selectedPaymentType,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedPaymentType = value;
-                      });
-                    },
-                  ),
-                  const Divider(),
-                  RadioListTile<String>(
-                    activeColor: kSubButtonColor,
-                    title: Text(getTranslation('split_70_30')),
-                    subtitle: Text(getTranslation('pay_70_percent_first')),
-                    value: '70-30',
+                    value: '1',
                     groupValue: selectedPaymentType,
                     onChanged: (value) {
                       setState(() {
@@ -266,7 +254,20 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                     activeColor: kSubButtonColor,
                     title: Text(getTranslation('split_50_50')),
                     subtitle: Text(getTranslation('pay_50_percent_first')),
-                    value: '50-50',
+                    value: '2',
+                    groupValue: selectedPaymentType,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPaymentType = value;
+                      });
+                    },
+                  ),
+                  const Divider(),
+                  RadioListTile<String>(
+                    activeColor: kSubButtonColor,
+                    title: Text(getTranslation('split_70_30')),
+                    subtitle: Text(getTranslation('pay_70_percent_first')),
+                    value: '3',
                     groupValue: selectedPaymentType,
                     onChanged: (value) {
                       setState(() {
