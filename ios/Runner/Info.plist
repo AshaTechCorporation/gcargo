@@ -37,6 +37,8 @@
 	<string>อนุญาตเข้าถึงไมโครโฟน เพื่อการติดต่อและสื่อสาร</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>อนุญาตเข้าถึงคลังภาพ เพื่อใช้การตั้งค่าโปรไฟล์</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>อนุญาตเข้าถึงตำแหน่ง เพื่อกำหนดที่ตั้งร้านของคุณ</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
