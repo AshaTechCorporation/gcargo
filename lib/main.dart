@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gcargo/auth/auth_wrapper.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/language_controller.dart';
@@ -33,6 +36,11 @@ void main() async {
   Get.put(LanguageController());
   Get.put(HomeController());
 
+  await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: [SystemUiOverlay.top], // แสดงเฉพาะด้านบน ⇒ ด้านล่างถูกซ่อน
+  );
+
   runApp(const MyApp());
 }
 
@@ -44,16 +52,37 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  // ⬅️ ADD: ตั้งเวลารี-ซ่อน
+  static const _rehideDelay = Duration(milliseconds: 2500);
+  Timer? _rehideTimer;
+
+  // ⬅️ ADD: ฟังก์ชันซ่อน “เฉพาะแถบล่าง”
+  Future<void> _rehideBottomOnly() async {
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [SystemUiOverlay.top], // โชว์เฉพาะด้านบน ⇒ ด้านล่างถูกซ่อน
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _rehideBottomOnly(); // ⬅️ ADD: ย้ำซ่อนตั้งแต่เริ่ม
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _rehideTimer?.cancel(); // ⬅️ ADD
     super.dispose();
+  }
+
+  // ⬅️ ADD: เมื่อขนาด/Insets เปลี่ยน (เช่น คีย์บอร์ดขึ้น) ⇒ หน่วงแล้วซ่อนอีกครั้ง
+  @override
+  void didChangeMetrics() {
+    _rehideTimer?.cancel();
+    _rehideTimer = Timer(_rehideDelay, _rehideBottomOnly);
   }
 
   @override
@@ -71,6 +100,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         // แอปกลับมาจาก background - AuthWrapper จะจัดการเอง
+        // ⬅️ ADD: กลับเข้าแอป ⇒ ย้ำซ่อนเฉพาะแถบล่าง
+        _rehideBottomOnly();
         break;
       case AppLifecycleState.inactive:
         // แอปไม่ active (เช่น มีการแจ้งเตือนมา)
@@ -84,6 +115,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      // ⬅️ ADD: หุ้มทั้งแอปด้วย Listener เพื่อตรวจจับการปัด/แตะ แล้วรี-ซ่อนอัตโนมัติ
+      builder:
+          (context, child) => Listener(
+            behavior: HitTestBehavior.translucent,
+            onPointerUp: (_) {
+              _rehideTimer?.cancel();
+              _rehideTimer = Timer(_rehideDelay, _rehideBottomOnly);
+            },
+            child: child ?? const SizedBox.shrink(),
+          ),
       title: 'G-Cargo',
       debugShowCheckedModeBanner: false,
       translations: AppTranslations(),
