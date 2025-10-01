@@ -279,10 +279,13 @@ class ProductDetailController extends GetxController {
   Map<String, String> get colorToKeyMapping {
     Map<String, String> mapping = {};
     propsList.forEach((key, value) {
-      if (value.toString().contains('颜色:')) {
-        final originalColor = value.toString().split(':')[1]; // เช่น "白色长款"
-        final translatedColor = translateToThai(originalColor); // เช่น "ขาว长款"
-        mapping[translatedColor] = key; // "ขาว长款" -> "0:0"
+      if (value.toString().contains('颜色:') || value.toString().contains('颜色分类:')) {
+        final valueParts = value.toString().split(':');
+        if (valueParts.length >= 2) {
+          final originalColor = valueParts.sublist(1).join(':'); // รองรับ "颜色:白色" และ "颜色分类:黑色 速干款"
+          final translatedColor = translateToThai(originalColor);
+          mapping[translatedColor] = key; // เช่น "ขาว长款" -> "0:0" หรือ "1627207:28341"
+        }
       }
     });
     return mapping;
@@ -293,9 +296,12 @@ class ProductDetailController extends GetxController {
     Map<String, String> mapping = {};
     propsList.forEach((key, value) {
       if (value.toString().contains('尺码:')) {
-        final originalSize = value.toString().split(':')[1]; // เช่น "XS"
-        final translatedSize = translateToThai(originalSize); // เช่น "XS"
-        mapping[translatedSize] = key; // "XS" -> "1:0"
+        final valueParts = value.toString().split(':');
+        if (valueParts.length >= 2) {
+          final originalSize = valueParts.sublist(1).join(':'); // เช่น "S", "M", "L"
+          final translatedSize = translateToThai(originalSize);
+          mapping[translatedSize] = key; // เช่น "S" -> "20509:28314"
+        }
       }
     });
     return mapping;
