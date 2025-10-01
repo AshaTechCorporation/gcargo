@@ -12,6 +12,7 @@ class ProductDetailController extends GetxController {
   var numIid = ''.obs;
   var type = ''.obs;
   var isFavorite = false.obs; // สำหรับเช็คว่าอยู่ในรายการโปรดหรือไม่
+  var selectedOptionKey = ''.obs; // สำหรับเก็บ option key ที่เลือก เช่น "0:0"
 
   @override
   void onInit() {
@@ -203,19 +204,101 @@ class ProductDetailController extends GetxController {
     return [];
   }
 
-  // Get all available images (main pic_url + desc_img)
+  // Get prop_imgs data
+  Map<String, dynamic> get propImgs {
+    final propImgs = itemData?['prop_imgs'];
+    if (propImgs is Map<String, dynamic>) {
+      return propImgs;
+    }
+    return {};
+  }
+
+  // Get prop_img list
+  List<Map<String, dynamic>> get propImgList {
+    final propImg = propImgs['prop_img'];
+    if (propImg is List) {
+      return propImg.cast<Map<String, dynamic>>();
+    }
+    return [];
+  }
+
+  // Get image URL for specific option key
+  String getImageForOption(String optionKey) {
+    for (var propImg in propImgList) {
+      if (propImg['properties'] == optionKey) {
+        return propImg['url'] ?? '';
+      }
+    }
+    return '';
+  }
+
+  // Get all available images (prop_imgs only, fallback to main pic_url)
   List<String> get allImages {
+    // Force reactive by accessing selectedOptionKey.value
+    final currentSelection = selectedOptionKey.value;
     List<String> images = [];
 
-    // Add main product image first
+    // Always show all prop_img images in original order
+    if (propImgList.isNotEmpty) {
+      for (var propImg in propImgList) {
+        final url = propImg['url'];
+        if (url != null && url.isNotEmpty && !images.contains(url)) {
+          images.add(url);
+        }
+      }
+      return images;
+    }
+
+    // Fallback: if no prop_imgs, show only main product image
     if (picUrl.isNotEmpty) {
       images.add(picUrl);
     }
 
-    // Add description images
-    images.addAll(descImages);
-
     return images;
+  }
+
+  // Method to update selected option and trigger image change
+  void updateSelectedOption(String optionKey) {
+    selectedOptionKey.value = optionKey;
+  }
+
+  // Get current selected image URL (for cart/order)
+  String get currentSelectedImageUrl {
+    // If option is selected, use option image
+    if (selectedOptionKey.value.isNotEmpty) {
+      final optionImage = getImageForOption(selectedOptionKey.value);
+      if (optionImage.isNotEmpty) {
+        return optionImage;
+      }
+    }
+    // If no option selected, use main pic_url
+    return picUrl;
+  }
+
+  // Create mapping between translated colors and their keys
+  Map<String, String> get colorToKeyMapping {
+    Map<String, String> mapping = {};
+    propsList.forEach((key, value) {
+      if (value.toString().contains('颜色:')) {
+        final originalColor = value.toString().split(':')[1]; // เช่น "白色长款"
+        final translatedColor = translateToThai(originalColor); // เช่น "ขาว长款"
+        mapping[translatedColor] = key; // "ขาว长款" -> "0:0"
+      }
+    });
+    return mapping;
+  }
+
+  // Create mapping between translated sizes and their keys
+  Map<String, String> get sizeToKeyMapping {
+    Map<String, String> mapping = {};
+    propsList.forEach((key, value) {
+      if (value.toString().contains('尺码:')) {
+        final originalSize = value.toString().split(':')[1]; // เช่น "XS"
+        final translatedSize = translateToThai(originalSize); // เช่น "XS"
+        mapping[translatedSize] = key; // "XS" -> "1:0"
+      }
+    });
+    return mapping;
   }
 
   // Get props_list data

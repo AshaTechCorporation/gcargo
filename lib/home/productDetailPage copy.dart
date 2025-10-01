@@ -436,19 +436,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               final translatedSize = productController.translateToThai(size);
               final selected = selectedSize == size;
               return GestureDetector(
-                onTap: () {
-                  setState(() => selectedSize = size);
-
-                  // Use mapping to find key
-                  final sizeMapping = productController.sizeToKeyMapping;
-                  final optionKey = sizeMapping[size];
-
-                  print('📏 Size: $size -> Key: $optionKey');
-
-                  if (optionKey != null) {
-                    productController.updateSelectedOption(optionKey);
-                  }
-                },
+                onTap: () => setState(() => selectedSize = size),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
@@ -480,19 +468,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               final translatedColor = productController.translateToThai(color);
               final selected = selectedColor == color;
               return GestureDetector(
-                onTap: () {
-                  setState(() => selectedColor = color);
-
-                  // Use mapping to find key
-                  final colorMapping = productController.colorToKeyMapping;
-                  final optionKey = colorMapping[translatedColor];
-
-                  print('🎨 Color: $translatedColor -> Key: $optionKey');
-
-                  if (optionKey != null) {
-                    productController.updateSelectedOption(optionKey);
-                  }
-                },
+                onTap: () => setState(() => selectedColor = color),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
@@ -698,7 +674,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 'orginal_price': productController.originalPrice,
                 'nick': productController.nick,
                 'detail_url': productController.detailUrl,
-                'pic_url': productController.currentSelectedImageUrl,
+                'pic_url': productController.picUrl,
                 'brand': productController.brand,
                 'quantity': quantity,
                 'selectedSize': selectedSize,
@@ -741,7 +717,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 'orginal_price': productController.originalPrice,
                 'nick': productController.nick,
                 'detail_url': productController.detailUrl,
-                'pic_url': productController.currentSelectedImageUrl,
+                'pic_url': productController.picUrl,
                 'brand': productController.brand,
                 'quantity': quantity,
                 'selectedSize': selectedSize,

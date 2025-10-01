@@ -26,10 +26,13 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
     'assets/images/No_Image.jpg',
   ];
 
+  String _lastSelectedKey = '';
+
   @override
   void initState() {
     super.initState();
-    _startAutoSlide();
+    // ปิด auto slide - ให้เปลี่ยนแค่เมื่อกดเลือกสี/ไซส์หรือกดจุดด้านล่าง
+    // _startAutoSlide();
   }
 
   @override
@@ -111,12 +114,41 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
         );
       }
 
-      // Get all images from API (main pic_url + desc_img)
+      // Get all images from API (prop_imgs)
       final allImages = widget.productController.allImages;
+      final selectedKey = widget.productController.selectedOptionKey.value;
 
       // If no images from API, use fallback images
       final imagesToShow = allImages.isNotEmpty ? allImages : fallbackImages;
       final isUsingApiImages = allImages.isNotEmpty;
+
+      // Jump to selected option image when option changes
+      if (_lastSelectedKey != selectedKey && selectedKey.isNotEmpty) {
+        _lastSelectedKey = selectedKey;
+
+        // Find index of selected option image
+        final optionImage = widget.productController.getImageForOption(selectedKey);
+        print('🔍 Selected key: $selectedKey');
+        print('🔍 Option image: $optionImage');
+        print('🔍 All images: $imagesToShow');
+
+        final targetIndex = imagesToShow.indexOf(optionImage);
+        print('🔍 Target index: $targetIndex');
+
+        if (targetIndex >= 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_pageController.hasClients && mounted) {
+              print('🔍 Jumping to page: $targetIndex');
+              _pageController.jumpToPage(targetIndex);
+              setState(() {
+                selectedImage = targetIndex;
+              });
+            }
+          });
+        } else {
+          print('🔍 Image not found in list!');
+        }
+      }
 
       return Column(
         children: [
@@ -128,22 +160,18 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
               child:
                   imagesToShow.length == 1
                       ? _buildSingleImage(imagesToShow[0], isUsingApiImages)
-                      : GestureDetector(
-                        onPanDown: (_) => _stopAutoSlide(),
-                        onPanEnd: (_) => _restartAutoSlide(),
-                        child: PageView.builder(
-                          controller: _pageController,
-                          onPageChanged: (index) {
-                            setState(() {
-                              selectedImage = index;
-                            });
-                          },
-                          itemCount: imagesToShow.length,
-                          itemBuilder: (context, index) {
-                            final imageUrl = imagesToShow[index];
-                            return _buildSingleImage(imageUrl, isUsingApiImages);
-                          },
-                        ),
+                      : PageView.builder(
+                        controller: _pageController,
+                        onPageChanged: (index) {
+                          setState(() {
+                            selectedImage = index;
+                          });
+                        },
+                        itemCount: imagesToShow.length,
+                        itemBuilder: (context, index) {
+                          final imageUrl = imagesToShow[index];
+                          return _buildSingleImage(imageUrl, isUsingApiImages);
+                        },
                       ),
             ),
           ),
@@ -161,9 +189,7 @@ class _ProductImageSliderWidgetState extends State<ProductImageSliderWidget> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: GestureDetector(
                       onTap: () {
-                        _stopAutoSlide();
                         _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                        _restartAutoSlide();
                       },
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 4),
