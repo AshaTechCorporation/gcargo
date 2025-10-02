@@ -97,13 +97,13 @@ class SearchService {
       File file = File(image.path);
       final imageUpload = await UoloadService.addImage(
         file: file,
-        path: 'uploads/alipay/',
+        path: 'images/asset/',
       );
 
       if (imageUpload != null) {
         // 2. ประมวลผลรูปภาพ
         final imgCode = await HomeService.uploadImage(
-          imgcode: 'https://cargo-api.dev-asha9.com/$imageUpload',
+          imgcode: 'https://g-cargo.dev-asha9.com/public/$imageUpload',
         );
 
         if (imgCode != null && imgCode.isNotEmpty) {
@@ -167,11 +167,11 @@ class SearchService {
   }
 
   // ฟังก์ชั่นสำหรับแสดง Image Picker Bottom Sheet
-  static void showImagePickerBottomSheet({
+  static Future<void> showImagePickerBottomSheet({
     required BuildContext context,
     required String selectedType,
-  }) {
-    showModalBottomSheet(
+  }) async {
+    final XFile? image = await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return SafeArea(
@@ -181,36 +181,37 @@ class SearchService {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('เลือกจากแกลเลอรี่'),
                 onTap: () async {
-                  Navigator.pop(context);
                   final ImagePicker picker = ImagePicker();
                   final XFile? image = await picker.pickImage(
                     source: ImageSource.gallery,
                   );
-                  if (image != null) {
-                    await handleImageSearch(
-                      context: context,
-                      image: image,
-                      selectedType: selectedType,
-                    );
-                  }
+
+                  // if (image != null) {
+                  Navigator.pop(context, image);
+                  // await handleImageSearch(
+                  //   context: context,
+                  //   image: image,
+                  //   selectedType: selectedType,
+                  // );
+                  // }
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.photo_camera),
                 title: const Text('ถ่ายรูป'),
                 onTap: () async {
-                  Navigator.pop(context);
                   final ImagePicker picker = ImagePicker();
                   final XFile? image = await picker.pickImage(
                     source: ImageSource.camera,
                   );
-                  if (image != null) {
-                    await handleImageSearch(
-                      context: context,
-                      image: image,
-                      selectedType: selectedType,
-                    );
-                  }
+                  // if (image != null) {
+                  Navigator.pop(context, image);
+                  // await handleImageSearch(
+                  //   context: context,
+                  //   image: image,
+                  //   selectedType: selectedType,
+                  // );
+                  // }
                 },
               ),
             ],
@@ -218,6 +219,13 @@ class SearchService {
         );
       },
     );
+    if (image != null) {
+      await handleImageSearch(
+        context: context,
+        image: image,
+        selectedType: selectedType,
+      );
+    }
   }
 
   // ฟังก์ชั่นสำหรับแปลง type สำหรับ API

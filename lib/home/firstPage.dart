@@ -240,7 +240,6 @@ class _FirstPageState extends State<FirstPage> {
       body: Stack(
         children: [
           PageStorage(bucket: bucket, child: pages[_pageIndex]),
-
           if (_showStatusPanel)
             Positioned(
               left: 0,
@@ -312,7 +311,6 @@ class _FirstPageState extends State<FirstPage> {
                 ),
               ),
             ),
-
           if (_showBillPanel)
             Positioned(
               left: 0,

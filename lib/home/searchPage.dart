@@ -8,7 +8,8 @@ import 'package:gcargo/home/productDetailPage.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
 
 class SearchPage extends StatefulWidget {
-  final List<Map<String, dynamic>> initialSearchResults;
+  // final List<Map<String, dynamic>> initialSearchResults;
+  final List<dynamic> initialSearchResults;
   final String initialSearchQuery;
   final String type;
 
@@ -22,7 +23,8 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchController = TextEditingController();
   late final HomeController homeController;
   late LanguageController languageController;
-  List<Map<String, dynamic>> currentSearchResults = [];
+  // List<Map<String, dynamic>> currentSearchResults = [];
+  List<dynamic> currentSearchResults = [];
   String currentSearchQuery = '';
   bool isSearching = false;
   List<String> searchHistory = [];
@@ -271,27 +273,26 @@ class _SearchPageState extends State<SearchPage> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children:
-                        searchHistory
-                            .map(
-                              (query) => GestureDetector(
-                                onTap: () {
-                                  searchController.text = query;
-                                  _performSearch(query);
-                                },
-                                child: Chip(
-                                  label: Text(query),
-                                  backgroundColor: Colors.blue.shade50,
-                                  deleteIcon: const Icon(Icons.close, size: 16),
-                                  onDeleted: () {
-                                    setState(() {
-                                      searchHistory.remove(query);
-                                    });
-                                  },
-                                ),
-                              ),
-                            )
-                            .toList(),
+                    children: searchHistory
+                        .map(
+                          (query) => GestureDetector(
+                            onTap: () {
+                              searchController.text = query;
+                              _performSearch(query);
+                            },
+                            child: Chip(
+                              label: Text(query),
+                              backgroundColor: Colors.blue.shade50,
+                              deleteIcon: const Icon(Icons.close, size: 16),
+                              onDeleted: () {
+                                setState(() {
+                                  searchHistory.remove(query);
+                                });
+                              },
+                            ),
+                          ),
+                        )
+                        .toList(),
                   ),
                 ] else ...[
                   Text(getTranslation('no_search_history'), style: TextStyle(color: Colors.grey)),

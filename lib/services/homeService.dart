@@ -129,7 +129,7 @@ class HomeService {
   //อัปโหลดรูป
   static Future uploadImage({required String imgcode}) async {
     //final url = Uri.https('kongcrdv.com', '/ima/index.php', {"imgcode": '${imgcode}', "key": 'tegcargo06062024'});
-    final url = Uri.https('laonet.online', '/ima/index.php', {"imgcode": '${imgcode}', "key": 'tegcargo06062024'});
+    final url = Uri.https('laonet.icom.la', '/ima/index.php', {"imgcode": '${imgcode}', "key": 'tegcargo06062024'});
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -158,11 +158,9 @@ class HomeService {
     //   'api_key': 'tegcargo06062024',
     // });
 
-    final client =
-        HttpClient()
-          ..autoUncompress =
-              false // ปิด gzip
-          ..connectionTimeout = Duration(seconds: 30);
+    final client = HttpClient()
+      ..autoUncompress = false // ปิด gzip
+      ..connectionTimeout = Duration(seconds: 30);
 
     try {
       final request = await client.getUrl(uri);
