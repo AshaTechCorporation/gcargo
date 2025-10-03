@@ -399,7 +399,6 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   const Divider(height: 24),
                   GestureDetector(
                     onTap: () async {
@@ -459,132 +458,131 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: GestureDetector(
-                    onTap:
-                        isOrdering
-                            ? null
-                            : () async {
-                              // ป้องกันการกดซ้ำ
-                              if (isOrdering) return;
+                    onTap: isOrdering
+                        ? null
+                        : () async {
+                            // ป้องกันการกดซ้ำ
+                            if (isOrdering) return;
 
-                              setState(() {
-                                isOrdering = true;
-                              });
+                            setState(() {
+                              isOrdering = true;
+                            });
 
-                              // Store context before async operations
-                              final currentContext = context;
+                            // Store context before async operations
+                            final currentContext = context;
 
-                              try {
-                                // แสดงไดอะล็อกเลือกรูปแบบการชำระเงิน
-                                final paymentType = await _showPaymentTypeDialog(currentContext);
-                                if (paymentType == null) {
-                                  setState(() {
-                                    isOrdering = false;
-                                  });
-                                  return;
-                                }
-
-                                List<PartService> addOnServices = [];
-                                List<Products> orderProducts = [];
-
-                                // Add selected extra service
-                                if (serviceSelected != null) {
-                                  final addOnService = PartService(serviceSelected!.id, serviceSelected!.standard_price);
-                                  addOnServices.add(addOnService);
-                                }
-
-                                // Create products for order
-                                for (var i = 0; i < products.length; i++) {
-                                  final product = products[i];
-
-                                  // Create options for this specific product
-                                  List<OptionsItem> productOptionsItems = [];
-
-                                  // Add selectedSize if available for this product
-                                  if (product['selectedSize'] != null && product['selectedSize'].toString().isNotEmpty) {
-                                    final sizeOption = OptionsItem(product['selectedSize'], '', 'size');
-                                    productOptionsItems.add(sizeOption);
-                                  }
-
-                                  // Add selectedColor if available for this product
-                                  if (product['selectedColor'] != null && product['selectedColor'].toString().isNotEmpty) {
-                                    final colorOption = OptionsItem(product['selectedColor'], '', 'color');
-                                    productOptionsItems.add(colorOption);
-                                  }
-
-                                  final orderProduct = Products(
-                                    product['nick'] ?? '', // product_shop
-                                    product['num_iid'] ?? '', // product_code
-                                    product['title'] ?? '', // product_name
-                                    product['detail_url'] ?? '', // product_url
-                                    product['pic_url'] ?? '', // product_image
-                                    product['name'] ?? '', // product_category
-                                    'shopgs1', // product_store_type
-                                    noteController.text, // product_note
-                                    product['price']?.toString() ?? '0', // product_price
-                                    product['quantity']?.toString() ?? '1', // product_qty
-                                    addOnServices, // add_on_services
-                                    productOptionsItems, // options specific to this product
-                                  );
-                                  orderProducts.add(orderProduct);
-                                }
-                                inspect(orderProducts);
-
-                                // Calculate total price
-                                final totalYuan = calculateTotalYuan();
-
-                                // Get selected shipping address ID
-                                final selectedAddressId = homeController.select_ship_address?.id;
-                                print(selectedAddressId);
-
-                                //Create order via API
-                                final result = await HomeService.createOrder(
-                                  date: DateTime.now().toIso8601String(),
-                                  total_price: totalYuan,
-                                  shipping_type: deliveryOptions['nameEng'] ?? 'car',
-                                  payment_term: paymentType,
-                                  note: noteController.text,
-                                  importer_code: '',
-                                  member_address_id: selectedAddressId,
-                                  products: orderProducts,
-                                  coupon: selectedCoupon,
-                                  paymentType: paymentType,
-                                );
-
-                                log('✅ Order created successfully: $result');
-
-                                // Remove ordered items from cart
-                                await _removeOrderedItemsFromCart();
-
-                                // Show success message
-                                if (mounted) {
-                                  ScaffoldMessenger.of(
-                                    currentContext,
-                                  ).showSnackBar(SnackBar(content: Text(getTranslation('order_success')), backgroundColor: Colors.green));
-
-                                  // Navigate back or to order confirmation page
-                                  Navigator.pushAndRemoveUntil(
-                                    currentContext,
-                                    MaterialPageRoute(builder: (context) => FirstPage()),
-                                    (route) => false,
-                                  );
-                                }
-                              } catch (e) {
-                                log('❌ Error creating order: $e');
-
-                                if (mounted) {
-                                  ScaffoldMessenger.of(
-                                    currentContext,
-                                  ).showSnackBar(SnackBar(content: Text('${getTranslation('error_occurred')}: $e'), backgroundColor: Colors.red));
-                                }
-                              } finally {
-                                // รีเซ็ต loading state
-                                if (mounted) {
-                                  setState(() {
-                                    isOrdering = false;
-                                  });
-                                }
+                            try {
+                              // แสดงไดอะล็อกเลือกรูปแบบการชำระเงิน
+                              final paymentType = await _showPaymentTypeDialog(currentContext);
+                              if (paymentType == null) {
+                                setState(() {
+                                  isOrdering = false;
+                                });
+                                return;
                               }
-                            },
+
+                              List<PartService> addOnServices = [];
+                              List<Products> orderProducts = [];
+
+                              // Add selected extra service
+                              if (serviceSelected != null) {
+                                final addOnService = PartService(serviceSelected!.id, serviceSelected!.standard_price);
+                                addOnServices.add(addOnService);
+                              }
+
+                              // Create products for order
+                              for (var i = 0; i < products.length; i++) {
+                                final product = products[i];
+
+                                // Create options for this specific product
+                                List<OptionsItem> productOptionsItems = [];
+
+                                // Add selectedSize if available for this product
+                                if (product['selectedSize'] != null && product['selectedSize'].toString().isNotEmpty) {
+                                  final sizeOption = OptionsItem(product['selectedSize'], '', 'size');
+                                  productOptionsItems.add(sizeOption);
+                                }
+
+                                // Add selectedColor if available for this product
+                                if (product['selectedColor'] != null && product['selectedColor'].toString().isNotEmpty) {
+                                  final colorOption = OptionsItem(product['selectedColor'], '', 'color');
+                                  productOptionsItems.add(colorOption);
+                                }
+
+                                final orderProduct = Products(
+                                  product['nick'] ?? '', // product_shop
+                                  product['num_iid'] ?? '', // product_code
+                                  product['title'] ?? '', // product_name
+                                  product['detail_url'] ?? '', // product_url
+                                  product['pic_url'] ?? '', // product_image
+                                  product['name'] ?? '', // product_category
+                                  'shopgs1', // product_store_type
+                                  noteController.text, // product_note
+                                  product['price']?.toString() ?? '0', // product_price
+                                  product['quantity']?.toString() ?? '1', // product_qty
+                                  addOnServices, // add_on_services
+                                  productOptionsItems, // options specific to this product
+                                );
+                                orderProducts.add(orderProduct);
+                              }
+                              inspect(orderProducts);
+
+                              // Calculate total price
+                              final totalYuan = calculateTotalYuan();
+
+                              // Get selected shipping address ID
+                              final selectedAddressId = homeController.select_ship_address?.id;
+                              print(selectedAddressId);
+
+                              //Create order via API
+                              final result = await HomeService.createOrder(
+                                date: DateTime.now().toIso8601String(),
+                                total_price: totalYuan,
+                                shipping_type: deliveryOptions['nameEng'] ?? 'car',
+                                payment_term: paymentType,
+                                note: noteController.text,
+                                importer_code: '',
+                                member_address_id: selectedAddressId == null ? '' : selectedAddressId.toString(),
+                                products: orderProducts,
+                                coupon: selectedCoupon,
+                                paymentType: paymentType,
+                              );
+
+                              log('✅ Order created successfully: $result');
+
+                              // Remove ordered items from cart
+                              await _removeOrderedItemsFromCart();
+
+                              // Show success message
+                              if (mounted) {
+                                ScaffoldMessenger.of(
+                                  currentContext,
+                                ).showSnackBar(SnackBar(content: Text(getTranslation('order_success')), backgroundColor: Colors.green));
+
+                                // Navigate back or to order confirmation page
+                                Navigator.pushAndRemoveUntil(
+                                  currentContext,
+                                  MaterialPageRoute(builder: (context) => FirstPage()),
+                                  (route) => false,
+                                );
+                              }
+                            } catch (e) {
+                              log('❌ Error creating order: $e');
+
+                              if (mounted) {
+                                ScaffoldMessenger.of(
+                                  currentContext,
+                                ).showSnackBar(SnackBar(content: Text('${getTranslation('error_occurred')}: $e'), backgroundColor: Colors.red));
+                              }
+                            } finally {
+                              // รีเซ็ต loading state
+                              if (mounted) {
+                                setState(() {
+                                  isOrdering = false;
+                                });
+                              }
+                            }
+                          },
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(color: isOrdering ? Colors.grey : kButtonColor, borderRadius: BorderRadius.circular(12)),
@@ -597,17 +595,16 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                               color: isOrdering ? Colors.grey.shade600 : Color(0xFF2E73B9), // ฟ้าอ่อน
                               shape: BoxShape.circle,
                             ),
-                            child:
-                                isOrdering
-                                    ? SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-                                    )
-                                    : Text(
-                                      '${widget.productDataList!.length}',
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                                    ),
+                            child: isOrdering
+                                ? SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                                  )
+                                : Text(
+                                    '${widget.productDataList!.length}',
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                                  ),
                           ),
                           const SizedBox(width: 12),
                           Text(
@@ -825,39 +822,38 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children:
-            homeController.extraServices.asMap().entries.map((entry) {
-              final index = entry.key;
-              final service = entry.value;
-              final isSelected = selectedExtraServiceIndex == index;
+        children: homeController.extraServices.asMap().entries.map((entry) {
+          final index = entry.key;
+          final service = entry.value;
+          final isSelected = selectedExtraServiceIndex == index;
 
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedExtraServiceIndex = isSelected ? null : index;
-                    serviceSelected = service;
-                  });
-                  inspect(serviceSelected);
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(right: 16),
-                  child: Row(
-                    children: [
-                      Icon(
-                        isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                        color: isSelected ? Colors.blue : Colors.grey,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        service.name ?? '',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: isSelected ? Colors.blue : Colors.black),
-                      ),
-                    ],
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedExtraServiceIndex = isSelected ? null : index;
+                serviceSelected = service;
+              });
+              inspect(serviceSelected);
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                    color: isSelected ? Colors.blue : Colors.grey,
+                    size: 16,
                   ),
-                ),
-              );
-            }).toList(),
+                  const SizedBox(width: 4),
+                  Text(
+                    service.name ?? '',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: isSelected ? Colors.blue : Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
