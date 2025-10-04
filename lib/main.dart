@@ -37,7 +37,7 @@ void main() async {
   Get.put(HomeController());
 
   await SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.manual,
+    SystemUiMode.immersiveSticky,
     overlays: [SystemUiOverlay.top], // แสดงเฉพาะด้านบน ⇒ ด้านล่างถูกซ่อน
   );
 
@@ -132,10 +132,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       fallbackLocale: const Locale('th', 'TH'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        appBarTheme: AppBarTheme(
-          titleTextStyle: TextStyle(fontFamily: 'SukhumvitSet', fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
-          centerTitle: false,
-        ),
+        appBarTheme: AppBarTheme(titleTextStyle: TextStyle(fontFamily: 'SukhumvitSet', fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold), centerTitle: false),
         fontFamily: 'SukhumvitSet',
       ),
       home: const AppLifecycleWrapper(),
