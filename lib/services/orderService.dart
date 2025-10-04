@@ -127,7 +127,7 @@ class OrderService {
         'member_id': userID.toString(),
         'order_type': order_type,
         'items': item,
-        'vat': vat == true ? 'Y' : 'N',
+        'bill_vat': vat == true ? 'Y' : 'N',
         'total_price': total_price,
       }),
     );
