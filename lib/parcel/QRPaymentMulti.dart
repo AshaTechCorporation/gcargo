@@ -253,7 +253,11 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
             child: Stack(
               children: [
                 Center(child: Image.file(uploadedImage!, fit: BoxFit.contain)),
-                Positioned(top: 40, right: 20, child: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white, size: 30))),
+                Positioned(
+                  top: 40,
+                  right: 20,
+                  child: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white, size: 30)),
+                ),
               ],
             ),
           );
@@ -288,7 +292,13 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
 
         // เรียก API ชำระเงิน
         String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        await OrderService.paymentOrderMultiple(vat: widget.vat, payment_type: 'upload', total_price: widget.totalPrice, order_type: widget.orderType, item: updatedItems);
+        await OrderService.paymentOrderMultiple(
+          vat: widget.vat,
+          payment_type: 'upload',
+          total_price: widget.totalPrice,
+          order_type: widget.orderType,
+          item: updatedItems,
+        );
 
         // หากสำเร็จ
         if (mounted) {
@@ -325,7 +335,11 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(title: const Text('เกิดข้อผิดพลาด'), content: Text(message), actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))]);
+        return AlertDialog(
+          title: const Text('เกิดข้อผิดพลาด'),
+          content: Text(message),
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))],
+        );
       },
     );
   }
@@ -341,7 +355,10 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
         title: Text(getTranslation('qr_promptpay'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
-      body: Padding(padding: const EdgeInsets.all(16), child: SingleChildScrollView(child: Column(children: [_buildBankCard(), const SizedBox(height: 16), _buildUploadBox()]))),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(child: Column(children: [_buildBankCard(), const SizedBox(height: 16), _buildUploadBox()])),
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
         child: SizedBox(
@@ -349,13 +366,20 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
           height: 48,
           child: ElevatedButton(
             onPressed: isLoading ? null : _handlePayment,
-            style: ElevatedButton.styleFrom(backgroundColor: isLoading ? Colors.grey : const Color(0xFF001B47), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isLoading ? Colors.grey : const Color(0xFF001B47),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
             child:
                 isLoading
                     ? const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                        ),
                         SizedBox(width: 8),
                         Text('กำลังดำเนินการ...', style: TextStyle(fontSize: 16, color: Colors.white)),
                       ],
@@ -412,7 +436,8 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
                             width: 40,
                             height: 40,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/No_Image.jpg', width: 40, height: 40, fit: BoxFit.cover),
+                            errorBuilder:
+                                (context, error, stackTrace) => Image.asset('assets/images/No_Image.jpg', width: 40, height: 40, fit: BoxFit.cover),
                           ),
                         )
                         : ClipOval(child: Image.asset('assets/images/No_Image.jpg', width: 40, height: 40, fit: BoxFit.cover)),
@@ -429,7 +454,11 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
                     ),
                     ElevatedButton(
                       onPressed: () => _copyAccountNumber(bank['account_number'] ?? ''),
-                      style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF001B47), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF001B47),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
                       child: Text(getTranslation('copy_account'), style: const TextStyle(fontSize: 12)),
                     ),
                   ],
@@ -441,7 +470,8 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
                       width: double.infinity,
                       height: 270,
                       fit: BoxFit.fill,
-                      errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/No_Image.jpg', width: 40, height: 40, fit: BoxFit.cover),
+                      errorBuilder:
+                          (context, error, stackTrace) => Image.asset('assets/images/No_Image.jpg', width: 40, height: 40, fit: BoxFit.cover),
                     )
                     : SizedBox.shrink(),
                 if (index < bankAccounts.length - 1) ...[const SizedBox(height: 12), const Divider(), const SizedBox(height: 12)],
@@ -456,7 +486,10 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
           const SizedBox(height: 12),
           Align(
             alignment: Alignment.center,
-            child: Text('${getTranslation('total_amount_pay')}: ${widget.totalPrice.toStringAsFixed(2)} ${getTranslation('baht')}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            child: Text(
+              '${getTranslation('total_amount_pay')}: ${widget.totalPrice.toStringAsFixed(2)} ${getTranslation('baht')}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
           ),
         ],
       ),
@@ -467,7 +500,11 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(border: Border.all(color: const Color(0xFF9381FF)), borderRadius: BorderRadius.circular(8), color: const Color(0xFFF7F5FF)),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFF9381FF)),
+        borderRadius: BorderRadius.circular(8),
+        color: const Color(0xFFF7F5FF),
+      ),
       child:
           uploadedImage == null
               ? Column(
@@ -496,7 +533,10 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
                   // แสดงรูปที่อัปโหลด
                   Stack(
                     children: [
-                      ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.file(uploadedImage!, width: 100, height: 100, fit: BoxFit.cover)),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(uploadedImage!, width: 100, height: 100, fit: BoxFit.cover),
+                      ),
                       // ปุ่มดูและลบ
                       Positioned(
                         top: 4,
