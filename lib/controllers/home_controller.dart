@@ -68,8 +68,7 @@ class HomeController extends GetxController {
       final data = await HomeService.getItemSearch(search: query, type: selectedItemType.value == 'shopgs1' ? 'taobao' : '1688', page: 1);
 
       if (data != null && data is Map && data['item'] is Map && data['item']['items'] is Map && data['item']['items']['item'] is List) {
-        final List<Map<String, dynamic>> items =
-            (data['item']['items']['item'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+        final List<Map<String, dynamic>> items = (data['item']['items']['item'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
 
         if (items.isNotEmpty) {
           searchItems.value = items;
