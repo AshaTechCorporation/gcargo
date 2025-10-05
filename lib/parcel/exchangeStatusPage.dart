@@ -29,17 +29,17 @@ class _ExchangeStatusPageState extends State<ExchangeStatusPage> {
 
     final translations = {
       'th': {
-        'exchange_status': 'สถานะแลกเงิน',
+        'exchange_status': 'สถานะ',
         'all': 'ทั้งหมด',
-        'pending_payment': 'รอชำระเงิน',
+        'pending_payment': 'รอตรวจสอบ',
         'completed': 'สำเร็จ',
         'select_date_range': 'เลือกช่วงวันที่',
         'search_order': 'ค้นหาเลขที่ออเดอร์',
-        'no_exchanges_found': 'ไม่พบรายการแลกเงิน',
+        'no_exchanges_found': 'ไม่พบรายการ',
         'no_exchanges_status': 'ไม่มีรายการในสถานะ',
         'exchanges_will_show_here': 'เมื่อคุณแลกเงิน รายการจะแสดงที่นี่',
         'order_number': 'เลขที่ออเดอร์',
-        'exchange_rate': 'อัตราแลกเงิน',
+        'exchange_rate': 'อัตราแลกเปลี่ยน',
         'service_fee': 'ค่าบริการ',
         'total_amount': 'จำนวนเงินรวม',
         'yuan': 'หยวน',

@@ -68,7 +68,7 @@ class _FirstPageState extends State<FirstPage> {
       'th': {
         'order_status': 'ออเดอร์',
         'parcel_status': 'พัสดุ',
-        'exchange_status': 'แลกเงิน',
+        'exchange_status': 'แลกเปลี่ยน',
         'problem_package': 'แจ้งเคลม',
         'product_history': 'ประวัติค่าสินค้า',
         'transport_cost': 'ประวัติค่าขนส่ง',

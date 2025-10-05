@@ -45,7 +45,7 @@ class _ExchangePageState extends State<ExchangePage> {
 
     final translations = {
       'th': {
-        'exchange': 'แลกเงิน',
+        'exchange': 'แลกเปลี่ยน',
         'exchange_rate': 'อัตราแลกเปลี่ยน',
         'service_fee': 'ค่าบริการ',
         'total_amount': 'จำนวนเงินรวม',
