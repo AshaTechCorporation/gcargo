@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gcargo/home/cartPage.dart';
@@ -473,8 +474,20 @@ class _HomePageState extends State<HomePage> {
                           ServiceImageCard(
                             imagePath: 'assets/images/bay.png',
                             onTap: () {
+                              if (Platform.isIOS) {
+                                Get.snackbar(
+                                  'แจ้งเตือน',
+                                  'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                                  backgroundColor: Colors.yellowAccent,
+                                  colorText: Colors.black,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                );
+                              } else {
+                                // 👉 ไปหน้าแลกเปลี่ยนเงิน
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
+                              }
                               // 👉 ไปหน้าแลกเปลี่ยนเงิน
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
+                              //Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
                             },
                           ),
                         ],

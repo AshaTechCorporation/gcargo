@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/accountPage.dart';
 import 'package:gcargo/bill/orderHistoryPage.dart';
@@ -291,7 +293,18 @@ class _FirstPageState extends State<FirstPage> {
                           setState(() {
                             _showStatusPanel = false;
                           });
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeStatusPage()));
+                          if (Platform.isIOS) {
+                            Get.snackbar(
+                              'แจ้งเตือน',
+                              'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                              backgroundColor: Colors.yellowAccent,
+                              colorText: Colors.black,
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                          } else {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeStatusPage()));
+                          }
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => const ExchangeStatusPage()));
                         },
                       ),
                       _statusActionItem(
