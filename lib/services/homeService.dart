@@ -158,9 +158,11 @@ class HomeService {
     //   'api_key': 'tegcargo06062024',
     // });
 
-    final client = HttpClient()
-      ..autoUncompress = false // ปิด gzip
-      ..connectionTimeout = Duration(seconds: 30);
+    final client =
+        HttpClient()
+          ..autoUncompress =
+              false // ปิด gzip
+          ..connectionTimeout = Duration(seconds: 30);
 
     try {
       final request = await client.getUrl(uri);
@@ -470,6 +472,51 @@ class HomeService {
     final userID = prefs.getInt('userID');
     final url = Uri.https(publicUrl, '/public/api/reward_page');
     var headers = {'Content-Type': 'application/json'};
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: convert.jsonEncode({
+        "draw": 1,
+        "order": [
+          {"column": 0, "dir": "asc"},
+        ],
+        "start": 0,
+        "length": 10,
+        "search": {"value": "", "regex": false},
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data']['data'] as List;
+      return List<Map<String, dynamic>>.from(list);
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //แลกของรางวัลเปลี่ยนสถานะ
+  static Future updateStatusReward({required int id, required String status}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final url = Uri.https(publicUrl, '/public/api/update_status_client_reward/$id');
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
+    final response = await http.put(url, headers: headers, body: convert.jsonEncode({"status": status}));
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = convert.jsonDecode(response.body);
+      return data;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //ประวัติแลกของ
+  static Future<List<Map<String, dynamic>>> getRewardExchange() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final url = Uri.https(publicUrl, '/public/api/client_reward_page');
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
     final response = await http.post(
       url,
       headers: headers,

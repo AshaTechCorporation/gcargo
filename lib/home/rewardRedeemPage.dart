@@ -125,6 +125,22 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
     });
   }
 
+  // ฟังก์ชั่นสำหรับอัพเดท point balance จาก API
+  Future<void> _updatePointBalance() async {
+    try {
+      final user = await homeController.getUserByIdFromAPI();
+      if (user != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('point_balance', user.point_balance ?? '0');
+        setState(() {
+          pointBalance = user.point_balance ?? '0';
+        });
+      }
+    } catch (e) {
+      print('Error updating point balance: $e');
+    }
+  }
+
   // ฟังก์ชั่นสำหรับแสดงแต้มเป็นทศนิยม 2 ตำแหน่ง
   String _formatPointBalance(String balance) {
     try {
@@ -136,7 +152,7 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
   }
 
   // ฟังก์ชั่นสำหรับเช็คแต้มและแลกรางวัล
-  void _checkPointsAndRedeem() {
+  Future<void> _checkPointsAndRedeem() async {
     final rewards = homeController.reward;
     if (rewards.isEmpty || selectedReward >= rewards.length) {
       _showAlert(getTranslation('no_rewards'));
@@ -148,8 +164,38 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
     final currentPoints = double.tryParse(pointBalance) ?? 0;
 
     if (currentPoints >= requiredPoints) {
-      // แต้มพอ ไปหน้าสำเร็จ
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const RewardSuccessPage()));
+      // แต้มพอ ยิง API updateStatusReward
+      final rewardId = selectedRewardData['id'];
+      if (rewardId != null) {
+        // แสดง loading
+        showDialog(context: context, barrierDismissible: false, builder: (context) => Center(child: CircularProgressIndicator()));
+
+        // เรียก API
+        final success = await homeController.updateRewardStatus(
+          id: rewardId,
+          status: 'pending', // หรือสถานะที่ต้องการ
+        );
+
+        // ปิด loading
+        if (mounted) {
+          Navigator.of(context).pop();
+
+          if (success) {
+            // API สำเร็จ ไปหน้า RewardSuccessPage
+            final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => const RewardSuccessPage()));
+
+            // ถ้ากลับมาจากหน้า RewardSuccessPage ให้อัพเดท point balance
+            if (result == true) {
+              await _updatePointBalance();
+            }
+          } else {
+            // API ไม่สำเร็จ แจ้งเตือน
+            _showAlert(getTranslation('redeem_failed'));
+          }
+        }
+      } else {
+        _showAlert(getTranslation('error_occurred'));
+      }
     } else {
       // แต้มไม่พอ แจ้งเตือน
       _showAlert(

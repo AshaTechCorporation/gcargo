@@ -79,7 +79,7 @@ class RewardSuccessPage extends StatelessWidget {
                       backgroundColor: kButtonColor,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(context, true),
                     child: Text(getTranslation('go_back'), style: TextStyle(fontSize: 16, color: Colors.white)),
                   ),
                 ),

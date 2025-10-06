@@ -34,6 +34,8 @@ class HomeController extends GetxController {
   var currentUser = Rxn<User>();
   var alipayPaymentById = Rxn<Payment>();
   var reward = <Map<String, dynamic>>[].obs;
+  var rewardExchangeHistory = <Map<String, dynamic>>[].obs;
+  var isLoadingRewardHistory = false.obs;
 
   // สำหรับเก็บไตเติ๊ลที่แปลแล้วของสินค้าในหน้าโฮม
   var translatedHomeTitles = <String, String>{}.obs;
@@ -68,7 +70,8 @@ class HomeController extends GetxController {
       final data = await HomeService.getItemSearch(search: query, type: selectedItemType.value == 'shopgs1' ? 'taobao' : '1688', page: 1);
 
       if (data != null && data is Map && data['item'] is Map && data['item']['items'] is Map && data['item']['items']['item'] is List) {
-        final List<Map<String, dynamic>> items = (data['item']['items']['item'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+        final List<Map<String, dynamic>> items =
+            (data['item']['items']['item'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
 
         if (items.isNotEmpty) {
           searchItems.value = items;
@@ -348,6 +351,46 @@ class HomeController extends GetxController {
     } catch (e) {
       log('❌ Error in searchItems: $e');
       _setErrorRate('$e');
+    }
+  }
+
+  // Method to fetch reward exchange history
+  Future<void> getRewardExchangeFromAPI() async {
+    try {
+      isLoadingRewardHistory.value = true;
+      final exchangeData = await HomeService.getRewardExchange();
+      if (exchangeData != null) {
+        rewardExchangeHistory.value = exchangeData;
+      } else {
+        _setErrorRate('ไม่สามารถเชื่อมต่อ API ไม่พบข้อมูลประวัติการแลก');
+      }
+    } catch (e) {
+      log('❌ Error in getRewardExchange: $e');
+      _setErrorRate('$e');
+    } finally {
+      isLoadingRewardHistory.value = false;
+    }
+  }
+
+  // Method to update reward status (redeem reward)
+  Future<bool> updateRewardStatus({required int id, required String status}) async {
+    try {
+      final result = await HomeService.updateStatusReward(id: id, status: status);
+      return true;
+    } catch (e) {
+      log('❌ Error in updateRewardStatus: $e');
+      return false;
+    }
+  }
+
+  // Method to get user by ID
+  Future<User?> getUserByIdFromAPI() async {
+    try {
+      final user = await HomeService.getUserById();
+      return user;
+    } catch (e) {
+      log('❌ Error in getUserById: $e');
+      return null;
     }
   }
 
