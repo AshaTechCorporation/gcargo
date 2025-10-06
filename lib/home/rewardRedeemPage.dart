@@ -38,7 +38,7 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
         'cancel': 'ยกเลิก',
         'confirm': 'ยืนยัน',
         'redeem_success': 'แลกของรางวัลสำเร็จ',
-        'redeem_failed': 'แลกของรางวัลไม่สำเร็จ',
+        'redeem_failed': 'ไม่พบรายการ',
         'loading': 'กำลังโหลด...',
         'no_rewards': 'ไม่มีของรางวัล',
         'error_occurred': 'เกิดข้อผิดพลาด',
@@ -171,10 +171,7 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
         showDialog(context: context, barrierDismissible: false, builder: (context) => Center(child: CircularProgressIndicator()));
 
         // เรียก API
-        final success = await homeController.updateRewardStatus(
-          id: rewardId,
-          status: 'pending', // หรือสถานะที่ต้องการ
-        );
+        final success = await homeController.updateRewardStatus(reward_id: rewardId);
 
         // ปิด loading
         if (mounted) {

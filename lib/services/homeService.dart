@@ -496,12 +496,29 @@ class HomeService {
   }
 
   //แลกของรางวัลเปลี่ยนสถานะ
-  static Future updateStatusReward({required int id, required String status}) async {
+  // static Future updateStatusReward({required int id, required String status}) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //   final url = Uri.https(publicUrl, '/public/api/update_status_client_reward/$id');
+  //   var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
+  //   final response = await http.put(url, headers: headers, body: convert.jsonEncode({"status": status}));
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     final data = convert.jsonDecode(response.body);
+  //     return data;
+  //   } else {
+  //     final data = convert.jsonDecode(response.body);
+  //     throw ApiException(data['message']);
+  //   }
+  // }
+
+  //แลกของรางวัลเปลี่ยนสถานะ เส้นเพอ่ม
+  static Future updateStatusReward({required int reward_id}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
     final token = prefs.getString('token');
-    final url = Uri.https(publicUrl, '/public/api/update_status_client_reward/$id');
+    final url = Uri.https(publicUrl, '/public/api/client_reward');
     var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
-    final response = await http.put(url, headers: headers, body: convert.jsonEncode({"status": status}));
+    final response = await http.post(url, headers: headers, body: convert.jsonEncode({"member_id": userID, "reward_id": reward_id, "qty": 1}));
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = convert.jsonDecode(response.body);
       return data;

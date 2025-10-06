@@ -373,10 +373,14 @@ class HomeController extends GetxController {
   }
 
   // Method to update reward status (redeem reward)
-  Future<bool> updateRewardStatus({required int id, required String status}) async {
+  Future<bool> updateRewardStatus({required int reward_id}) async {
     try {
-      final result = await HomeService.updateStatusReward(id: id, status: status);
-      return true;
+      final result = await HomeService.updateStatusReward(reward_id: reward_id);
+      if (result != null) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       log('❌ Error in updateRewardStatus: $e');
       return false;
