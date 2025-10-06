@@ -531,6 +531,7 @@ class HomeService {
   //ประวัติแลกของ
   static Future<List<Map<String, dynamic>>> getRewardExchange() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
     final token = prefs.getString('token');
     final url = Uri.https(publicUrl, '/public/api/client_reward_page');
     var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
@@ -539,6 +540,7 @@ class HomeService {
       headers: headers,
       body: convert.jsonEncode({
         "draw": 1,
+        "member_id": userID,
         "order": [
           {"column": 0, "dir": "asc"},
         ],

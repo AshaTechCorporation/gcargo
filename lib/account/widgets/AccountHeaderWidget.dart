@@ -4,6 +4,7 @@ import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/models/wallettrans.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AccountHeaderWidget extends StatelessWidget {
   final VoidCallback onCreditTap;
@@ -89,6 +90,18 @@ class AccountHeaderWidget extends StatelessWidget {
     } catch (e) {
       // ถ้าไม่พบ OrderController หรือเกิดข้อผิดพลาด ให้คืนค่า 0
       return 0;
+    }
+  }
+
+  // ฟังก์ชั่นสำหรับฟอแมทพ้อยให้มีคอมม่า
+  String _formatPointBalance(String? balance) {
+    try {
+      if (balance == null || balance.isEmpty) return '0.00';
+      final double value = double.parse(balance);
+      final formatter = NumberFormat('#,##0.00');
+      return formatter.format(value);
+    } catch (e) {
+      return '0.00';
     }
   }
 
@@ -196,9 +209,7 @@ class AccountHeaderWidget extends StatelessWidget {
                         top: 10,
                         left: 25,
                         child: Text(
-                          user?.point_balance != null && user!.point_balance!.isNotEmpty
-                              ? double.tryParse(user!.point_balance!)?.toStringAsFixed(2) ?? '0.00'
-                              : '0.00',
+                          _formatPointBalance(user?.point_balance),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 30,

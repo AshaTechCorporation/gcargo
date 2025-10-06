@@ -19,6 +19,7 @@ import 'package:gcargo/home/packageDepositPage.dart';
 import 'package:gcargo/home/productDetailPage.dart';
 import 'package:gcargo/home/rewardRedeemPage.dart';
 import 'package:gcargo/widgets/upgrade_test_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -108,6 +109,11 @@ class _HomePageState extends State<HomePage> {
     languageController = Get.find<LanguageController>();
     homeController.searchItemsFromAPI('');
 
+    // เรียก API เมื่อเข้าหน้า
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updatePointBalance();
+    });
+
     if (!mounted) return;
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_pageController.hasClients && homeController.imgBanners.isNotEmpty) {
@@ -123,6 +129,19 @@ class _HomePageState extends State<HomePage> {
     _timer.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  // ฟังก์ชั่นสำหรับอัพเดท point balance จาก API
+  Future<void> _updatePointBalance() async {
+    try {
+      final user = await homeController.getUserByIdFromAPI();
+      if (user != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('point_balance', user.point_balance ?? '0');
+      }
+    } catch (e) {
+      print('Error updating point balance: $e');
+    }
   }
 
   // ฟังก์ชั่นสำหรับเรียก API searchLink

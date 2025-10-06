@@ -6,6 +6,7 @@ import 'package:gcargo/home/rewardHistoryPage.dart';
 import 'package:gcargo/home/rewardSuccessPage.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class RewardRedeemPage extends StatefulWidget {
   const RewardRedeemPage({super.key});
@@ -112,7 +113,8 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
     // เรียก API เมื่อเข้าหน้า
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.getRewardFromAPI();
-      _loadPointBalance();
+      //_loadPointBalance();
+      _updatePointBalance();
     });
   }
 
@@ -141,11 +143,12 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
     }
   }
 
-  // ฟังก์ชั่นสำหรับแสดงแต้มเป็นทศนิยม 2 ตำแหน่ง
+  // ฟังก์ชั่นสำหรับแสดงแต้มเป็นทศนิยม 2 ตำแหน่ง พร้อมคอมม่า
   String _formatPointBalance(String balance) {
     try {
       final double value = double.parse(balance);
-      return value.toStringAsFixed(2);
+      final formatter = NumberFormat('#,##0.00');
+      return formatter.format(value);
     } catch (e) {
       return '0.00';
     }
@@ -286,7 +289,7 @@ class _RewardRedeemPageState extends State<RewardRedeemPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(12)),
                     child: Text(
-                      '${reward['point']?.toString() ?? '0'} แต้ม',
+                      '${_formatPointBalance(reward['point']?.toString() ?? '0')} แต้ม',
                       style: TextStyle(color: isEnabled ? Colors.blue.shade900 : Colors.black45, fontWeight: FontWeight.bold),
                     ),
                   ),

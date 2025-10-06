@@ -148,6 +148,11 @@ class _AccountPageState extends State<AccountPage> {
 
   Future<void> fristLoad() async {
     try {
+      final user = await homeController.getUserByIdFromAPI();
+      if (user != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('point_balance', user.point_balance ?? '0');
+      }
       final prefs = await SharedPreferences.getInstance();
       final userToken = prefs.getString('token');
 
@@ -203,247 +208,250 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<LanguageController>(
-      builder: (controller) => Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Menu Sections
-              Expanded(
-                child: ListView(
-                  children: [
-                    const SizedBox(height: 20),
+      builder:
+          (controller) => Scaffold(
+            backgroundColor: Colors.white,
+            body: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Menu Sections
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        const SizedBox(height: 20),
 
-                    // Header Profile (ชื่อผู้ใช้ + ยอด)
-                    GetBuilder<HomeController>(
-                      builder: (homeController) => Obx(
-                        () => AccountHeaderWidget(
-                          onCreditTap: () {},
-                          onPointTap: () {},
-                          onParcelTap: () {
-                            if (_isLoggedIn()) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
-                            } else {
-                              _showLoginRequiredDialog();
-                            }
-                          },
-                          onWalletTap: () {
-                            if (_isLoggedIn()) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
-                            } else {
-                              _showLoginRequiredDialog();
-                            }
-                          },
-                          onTransferTap: () {},
-                          user: homeController.currentUser.value,
-                          isLoading: homeController.isLoading.value,
-                          walletTrans: orderController.walletTrans,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    _buildSectionTitle(getTranslation('Account.news_promotion')),
-                    _buildMenuItem(
-                      getTranslation('Account.news_promotion'),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => NewsPromotionPage()));
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('Account.coupon'),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CouponPage()));
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('Account.favorite'),
-                      onTap: () {
-                        if (token != null) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritePage()));
-                        } else {
-                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                        }
-                      },
-                    ),
-
-                    _buildSectionTitle(getTranslation('general_section')),
-                    _buildMenuItem(
-                      getTranslation('profile'),
-                      onTap: () async {
-                        final homeController = Get.find<HomeController>();
-                        if (homeController.currentUser.value != null) {
-                          final _edit = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)),
-                          );
-                          if (_edit == true) {}
-                        } else {
-                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                        }
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('Account.address_list'),
-                      onTap: () async {
-                        final homeController = Get.find<HomeController>();
-                        if (homeController.currentUser.value != null) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddressListPage()));
-                        } else {
-                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                        }
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('Account.bank_verify'),
-                      showVerified: true,
-                      onTap: () async {
-                        final homeController = Get.find<HomeController>();
-                        if (homeController.currentUser.value != null) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
-                        } else {
-                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                        }
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('Account.security'),
-                      onTap: () async {
-                        // final homeController = Get.find<HomeController>();
-                        // if (homeController.currentUser.value != null) {
-                        //   Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
-                        // } else {
-                        //   // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                        //   ScaffoldMessenger.of(
-                        //     context,
-                        //   ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                        // }
-
-                        Get.snackbar(
-                          'แจ้งเตือน',
-                          'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                          backgroundColor: Colors.yellowAccent,
-                          colorText: Colors.black,
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('change_language'),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
-                        // Get.snackbar(
-                        //   'แจ้งเตือน',
-                        //   'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                        //   backgroundColor: Colors.yellowAccent,
-                        //   colorText: Colors.black,
-                        //   snackPosition: SnackPosition.BOTTOM,
-                        // );
-                      },
-                    ),
-
-                    _buildSectionTitle(getTranslation('help_section')),
-                    _buildMenuItem(
-                      getTranslation('Account.contact_staff'),
-                      onTap: () {
-                        showQrDialog(
-                          context,
-                          handle: '@gcargo',
-                          //avatarUrl: 'https://i.pravatar.cc/150?img=12', // หรือ avatarAsset: 'assets/images/avatar.png'
-                          onDownload: () {
-                            // TODO: ทำฟังก์ชันบันทึกรูป/แชร์
-                          },
-                        );
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('Account.user_manual'),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => UserManualPage()));
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('Account.faq'),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => FaqPage()));
-                      },
-                    ),
-                    _buildMenuItem(
-                      getTranslation('Account.about_us'),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUsPage()));
-                      },
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    Center(
-                      child: Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade300),
-                          color: Colors.white,
-                        ),
-                        child: TextButton(
-                          onPressed: () async {
-                            if (token == null) {
-                              // ไปหน้า Login
-                              //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage()));
-                            } else {
-                              final confirm = await showDialog(
-                                context: context,
-                                builder: (context) => LogoutConfirmationDialog(
-                                  onConfirm: () {
-                                    // TODO: ลบ token ออกจาก SharedPreferences
-                                    Navigator.pop(context, true);
+                        // Header Profile (ชื่อผู้ใช้ + ยอด)
+                        GetBuilder<HomeController>(
+                          builder:
+                              (homeController) => Obx(
+                                () => AccountHeaderWidget(
+                                  onCreditTap: () {},
+                                  onPointTap: () {},
+                                  onParcelTap: () {
+                                    if (_isLoggedIn()) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
+                                    } else {
+                                      _showLoginRequiredDialog();
+                                    }
                                   },
-                                  onCancel: () => Navigator.pop(context, false),
+                                  onWalletTap: () {
+                                    if (_isLoggedIn()) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
+                                    } else {
+                                      _showLoginRequiredDialog();
+                                    }
+                                  },
+                                  onTransferTap: () {},
+                                  user: homeController.currentUser.value,
+                                  isLoading: homeController.isLoading.value,
+                                  walletTrans: orderController.walletTrans,
                                 ),
-                              );
-                              if (confirm == true) {
-                                await clearToken();
-                                if (mounted) {
-                                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
-                                }
-                              }
+                              ),
+                        ),
+                        SizedBox(height: 24),
+                        _buildSectionTitle(getTranslation('Account.news_promotion')),
+                        _buildMenuItem(
+                          getTranslation('Account.news_promotion'),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => NewsPromotionPage()));
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('Account.coupon'),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => CouponPage()));
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('Account.favorite'),
+                          onTap: () {
+                            if (token != null) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritePage()));
+                            } else {
+                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
                             }
                           },
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            foregroundColor: Color(0xFF4A4A4A),
-                            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                          child: Text(
-                            token == null ? getTranslation('Account.login') : getTranslation('Account.logout'),
-                            style: TextStyle(fontFamily: 'SukhumvitSet', fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+
+                        _buildSectionTitle(getTranslation('general_section')),
+                        _buildMenuItem(
+                          getTranslation('profile'),
+                          onTap: () async {
+                            final homeController = Get.find<HomeController>();
+                            if (homeController.currentUser.value != null) {
+                              final _edit = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)),
+                              );
+                              if (_edit == true) {}
+                            } else {
+                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                            }
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('Account.address_list'),
+                          onTap: () async {
+                            final homeController = Get.find<HomeController>();
+                            if (homeController.currentUser.value != null) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => AddressListPage()));
+                            } else {
+                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                            }
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('Account.bank_verify'),
+                          showVerified: true,
+                          onTap: () async {
+                            final homeController = Get.find<HomeController>();
+                            if (homeController.currentUser.value != null) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
+                            } else {
+                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                            }
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('Account.security'),
+                          onTap: () async {
+                            // final homeController = Get.find<HomeController>();
+                            // if (homeController.currentUser.value != null) {
+                            //   Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
+                            // } else {
+                            //   // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                            //   ScaffoldMessenger.of(
+                            //     context,
+                            //   ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                            // }
+
+                            Get.snackbar(
+                              'แจ้งเตือน',
+                              'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                              backgroundColor: Colors.yellowAccent,
+                              colorText: Colors.black,
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('change_language'),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
+                            // Get.snackbar(
+                            //   'แจ้งเตือน',
+                            //   'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                            //   backgroundColor: Colors.yellowAccent,
+                            //   colorText: Colors.black,
+                            //   snackPosition: SnackPosition.BOTTOM,
+                            // );
+                          },
+                        ),
+
+                        _buildSectionTitle(getTranslation('help_section')),
+                        _buildMenuItem(
+                          getTranslation('Account.contact_staff'),
+                          onTap: () {
+                            showQrDialog(
+                              context,
+                              handle: '@gcargo',
+                              //avatarUrl: 'https://i.pravatar.cc/150?img=12', // หรือ avatarAsset: 'assets/images/avatar.png'
+                              onDownload: () {
+                                // TODO: ทำฟังก์ชันบันทึกรูป/แชร์
+                              },
+                            );
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('Account.user_manual'),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => UserManualPage()));
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('Account.faq'),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => FaqPage()));
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('Account.about_us'),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUsPage()));
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        Center(
+                          child: Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey.shade300),
+                              color: Colors.white,
+                            ),
+                            child: TextButton(
+                              onPressed: () async {
+                                if (token == null) {
+                                  // ไปหน้า Login
+                                  //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage()));
+                                } else {
+                                  final confirm = await showDialog(
+                                    context: context,
+                                    builder:
+                                        (context) => LogoutConfirmationDialog(
+                                          onConfirm: () {
+                                            // TODO: ลบ token ออกจาก SharedPreferences
+                                            Navigator.pop(context, true);
+                                          },
+                                          onCancel: () => Navigator.pop(context, false),
+                                        ),
+                                  );
+                                  if (confirm == true) {
+                                    await clearToken();
+                                    if (mounted) {
+                                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                                    }
+                                  }
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                foregroundColor: Color(0xFF4A4A4A),
+                                textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              child: Text(
+                                token == null ? getTranslation('Account.login') : getTranslation('Account.logout'),
+                                style: TextStyle(fontFamily: 'SukhumvitSet', fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
 
-                    SizedBox(height: 40),
-                  ],
-                ),
+                        SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
