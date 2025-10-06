@@ -23,7 +23,7 @@ class ExchangeRatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, String>> exchangeRates = [
-      {'icon': 'assets/icons/cha2.png', 'title': getTranslation('product_order_rate'), 'price': '${exchangeRate['product_payment_rate']}'},
+      {'icon': 'assets/icons/cha2.png', 'title': getTranslation('product_order_rate'), 'price': '${exchangeRate['deposit_order_rate']}'},
       {'icon': 'assets/icons/cha1.png', 'title': getTranslation('money_transfer_rate'), 'price': '${exchangeRate['alipay_topup_rate']}'},
     ];
 
