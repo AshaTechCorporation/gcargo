@@ -74,7 +74,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
           title: Text(getTranslation('shipping_rate'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 24)),
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+          leading: IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
         ),
         body: Obx(() {
           // Separate data by vehicle type
