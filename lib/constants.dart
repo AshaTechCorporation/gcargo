@@ -25,3 +25,7 @@ const kCicleSelectedColor = Color(0xFFE5EBFC);
 const kTextTitleHeadColor = Color(0xFF202020);
 
 final List<String> itemType = ['shopgs2', 'shopgs1'];
+
+const List<Map<String, dynamic>> importcard = [
+  {'id': 1, 'Importercode': 'AAAA', 'Sendbycar': '/EK', 'Sendbyboat': '/SEA'},
+];

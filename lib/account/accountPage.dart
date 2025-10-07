@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gcargo/account/WalletPage.dart';
 import 'package:gcargo/account/aboutUsPage.dart';
 import 'package:gcargo/account/addressListPage.dart';
@@ -13,6 +14,7 @@ import 'package:gcargo/account/securityPage.dart';
 import 'package:gcargo/account/userManualPage.dart';
 import 'package:gcargo/account/widgets/AccountHeaderWidget.dart';
 import 'package:gcargo/account/widgets/showQrDialog.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/controllers/order_controller.dart';
@@ -22,6 +24,7 @@ import 'package:gcargo/parcel/parcelStatusPage.dart';
 import 'package:get/get.dart';
 import 'package:gcargo/widgets/LogoutConfirmationDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gcargo/services/accountService.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -35,6 +38,10 @@ class _AccountPageState extends State<AccountPage> {
   final OrderController orderController = Get.put(OrderController());
   late LanguageController languageController;
   String? token;
+  bool isGuangzhouSelected = true;
+  List<Map<String, dynamic>> storeGcargo = [];
+  bool isLoadingStore = false;
+  String importer_code = '';
 
   String getTranslation(String key) {
     final currentLang = languageController.currentLanguage.value;
@@ -70,6 +77,9 @@ class _AccountPageState extends State<AccountPage> {
         'status': 'สถานะ',
         'transfer_money': 'โอนเงิน',
         'my_wallet': 'Wallet ของฉัน',
+        'shipping_address': 'ที่อยู่รับพัสดุ',
+        'importer_code': 'รหัสลูกค้า',
+        'phone_number': 'เบอร์โทรศัพท์',
       },
       'en': {
         'Account.title': 'Account',
@@ -100,6 +110,9 @@ class _AccountPageState extends State<AccountPage> {
         'status': 'Status',
         'transfer_money': 'Transfer Money',
         'my_wallet': 'My Wallet',
+        'shipping_address': 'Shipping Address',
+        'importer_code': 'Importer Code',
+        'phone_number': 'Phone Number',
       },
       'zh': {
         'Account.title': '账户',
@@ -130,6 +143,9 @@ class _AccountPageState extends State<AccountPage> {
         'status': '状态',
         'transfer_money': '转账',
         'my_wallet': '我的钱包',
+        'shipping_address': '收货地址',
+        'importer_code': '进口商代码',
+        'phone_number': '电话号码',
       },
     };
 
@@ -143,6 +159,7 @@ class _AccountPageState extends State<AccountPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await fristLoad();
       orderController.getWalletTrans();
+      await getStoreData();
     });
   }
 
@@ -152,6 +169,9 @@ class _AccountPageState extends State<AccountPage> {
       if (user != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('point_balance', user.point_balance ?? '0');
+        setState(() {
+          importer_code = user.importer_code ?? '';
+        });
       }
       final prefs = await SharedPreferences.getInstance();
       final userToken = prefs.getString('token');
@@ -161,6 +181,24 @@ class _AccountPageState extends State<AccountPage> {
       });
     } catch (e) {
       print('Error in fristLoad: $e');
+    }
+  }
+
+  Future<void> getStoreData() async {
+    try {
+      setState(() {
+        isLoadingStore = true;
+      });
+      final stores = await AccountService.getStore();
+      setState(() {
+        storeGcargo = stores;
+        isLoadingStore = false;
+      });
+    } catch (e) {
+      print('Error in getStoreData: $e');
+      setState(() {
+        isLoadingStore = false;
+      });
     }
   }
 
@@ -207,6 +245,7 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return GetBuilder<LanguageController>(
       builder:
           (controller) => Scaffold(
@@ -249,7 +288,232 @@ class _AccountPageState extends State<AccountPage> {
                                 ),
                               ),
                         ),
-                        SizedBox(height: 24),
+                        if (_isLoggedIn()) SizedBox(height: 15),
+                        if (_isLoggedIn()) // เช็คว่าล็อกอินแล้วหรือไม่
+                          // Importer Code Card
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              gradient: LinearGradient(
+                                colors: [Color(0xFF4A90E2), Color(0xFF357ABD)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              boxShadow: [BoxShadow(color: Colors.blue.withOpacity(0.3), spreadRadius: 0, blurRadius: 12, offset: Offset(0, 6))],
+                            ),
+                            child: Column(
+                              children: [
+                                // Main Importer Code
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(12),
+                                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+                                      child: Icon(Icons.badge_outlined, color: Colors.white, size: 24),
+                                    ),
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            getTranslation('importer_code'),
+                                            style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            '${importer_code.toUpperCase()}',
+                                            style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Clipboard.setData(ClipboardData(text: '${importer_code.toUpperCase()}'));
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('คัดลอกรหัสผู้นำเข้าแล้ว'),
+                                            backgroundColor: Colors.green,
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
+                                        child: Icon(Icons.copy, color: Colors.white, size: 18),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 16),
+                                // Shipping Methods
+                                Container(
+                                  padding: EdgeInsets.all(16),
+                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Icon(Icons.local_shipping, color: Colors.white, size: 20),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              'ส่งทางรถ',
+                                              style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
+                                            ),
+                                            SizedBox(height: 2),
+                                            Text(
+                                              'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbycar']}',
+                                              style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Icon(Icons.directions_boat, color: Colors.white, size: 20),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              'ส่งทางเรือ',
+                                              style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
+                                            ),
+                                            SizedBox(height: 2),
+                                            Text(
+                                              'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbyboat']}',
+                                              style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        SizedBox(height: 16),
+                        // Store Address Section
+                        (storeGcargo.isEmpty || !_isLoggedIn())
+                            ? const SizedBox()
+                            : Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(Icons.location_on, color: Color(0xFF4A90E2), size: 20),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        getTranslation('shipping_address'),
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 12),
+                                  Column(
+                                    children: List.generate(
+                                      storeGcargo.length,
+                                      (indexStore) => Container(
+                                        width: double.infinity,
+                                        margin: EdgeInsets.only(bottom: 12),
+                                        padding: EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(color: Color(0xFFE3F2FD)),
+                                          boxShadow: [
+                                            BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 0, blurRadius: 8, offset: Offset(0, 2)),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.all(8),
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFF4A90E2).withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Icon(Icons.store, color: Color(0xFF4A90E2), size: 16),
+                                                ),
+                                                SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        storeGcargo[indexStore]['name'] ?? '',
+                                                        style: TextStyle(color: Color(0xFF2C3E50), fontWeight: FontWeight.bold, fontSize: 16),
+                                                      ),
+                                                      SizedBox(height: 4),
+                                                      Text(
+                                                        (storeGcargo[indexStore]['address'] ?? '').replaceAll(RegExp(r'[\r\n]'), ''),
+                                                        style: TextStyle(color: Color(0xFF7F8C8D), fontSize: 14),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 12),
+                                            Row(
+                                              children: [
+                                                Icon(Icons.phone, color: Color(0xFF27AE60), size: 16),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  '${getTranslation('phone_number')}: ${storeGcargo[indexStore]['phone'] ?? ''}',
+                                                  style: TextStyle(color: Color(0xFF2C3E50), fontSize: 14, fontWeight: FontWeight.w500),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 12),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () {
+                                                      Clipboard.setData(ClipboardData(text: storeGcargo[indexStore]['address'] ?? ''));
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text('คัดลอกที่อยู่แล้ว'),
+                                                          backgroundColor: Colors.green,
+                                                          duration: Duration(seconds: 2),
+                                                        ),
+                                                      );
+                                                    },
+                                                    icon: Icon(Icons.copy, size: 16),
+                                                    label: Text('คัดลอกที่อยู่'),
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: Color(0xFF4A90E2),
+                                                      foregroundColor: Colors.white,
+                                                      padding: EdgeInsets.symmetric(vertical: 8),
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                        if (_isLoggedIn()) SizedBox(height: 24),
                         _buildSectionTitle(getTranslation('Account.news_promotion')),
                         _buildMenuItem(
                           getTranslation('Account.news_promotion'),
@@ -488,4 +752,41 @@ class _AccountPageState extends State<AccountPage> {
       ],
     );
   }
+}
+
+Widget _buildInfoRow(BuildContext context, String title, String detail, IconData icon, Color iconColor, String subtitle, void Function()? onTap) {
+  final size = MediaQuery.of(context).size; // ใช้ context ที่ส่งเข้ามา
+
+  return Padding(
+    padding: EdgeInsets.symmetric(
+      vertical: size.height * 0.005, // ปรับขนาด padding ให้สัมพันธ์กับความสูงของหน้าจอ
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+              Text(subtitle, style: TextStyle(fontSize: 13, color: Color(0xff606060))), //stringsubtitles
+            ],
+          ),
+        ),
+        Expanded(flex: 3, child: Text(detail, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
+        GestureDetector(
+          onTap: onTap,
+          child: Row(
+            children: [
+              Icon(icon, color: iconColor),
+              SizedBox(width: size.width * 0.008),
+              Text('AccountPage.copy', style: TextStyle(color: iconColor, fontSize: 12)),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }

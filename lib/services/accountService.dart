@@ -358,4 +358,21 @@ class AccountService {
       throw ApiException(data['message']);
     }
   }
+
+  //ดึงข้อมูลสโตร์ที่อยู่จัดส่ง
+  static Future<List<Map<String, dynamic>>> getStore() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final url = Uri.https(publicUrl, '/public/api/get_store');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data'] as List;
+      return list.map((e) => e as Map<String, dynamic>).toList();
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
 }
