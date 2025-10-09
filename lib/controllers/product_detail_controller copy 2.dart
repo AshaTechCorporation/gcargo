@@ -13,8 +13,6 @@ class ProductDetailController extends GetxController {
   var type = ''.obs;
   var isFavorite = false.obs; // สำหรับเช็คว่าอยู่ในรายการโปรดหรือไม่
   var selectedOptionKey = ''.obs; // สำหรับเก็บ option key ที่เลือก เช่น "0:0"
-  var translatedPropsOptions = <String, Map<String, String>>{}.obs; // เก็บข้อมูลแปลภาษาของ props_list
-  var selectedOptionsByCategory = <String, String>{}.obs; // เก็บ option ที่เลือกแต่ละ category เช่น {"0": "0:0", "1": "1:2"}
 
   @override
   void onInit() {
@@ -60,9 +58,6 @@ class ProductDetailController extends GetxController {
 
         // เช็คว่าอยู่ในรายการโปรดหรือไม่
         await checkIfFavorite();
-
-        // แปลภาษา props_list
-        await translatePropsOptions();
 
         // Debug: Log all available fields
         log('🔍 All product data fields: ${data.keys.toList()}');
@@ -179,122 +174,15 @@ class ProductDetailController extends GetxController {
 
   String get title => itemData?['title'] ?? 'ไม่มีชื่อสินค้า';
   String get picUrl => itemData?['pic_url'] ?? '';
-  double get price {
-    // Force reactive by accessing selectedOptionKey.value
-    selectedOptionKey.value;
-    return getCurrentPrice();
-  }
-
+  double get price => _safeToDouble(itemData?['price']);
   double get promotionPrice => _safeToDouble(itemData?['promotion_price']);
-  double get originalPrice {
-    // Force reactive by accessing selectedOptionKey.value
-    selectedOptionKey.value;
-    return getCurrentPrice();
-  }
+  double get originalPrice => _safeToDouble(itemData?['orginal_price']);
 
   double _safeToDouble(dynamic value) {
     if (value is double) return value;
     if (value is int) return value.toDouble();
     if (value is String) return double.tryParse(value) ?? 0.0;
     return 0.0;
-  }
-
-  // Method สำหรับหาราคาจาก SKU ตาม selectedOptionKey
-  double getCurrentPrice() {
-    // ถ้าไม่มีการเลือก option ให้ใช้ราคาเดิม
-    if (selectedOptionsByCategory.isEmpty) {
-      return _safeToDouble(itemData?['price']);
-    }
-
-    // หาราคาจาก SKU ที่ตรงกับ selectedOptionKey
-    final skus = itemData?['skus'];
-    if (skus != null && skus['sku'] is List) {
-      final skuList = skus['sku'] as List;
-
-      // ตรวจสอบทุก SKU เพื่อหาที่ตรงกับ selected options
-      for (var sku in skuList) {
-        final skuProperties = sku['properties'] as String?;
-        if (skuProperties == null) continue;
-
-        // แยก properties ของ SKU
-        final skuParts = skuProperties.split(';');
-        bool isMatch = true;
-
-        // ตรวจสอบว่า selected options ทุกตัวตรงกับ SKU นี้หรือไม่
-        for (final selectedOption in selectedOptionsByCategory.values) {
-          if (selectedOption.isEmpty) continue;
-
-          bool foundInSku = false;
-          for (final skuPart in skuParts) {
-            if (skuPart == selectedOption) {
-              foundInSku = true;
-              break;
-            }
-          }
-
-          if (!foundInSku) {
-            isMatch = false;
-            break;
-          }
-        }
-
-        if (isMatch && selectedOptionsByCategory.isNotEmpty) {
-          final skuPrice = _safeToDouble(sku['price']);
-          log('Found matching SKU: $skuProperties with price: $skuPrice');
-          log('Selected options: ${selectedOptionsByCategory.values.toList()}');
-
-          // ถ้าราคาใน SKU เป็น 0 หรือไม่มี ให้ใช้ราคาเดิม
-          if (skuPrice > 0) {
-            return skuPrice;
-          }
-        }
-      }
-    }
-
-    // ถ้าไม่เจอ SKU หรือราคาเป็น 0 ให้ใช้ราคาเดิม
-    return _safeToDouble(itemData?['price']);
-  }
-
-  // สร้าง combination key จาก selected options
-  String _buildCombinationKey() {
-    if (selectedOptionsByCategory.isEmpty) return '';
-
-    // หาทุก category ที่มีใน SKU properties และเรียงลำดับ
-    final skus = itemData?['skus'];
-    if (skus == null || skus['sku'] is! List) return '';
-
-    final skuList = skus['sku'] as List;
-    if (skuList.isEmpty) return '';
-
-    // ใช้ SKU แรกเป็นตัวอย่างเพื่อหาลำดับ category
-    final firstSkuProperties = skuList.first['properties'] as String?;
-    if (firstSkuProperties == null) return '';
-
-    final categoryOrder = <String>[];
-    final propertyParts = firstSkuProperties.split(';');
-    for (final part in propertyParts) {
-      final keyParts = part.split(':');
-      if (keyParts.isNotEmpty) {
-        final category = keyParts[0];
-        if (!categoryOrder.contains(category)) {
-          categoryOrder.add(category);
-        }
-      }
-    }
-
-    // สร้าง combination key ตามลำดับที่พบใน SKU
-    final selectedOptions = <String>[];
-    for (final category in categoryOrder) {
-      final selectedOption = selectedOptionsByCategory[category];
-      if (selectedOption != null && selectedOption.isNotEmpty) {
-        selectedOptions.add(selectedOption);
-      }
-    }
-
-    final result = selectedOptions.join(';');
-    log('Building combination key from SKU order $categoryOrder: $result');
-    log('Selected options by category: $selectedOptionsByCategory');
-    return result;
   }
 
   String get area => itemData?['area'] ?? '';
@@ -372,17 +260,6 @@ class ProductDetailController extends GetxController {
   // Method to update selected option and trigger image change
   void updateSelectedOption(String optionKey) {
     selectedOptionKey.value = optionKey;
-
-    // อัพเดท selectedOptionsByCategory
-    final parts = optionKey.split(':');
-    if (parts.length >= 2) {
-      final categoryId = parts[0];
-      selectedOptionsByCategory[categoryId] = optionKey;
-      log('Updated selectedOptionsByCategory: $selectedOptionsByCategory');
-    }
-
-    // Force update price by triggering reactive update
-    update();
   }
 
   // Get current selected image URL (for cart/order)
@@ -441,7 +318,7 @@ class ProductDetailController extends GetxController {
 
   // ------------------------- FLEX PARSER (ไม่สร้างคลาส) -------------------------
 
-  /// แยก props_list เป็นกลุ่มตามด้านซ้ายของ key (เช่น "0", "1" หรือ "1627207", "122216343")
+  /// แยก props_list เป็นกลุ่มตามด้านซ้ายของ key (เช่น "0", "1")
   /// คืนค่าเป็น Map<categoryId, List<Map<String,String>>> โดยรายการเก็บ {'key','value','raw'}
   Map<String, List<Map<String, String>>> get _optionsByCategory {
     final Map<String, List<Map<String, String>>> bucket = {};
@@ -450,7 +327,7 @@ class ProductDetailController extends GetxController {
       if (v is! String || !k.contains(':')) return;
       final kp = k.split(':');
       if (kp.length != 2) return;
-      final catId = kp[0].trim(); // "0", "1", "1627207", "122216343", ...
+      final catId = kp[0].trim(); // "0", "1", ...
       // value เช่น "颜色:S23外置笔黑色【16+1T】" -> เก็บเฉพาะส่วนหลังเป็น value
       final vp = v.split(':');
       final cleaned = (vp.length >= 2 ? vp.sublist(1).join(':') : v).trim();
@@ -688,71 +565,6 @@ class ProductDetailController extends GetxController {
   Future<void> refreshData() async {
     if (numIid.value.isNotEmpty) {
       await getItemDetail(numIid.value, type.value);
-    }
-  }
-
-  // ฟังก์ชันสำหรับแปลภาษา props_list
-  Future<void> translatePropsOptions() async {
-    try {
-      final props = propsList;
-      if (props.isEmpty) return;
-
-      log('Props list to translate: ${props.length} items');
-
-      // สร้าง list ของ options สำหรับแปล
-      List<Map<String, dynamic>> optionsToTranslate = [];
-      props.forEach((key, value) {
-        if (value is String) {
-          // แยกชื่อและค่าจาก value เช่น "颜色:罗森绿" -> name: "颜色", value: "罗森绿"
-          final parts = value.split(':');
-          if (parts.length >= 2) {
-            optionsToTranslate.add({'key': key, 'name': parts[0], 'value': parts.sublist(1).join(':'), 'original': value});
-          } else {
-            // กรณีที่ไม่มี : ให้ใช้ value ทั้งหมด
-            optionsToTranslate.add({'key': key, 'name': '', 'value': value, 'original': value});
-          }
-        }
-      });
-
-      log('Options to translate: ${optionsToTranslate.length} items');
-
-      if (optionsToTranslate.isNotEmpty) {
-        // ใช้ฟังก์ชัน extractTitlesToTranslatePops เพื่อสร้างข้อความสำหรับแปล
-        final textToTranslate = extractTitlesToTranslatePops(optionsToTranslate);
-
-        log('Text to translate: $textToTranslate');
-
-        if (textToTranslate.isNotEmpty) {
-          // เรียก translate API
-          final translated = await HomeService.translate(text: textToTranslate, from: 'zh-CN', to: 'th');
-
-          log('Translated result: $translated');
-
-          if (translated != null && translated.isNotEmpty) {
-            // ประมวลผลข้อมูลที่แปลแล้ว
-            final translatedOptions = applyTranslatedTitlesToItemsPops(optionsToTranslate, translated);
-
-            log('Translated options: ${translatedOptions.length} items');
-
-            // เก็บข้อมูลแปลภาษา
-            Map<String, Map<String, String>> translatedMap = {};
-            for (var option in translatedOptions) {
-              final key = option['key'] as String;
-              translatedMap[key] = {
-                'original': option['original'] ?? '',
-                'translated_name': option['name'] ?? '',
-                'translated_value': option['value'] ?? '',
-                'translated_full': '${option['name'] ?? ''}:${option['value'] ?? ''}',
-              };
-            }
-
-            translatedPropsOptions.value = translatedMap;
-            log('Final translated map: ${translatedMap.length} items');
-          }
-        }
-      }
-    } catch (e) {
-      log('Error translating props options: $e');
     }
   }
 

@@ -119,10 +119,10 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
               children: [
                 _buildSectionTitle('assets/icons/calendar.png', 'กำหนดการ'),
                 const SizedBox(height: 12),
-                _buildInfoRow('ถึงโกดังจีน', _formatDate(orderData?['created_at'] ?? '-')),
-                _buildInfoRow('ออกจากโกดังจีน', '-'),
-                _buildInfoRow('คาดจะถึงไทย', '-'),
-                _buildInfoRow('โกดังไทยรับสินค้า', '-'),
+                _buildInfoRow('ถึงโกดังจีน', _formatDate(orderData?['date'] ?? '-')),
+                _buildInfoRow('ออกจากโกดังจีน', _formatDate(orderData?['packing_lists']?['closing_date'] ?? '-')),
+                _buildInfoRow('คาดจะถึงไทย', _formatDate(orderData?['packing_lists']?['estimated_arrival_date'] ?? '-')),
+                _buildInfoRow('โกดังไทยรับสินค้า', _formatDate(orderData?['packing_lists']?['actual_arrival_date'] ?? '-')),
               ],
             ),
           ),
@@ -135,42 +135,42 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
                 _buildSectionTitle('assets/icons/book.png', 'รายละเอียดสินค้า'),
                 const SizedBox(height: 12),
                 _buildInfoRow('เลขบิลสั่งซื้อ', orderData?['order']?['code'] ?? '-'),
-                _buildInfoRow('เลขบิลหน้าโกดัง', orderData?['code'] ?? '-'),
-                _buildInfoRow('ประเภทสินค้า', orderData?['store']?['name'] ?? '-'),
-                _buildInfoRow('หมายเหตุของลูกค้า', orderData?['note'] ?? '-'),
+                _buildInfoRow('เลขบิลหน้าโกดัง', orderData?['receipt_no_wh'] ?? '-'),
+                _buildInfoRow('ประเภทสินค้า', orderData?['product_type']?['name'] ?? '-'),
+                _buildInfoRow('หมายเหตุของลูกค้า', orderData?['order']?['note'] ?? '-'),
               ],
             ),
           ),
 
           // 🔹 กล่อง: ค่าใช้จ่าย (ซ่อนถ้าสถานะเป็น รอส่งไปโกดังจีน หรือ ถึงโกดังจีน)
-          if (widget.status != 'รอส่งไปโกดังจีน' && widget.status != 'ถึงโกดังจีน')
-            _buildBox(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('assets/icons/dollar-circle.png', 'ค่าใช้จ่าย'),
-                  const SizedBox(height: 12),
-                  _buildInfoRow('ค่าขนส่งจีนไทย', ' 8516.00฿'),
-                  _buildInfoRow('ค่าบริการ QC', ' 0฿'),
-                  _buildInfoRow('ค่าตีลังไม้', ' 0฿'),
-                  _buildInfoRow('รวมราคา', ' 8516.00฿'),
-                ],
-              ),
-            ),
+          // if (widget.status != 'รอส่งไปโกดังจีน' && widget.status != 'ถึงโกดังจีน')
+          //   _buildBox(
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         _buildSectionTitle('assets/icons/dollar-circle.png', 'ค่าใช้จ่าย'),
+          //         const SizedBox(height: 12),
+          //         _buildInfoRow('ค่าขนส่งจีนไทย', ' 8516.00฿'),
+          //         _buildInfoRow('ค่าบริการ QC', ' 0฿'),
+          //         _buildInfoRow('ค่าตีลังไม้', ' 0฿'),
+          //         _buildInfoRow('รวมราคา', ' 8516.00฿'),
+          //       ],
+          //     ),
+          //   ),
 
           // 🔹 กล่อง: การชำระเงิน (ซ่อนถ้าสถานะเป็น รอส่งไปโกดังจีน หรือ ถึงโกดังจีน)
-          if (widget.status != 'รอส่งไปโกดังจีน' && widget.status != 'ถึงโกดังจีน')
-            _buildBox(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('assets/icons/menu-board-blue.png', 'การชำระเงิน'),
-                  const SizedBox(height: 12),
-                  _buildInfoRow('การชำระเงิน', 'QR พร้อมเพย์'),
-                  _buildInfoRow('เลขที่เอกสาร  X2504290002', '.'),
-                ],
-              ),
-            ),
+          // if (widget.status != 'รอส่งไปโกดังจีน' && widget.status != 'ถึงโกดังจีน')
+          //   _buildBox(
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         _buildSectionTitle('assets/icons/menu-board-blue.png', 'การชำระเงิน'),
+          //         const SizedBox(height: 12),
+          //         _buildInfoRow('การชำระเงิน', 'QR พร้อมเพย์'),
+          //         _buildInfoRow('เลขที่เอกสาร  X2504290002', '.'),
+          //       ],
+          //     ),
+          //   ),
 
           // 🔹 กล่อง: พัสดุทั้งหมด
           _buildBox(
@@ -181,14 +181,14 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
                   children: [
                     _buildSectionTitle('assets/icons/box.png', 'พัสดุทั้งหมด'),
                     const Spacer(),
-                    Text('${_getDeliveryOrderListsCount()} ชิ้น', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text('${_getDeliveryOrderListsCount()} กล่อง', style: const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 12),
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _getDeliveryOrderListsCount(),
+                  itemCount: _getDeliveryOrderLists().length,
                   separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final deliveryOrderLists = _getDeliveryOrderLists();
@@ -204,7 +204,14 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
                         onTap:
                             () => Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => ParcelSubDetailPage(deliveryOrderItem: item, orderCode: orderData?['code'] ?? 'N/A')),
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => ParcelSubDetailPage(
+                                      deliveryOrderItem: item,
+                                      orderCode: orderData?['order']?['code'] ?? 'N/A',
+                                      order: orderData ?? {},
+                                    ),
+                              ),
                             ),
                       ),
                     );
@@ -238,7 +245,19 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
   }
 
   int _getDeliveryOrderListsCount() {
-    return _getDeliveryOrderLists().length;
+    final deliveryOrderLists = _getDeliveryOrderLists();
+    int totalQtyBox = 0;
+
+    for (var list in deliveryOrderLists) {
+      final qtyBox = list['qty_box'];
+      if (qtyBox is int) {
+        totalQtyBox += qtyBox;
+      } else if (qtyBox is String) {
+        totalQtyBox += int.tryParse(qtyBox) ?? 0;
+      }
+    }
+
+    return totalQtyBox;
   }
 
   // ฟังก์ชั่นสำหรับ format วันที่

@@ -11,6 +11,7 @@ part 'ordersPageNew.g.dart';
 class OrdersPageNew {
   int? id;
   String? code;
+  String? receipt_no_wh;
   String? po_no;
   int? order_id;
   String? date;
@@ -51,6 +52,7 @@ class OrdersPageNew {
     this.product_type,
     this.import_po,
     this.order,
+    this.receipt_no_wh,
   );
 
   factory OrdersPageNew.fromJson(Map<String, dynamic> json) => _$OrdersPageNewFromJson(json);

@@ -485,7 +485,7 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
             showActionButton: orderStatus == getTranslation('completed'),
             orderId: order.id ?? 0,
             orderCode: order.order?.code ?? 'N/A',
-            warehouseCode: order.code ?? 'N/A',
+            warehouseCode: order.receipt_no_wh ?? 'N/A',
             totalPrice: order.order?.total_price ?? '0.00',
           ),
         );

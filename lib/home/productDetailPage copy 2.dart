@@ -256,6 +256,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   // ฟังก์ชันสำหรับแปลไตเติ๊ลของ recommended items
   Future<void> _translateRecommendedTitles(List<Map<String, dynamic>> items) async {
     if (items.isEmpty || isTranslatingRecommendedTitles) return;
+
     // บันทึก item IDs ที่กำลังจะแปล
     lastTranslatedItemIds = items.map((item) => item['num_iid']?.toString() ?? '').toList();
 
@@ -455,27 +456,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     borderRadius: BorderRadius.circular(8),
                     color: selected ? kButtonColor : Colors.white,
                   ),
-                  child: Obx(() {
-                    final sizeMapping = productController.sizeToKeyMapping;
-                    final mappedKey = sizeMapping[size];
-                    final translatedData = mappedKey != null ? productController.translatedPropsOptions[mappedKey] : null;
-                    final originalText = translatedData?['original'] ?? size;
-                    final translatedText = translatedData?['translated_value'] ?? translatedSize;
-
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          originalText.split(':').length > 1 ? originalText.split(':')[1] : originalText,
-                          style: TextStyle(color: selected ? Colors.white : Colors.black, fontSize: 10),
-                        ),
-                        if (translatedText != originalText && translatedText.isNotEmpty) ...[
-                          SizedBox(height: 2),
-                          Text(translatedText, style: TextStyle(color: selected ? Colors.white70 : Colors.grey, fontSize: 10)),
-                        ],
-                      ],
-                    );
-                  }),
+                  child: Text(translatedSize, style: TextStyle(color: selected ? Colors.white : Colors.black)),
                 ),
               );
             }).toList(),
@@ -519,27 +500,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     borderRadius: BorderRadius.circular(8),
                     color: selected ? kButtonColor : Colors.white,
                   ),
-                  child: Obx(() {
-                    final colorMapping = productController.colorToKeyMapping;
-                    final mappedKey = colorMapping[translatedColor];
-                    final translatedData = mappedKey != null ? productController.translatedPropsOptions[mappedKey] : null;
-                    final originalText = translatedData?['original'] ?? translatedColor;
-                    final translatedText = translatedData?['translated_value'] ?? translatedColor;
-
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          originalText.split(':').length > 1 ? originalText.split(':')[1] : originalText,
-                          style: TextStyle(color: selected ? Colors.white : Colors.black, fontSize: 10),
-                        ),
-                        if (translatedText != originalText && translatedText.isNotEmpty) ...[
-                          SizedBox(height: 2),
-                          Text(translatedText, style: TextStyle(color: selected ? Colors.white70 : Colors.grey, fontSize: 10)),
-                        ],
-                      ],
-                    );
-                  }),
+                  child: Text(translatedColor, style: TextStyle(color: selected ? Colors.white : Colors.black)),
                 ),
               );
             }).toList(),
@@ -552,6 +513,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final itemTranslatedTitle = translatedRecommendedTitles[originalTitle] ?? originalTitle;
     final picUrl = formatImageUrl(item['pic_url'] ?? '');
     final price = item['price']?.toString() ?? '0';
+    final promotionPrice = item['promotion_price']?.toString() ?? '';
     final numIid = item['num_iid']?.toString() ?? '';
 
     return GestureDetector(
@@ -680,7 +642,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [Text('¥$price', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))],
+                          children: [
+                            if (promotionPrice.isNotEmpty && promotionPrice != '0') ...[
+                              Text('¥$promotionPrice', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 12)),
+                              Text('¥$price', style: const TextStyle(fontSize: 10, color: Colors.grey, decoration: TextDecoration.lineThrough)),
+                            ] else ...[
+                              Text('¥$price', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                            ],
+                          ],
                         ),
                       ],
                     ),
@@ -934,7 +903,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                           SizedBox(height: 6),
                           Text(
-                            '¥${productController.originalPrice}',
+                            '¥${productController.originalPrice.toStringAsFixed(0)}',
                             style: TextStyle(fontSize: 32, color: Colors.black, fontWeight: FontWeight.bold),
                           ),
                           if (productController.area.isNotEmpty) ...[

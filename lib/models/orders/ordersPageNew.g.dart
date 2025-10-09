@@ -43,12 +43,14 @@ OrdersPageNew _$OrdersPageNewFromJson(Map<String, dynamic> json) =>
       json['order'] == null
           ? null
           : ShippingDeilvery.fromJson(json['order'] as Map<String, dynamic>),
+      json['receipt_no_wh'] as String?,
     );
 
 Map<String, dynamic> _$OrdersPageNewToJson(OrdersPageNew instance) =>
     <String, dynamic>{
       'id': instance.id,
       'code': instance.code,
+      'receipt_no_wh': instance.receipt_no_wh,
       'po_no': instance.po_no,
       'order_id': instance.order_id,
       'date': instance.date,

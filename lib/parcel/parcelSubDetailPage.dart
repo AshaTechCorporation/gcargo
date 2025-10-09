@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class ParcelSubDetailPage extends StatelessWidget {
   final Map<String, dynamic> deliveryOrderItem;
   final String orderCode;
+  final Map<String, dynamic> order;
 
-  const ParcelSubDetailPage({super.key, required this.deliveryOrderItem, required this.orderCode});
+  const ParcelSubDetailPage({super.key, required this.deliveryOrderItem, required this.orderCode, required this.order});
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
@@ -31,8 +32,8 @@ class ParcelSubDetailPage extends StatelessWidget {
           const Text('รายละเอียดรายการ', style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           _buildInfoRow('เลขบิลสั่งซื้อ', orderCode),
-          _buildInfoRow('ประเภทสินค้า', deliveryOrderItem['product_name'] ?? '-'),
-          _buildInfoRow('ล็อด', deliveryOrderItem['state'] ?? '-'),
+          _buildInfoRow('ประเภทสินค้า', order['product_type']?['name'] ?? '-'),
+          _buildInfoRow('ล็อด', order['packing_list']?['packinglist_no'] ?? '-'),
           const Divider(height: 32),
 
           // 🔹 ขนาดพัสดุ
@@ -44,7 +45,7 @@ class ParcelSubDetailPage extends StatelessWidget {
             '${deliveryOrderItem['width'] ?? '0'} x ${deliveryOrderItem['long'] ?? '0'} x ${deliveryOrderItem['height'] ?? '0'} cm',
           ),
           _buildInfoRow('ปริมาตร', _calculateVolume()),
-          _buildInfoRow('จำนวน', '${deliveryOrderItem['qty'] ?? '0'}'),
+          _buildInfoRow('จำนวน', '${deliveryOrderItem['qty_box'] ?? '0'}'),
           const Divider(height: 32),
 
           // 🔹 รูปภาพ
@@ -88,14 +89,21 @@ class ParcelSubDetailPage extends StatelessWidget {
         children:
             images.map<Widget>((image) {
               final imageUrl = image['image_url'] ?? '';
+
+              // เช็คว่า URL เป็น relative path หรือไม่
+              String fullImageUrl = imageUrl;
+              if (imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
+                fullImageUrl = 'https://g-cargo.dev-asha9.com/public/$imageUrl';
+              }
+
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child:
-                      imageUrl.isNotEmpty
+                      fullImageUrl.isNotEmpty
                           ? Image.network(
-                            imageUrl,
+                            fullImageUrl,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
