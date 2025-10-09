@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/utils/helpers.dart';
 
 class ProductCardFromAPI extends StatelessWidget {
@@ -42,12 +43,12 @@ class ProductCardFromAPI extends StatelessWidget {
                       imageUrl.isNotEmpty
                           ? Image.network(
                             formatImageUrl(imageUrl),
-                            fit: BoxFit.cover,
-                            height: 130,
+                            fit: BoxFit.fill,
+                            height: isPhone(context) ? 130 : 200,
                             width: double.infinity,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
-                                height: 130,
+                                height: isPhone(context) ? 130 : 200,
                                 width: double.infinity,
                                 color: Colors.grey.shade200,
                                 child: const Icon(Icons.image_not_supported, color: Colors.grey),
@@ -56,7 +57,7 @@ class ProductCardFromAPI extends StatelessWidget {
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) return child;
                               return Container(
-                                height: 130,
+                                height: isPhone(context) ? 130 : 200,
                                 width: double.infinity,
                                 color: Colors.grey.shade200,
                                 child: const Center(child: CircularProgressIndicator()),
@@ -64,7 +65,7 @@ class ProductCardFromAPI extends StatelessWidget {
                             },
                           )
                           : Container(
-                            height: 130,
+                            height: isPhone(context) ? 130 : 200,
                             width: double.infinity,
                             color: Colors.grey.shade200,
                             child: const Icon(Icons.image, color: Colors.grey),
@@ -83,8 +84,8 @@ class ProductCardFromAPI extends StatelessWidget {
                     // แสดงชื่อสินค้าต้นฉบับ
                     Text(
                       title,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black),
-                      maxLines: 1,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 14 : 20, color: Colors.black),
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
 
@@ -93,8 +94,8 @@ class ProductCardFromAPI extends StatelessWidget {
                       SizedBox(height: 1),
                       Text(
                         translatedTitle!,
-                        style: TextStyle(fontSize: 11, color: Colors.blue.shade700, fontWeight: FontWeight.w500),
-                        maxLines: 1,
+                        style: TextStyle(fontSize: isPhone(context) ? 12 : 20, color: Colors.blue.shade700, fontWeight: FontWeight.w500),
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -102,7 +103,7 @@ class ProductCardFromAPI extends StatelessWidget {
                     Expanded(
                       child: Text(seller, style: TextStyle(fontSize: 11, color: Colors.grey.shade600), maxLines: 2, overflow: TextOverflow.ellipsis),
                     ),
-                    Text(price, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black)),
+                    Text(price, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 14 : 20, color: Colors.black)),
                   ],
                 ),
               ),

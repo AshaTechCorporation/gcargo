@@ -46,19 +46,19 @@ class _TermsDialogState extends State<TermsDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('เงื่อนไขบริการ', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
-                  IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.black)),
+                  Text('เงื่อนไขบริการ', style: TextStyle(fontSize: isPhone(context) ? 22 : 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                  IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close, color: Colors.black, size: isPhone(context) ? 24 : 30)),
                 ],
               ),
               const SizedBox(height: 4),
-              const Text('กรุณาอ่านเงื่อนไขในบริการให้ครบถ้วน', style: TextStyle(fontSize: 14, color: kHintTextColor)),
+              Text('กรุณาอ่านเงื่อนไขในบริการให้ครบถ้วน', style: TextStyle(fontSize: isPhone(context) ? 14 : 18, color: kHintTextColor)),
               const SizedBox(height: 16),
 
               // 🔹 เงื่อนไขแบบ scroll
               Expanded(
                 child: SingleChildScrollView(
                   controller: _scrollController,
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _termsSection('1. การรับสินค้า', [
@@ -152,14 +152,17 @@ class _termsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(title, style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ...bullets.map(
             (b) => Padding(
               padding: const EdgeInsets.only(bottom: 6),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [const Text('• ', style: TextStyle(fontSize: 14)), Expanded(child: Text(b, style: const TextStyle(fontSize: 14)))],
+                children: [
+                  Text('• ', style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
+                  Expanded(child: Text(b, style: TextStyle(fontSize: isPhone(context) ? 14 : 18))),
+                ],
               ),
             ),
           ),

@@ -22,17 +22,20 @@ class CustomDropdownFormField<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 18, color: kButtonColor)),
+        Text(label, style: TextStyle(fontSize: isPhone(context) ? 18 : 22, color: kButtonColor)),
         const SizedBox(height: 6),
         DropdownButtonFormField<T>(
           value: value,
           onChanged: onChanged,
           items: items,
+          style: TextStyle(fontSize: isPhone(context) ? 18 : 22, color: Colors.black, fontFamily: 'SukhumvitSet'),
           decoration: InputDecoration(
             hintText: hintText,
+            hintStyle: TextStyle(color: kHintTextColor, fontSize: isPhone(context) ? 18 : 22),
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: kButtonColor)),
           ),
+          icon: Icon(Icons.arrow_drop_down, color: kButtonColor, size: isPhone(context) ? 24 : 30),
         ),
       ],
     );

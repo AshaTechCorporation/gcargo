@@ -36,10 +36,7 @@ void main() async {
   Get.put(LanguageController());
   Get.put(HomeController());
 
-  await SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.immersiveSticky,
-    overlays: [SystemUiOverlay.top], // แสดงเฉพาะด้านบน ⇒ ด้านล่างถูกซ่อน
-  );
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: [SystemUiOverlay.top]);
 
   runApp(const MyApp());
 }
@@ -58,10 +55,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   // ⬅️ ADD: ฟังก์ชันซ่อน “เฉพาะแถบล่าง”
   Future<void> _rehideBottomOnly() async {
-    await SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: [SystemUiOverlay.top], // โชว์เฉพาะด้านบน ⇒ ด้านล่างถูกซ่อน
-    );
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: [SystemUiOverlay.top]);
   }
 
   @override
@@ -115,7 +109,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      // ⬅️ ADD: หุ้มทั้งแอปด้วย Listener เพื่อตรวจจับการปัด/แตะ แล้วรี-ซ่อนอัตโนมัติ
       builder:
           (context, child) => Listener(
             behavior: HitTestBehavior.translucent,
@@ -132,7 +125,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       fallbackLocale: const Locale('th', 'TH'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        appBarTheme: AppBarTheme(titleTextStyle: TextStyle(fontFamily: 'SukhumvitSet', fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold), centerTitle: false),
+        appBarTheme: AppBarTheme(
+          titleTextStyle: TextStyle(fontFamily: 'SukhumvitSet', fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
+          centerTitle: false,
+        ),
         fontFamily: 'SukhumvitSet',
       ),
       home: const AppLifecycleWrapper(),

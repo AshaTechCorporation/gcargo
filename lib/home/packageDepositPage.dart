@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/language_controller.dart';
 import 'package:get/get.dart';
 
@@ -192,10 +193,16 @@ class _PackageDepositPageState extends State<PackageDepositPage> {
       () => Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(getTranslation('package_deposit'), style: TextStyle(color: Colors.black)),
+          title: Text(
+            getTranslation('package_deposit'),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 18 : 22),
+          ),
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black), onPressed: () => Navigator.pop(context)),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new, size: isPhone(context) ? 20 : 24, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 12),
@@ -204,7 +211,7 @@ class _PackageDepositPageState extends State<PackageDepositPage> {
                 child: TextButton(
                   onPressed: _addPackage,
                   style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
-                  child: Text(getTranslation('add_package'), style: TextStyle(color: Colors.black)),
+                  child: Text(getTranslation('add_package'), style: TextStyle(color: Colors.black, fontSize: isPhone(context) ? 14 : 18)),
                 ),
               ),
             ),
@@ -227,7 +234,7 @@ class _PackageDepositPageState extends State<PackageDepositPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(getTranslation('transport_method'), style: TextStyle(fontSize: 14)),
+                  Text(getTranslation('transport_method'), style: TextStyle(fontSize: isPhone(context) ? 14 : 16)),
                   const SizedBox(width: 12),
                   Row(
                     children: [
@@ -236,7 +243,7 @@ class _PackageDepositPageState extends State<PackageDepositPage> {
                         groupValue: transportMethod,
                         onChanged: (val) => setState(() => transportMethod = val!),
                       ),
-                      Text(getTranslation('land_transport')),
+                      Text(getTranslation('land_transport'), style: TextStyle(fontSize: isPhone(context) ? 14 : 16)),
                     ],
                   ),
                   const SizedBox(width: 12),
@@ -247,7 +254,7 @@ class _PackageDepositPageState extends State<PackageDepositPage> {
                         groupValue: transportMethod,
                         onChanged: (val) => setState(() => transportMethod = val!),
                       ),
-                      Text(getTranslation('sea_transport')),
+                      Text(getTranslation('sea_transport'), style: TextStyle(fontSize: isPhone(context) ? 14 : 16)),
                     ],
                   ),
                 ],
@@ -259,7 +266,7 @@ class _PackageDepositPageState extends State<PackageDepositPage> {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF002A5B), padding: const EdgeInsets.symmetric(vertical: 16)),
-                  child: Text(getTranslation('confirm'), style: TextStyle(color: Colors.white)),
+                  child: Text(getTranslation('confirm'), style: TextStyle(color: Colors.white, fontSize: isPhone(context) ? 16 : 20)),
                 ),
               ),
             ],
@@ -284,19 +291,22 @@ class _PackageDepositPageState extends State<PackageDepositPage> {
         children: [
           // 🔵 ไอคอนรถในวงกลม
           Container(
-            width: 40,
-            height: 40,
+            width: isPhone(context) ? 40 : 45,
+            height: isPhone(context) ? 40 : 45,
             decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFEDF6FF)),
-            child: Center(child: Image.asset('assets/icons/car.png', width: 20, height: 20)),
+            child: Center(child: Image.asset('assets/icons/car.png', width: isPhone(context) ? 20 : 24, height: isPhone(context) ? 20 : 24)),
           ),
 
           const SizedBox(width: 12),
 
           // 📝 ข้อความกลางการ์ด
-          Expanded(child: Text(item['tracking'] ?? '-', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500))),
+          Expanded(child: Text(item['tracking'] ?? '-', style: TextStyle(fontSize: isPhone(context) ? 14 : 18, fontWeight: FontWeight.w500))),
 
           // ❌ ปุ่มลบด้านขวากลาง
-          GestureDetector(onTap: () => _removePackage(index), child: Image.asset('assets/icons/Vectorremove.png', width: 20, height: 20)),
+          GestureDetector(
+            onTap: () => _removePackage(index),
+            child: Image.asset('assets/icons/Vectorremove.png', width: isPhone(context) ? 20 : 24, height: isPhone(context) ? 20 : 24),
+          ),
         ],
       ),
     );
@@ -354,7 +364,7 @@ class _PackageDialogState extends State<_PackageDialog> {
       child: Scaffold(
         resizeToAvoidBottomInset: false, // ป้องกัน overflow เมื่อ keyboard ขึ้น
         appBar: AppBar(
-          title: Text(widget.getTranslation('package_details')),
+          title: Text(widget.getTranslation('package_details'), style: TextStyle(color: Colors.black, fontSize: isPhone(context) ? 18 : 22)),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           elevation: 0,
@@ -365,21 +375,29 @@ class _PackageDialogState extends State<_PackageDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.getTranslation('tracking_number')),
+              Text(widget.getTranslation('tracking_number'), style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
               const SizedBox(height: 6),
               TextField(
                 controller: trackingCtrl,
-                decoration: InputDecoration(border: OutlineInputBorder(), hintText: widget.getTranslation('enter_tracking')),
+                style: TextStyle(
+                  // ✅ ขนาดตัวอักษรของข้อความที่พิมพ์
+                  fontSize: isPhone(context) ? 16 : 22,
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: widget.getTranslation('enter_tracking'),
+                  hintStyle: TextStyle(fontSize: isPhone(context) ? 14 : 18),
+                ),
               ),
               const SizedBox(height: 16),
 
-              Text(widget.getTranslation('select_service')),
+              Text(widget.getTranslation('select_service'), style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
               Column(
                 children:
                     serviceTypes
                         .map(
                           (serviceType) => RadioListTile(
-                            title: Text(serviceType),
+                            title: Text(serviceType, style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
                             value: serviceType,
                             groupValue: service,
                             onChanged: (val) => setState(() => service = val!),
@@ -395,12 +413,17 @@ class _PackageDialogState extends State<_PackageDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.getTranslation('quantity')),
+                        Text(widget.getTranslation('quantity'), style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
                         const SizedBox(height: 6),
                         TextField(
                           controller: qtyCtrl,
+                          style: TextStyle(fontSize: isPhone(context) ? 16 : 22),
                           keyboardType: TextInputType.number,
-                          decoration: InputDecoration(border: OutlineInputBorder(), hintText: widget.getTranslation('enter_quantity')),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: widget.getTranslation('enter_quantity'),
+                            hintStyle: TextStyle(fontSize: isPhone(context) ? 14 : 18),
+                          ),
                         ),
                       ],
                     ),
@@ -410,12 +433,23 @@ class _PackageDialogState extends State<_PackageDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.getTranslation('type')),
+                        Text(widget.getTranslation('type'), style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
                           value: selectedType,
-                          decoration: InputDecoration(border: OutlineInputBorder(), hintText: widget.getTranslation('select_type')),
-                          items: productTypes.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
+                          //style: TextStyle(fontSize: isPhone(context) ? 16 : 22),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: widget.getTranslation('select_type'),
+                            hintStyle: TextStyle(fontSize: isPhone(context) ? 14 : 18),
+                          ),
+                          items:
+                              productTypes
+                                  .map(
+                                    (type) =>
+                                        DropdownMenuItem(value: type, child: Text(type, style: TextStyle(fontSize: isPhone(context) ? 16 : 18))),
+                                  )
+                                  .toList(),
                           onChanged: (val) => setState(() => selectedType = val),
                         ),
                       ],
@@ -425,13 +459,18 @@ class _PackageDialogState extends State<_PackageDialog> {
               ),
 
               const SizedBox(height: 16),
-              Text(widget.getTranslation('note')),
+              Text(widget.getTranslation('note'), style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
               const SizedBox(height: 6),
               TextField(
                 controller: noteCtrl,
+                style: TextStyle(fontSize: isPhone(context) ? 16 : 22),
                 maxLength: 200,
                 maxLines: 3,
-                decoration: InputDecoration(border: OutlineInputBorder(), hintText: widget.getTranslation('enter_note')),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: widget.getTranslation('enter_note'),
+                  hintStyle: TextStyle(fontSize: isPhone(context) ? 14 : 18),
+                ),
               ),
 
               const SizedBox(height: 32), // เปลี่ยนจาก Spacer เป็น SizedBox
@@ -449,7 +488,7 @@ class _PackageDialogState extends State<_PackageDialog> {
                       });
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF002A5B), padding: const EdgeInsets.symmetric(vertical: 16)),
-                    child: Text(widget.getTranslation('save'), style: TextStyle(color: Colors.white)),
+                    child: Text(widget.getTranslation('save'), style: TextStyle(color: Colors.white, fontSize: isPhone(context) ? 16 : 20)),
                   ),
                 ),
               ),

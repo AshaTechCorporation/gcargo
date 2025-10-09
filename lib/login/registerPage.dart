@@ -301,9 +301,12 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 🔹 หัวข้อ
-                const Text('ลงทะเบียน', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kButtonColor)),
+                Text('ลงทะเบียน', style: TextStyle(fontSize: isPhone(context) ? 24 : 28, fontWeight: FontWeight.bold, color: kButtonColor)),
                 const SizedBox(height: 4),
-                const Text('สมัครใช้งานง่าย ส่งของข้ามประเทศได้ปลอดภัยทุกขั้นตอน', style: TextStyle(fontSize: 13, color: kHintTextColor)),
+                Text(
+                  'สมัครใช้งานง่าย ส่งของข้ามประเทศได้ปลอดภัยทุกขั้นตอน',
+                  style: TextStyle(fontSize: isPhone(context) ? 13 : 18, color: kHintTextColor),
+                ),
                 const SizedBox(height: 24),
 
                 CustomTextFormField(
@@ -359,7 +362,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('เบอร์โทรศัพท์มือถือ', style: TextStyle(fontSize: 18, color: kButtonColor)),
+                    Text('เบอร์โทรศัพท์มือถือ', style: TextStyle(fontSize: isPhone(context) ? 18 : 22, color: kButtonColor)),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _phoneController,
@@ -370,7 +373,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                       decoration: InputDecoration(
                         hintText: 'กรุณากรอกเบอร์โทรศัพท์มือถือ',
-                        hintStyle: const TextStyle(color: kHintTextColor),
+                        hintStyle: TextStyle(color: kHintTextColor, fontSize: isPhone(context) ? 18 : 22),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey)),
                         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey)),
                         focusedBorder: OutlineInputBorder(
@@ -479,8 +482,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         visualDensity: const VisualDensity(horizontal: -4, vertical: -4), // ✅ ลดช่องว่าง
                       ),
                       const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text('ยินยอมในข้อตกลงเงื่อนไขในการบริการของทางเว็บไซต์', style: TextStyle(fontSize: 13, color: kHintTextColor)),
+                      Expanded(
+                        child: Text(
+                          'ยินยอมในข้อตกลงเงื่อนไขในการบริการของทางเว็บไซต์',
+                          style: TextStyle(fontSize: isPhone(context) ? 13 : 16, color: kHintTextColor),
+                        ),
                       ),
                     ],
                   ),
@@ -500,7 +506,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
 
                       // ไม่ใช้ Form validation แล้ว เพราะเราเช็คเองแล้ว
-                      final accepted = await showDialog<bool>(context: context, barrierDismissible: false, builder: (context) => const TermsDialog());
+                      final accepted = await showDialog<bool>(context: context, barrierDismissible: false, builder: (context) => TermsDialog());
 
                       if (accepted == true) {
                         // TODO: ดำเนินการสมัครต่อ
@@ -579,7 +585,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('ยืนยัน', style: TextStyle(fontSize: 18)),
+                    child: Text('ยืนยัน', style: TextStyle(fontSize: isPhone(context) ? 18 : 22, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -597,7 +603,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       side: const BorderSide(color: kButtonColor),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('ย้อนกลับ', style: TextStyle(fontSize: 18)),
+                    child: Text('ย้อนกลับ', style: TextStyle(fontSize: isPhone(context) ? 18 : 22)),
                   ),
                 ),
               ],

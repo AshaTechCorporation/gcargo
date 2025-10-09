@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 
 class ServiceImageCard extends StatelessWidget {
   final String imagePath;
@@ -11,7 +12,10 @@ class ServiceImageCard extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.asset(imagePath, height: 100, fit: BoxFit.fill)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(imagePath, height: isPhone(context) ? 100 : 130, fit: BoxFit.fill),
+        ),
       ),
     );
   }

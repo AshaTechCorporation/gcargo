@@ -75,15 +75,18 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 🔹 โลโก้ด้านขวาบน
-                Align(alignment: Alignment.topRight, child: Image.asset('assets/icons/Logo.png', width: 80)),
+                Align(alignment: Alignment.topRight, child: Image.asset('assets/icons/Logo.png', width: isPhone(context) ? 80 : 120)),
                 SizedBox(height: 16),
 
                 // 🔹 หัวข้อ
-                Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: kButtonColor)),
+                Text('เข้าสู่ระบบ', style: TextStyle(fontSize: isPhone(context) ? 36 : 42, fontWeight: FontWeight.bold, color: kButtonColor)),
                 SizedBox(height: 4),
 
                 // 🔹 คำอธิบาย
-                Text('บริการขนส่งระหว่างประเทศรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน', style: TextStyle(fontSize: 16, color: kHintTextColor)),
+                Text(
+                  'บริการขนส่งระหว่างประเทศรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน',
+                  style: TextStyle(fontSize: isPhone(context) ? 16 : 20, color: kHintTextColor),
+                ),
                 SizedBox(height: 24),
 
                 // 🔹 Email
@@ -106,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 SizedBox(height: 6),
-                Text('รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร', style: TextStyle(fontSize: 14, color: kHintTextColor)),
+                Text('รหัสผ่านต้องมีความยาว 8 - 20 ตัวอักษร', style: TextStyle(fontSize: isPhone(context) ? 14 : 18, color: kHintTextColor)),
 
                 // 🔹 ลืมรหัสผ่าน
                 Align(
@@ -116,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ForgetPasswordPage()));
                     },
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                    child: Text('ลืมรหัสผ่าน', style: TextStyle(color: kHintTextColor, fontSize: 14)),
+                    child: Text('ลืมรหัสผ่าน', style: TextStyle(color: kHintTextColor, fontSize: isPhone(context) ? 14 : 18)),
                   ),
                 ),
                 SizedBox(height: 4),
@@ -124,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                 // 🔹 ปุ่มเข้าสู่ระบบ
                 SizedBox(
                   width: double.infinity,
-                  height: 48,
+                  height: isPhone(context) ? 48 : 52,
                   child: ElevatedButton(
                     onPressed:
                         isLoading
@@ -263,23 +266,23 @@ class _LoginPageState extends State<LoginPage> {
                         isLoading
                             ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 SizedBox(
-                                  width: 20,
-                                  height: 20,
+                                  width: isPhone(context) ? 20 : 30,
+                                  height: isPhone(context) ? 20 : 30,
                                   child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
                                 ),
                                 SizedBox(width: 12),
-                                Text('กำลังเข้าสู่ระบบ...', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                Text('กำลังเข้าสู่ระบบ...', style: TextStyle(fontSize: isPhone(context) ? 20 : 26, fontWeight: FontWeight.bold)),
                               ],
                             )
-                            : const Text('เข้าสู่ระบบ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            : Text('เข้าสู่ระบบ', style: TextStyle(fontSize: isPhone(context) ? 20 : 26, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 SizedBox(height: 16),
 
                 // 🔹 ข้อความ "หรือ"
-                Center(child: Text('หรือ', style: TextStyle(color: kHintTextColor))),
+                Center(child: Text('หรือ', style: TextStyle(color: kHintTextColor, fontSize: isPhone(context) ? 14 : 18))),
                 SizedBox(height: 16),
 
                 // 🔹 ไอคอน + สร้างบัญชีใหม่ในแถวเดียวกัน
@@ -298,17 +301,17 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextButton.styleFrom(padding: EdgeInsets.zero, foregroundColor: kButtonColor),
                       child: Row(
                         children: [
-                          Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: isPhone(context) ? 20 : 26, fontWeight: FontWeight.bold)),
                           SizedBox(width: 8),
                           Container(
-                            width: 28,
-                            height: 28,
+                            width: isPhone(context) ? 28 : 32,
+                            height: isPhone(context) ? 28 : 32,
                             decoration: BoxDecoration(
                               color: kButtonColor,
                               shape: BoxShape.circle,
                               border: Border.all(color: kButtonColor, width: 1.6),
                             ),
-                            child: Icon(CupertinoIcons.right_chevron, size: 18, color: Colors.white),
+                            child: Icon(CupertinoIcons.right_chevron, size: isPhone(context) ? 18 : 22, color: Colors.white),
                           ),
                         ],
                       ),

@@ -250,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                                   isDense: true,
                                   contentPadding: EdgeInsets.zero,
                                   hintText: getTranslation('Home.search_placeholder'),
-                                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                  hintStyle: TextStyle(color: Colors.grey, fontSize: isPhone(context) ? 14 : 16),
                                   border: InputBorder.none,
                                 ),
                                 style: TextStyle(color: Colors.black),
@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                               onTap: () {
                                 SearchService.showImagePickerBottomSheet(context: context, selectedType: homeController.selectedItemType.value);
                               },
-                              child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: 20),
+                              child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: isPhone(context) ? 20 : 24),
                             ),
                           ],
                         ),
@@ -276,14 +276,24 @@ class _HomePageState extends State<HomePage> {
                         ////go action
                         Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
                       },
-                      child: Image.asset('assets/icons/bag.png', width: 20, height: 20, fit: BoxFit.fill),
+                      child: Image.asset(
+                        'assets/icons/bag.png',
+                        width: isPhone(context) ? 20 : 24,
+                        height: isPhone(context) ? 20 : 24,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                     SizedBox(width: 12),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
                       },
-                      child: Image.asset('assets/icons/notification.png', width: 20, height: 20, fit: BoxFit.fill),
+                      child: Image.asset(
+                        'assets/icons/notification.png',
+                        width: isPhone(context) ? 20 : 24,
+                        height: isPhone(context) ? 20 : 24,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ],
                 ),
@@ -307,7 +317,7 @@ class _HomePageState extends State<HomePage> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
-                              height: 140,
+                              height: isPhone(context) ? 140 : 180,
                               color: Colors.grey.shade200,
                               child: Center(child: Text(getTranslation('no_banner'), style: TextStyle(color: Colors.grey))),
                             ),
@@ -319,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: SizedBox(
-                            height: 140,
+                            height: isPhone(context) ? 140 : 180,
                             child: PageView.builder(
                               controller: _pageController,
                               itemCount: homeController.imgBanners.length,
@@ -381,7 +391,12 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.asset('assets/images/pichome.png', width: double.infinity, height: 140, fit: BoxFit.cover),
+                            child: Image.asset(
+                              'assets/images/pichome.png',
+                              width: double.infinity,
+                              height: isPhone(context) ? 140 : 160,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
 
@@ -407,7 +422,7 @@ class _HomePageState extends State<HomePage> {
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.zero,
                                         ),
-                                        style: TextStyle(fontSize: 14),
+                                        style: TextStyle(fontSize: isPhone(context) ? 14 : 16),
                                         textInputAction: TextInputAction.search,
                                         onSubmitted:
                                             isSearchLoading
@@ -452,7 +467,7 @@ class _HomePageState extends State<HomePage> {
                                                 valueColor: AlwaysStoppedAnimation<Color>(Colors.grey.shade600),
                                               ),
                                             )
-                                            : Icon(Icons.send, color: Colors.grey.shade600, size: 20),
+                                            : Icon(Icons.send, color: Colors.grey.shade600, size: isPhone(context) ? 20 : 24),
                                   ),
                                 ],
                               ),
@@ -468,7 +483,7 @@ class _HomePageState extends State<HomePage> {
                             getTranslation('paste_link_here'),
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 18,
+                              fontSize: isPhone(context) ? 18 : 22,
                               fontWeight: FontWeight.bold,
                               shadows: [Shadow(color: Colors.black.withOpacity(0.5), blurRadius: 4, offset: Offset(1, 1))],
                             ),
@@ -493,20 +508,20 @@ class _HomePageState extends State<HomePage> {
                           ServiceImageCard(
                             imagePath: 'assets/images/bay.png',
                             onTap: () {
-                              if (Platform.isIOS) {
-                                Get.snackbar(
-                                  'แจ้งเตือน',
-                                  'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                                  backgroundColor: Colors.yellowAccent,
-                                  colorText: Colors.black,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                );
-                              } else {
-                                // 👉 ไปหน้าแลกเปลี่ยนเงิน
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
-                              }
+                              // if (Platform.isIOS) {
+                              //   Get.snackbar(
+                              //     'แจ้งเตือน',
+                              //     'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                              //     backgroundColor: Colors.yellowAccent,
+                              //     colorText: Colors.black,
+                              //     snackPosition: SnackPosition.BOTTOM,
+                              //   );
+                              // } else {
+                              //   // 👉 ไปหน้าแลกเปลี่ยนเงิน
+                              //   Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
+                              // }
                               // 👉 ไปหน้าแลกเปลี่ยนเงิน
-                              //Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
                             },
                           ),
                         ],
@@ -534,10 +549,14 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.grey.shade300),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                        padding:
+                            isPhone(context)
+                                ? const EdgeInsets.symmetric(vertical: 12, horizontal: 8)
+                                : const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                         child: IntrinsicHeight(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               ServiceItemWidget(
                                 iconPath: 'assets/icons/tran1.png',
@@ -576,7 +595,10 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(getTranslation('recommended_products'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text(
+                            getTranslation('recommended_products'),
+                            style: TextStyle(fontSize: isPhone(context) ? 20 : 24, fontWeight: FontWeight.bold),
+                          ),
                           Obx(
                             () => Container(
                               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -586,7 +608,10 @@ class _HomePageState extends State<HomePage> {
                                   value: homeController.selectedItemType.value.isEmpty ? itemType.first : homeController.selectedItemType.value,
                                   items:
                                       itemType.map((item) {
-                                        return DropdownMenuItem<String>(value: item, child: Text(item, style: TextStyle(fontSize: 14)));
+                                        return DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(item, style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
+                                        );
                                       }).toList(),
                                   onChanged: (String? newValue) {
                                     if (newValue != null) {
@@ -625,11 +650,11 @@ class _HomePageState extends State<HomePage> {
                             ),
                             child: Column(
                               children: [
-                                Icon(Icons.error_outline, color: Colors.red.shade600, size: 48),
+                                Icon(Icons.error_outline, color: Colors.red.shade600, size: isPhone(context) ? 48 : 52),
                                 SizedBox(height: 12),
                                 Text(
                                   homeController.errorMessage.value,
-                                  style: TextStyle(color: Colors.red.shade700, fontSize: 16, fontWeight: FontWeight.w500),
+                                  style: TextStyle(color: Colors.red.shade700, fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.w500),
                                   textAlign: TextAlign.center,
                                 ),
                                 SizedBox(height: 16),
@@ -647,7 +672,9 @@ class _HomePageState extends State<HomePage> {
                       if (homeController.searchItems.isEmpty) {
                         return Padding(
                           padding: EdgeInsets.all(32),
-                          child: Center(child: Text(getTranslation('no_products'), style: TextStyle(fontSize: 16, color: Colors.grey))),
+                          child: Center(
+                            child: Text(getTranslation('no_products'), style: TextStyle(fontSize: isPhone(context) ? 16 : 20, color: Colors.grey)),
+                          ),
                         );
                       }
 
@@ -656,9 +683,9 @@ class _HomePageState extends State<HomePage> {
                         child: GridView.builder(
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 0.78,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
+                            childAspectRatio: isPhone(context) ? 0.78 : 1,
+                            mainAxisSpacing: isPhone(context) ? 12 : 20,
+                            crossAxisSpacing: isPhone(context) ? 12 : 20,
                           ),
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),

@@ -511,7 +511,7 @@ class _ExchangePageState extends State<ExchangePage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(icon: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20), onPressed: () => Navigator.pop(context)),
-          title: Text(getTranslation('exchange'), style: TextStyle(color: Colors.black)),
+          title: Text(getTranslation('exchange'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(16),
@@ -535,20 +535,20 @@ class _ExchangePageState extends State<ExchangePage> {
                       SizedBox(width: 8),
                       Text(
                         '${getTranslation('exchange_rate')} G-cargo-A: ${rate != null ? "1 ¥ = $rate ฿" : getTranslation('uploading')}',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.w500, color: Colors.black),
                       ),
                     ],
                   ),
                 );
               }),
               SizedBox(height: 16),
-              Text(getTranslation('yuan_amount_to_transfer')),
+              Text(getTranslation('yuan_amount_to_transfer'), style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.w500)),
               SizedBox(height: 8),
               Row(
                 children: [
                   Container(
                     width: size.width * 0.6,
-                    height: 48,
+                    height: isPhone(context) ? 48 : 52,
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -557,6 +557,7 @@ class _ExchangePageState extends State<ExchangePage> {
                     ),
                     child: TextField(
                       controller: _bahtController,
+                      style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.w500),
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(hintText: getTranslation('enter_amount'), border: InputBorder.none),
                     ),
@@ -564,7 +565,7 @@ class _ExchangePageState extends State<ExchangePage> {
                   SizedBox(width: 8),
                   Container(
                     width: size.width * 0.26,
-                    height: 48,
+                    height: isPhone(context) ? 48 : 52,
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: kBackgroundTextColor.withValues(alpha: 0.05),
@@ -575,17 +576,21 @@ class _ExchangePageState extends State<ExchangePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          child: Text(calculatedYuan, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            calculatedYuan,
+                            style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         SizedBox(width: 4),
-                        Text('¥', style: TextStyle(fontSize: 14, color: Colors.black54)),
+                        Text('¥', style: TextStyle(fontSize: isPhone(context) ? 14 : 16, color: Colors.black54)),
                       ],
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 20),
-              Text(getTranslation('select_payment_method')),
+              Text(getTranslation('select_payment_method'), style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.w500)),
               SizedBox(height: 12),
               ...List.generate(paymentMethods.length, (index) {
                 return GestureDetector(
@@ -609,7 +614,7 @@ class _ExchangePageState extends State<ExchangePage> {
                       children: [
                         //Image.asset(icons[index], width: 28, height: 28),
                         SizedBox(width: 12),
-                        Expanded(child: Text(_getAccountName(paymentMethods[index]), style: TextStyle(fontSize: 16))),
+                        Expanded(child: Text(_getAccountName(paymentMethods[index]), style: TextStyle(fontSize: isPhone(context) ? 16 : 20))),
                         Radio(
                           activeColor: kSubButtonColor,
                           value: index,
@@ -648,8 +653,8 @@ class _ExchangePageState extends State<ExchangePage> {
                             GestureDetector(
                               onTap: selectedFile != null ? _viewSelectedFile : null,
                               child: Container(
-                                width: 120,
-                                height: 120,
+                                width: isPhone(context) ? 120 : 160,
+                                height: isPhone(context) ? 120 : 160,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: Colors.grey.shade300),
@@ -666,21 +671,27 @@ class _ExchangePageState extends State<ExchangePage> {
                                                       ? Column(
                                                         mainAxisAlignment: MainAxisAlignment.center,
                                                         children: [
-                                                          Icon(Icons.picture_as_pdf, color: Colors.red, size: 40),
+                                                          Icon(Icons.picture_as_pdf, color: Colors.red, size: isPhone(context) ? 40 : 50),
                                                           SizedBox(height: 8),
-                                                          Text('PDF', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                                                          Text('กดเพื่อดู', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                                                          Text(
+                                                            'PDF',
+                                                            style: TextStyle(fontSize: isPhone(context) ? 12 : 14, fontWeight: FontWeight.bold),
+                                                          ),
+                                                          Text(
+                                                            'กดเพื่อดู',
+                                                            style: TextStyle(fontSize: isPhone(context) ? 12 : 14, color: Colors.grey),
+                                                          ),
                                                         ],
                                                       )
                                                       : Stack(
                                                         children: [
                                                           Image.file(
                                                             selectedFile!,
-                                                            width: 120,
-                                                            height: 120,
+                                                            width: isPhone(context) ? 120 : 160,
+                                                            height: isPhone(context) ? 120 : 160,
                                                             fit: BoxFit.cover,
                                                             errorBuilder: (context, error, stackTrace) {
-                                                              return Icon(Icons.broken_image, color: Colors.grey, size: 40);
+                                                              return Icon(Icons.broken_image, color: Colors.grey, size: isPhone(context) ? 40 : 50);
                                                             },
                                                           ),
                                                           Positioned(
@@ -692,7 +703,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                                                 color: Colors.black54,
                                                                 borderRadius: BorderRadius.circular(4),
                                                               ),
-                                                              child: Icon(Icons.zoom_in, color: Colors.white, size: 16),
+                                                              child: Icon(Icons.zoom_in, color: Colors.white, size: isPhone(context) ? 16 : 20),
                                                             ),
                                                           ),
                                                         ],
@@ -711,7 +722,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                                 child: Container(
                                                   padding: EdgeInsets.all(4),
                                                   decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
-                                                  child: Icon(Icons.close, color: Colors.white, size: 16),
+                                                  child: Icon(Icons.close, color: Colors.white, size: isPhone(context) ? 16 : 20),
                                                 ),
                                               ),
                                             ),
@@ -720,9 +731,16 @@ class _ExchangePageState extends State<ExchangePage> {
                                         : Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Image.asset('assets/icons/cl11.png', width: 36, height: 36),
+                                            Image.asset(
+                                              'assets/icons/cl11.png',
+                                              width: isPhone(context) ? 36 : 42,
+                                              height: isPhone(context) ? 36 : 42,
+                                            ),
                                             SizedBox(height: 8),
-                                            Text(getTranslation('upload_slip'), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                            Text(
+                                              getTranslation('upload_slip'),
+                                              style: TextStyle(fontSize: isPhone(context) ? 12 : 14, fontWeight: FontWeight.bold),
+                                            ),
                                           ],
                                         ),
                               ),
@@ -730,10 +748,13 @@ class _ExchangePageState extends State<ExchangePage> {
                             SizedBox(height: 12),
                             Text(
                               selectedFile != null ? getTranslation('click_image_to_view') : getTranslation('upload_qr_image'),
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 14 : 18),
                             ),
                             SizedBox(height: 4),
-                            Text(getTranslation('supported_file_formats'), style: TextStyle(fontSize: 12, color: Colors.black54)),
+                            Text(
+                              getTranslation('supported_file_formats'),
+                              style: TextStyle(fontSize: isPhone(context) ? 12 : 14, color: Colors.black54),
+                            ),
                             SizedBox(height: 16),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -743,7 +764,10 @@ class _ExchangePageState extends State<ExchangePage> {
                                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                               ),
                               onPressed: _showFilePickerOptions,
-                              child: Text(selectedFile != null ? getTranslation('change_file') : getTranslation('select_file')),
+                              child: Text(
+                                selectedFile != null ? getTranslation('change_file') : getTranslation('select_file'),
+                                style: TextStyle(fontSize: isPhone(context) ? 14 : 18),
+                              ),
                             ),
                           ],
                         ),
@@ -764,12 +788,12 @@ class _ExchangePageState extends State<ExchangePage> {
                 ),
                 child: Row(
                   children: [
-                    Image.asset('assets/icons/danger.png', width: 20),
+                    Image.asset('assets/icons/danger.png', width: isPhone(context) ? 20 : 24),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         '${getTranslation('transaction_hours')} ${getTranslation('business_hours_message')}',
-                        style: TextStyle(fontSize: 12, color: Colors.black87),
+                        style: TextStyle(fontSize: isPhone(context) ? 12 : 14, color: Colors.black87),
                       ),
                     ),
                   ],
@@ -782,10 +806,10 @@ class _ExchangePageState extends State<ExchangePage> {
                 final rate = double.tryParse(alipayRate?.toString() ?? '0') ?? 0.0;
                 return Row(
                   children: [
-                    Text('${getTranslation('exchange_rate')} ', style: TextStyle(color: Colors.black54)),
+                    Text('${getTranslation('exchange_rate')} ', style: TextStyle(color: Colors.black54, fontSize: isPhone(context) ? 14 : 18)),
                     Text(
                       rate > 0 ? '${rate.toStringAsFixed(2)} ${getTranslation('baht')}/${getTranslation('yuan')}' : getTranslation('uploading'),
-                      style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: isPhone(context) ? 14 : 18),
                     ),
                   ],
                 );
@@ -860,9 +884,10 @@ class _ExchangePageState extends State<ExchangePage> {
                       Get.snackbar('ข้อผิดพลาด', 'เกิดข้อผิดพลาด: $e', backgroundColor: Colors.red, colorText: Colors.white);
                     }
                   },
-                  child: Text(getTranslation('confirm'), style: TextStyle(fontSize: 16, color: Colors.white)),
+                  child: Text(getTranslation('confirm'), style: TextStyle(fontSize: isPhone(context) ? 16 : 20, color: Colors.white)),
                 ),
               ),
+              SizedBox(height: size.height * 0.05),
             ],
           ),
         ),
@@ -886,13 +911,14 @@ class _ExchangePageState extends State<ExchangePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontSize: 14, color: Colors.black87)),
+        Text(label, style: TextStyle(fontSize: isPhone(context) ? 14 : 18, color: Colors.black87)),
         const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: TextField(
             controller: controller,
+            style: TextStyle(fontSize: isPhone(context) ? 14 : 18, color: Colors.black),
             keyboardType: keyboardType,
             decoration: const InputDecoration(border: InputBorder.none, hintText: ''),
           ),

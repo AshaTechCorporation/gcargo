@@ -838,19 +838,20 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   Widget _buildSecondButton(String? status) {
     if (status == 'shipped') {
       // For "รอตรวจสอบ" - show "ซื้ออีกครั้ง" button
-      return ElevatedButton(
-        onPressed: () {
-          // แสดงข้อความว่าฟังก์ชันยังไม่พร้อมใช้งาน
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ฟังก์ชันนี้ยังไม่พร้อมใช้งาน'), backgroundColor: Colors.orange));
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: kButtonColor,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Text(getTranslation('buy_again'), style: TextStyle(fontSize: 16)),
-      );
+      return const SizedBox.shrink();
+      // return ElevatedButton(
+      //   onPressed: () {
+      //     // แสดงข้อความว่าฟังก์ชันยังไม่พร้อมใช้งาน
+      //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ฟังก์ชันนี้ยังไม่พร้อมใช้งาน'), backgroundColor: Colors.orange));
+      //   },
+      //   style: ElevatedButton.styleFrom(
+      //     backgroundColor: kButtonColor,
+      //     foregroundColor: Colors.white,
+      //     padding: const EdgeInsets.symmetric(vertical: 14),
+      //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      //   ),
+      //   child: Text(getTranslation('buy_again'), style: TextStyle(fontSize: 16)),
+      // );
     } else if (status == 'awaiting_payment') {
       // For "รอชำระเงิน" - show price button with API total
       final order = orderController.order.value;

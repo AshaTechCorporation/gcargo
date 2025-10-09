@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/home/exchangeRatePage.dart';
 import 'package:gcargo/home/shippingRatePage.dart';
@@ -31,19 +32,21 @@ class ServiceItemWidget extends StatelessWidget {
         }
       },
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(5),
+            padding: isPhone(context) ? const EdgeInsets.all(5) : const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
             ),
-            child: Image.asset(iconPath, width: 36, height: 36),
+            child: Image.asset(iconPath, width: isPhone(context) ? 36 : 42, height: isPhone(context) ? 36 : 42, fit: BoxFit.fill),
           ),
           const SizedBox(height: 6),
-          SizedBox(child: Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center)),
+          SizedBox(child: Text(label, style: TextStyle(fontSize: isPhone(context) ? 12 : 18), textAlign: TextAlign.center)),
         ],
       ),
     );

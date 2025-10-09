@@ -157,13 +157,13 @@ class _FirstPageState extends State<FirstPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: isPhone(context) ? 36 : 42,
+                height: isPhone(context) ? 36 : 42,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: iconBackground),
-                child: Center(child: Image.asset(icon, width: 20, height: 20)),
+                child: Center(child: Image.asset(icon, width: isPhone(context) ? 20 : 25, height: isPhone(context) ? 20 : 25)),
               ),
               const SizedBox(height: 8),
-              Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+              Text(label, style: TextStyle(fontSize: isPhone(context) ? 12 : 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
             ],
           ),
         ),
@@ -171,7 +171,7 @@ class _FirstPageState extends State<FirstPage> {
     );
   }
 
-  Widget _billActionItem({required String icon, required String label, required bool isSelected, required VoidCallback onTap}) {
+  Widget _billActionItem({required String icon, required String label, required bool isSelected, required VoidCallback onTap, required Size size}) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -185,26 +185,32 @@ class _FirstPageState extends State<FirstPage> {
 
             // ปุ่มเต็ม (พื้น + ไอคอน + ข้อความ)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: isPhone(context) ? 12 : 18, vertical: isPhone(context) ? 10 : 16),
+              width: isPhone(context) ? size.width * 0.4 : size.width * 0.4,
               decoration: BoxDecoration(
                 color: isSelected ? const Color(0xFFE9F7EF) : const Color(0xFFF0F4FA),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // ไอคอนวงกลม
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: isPhone(context) ? 36 : 42,
+                    height: isPhone(context) ? 36 : 42,
                     decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                    child: Center(child: Image.asset(icon, width: 20, height: 20)),
+                    child: Center(child: Image.asset(icon, width: isPhone(context) ? 20 : 25, height: isPhone(context) ? 20 : 25)),
                   ),
                   const SizedBox(width: 8),
                   // ข้อความ
                   Text(
                     label,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: isSelected ? const Color(0xFF6BD08B) : Colors.black),
+                    style: TextStyle(
+                      fontSize: isPhone(context) ? 14 : 18,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? const Color(0xFF6BD08B) : Colors.black,
+                    ),
                   ),
                 ],
               ),
@@ -226,9 +232,10 @@ class _FirstPageState extends State<FirstPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(navItems[index]['icon'], width: 24, height: 24, color: color),
+            Image.asset(navItems[index]['icon'], width: isPhone(context) ? 24 : 30, height: isPhone(context) ? 24 : 30, color: color),
             const SizedBox(height: 4),
-            if (isSelected) Text(navItems[index]['label'], style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w500)),
+            if (isSelected)
+              Text(navItems[index]['label'], style: TextStyle(color: color, fontSize: isPhone(context) ? 12 : 16, fontWeight: FontWeight.w500)),
           ],
         ),
       ),
@@ -237,6 +244,7 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       extendBody: true,
       body: Stack(
@@ -345,6 +353,7 @@ class _FirstPageState extends State<FirstPage> {
                         icon: 'assets/icons/task-square.png',
                         label: getStatusTranslation('product_history'),
                         isSelected: false,
+                        size: size,
                         onTap: () {
                           setState(() {
                             _showBillPanel = false;
@@ -356,6 +365,7 @@ class _FirstPageState extends State<FirstPage> {
                         icon: 'assets/icons/menu-board.png',
                         label: getStatusTranslation('transport_cost'),
                         isSelected: true,
+                        size: size,
                         onTap: () {
                           setState(() {
                             _showBillPanel = false;

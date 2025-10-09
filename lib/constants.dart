@@ -29,3 +29,5 @@ final List<String> itemType = ['shopgs2', 'shopgs1'];
 const List<Map<String, dynamic>> importcard = [
   {'id': 1, 'Importercode': 'AAAA', 'Sendbycar': '/EK', 'Sendbyboat': '/SEA'},
 ];
+
+bool isPhone(BuildContext context) => MediaQuery.of(context).size.shortestSide < 550;

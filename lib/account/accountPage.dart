@@ -311,7 +311,7 @@ class _AccountPageState extends State<AccountPage> {
                                     Container(
                                       padding: EdgeInsets.all(12),
                                       decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-                                      child: Icon(Icons.badge_outlined, color: Colors.white, size: 24),
+                                      child: Icon(Icons.badge_outlined, color: Colors.white, size: isPhone(context) ? 24 : 30),
                                     ),
                                     SizedBox(width: 16),
                                     Expanded(
@@ -320,12 +320,21 @@ class _AccountPageState extends State<AccountPage> {
                                         children: [
                                           Text(
                                             getTranslation('importer_code'),
-                                            style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
+                                            style: TextStyle(
+                                              fontSize: isPhone(context) ? 12 : 16,
+                                              color: Colors.white.withOpacity(0.8),
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                           SizedBox(height: 4),
                                           Text(
                                             '${importer_code.toUpperCase()}',
-                                            style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2),
+                                            style: TextStyle(
+                                              fontSize: isPhone(context) ? 20 : 24,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.2,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -344,7 +353,7 @@ class _AccountPageState extends State<AccountPage> {
                                       child: Container(
                                         padding: EdgeInsets.all(10),
                                         decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
-                                        child: Icon(Icons.copy, color: Colors.white, size: 18),
+                                        child: Icon(Icons.copy, color: Colors.white, size: isPhone(context) ? 18 : 22),
                                       ),
                                     ),
                                   ],
@@ -359,16 +368,24 @@ class _AccountPageState extends State<AccountPage> {
                                       Expanded(
                                         child: Column(
                                           children: [
-                                            Icon(Icons.local_shipping, color: Colors.white, size: 20),
+                                            Icon(Icons.local_shipping, color: Colors.white, size: isPhone(context) ? 20 : 26),
                                             SizedBox(height: 4),
                                             Text(
                                               'ส่งทางรถ',
-                                              style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
+                                              style: TextStyle(
+                                                fontSize: isPhone(context) ? 10 : 14,
+                                                color: Colors.white.withOpacity(0.8),
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
                                             SizedBox(height: 2),
                                             Text(
                                               'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbycar']}',
-                                              style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                fontSize: isPhone(context) ? 12 : 16,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -378,16 +395,24 @@ class _AccountPageState extends State<AccountPage> {
                                       Expanded(
                                         child: Column(
                                           children: [
-                                            Icon(Icons.directions_boat, color: Colors.white, size: 20),
+                                            Icon(Icons.directions_boat, color: Colors.white, size: isPhone(context) ? 20 : 26),
                                             SizedBox(height: 4),
                                             Text(
                                               'ส่งทางเรือ',
-                                              style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
+                                              style: TextStyle(
+                                                fontSize: isPhone(context) ? 10 : 14,
+                                                color: Colors.white.withOpacity(0.8),
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
                                             SizedBox(height: 2),
                                             Text(
                                               'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbyboat']}',
-                                              style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                fontSize: isPhone(context) ? 12 : 16,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -410,11 +435,11 @@ class _AccountPageState extends State<AccountPage> {
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.location_on, color: Color(0xFF4A90E2), size: 20),
+                                      Icon(Icons.location_on, color: Color(0xFF4A90E2), size: isPhone(context) ? 20 : 26),
                                       SizedBox(width: 8),
                                       Text(
                                         getTranslation('shipping_address'),
-                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
+                                        style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
                                       ),
                                     ],
                                   ),
@@ -445,7 +470,7 @@ class _AccountPageState extends State<AccountPage> {
                                                     color: Color(0xFF4A90E2).withOpacity(0.1),
                                                     borderRadius: BorderRadius.circular(8),
                                                   ),
-                                                  child: Icon(Icons.store, color: Color(0xFF4A90E2), size: 16),
+                                                  child: Icon(Icons.store, color: Color(0xFF4A90E2), size: isPhone(context) ? 16 : 22),
                                                 ),
                                                 SizedBox(width: 12),
                                                 Expanded(
@@ -454,12 +479,16 @@ class _AccountPageState extends State<AccountPage> {
                                                     children: [
                                                       Text(
                                                         storeGcargo[indexStore]['name'] ?? '',
-                                                        style: TextStyle(color: Color(0xFF2C3E50), fontWeight: FontWeight.bold, fontSize: 16),
+                                                        style: TextStyle(
+                                                          color: Color(0xFF2C3E50),
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: isPhone(context) ? 16 : 20,
+                                                        ),
                                                       ),
                                                       SizedBox(height: 4),
                                                       Text(
                                                         (storeGcargo[indexStore]['address'] ?? '').replaceAll(RegExp(r'[\r\n]'), ''),
-                                                        style: TextStyle(color: Color(0xFF7F8C8D), fontSize: 14),
+                                                        style: TextStyle(color: Color(0xFF7F8C8D), fontSize: isPhone(context) ? 14 : 18),
                                                       ),
                                                     ],
                                                   ),
@@ -469,11 +498,15 @@ class _AccountPageState extends State<AccountPage> {
                                             SizedBox(height: 12),
                                             Row(
                                               children: [
-                                                Icon(Icons.phone, color: Color(0xFF27AE60), size: 16),
+                                                Icon(Icons.phone, color: Color(0xFF27AE60), size: isPhone(context) ? 16 : 22),
                                                 SizedBox(width: 8),
                                                 Text(
                                                   '${getTranslation('phone_number')}: ${storeGcargo[indexStore]['phone'] ?? ''}',
-                                                  style: TextStyle(color: Color(0xFF2C3E50), fontSize: 14, fontWeight: FontWeight.w500),
+                                                  style: TextStyle(
+                                                    color: Color(0xFF2C3E50),
+                                                    fontSize: isPhone(context) ? 14 : 18,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -492,8 +525,8 @@ class _AccountPageState extends State<AccountPage> {
                                                         ),
                                                       );
                                                     },
-                                                    icon: Icon(Icons.copy, size: 16),
-                                                    label: Text('คัดลอกที่อยู่'),
+                                                    icon: Icon(Icons.copy, size: isPhone(context) ? 16 : 22),
+                                                    label: Text('คัดลอกที่อยู่', style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
                                                     style: ElevatedButton.styleFrom(
                                                       backgroundColor: Color(0xFF4A90E2),
                                                       foregroundColor: Colors.white,
@@ -702,7 +735,7 @@ class _AccountPageState extends State<AccountPage> {
                               ),
                               child: Text(
                                 token == null ? getTranslation('Account.login') : getTranslation('Account.logout'),
-                                style: TextStyle(fontFamily: 'SukhumvitSet', fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(fontFamily: 'SukhumvitSet', fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -722,7 +755,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+      child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 20)),
     );
   }
 
@@ -738,12 +771,12 @@ class _AccountPageState extends State<AccountPage> {
                 Expanded(
                   child: Row(
                     children: [
-                      Text(title, style: const TextStyle(fontSize: 15)),
+                      Text(title, style: TextStyle(fontSize: isPhone(context) ? 16 : 20)),
                       if (showVerified) ...[const SizedBox(width: 8), const Icon(Icons.verified, color: Colors.grey, size: 18)],
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                Icon(Icons.arrow_forward_ios, size: isPhone(context) ? 16 : 22, color: Colors.grey),
               ],
             ),
           ),
@@ -752,41 +785,4 @@ class _AccountPageState extends State<AccountPage> {
       ],
     );
   }
-}
-
-Widget _buildInfoRow(BuildContext context, String title, String detail, IconData icon, Color iconColor, String subtitle, void Function()? onTap) {
-  final size = MediaQuery.of(context).size; // ใช้ context ที่ส่งเข้ามา
-
-  return Padding(
-    padding: EdgeInsets.symmetric(
-      vertical: size.height * 0.005, // ปรับขนาด padding ให้สัมพันธ์กับความสูงของหน้าจอ
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 2,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
-              Text(subtitle, style: TextStyle(fontSize: 13, color: Color(0xff606060))), //stringsubtitles
-            ],
-          ),
-        ),
-        Expanded(flex: 3, child: Text(detail, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
-        GestureDetector(
-          onTap: onTap,
-          child: Row(
-            children: [
-              Icon(icon, color: iconColor),
-              SizedBox(width: size.width * 0.008),
-              Text('AccountPage.copy', style: TextStyle(color: iconColor, fontSize: 12)),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
 }

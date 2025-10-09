@@ -28,12 +28,12 @@ class WelcomePage extends StatelessWidget {
             right: 0,
             child: Column(
               children: [
-                Image.asset('assets/icons/Logo.png', width: 300, fit: BoxFit.fill), // 🔺 เปลี่ยนตรงนี้
+                Image.asset('assets/icons/Logo.png', width: isPhone(context) ? 300 : 400, fit: BoxFit.fill), // 🔺 เปลี่ยนตรงนี้
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'บริการขนส่งระหว่างประเทศ\nรวดเร็ว ปลอดภัย ติดตามได้ทุกขั้นตอน',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, color: kButtonColor, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: isPhone(context) ? 20 : 30, color: kButtonColor, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -49,7 +49,7 @@ class WelcomePage extends StatelessWidget {
                 // ปุ่มเริ่มต้นใช้งาน
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: isPhone(context) ? 50 : 60,
                   child: ElevatedButton(
                     onPressed: () {
                       // ไปหน้าใช้งาน
@@ -60,7 +60,7 @@ class WelcomePage extends StatelessWidget {
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: Text('เริ่มต้นใช้งาน', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    child: Text('เริ่มต้นใช้งาน', style: TextStyle(fontSize: isPhone(context) ? 20 : 26, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -76,12 +76,12 @@ class WelcomePage extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: isPhone(context) ? 18 : 22, fontWeight: FontWeight.bold)),
                         SizedBox(width: 4),
                         CircleAvatar(
                           radius: 16, // ขนาดวงกลม
                           backgroundColor: kButtonColor, // เปลี่ยนสีพื้นหลังตามต้องการ
-                          child: Icon(CupertinoIcons.right_chevron, color: Colors.white, size: 18),
+                          child: Icon(CupertinoIcons.right_chevron, color: Colors.white, size: isPhone(context) ? 18 : 22),
                         ),
                       ],
                     ),

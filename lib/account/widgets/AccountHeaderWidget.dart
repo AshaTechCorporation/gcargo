@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/models/user.dart';
@@ -107,6 +108,7 @@ class AccountHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return GetBuilder<LanguageController>(
       builder:
           (controller) => Padding(
@@ -125,46 +127,59 @@ class AccountHeaderWidget extends StatelessWidget {
                               (user?.image != null && user!.image!.isNotEmpty)
                                   ? Image.network(
                                     user!.image!,
-                                    width: 48,
-                                    height: 48,
+                                    width: isPhone(context) ? 48 : 52,
+                                    height: isPhone(context) ? 48 : 52,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
                                       // ถ้าโหลดรูปจาก network ไม่ได้ ให้แสดง Avatar default
-                                      return Image.asset('assets/images/user.png', width: 48, height: 48, fit: BoxFit.cover);
+                                      return Image.asset(
+                                        'assets/images/user.png',
+                                        width: isPhone(context) ? 48 : 52,
+                                        height: isPhone(context) ? 48 : 52,
+                                        fit: BoxFit.cover,
+                                      );
                                     },
                                     loadingBuilder: (context, child, loadingProgress) {
                                       if (loadingProgress == null) return child;
                                       // แสดง loading indicator ขณะโหลดรูป
                                       return Container(
-                                        width: 48,
-                                        height: 48,
+                                        width: isPhone(context) ? 48 : 52,
+                                        height: isPhone(context) ? 48 : 52,
                                         decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
                                         child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
                                       );
                                     },
                                   )
-                                  : Image.asset('assets/images/user.png', width: 48, height: 48, fit: BoxFit.cover),
+                                  : Image.asset(
+                                    'assets/images/user.png',
+                                    width: isPhone(context) ? 48 : 52,
+                                    height: isPhone(context) ? 48 : 52,
+                                    fit: BoxFit.cover,
+                                  ),
                         ),
                         const SizedBox(width: 12),
                         isLoading
                             ? Container(
-                              width: 100,
-                              height: 16,
+                              width: size.width * 0.3, // 30% ของหน้าจอ 100,
+                              height: isPhone(context) ? 16 : 18,
                               decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
                             )
                             : Text(
                               user?.fname ?? getTranslation('user_not_logged_in'),
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                              style: TextStyle(fontSize: isPhone(context) ? 16 : 18, fontWeight: FontWeight.w600, color: Colors.black),
                             ),
                       ],
                     ),
                     isLoading
                         ? Container(
-                          width: 50,
-                          height: 14,
+                          width: isPhone(context) ? 50 : 70,
+                          height: isPhone(context) ? 14 : 18,
                           decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
                         )
-                        : Text(user?.code ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500)),
+                        : Text(
+                          user?.code ?? '',
+                          style: TextStyle(fontSize: isPhone(context) ? 14 : 16, color: Colors.grey, fontWeight: FontWeight.w500),
+                        ),
                   ],
                 ),
 
@@ -176,7 +191,12 @@ class AccountHeaderWidget extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset('assets/images/credit111.png', height: 80, width: double.infinity, fit: BoxFit.cover),
+                        child: Image.asset(
+                          'assets/images/credit111.png',
+                          height: isPhone(context) ? 80 : 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       Positioned(
                         top: 10,
@@ -185,7 +205,7 @@ class AccountHeaderWidget extends StatelessWidget {
                           '${_calculateWalletBalance().toStringAsFixed(2)}',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 30,
+                            fontSize: isPhone(context) ? 30 : 30,
                             fontWeight: FontWeight.bold,
                             shadows: [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black.withOpacity(0.5))],
                           ),
@@ -203,7 +223,12 @@ class AccountHeaderWidget extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset('assets/images/point111.png', height: 80, width: double.infinity, fit: BoxFit.cover),
+                        child: Image.asset(
+                          'assets/images/point111.png',
+                          height: isPhone(context) ? 80 : 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       Positioned(
                         top: 10,
@@ -212,7 +237,7 @@ class AccountHeaderWidget extends StatelessWidget {
                           _formatPointBalance(user?.point_balance),
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 30,
+                            fontSize: isPhone(context) ? 30 : 30,
                             fontWeight: FontWeight.bold,
                             shadows: [Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.black.withOpacity(0.5))],
                           ),
@@ -233,6 +258,8 @@ class AccountHeaderWidget extends StatelessWidget {
                       'assets/icons/box-blusee.png',
                       onParcelTap,
                       getTranslation('status'),
+                      context,
+                      size,
                     ),
                     _quickItem(
                       '฿${_calculateWalletBalance().toStringAsFixed(2)}',
@@ -240,6 +267,8 @@ class AccountHeaderWidget extends StatelessWidget {
                       'assets/icons/empty-wallet.png',
                       onWalletTap,
                       getTranslation('transfer_money'),
+                      context,
+                      size,
                     ),
                   ],
                 ),
@@ -249,12 +278,12 @@ class AccountHeaderWidget extends StatelessWidget {
     );
   }
 
-  Widget _quickItem(String value, String label, String iconPath, VoidCallback onTap, String transferLabel) {
+  Widget _quickItem(String value, String label, String iconPath, VoidCallback onTap, String transferLabel, BuildContext context, Size size) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 180,
-        padding: const EdgeInsets.all(12),
+        width: isPhone(context) ? 180 : size.width * 0.45,
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -267,9 +296,9 @@ class AccountHeaderWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (value.isNotEmpty) Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  if (value.isNotEmpty) Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 22)),
                   const SizedBox(height: 4),
-                  Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(label, style: TextStyle(fontSize: isPhone(context) ? 12 : 18, color: Colors.grey)),
                 ],
               ),
             ),
@@ -277,13 +306,13 @@ class AccountHeaderWidget extends StatelessWidget {
             Column(
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: isPhone(context) ? 36 : 42,
+                  height: isPhone(context) ? 36 : 42,
                   decoration: BoxDecoration(color: const Color(0xFFF5F6F8), borderRadius: BorderRadius.circular(8)),
-                  child: Center(child: Image.asset(iconPath, width: 20)),
+                  child: Center(child: Image.asset(iconPath, width: isPhone(context) ? 20 : 30)),
                 ),
                 const SizedBox(height: 4),
-                Text('$transferLabel', style: TextStyle(fontSize: 12)), // หรือข้อความอื่นตามรูป
+                Text('$transferLabel', style: TextStyle(fontSize: isPhone(context) ? 12 : 18)), // หรือข้อความอื่นตามรูป
               ],
             ),
           ],
