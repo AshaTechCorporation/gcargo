@@ -76,7 +76,7 @@ class ProductCardFromAPI extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -99,10 +99,10 @@ class ProductCardFromAPI extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
-                    SizedBox(height: 2),
-                    Expanded(
-                      child: Text(seller, style: TextStyle(fontSize: 11, color: Colors.grey.shade600), maxLines: 2, overflow: TextOverflow.ellipsis),
-                    ),
+                    SizedBox(height: 1),
+                    // Expanded(
+                    //   child: Text(seller, style: TextStyle(fontSize: 11, color: Colors.grey.shade600), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    // ),
                     Text(price, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 14 : 20, color: Colors.black)),
                   ],
                 ),

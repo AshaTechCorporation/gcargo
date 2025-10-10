@@ -650,7 +650,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 Expanded(
                   flex: 2,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -662,7 +662,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             Text(
                               originalTitle,
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                              maxLines: 1,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
 
@@ -672,7 +672,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               Text(
                                 itemTranslatedTitle,
                                 style: const TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.w500),
-                                maxLines: 1,
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
