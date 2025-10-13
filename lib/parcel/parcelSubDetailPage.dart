@@ -33,7 +33,7 @@ class ParcelSubDetailPage extends StatelessWidget {
           const SizedBox(height: 12),
           _buildInfoRow('เลขบิลสั่งซื้อ', orderCode),
           _buildInfoRow('ประเภทสินค้า', order['product_type']?['name'] ?? '-'),
-          _buildInfoRow('ล็อด', order['packing_list']?['packinglist_no'] ?? '-'),
+          _buildPackingListRow(),
           const Divider(height: 32),
 
           // 🔹 ขนาดพัสดุ
@@ -69,6 +69,33 @@ class ParcelSubDetailPage extends StatelessWidget {
     } catch (e) {
       return '0.0000 cbm';
     }
+  }
+
+  // Helper method สำหรับสร้าง row ของ packing list
+  Widget _buildPackingListRow() {
+    final packingLists = order['packing_lists'] as List<dynamic>?;
+
+    if (packingLists == null || packingLists.isEmpty) {
+      return _buildInfoRow('ล็อด', '-');
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(width: 100, child: Text('ล็อด', style: TextStyle(fontWeight: FontWeight.w500))),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children:
+                packingLists.map<Widget>((packingList) {
+                  final packingListNo = packingList['packinglist_no']?.toString() ?? '-';
+                  return Padding(padding: const EdgeInsets.only(bottom: 4), child: Text(packingListNo));
+                }).toList(),
+          ),
+        ),
+      ],
+    );
   }
 
   // Helper method สำหรับแสดงรูปภาพ

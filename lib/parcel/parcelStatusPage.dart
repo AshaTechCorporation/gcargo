@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/couponPage.dart';
 import 'package:gcargo/constants.dart';
@@ -7,6 +9,7 @@ import 'package:gcargo/models/legalimport.dart';
 import 'package:gcargo/models/orders/ordersPageNew.dart';
 import 'package:gcargo/parcel/claimPackagePage.dart';
 import 'package:gcargo/parcel/parcelDetailPage.dart';
+import 'package:gcargo/parcel/paymentMethodMulti.dart';
 import 'package:gcargo/parcel/shippingMethodPage.dart';
 import 'package:gcargo/parcel/widgets/date_range_picker_widget.dart';
 import 'package:get/get.dart';
@@ -245,19 +248,21 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         for (OrdersPageNew order in legalImport.delivery_orders!) {
           final orderStatus = _mapApiStatusToDisplayStatus(order.status ?? '');
           if (orderStatus == getTranslation('arrived_thailand')) {
-            allThailandParcels.add(order.code ?? '');
+            allThailandParcels.add(order.po_no ?? '');
           }
         }
       }
     }
 
-    if (isSelectAll) {
-      // เลือกทั้งหมด
-      selectedParcels.addAll(allThailandParcels);
-    } else {
-      // ยกเลิกการเลือกทั้งหมด
-      selectedParcels.removeAll(allThailandParcels);
-    }
+    setState(() {
+      if (isSelectAll) {
+        // เลือกทั้งหมด
+        selectedParcels.addAll(allThailandParcels);
+      } else {
+        // ยกเลิกการเลือกทั้งหมด
+        selectedParcels.removeAll(allThailandParcels);
+      }
+    });
   }
 
   // Method สำหรับอัปเดตสถานะ "เลือกทั้งหมด" ตามการเลือกของแต่ละการ์ด
@@ -629,44 +634,43 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 🎟 คูปองส่วนลด
-          GestureDetector(
-            onTap: () {
-              // ไปหน้าคูปองส่วนลด
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const CouponPage()));
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(getTranslation('coupon_discount'), style: TextStyle(fontWeight: FontWeight.bold)),
-                Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF999999)),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
+          // GestureDetector(
+          //   onTap: () {
+          //     // ไปหน้าคูปองส่วนลด
+          //     Navigator.push(context, MaterialPageRoute(builder: (_) => const CouponPage()));
+          //   },
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text(getTranslation('coupon_discount'), style: TextStyle(fontWeight: FontWeight.bold)),
+          //       Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF999999)),
+          //     ],
+          //   ),
+          // ),
+          // const SizedBox(height: 12),
 
           // 🚚 ขนส่ง
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(getTranslation('shipping_thailand'), style: TextStyle(fontWeight: FontWeight.bold)),
-              GestureDetector(
-                onTap: () {
-                  // ไปหน้าเลือกขนส่ง
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ShippingMethodPage()));
-                },
-                child: Row(
-                  children: const [
-                    Text('50฿', style: TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF999999)),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(getTranslation('shipping_thailand'), style: TextStyle(fontWeight: FontWeight.bold)),
+          //     GestureDetector(
+          //       onTap: () {
+          //         // ไปหน้าเลือกขนส่ง
+          //         Navigator.push(context, MaterialPageRoute(builder: (_) => const ShippingMethodPage()));
+          //       },
+          //       child: Row(
+          //         children: const [
+          //           Text('50฿', style: TextStyle(fontWeight: FontWeight.bold)),
+          //           SizedBox(width: 4),
+          //           Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF999999)),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          // ),
           const SizedBox(height: 16),
-
-          // ⚠️ แจ้งเตือนภาษี
+          // ☑️ Checkbox สำหรับขอใบเสร็จ
           GestureDetector(
             onTap: () {
               setState(() {
@@ -674,7 +678,6 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
               });
             },
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   margin: const EdgeInsets.only(top: 2),
@@ -739,7 +742,27 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-              onPressed: () {},
+              onPressed: () {
+                if (selectedParcels.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('โปรดเลือกรายการที่จะชำระ'), backgroundColor: Colors.red));
+                  return;
+                }
+
+                final formattedData = _formatSelectedItemsData();
+                inspect(formattedData);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => PaymentMethodMulti(
+                          vat: formattedData['vat'],
+                          orderType: formattedData['order_type'],
+                          totalPrice: formattedData['total_price'],
+                          items: formattedData['items'],
+                        ),
+                  ),
+                );
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -760,7 +783,10 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
                       Text(getTranslation('confirm_delivery'), style: TextStyle(fontSize: 16, color: Colors.white)),
                     ],
                   ),
-                  //const Text('8,566.00฿', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text(
+                    '${_calculateTotalPrice().toStringAsFixed(2)}฿',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
                 ],
               ),
             ),
@@ -768,5 +794,63 @@ class _ParcelStatusPageState extends State<ParcelStatusPage> {
         ],
       ),
     );
+  }
+
+  // Method สำหรับคำนวณราคารวม
+  double _calculateTotalPrice() {
+    double totalPrice = 0.0;
+
+    // คำนวณราคาจากพัสดุที่เลือก
+    for (LegalImport legalImport in orderController.deilveryOrders) {
+      if (legalImport.delivery_orders != null) {
+        for (OrdersPageNew order in legalImport.delivery_orders!) {
+          if (selectedParcels.contains(order.po_no)) {
+            // ใช้ราคาจาก order.order?.total_price
+            double price = double.tryParse(order.order?.total_price ?? '0') ?? 0.0;
+            totalPrice += price;
+          }
+        }
+      }
+    }
+
+    // ถ้าเลือกขอใบเสร็จ ให้บวก 7%
+    if (isRequestTaxCertificate) {
+      totalPrice = totalPrice * 1.07;
+    }
+
+    return totalPrice;
+  }
+
+  // Method สำหรับจัดฟอร์แมตข้อมูลที่เลือก
+  Map<String, dynamic> _formatSelectedItemsData() {
+    List<Map<String, dynamic>> items = [];
+    final currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    double totalPrice = 0.0;
+
+    for (LegalImport legalImport in orderController.deilveryOrders) {
+      if (legalImport.delivery_orders != null) {
+        for (OrdersPageNew order in legalImport.delivery_orders!) {
+          if (selectedParcels.contains(order.po_no)) {
+            double itemPrice = double.tryParse(order.order?.total_price ?? '0') ?? 0.0;
+            totalPrice += itemPrice;
+
+            items.add({
+              "ref_no": order.code?.isNotEmpty == true ? order.code : "",
+              "date": currentDate,
+              "total_price": itemPrice,
+              "note": order.note ?? "",
+              "image": "",
+            });
+          }
+        }
+      }
+    }
+
+    // เพิ่ม VAT 7% ถ้าเลือก
+    if (isRequestTaxCertificate) {
+      totalPrice = totalPrice * 1.07;
+    }
+
+    return {'vat': isRequestTaxCertificate, 'order_type': 'transport_thai', 'total_price': totalPrice, 'items': items};
   }
 }

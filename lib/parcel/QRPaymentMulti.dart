@@ -36,7 +36,7 @@ class _QRPaymentMultiState extends State<QRPaymentMulti> {
 
     final translations = {
       'th': {
-        'qr_promptpay': 'QR พร้อมเพย์',
+        'qr_promptpay': 'QR พร้อมเพย์ / โอน',
         'copy_account': 'คัดลอก',
         'copy_account_success': 'คัดลอกเลขบัญชี',
         'total_amount_pay': 'ยอดชำระทั้งหมด',

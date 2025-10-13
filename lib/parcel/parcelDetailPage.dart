@@ -119,10 +119,11 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
               children: [
                 _buildSectionTitle('assets/icons/calendar.png', 'กำหนดการ'),
                 const SizedBox(height: 12),
+
                 _buildInfoRow('ถึงโกดังจีน', _formatDate(orderData?['date'] ?? '-')),
-                _buildInfoRow('ออกจากโกดังจีน', _formatDate(orderData?['packing_lists']?['closing_date'] ?? '-')),
-                _buildInfoRow('คาดจะถึงไทย', _formatDate(orderData?['packing_lists']?['estimated_arrival_date'] ?? '-')),
-                _buildInfoRow('โกดังไทยรับสินค้า', _formatDate(orderData?['packing_lists']?['actual_arrival_date'] ?? '-')),
+                _buildInfoRow('ออกจากโกดังจีน', _formatDate(_getPackingListData('closing_date'))),
+                _buildInfoRow('คาดจะถึงไทย', _formatDate(_getPackingListData('estimated_arrival_date'))),
+                _buildInfoRow('โกดังไทยรับสินค้า', _formatDate(_getDeliveryOrderThaiDate())),
               ],
             ),
           ),
@@ -258,6 +259,29 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
     }
 
     return totalQtyBox;
+  }
+
+  // Helper method สำหรับดึงข้อมูลจาก packing_lists
+  String _getPackingListData(String field) {
+    final packingLists = orderData?['packing_lists'] as List<dynamic>?;
+    if (packingLists != null && packingLists.isNotEmpty) {
+      final data = packingLists.first[field];
+      return data?.toString() ?? '-';
+    }
+    return '-';
+  }
+
+  // Helper method สำหรับดึงวันที่จาก delivery_order_thai
+  String _getDeliveryOrderThaiDate() {
+    final packingLists = orderData?['packing_lists'] as List<dynamic>?;
+    if (packingLists != null && packingLists.isNotEmpty) {
+      final deliveryOrderThai = packingLists.first['delivery_order_thai'] as List<dynamic>?;
+      if (deliveryOrderThai != null && deliveryOrderThai.isNotEmpty) {
+        final date = deliveryOrderThai.first['date'];
+        return date?.toString() ?? '-';
+      }
+    }
+    return '-';
   }
 
   // ฟังก์ชั่นสำหรับ format วันที่
