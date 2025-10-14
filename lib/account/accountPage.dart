@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gcargo/account/WalletPage.dart';
@@ -8,6 +10,7 @@ import 'package:gcargo/account/changeLanguagePage.dart';
 import 'package:gcargo/account/couponPage.dart';
 import 'package:gcargo/account/faqPage.dart';
 import 'package:gcargo/account/favoritePage.dart';
+import 'package:gcargo/account/myRate.dart';
 import 'package:gcargo/account/newsPromotionPage.dart';
 import 'package:gcargo/account/profilePage.dart';
 import 'package:gcargo/account/securityPage.dart';
@@ -42,6 +45,7 @@ class _AccountPageState extends State<AccountPage> {
   List<Map<String, dynamic>> storeGcargo = [];
   bool isLoadingStore = false;
   String importer_code = '';
+  int? transport_rate_id;
 
   String getTranslation(String key) {
     final currentLang = languageController.currentLanguage.value;
@@ -80,6 +84,7 @@ class _AccountPageState extends State<AccountPage> {
         'shipping_address': 'ที่อยู่รับพัสดุ',
         'importer_code': 'รหัสลูกค้า',
         'phone_number': 'เบอร์โทรศัพท์',
+        'my_rate': 'เรทค่าขนส่งของฉัน',
       },
       'en': {
         'Account.title': 'Account',
@@ -113,6 +118,7 @@ class _AccountPageState extends State<AccountPage> {
         'shipping_address': 'Shipping Address',
         'importer_code': 'Importer Code',
         'phone_number': 'Phone Number',
+        'my_rate': 'My Shipping Rate',
       },
       'zh': {
         'Account.title': '账户',
@@ -146,6 +152,7 @@ class _AccountPageState extends State<AccountPage> {
         'shipping_address': '收货地址',
         'importer_code': '进口商代码',
         'phone_number': '电话号码',
+        'my_rate': '我的运费',
       },
     };
 
@@ -167,10 +174,12 @@ class _AccountPageState extends State<AccountPage> {
     try {
       final user = await homeController.getUserByIdFromAPI();
       if (user != null) {
+        inspect(user.transport_rate_id);
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('point_balance', user.point_balance ?? '0');
         setState(() {
           importer_code = user.importer_code ?? '';
+          transport_rate_id = user.transport_rate_id ?? 0;
         });
       }
       final prefs = await SharedPreferences.getInstance();
@@ -585,6 +594,26 @@ class _AccountPageState extends State<AccountPage> {
                                 MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)),
                               );
                               if (_edit == true) {}
+                            } else {
+                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                            }
+                          },
+                        ),
+                        _buildMenuItem(
+                          getTranslation('my_rate'),
+                          onTap: () async {
+                            final homeController = Get.find<HomeController>();
+                            if (homeController.currentUser.value != null) {
+                              if (transport_rate_id == null || transport_rate_id == 0) {
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(const SnackBar(content: Text('ยังไม่ได้กำหนดเรทค่าขนส่ง'), backgroundColor: Colors.orange));
+                              } else {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => MyRate(transport_rate_id: transport_rate_id!)));
+                              }
                             } else {
                               // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
                               ScaffoldMessenger.of(

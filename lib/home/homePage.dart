@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -136,6 +137,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final user = await homeController.getUserByIdFromAPI();
       if (user != null) {
+        inspect(user.transport_rate_id);
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('point_balance', user.point_balance ?? '0');
       }

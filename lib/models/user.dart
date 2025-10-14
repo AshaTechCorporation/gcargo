@@ -37,6 +37,7 @@ class User {
   int? notify_sms;
   int? notify_line;
   int? notify_email;
+  int? transport_rate_id;
   String? found_via;
   int? priority_update_tracking;
   int? priority_package_protection;
@@ -97,6 +98,7 @@ class User {
     this.detail,
     this.ship_address,
     this.member_banks,
+    this.transport_rate_id,
   );
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

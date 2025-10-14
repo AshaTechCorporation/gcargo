@@ -57,6 +57,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       (json['member_banks'] as List<dynamic>?)
           ?.map((e) => MemberBank.fromJson(e as Map<String, dynamic>))
           .toList(),
+      (json['transport_rate_id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -90,6 +91,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'notify_sms': instance.notify_sms,
       'notify_line': instance.notify_line,
       'notify_email': instance.notify_email,
+      'transport_rate_id': instance.transport_rate_id,
       'found_via': instance.found_via,
       'priority_update_tracking': instance.priority_update_tracking,
       'priority_package_protection': instance.priority_package_protection,
