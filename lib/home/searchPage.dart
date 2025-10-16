@@ -205,7 +205,7 @@ class _SearchPageState extends State<SearchPage> {
                   children: [
                     IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20)),
                     //const Text("A100", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Expanded(
                       child: Stack(
                         children: [
@@ -224,7 +224,7 @@ class _SearchPageState extends State<SearchPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   if (isSearching)
-                                    const Padding(
+                                    Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
                                     )
