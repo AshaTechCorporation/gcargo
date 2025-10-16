@@ -6,6 +6,7 @@ import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/home/productDetailPage.dart';
 import 'package:gcargo/home/widgets/ProductCardFromAPI.dart';
+import 'package:gcargo/services/homeService.dart';
 
 class SearchPage extends StatefulWidget {
   // final List<Map<String, dynamic>> initialSearchResults;
@@ -28,6 +29,11 @@ class _SearchPageState extends State<SearchPage> {
   String currentSearchQuery = '';
   bool isSearching = false;
   List<String> searchHistory = [];
+
+  // Translation variables
+  Map<String, String> translatedTitles = {};
+  bool isTranslatingTitles = false;
+  List<String> lastTranslatedItemIds = [];
 
   String getTranslation(String key) {
     final currentLang = languageController.currentLanguage.value;
@@ -198,7 +204,7 @@ class _SearchPageState extends State<SearchPage> {
                 Row(
                   children: [
                     IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20)),
-                    const Text("A100", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    //const Text("A100", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Stack(
@@ -213,6 +219,7 @@ class _SearchPageState extends State<SearchPage> {
                             decoration: InputDecoration(
                               hintText: getTranslation('search_hint'),
                               hintStyle: const TextStyle(fontSize: 14),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                               suffixIcon: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -232,7 +239,6 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                               filled: true,
                               fillColor: Colors.grey[100],
-                              contentPadding: const EdgeInsets.symmetric(vertical: 0),
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                             ),
                           ),
@@ -273,26 +279,27 @@ class _SearchPageState extends State<SearchPage> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: searchHistory
-                        .map(
-                          (query) => GestureDetector(
-                            onTap: () {
-                              searchController.text = query;
-                              _performSearch(query);
-                            },
-                            child: Chip(
-                              label: Text(query),
-                              backgroundColor: Colors.blue.shade50,
-                              deleteIcon: const Icon(Icons.close, size: 16),
-                              onDeleted: () {
-                                setState(() {
-                                  searchHistory.remove(query);
-                                });
-                              },
-                            ),
-                          ),
-                        )
-                        .toList(),
+                    children:
+                        searchHistory
+                            .map(
+                              (query) => GestureDetector(
+                                onTap: () {
+                                  searchController.text = query;
+                                  _performSearch(query);
+                                },
+                                child: Chip(
+                                  label: Text(query),
+                                  backgroundColor: Colors.blue.shade50,
+                                  deleteIcon: const Icon(Icons.close, size: 16),
+                                  onDeleted: () {
+                                    setState(() {
+                                      searchHistory.remove(query);
+                                    });
+                                  },
+                                ),
+                              ),
+                            )
+                            .toList(),
                   ),
                 ] else ...[
                   Text(getTranslation('no_search_history'), style: TextStyle(color: Colors.grey)),
@@ -320,7 +327,19 @@ class _SearchPageState extends State<SearchPage> {
                       itemBuilder: (context, index) {
                         final item = currentSearchResults[index];
                         final originalTitle = item['title'] ?? 'ไม่มีชื่อสินค้า';
-                        final translatedTitle = homeController.translatedHomeTitles[originalTitle];
+                        final translatedTitle = translatedTitles[originalTitle];
+
+                        // แปลไตเติ๊ลถ้ายังไม่ได้แปล
+                        final currentItemIds = currentSearchResults.map((item) => item['num_iid']?.toString() ?? '').toList();
+                        final itemsChanged = !_listEquals(currentItemIds, lastTranslatedItemIds);
+                        final shouldRetry = translatedTitles.isEmpty && lastTranslatedItemIds.isNotEmpty;
+
+                        if (!isTranslatingTitles && (itemsChanged || shouldRetry)) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _translateSearchTitles(currentSearchResults);
+                          });
+                        }
+
                         return ProductCardFromAPI(
                           imageUrl: item['pic_url'] ?? '',
                           title: originalTitle,
@@ -364,5 +383,107 @@ class _SearchPageState extends State<SearchPage> {
         ),
       );
     });
+  }
+
+  // ฟังก์ชันสำหรับแปลไตเติ๊ลของ search results
+  Future<void> _translateSearchTitles(List<dynamic> items) async {
+    if (items.isEmpty || isTranslatingTitles) return;
+
+    // บันทึก item IDs ที่กำลังจะแปล
+    lastTranslatedItemIds = items.map((item) => item['num_iid']?.toString() ?? '').toList();
+
+    setState(() {
+      isTranslatingTitles = true;
+    });
+
+    try {
+      // รวบรวมไตเติ๊ลทั้งหมดเพื่อส่งแปลครั้งเดียว
+      final List<String> originalTitles = [];
+
+      for (int i = 0; i < items.length; i++) {
+        final originalTitle = items[i]['title']?.toString() ?? '';
+        if (originalTitle.isNotEmpty) {
+          originalTitles.add(originalTitle);
+        }
+      }
+
+      if (originalTitles.isNotEmpty) {
+        final Map<String, String> titleMap = {};
+
+        // ครั้งที่ 1: ส่งแปลทั้งหมด
+        await _translateSearchTitlesRound(originalTitles, titleMap, 1);
+
+        // เช็คว่าได้แปลครบหรือไม่
+        final List<String> missingTitles = originalTitles.where((title) => !titleMap.containsKey(title)).toList();
+
+        if (missingTitles.isNotEmpty) {
+          print('🔄 Round 2: Translating ${missingTitles.length} missing search titles');
+          await _translateSearchTitlesRound(missingTitles, titleMap, 2);
+        }
+
+        if (mounted) {
+          setState(() {
+            translatedTitles = titleMap;
+          });
+        }
+
+        print('🎉 Search titles translation completed. Total translated: ${titleMap.length}/${originalTitles.length}');
+      }
+
+      // ถ้าการแปลไม่สำเร็จ ให้ reset เพื่อให้ลองใหม่ได้
+      if (mounted && translatedTitles.isEmpty) {
+        lastTranslatedItemIds = [];
+      }
+    } catch (e) {
+      print('Error translating search titles: $e');
+      // Reset เมื่อเกิด error
+      if (mounted) {
+        lastTranslatedItemIds = [];
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isTranslatingTitles = false;
+        });
+      }
+    }
+  }
+
+  // ฟังก์ชันช่วยสำหรับแปลแต่ละรอบของ search titles
+  Future<void> _translateSearchTitlesRound(List<String> titlesToTranslate, Map<String, String> titleMap, int round) async {
+    try {
+      // รวมไตเติ๊ลด้วย separator
+      final String combinedText = titlesToTranslate.join('|||');
+      print('📝 Round $round - Combined search titles to translate: ${combinedText.length} characters');
+
+      // ส่งแปลครั้งเดียว
+      final String? translatedText = await HomeService.translate(text: combinedText, from: 'zh-CN', to: 'th');
+
+      if (translatedText != null && translatedText.isNotEmpty) {
+        // แยกผลลัพธ์ที่แปลแล้ว
+        final List<String> translatedTitles = translatedText.split('|||');
+
+        // จับคู่ไตเติ๊ลต้นฉบับกับที่แปลแล้ว
+        for (int i = 0; i < titlesToTranslate.length && i < translatedTitles.length; i++) {
+          final original = titlesToTranslate[i];
+          final translated = translatedTitles[i].trim();
+          if (translated.isNotEmpty) {
+            titleMap[original] = translated;
+            print('✅ Round $round - Search translated: "$original" -> "$translated"');
+          }
+        }
+      }
+    } catch (e) {
+      print('Error in search translation round $round: $e');
+    }
+  }
+
+  // Helper function to check if two lists are equal
+  bool _listEquals(List<String> list1, List<String> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
   }
 }
