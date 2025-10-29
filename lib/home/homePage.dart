@@ -175,7 +175,10 @@ class _HomePageState extends State<HomePage> {
           }
 
           print('🔍 ไปหน้า ProductDetailPage - ID: $productId, type: $type');
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: productId, name: 'Shirt', type: type)));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: productId, name: 'Shirt', type: type, channel: 'link')),
+          );
         } else {
           _showAlert('ไม่พบ Product ID จาก API');
         }
@@ -715,6 +718,7 @@ class _HomePageState extends State<HomePage> {
                                           num_iid: numIidStr,
                                           name: 'Shirt',
                                           type: homeController.selectedItemType.value == 'shopgs1' ? 'taobao' : '1688',
+                                          channel: 'nomal',
                                         ),
                                   ),
                                 );

@@ -18,8 +18,9 @@ import 'package:gcargo/utils/helpers.dart';
 
 class PurchaseBillPage extends StatefulWidget {
   final List<Map<String, dynamic>>? productDataList;
+  final String channel;
 
-  const PurchaseBillPage({super.key, this.productDataList});
+  const PurchaseBillPage({super.key, this.productDataList, required this.channel});
 
   @override
   State<PurchaseBillPage> createState() => _PurchaseBillPageState();
@@ -359,19 +360,30 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 children: [
                   SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: () async {
-                      final selectedOption = await Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryMethodPage()));
-                      if (selectedOption != null) {
-                        setState(() {
-                          deliveryOptions = selectedOption;
-                        });
-                      }
-                    },
-                    child: Text(getTranslation('shipping_method'), style: TextStyle(fontWeight: FontWeight.bold)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        children: [
+                          Text(getTranslation('shipping_method'), style: TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 4),
+                          Text('${deliveryOptions['name']}', style: TextStyle(color: Colors.grey)),
+                        ],
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          final selectedOption = await _showDeliveryMethodDialog();
+                          if (selectedOption != null) {
+                            setState(() {
+                              deliveryOptions = selectedOption;
+                            });
+                          }
+                        },
+                        icon: Icon(Icons.arrow_forward_ios, color: Colors.black),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text('${deliveryOptions['name']}', style: TextStyle(color: Colors.grey)),
+
                   const Divider(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -474,13 +486,19 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
 
                               try {
                                 // แสดงไดอะล็อกเลือกรูปแบบการชำระเงิน
-                                final paymentType = await _showPaymentTypeDialog(currentContext);
+                                String? paymentType;
+                                if (widget.channel == 'link') {
+                                  paymentType = '1';
+                                } else {
+                                  paymentType = await _showPaymentTypeDialog(currentContext);
+                                }
                                 if (paymentType == null) {
                                   setState(() {
                                     isOrdering = false;
                                   });
                                   return;
                                 }
+                                print(paymentType);
 
                                 List<PartService> addOnServices = [];
                                 List<Products> orderProducts = [];
@@ -914,5 +932,88 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
       // Log error but don't interrupt the flow
       log('❌ Error removing items from cart: $e');
     }
+  }
+
+  Future<Map<String, dynamic>?> _showDeliveryMethodDialog() async {
+    return showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (BuildContext context) {
+        // เช็คตัวเลือกปัจจุบัน
+        int? selectedDeliveryId;
+        if (deliveryOptions['id'] == 1) {
+          selectedDeliveryId = 1;
+        } else if (deliveryOptions['id'] == 2) {
+          selectedDeliveryId = 2;
+        }
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(getTranslation('shipping_method')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: Radio<int>(
+                      value: 1,
+                      groupValue: selectedDeliveryId,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedDeliveryId = value;
+                        });
+                      },
+                    ),
+                    title: Row(children: [Icon(Icons.local_shipping, color: Colors.blue, size: 20), SizedBox(width: 8), Text('ทางรถ')]),
+                    subtitle: Text('ขนส่งทางรถ'),
+                    tileColor: selectedDeliveryId == 1 ? Colors.blue.shade50 : null,
+                    onTap: () {
+                      setState(() {
+                        selectedDeliveryId = 1;
+                      });
+                    },
+                  ),
+                  Divider(),
+                  ListTile(
+                    leading: Radio<int>(
+                      value: 2,
+                      groupValue: selectedDeliveryId,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedDeliveryId = value;
+                        });
+                      },
+                    ),
+                    title: Row(children: [Icon(Icons.directions_boat, color: Colors.blue, size: 20), SizedBox(width: 8), Text('ทางเรือ')]),
+                    subtitle: Text('ขนส่งทางเรือ'),
+                    tileColor: selectedDeliveryId == 2 ? Colors.blue.shade50 : null,
+                    onTap: () {
+                      setState(() {
+                        selectedDeliveryId = 2;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(getTranslation('cancel'))),
+                ElevatedButton(
+                  onPressed:
+                      selectedDeliveryId != null
+                          ? () {
+                            final selectedOption =
+                                selectedDeliveryId == 1
+                                    ? {'id': 1, 'name': 'ขนส่งทางรถ', 'type': 'car'}
+                                    : {'id': 2, 'name': 'ขนส่งทางเรือ', 'type': 'ship'};
+                            Navigator.of(context).pop(selectedOption);
+                          }
+                          : null,
+                  child: Text('ตกลง'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

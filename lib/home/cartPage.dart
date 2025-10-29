@@ -512,7 +512,7 @@ class _CartPageState extends State<CartPage> {
                 }
               }
 
-              Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: selectedItemsMapList)));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: selectedItemsMapList, channel: 'nomal')));
             } else {
               // ถ้าไม่มีสินค้าที่เลือก ให้ pop กลับ
               Navigator.pop(context);

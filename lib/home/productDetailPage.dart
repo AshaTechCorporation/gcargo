@@ -22,10 +22,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetailPage extends StatefulWidget {
-  ProductDetailPage({super.key, required this.num_iid, required this.name, required this.type});
+  ProductDetailPage({super.key, required this.num_iid, required this.name, required this.type, required this.channel});
   String num_iid;
   String name;
   String type;
+  String channel;
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -738,7 +739,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               };
 
               if (mounted) {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData])));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData], channel: widget.channel)));
               }
             },
             child: Text(getTranslation('order_now'), style: TextStyle(fontSize: 16, color: Colors.white)),

@@ -353,7 +353,8 @@ class _SearchPageState extends State<SearchPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => ProductDetailPage(num_iid: numIidStr, name: searchController.text, type: widget.type),
+                                builder:
+                                    (_) => ProductDetailPage(num_iid: numIidStr, name: searchController.text, type: widget.type, channel: 'nomal'),
                               ),
                             );
                           },

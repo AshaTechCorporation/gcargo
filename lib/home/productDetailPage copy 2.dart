@@ -707,7 +707,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               };
 
               if (mounted) {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData])));
+                //Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData], channel: widget.channel)));
               }
             },
             child: Text(getTranslation('order_now'), style: TextStyle(fontSize: 16, color: Colors.white)),
