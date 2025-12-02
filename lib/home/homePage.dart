@@ -218,14 +218,6 @@ class _HomePageState extends State<HomePage> {
       builder:
           (controller) => Scaffold(
             backgroundColor: Colors.white,
-            // floatingActionButton: FloatingActionButton(
-            //   onPressed: () {
-            //     Navigator.push(context, MaterialPageRoute(builder: (context) => const UpgradeTestWidget()));
-            //   },
-            //   backgroundColor: Colors.blue,
-            //   tooltip: 'ทดสอบ Upgrader',
-            //   child: const Icon(Icons.system_update, color: Colors.white),
-            // ),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(60),
               child: AppBar(
@@ -513,19 +505,6 @@ class _HomePageState extends State<HomePage> {
                           ServiceImageCard(
                             imagePath: 'assets/images/bay.png',
                             onTap: () {
-                              // if (Platform.isIOS) {
-                              //   Get.snackbar(
-                              //     'แจ้งเตือน',
-                              //     'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                              //     backgroundColor: Colors.yellowAccent,
-                              //     colorText: Colors.black,
-                              //     snackPosition: SnackPosition.BOTTOM,
-                              //   );
-                              // } else {
-                              //   // 👉 ไปหน้าแลกเปลี่ยนเงิน
-                              //   Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
-                              // }
-                              // 👉 ไปหน้าแลกเปลี่ยนเงิน
                               Navigator.push(context, MaterialPageRoute(builder: (_) => ExchangePage()));
                             },
                           ),
