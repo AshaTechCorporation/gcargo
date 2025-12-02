@@ -25,7 +25,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
         'land_transport': 'ขนส่งทางรถ',
         'sea_transport': 'ขนส่งทางเรือ',
         'weight_kg': 'น้ำหนัก (กก.)',
-        'price_cbm': 'ราคา/ลบ.ม.',
+        'price_cbm': 'ราคา/ลบ.ม',
         'baht': 'บาท',
         'loading': 'กำลังโหลด...',
         'no_data': 'ไม่มีข้อมูล',
@@ -171,7 +171,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
         boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,49 +197,61 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
               ),
             ),
 
-            // 🔻 ส่วนล่าง: กิโลกรัม / ประมาณ (แบ่งซ้าย/ขวาเท่ากัน)
+            // 🔻 ส่วนล่าง: กิโลกรัม / ราคา (แบ่งเป็น 2 แถว)
             Expanded(
-              child: Row(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    flex: 5,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(getTranslation('weight_kg'), style: TextStyle(fontSize: 16, color: Colors.black54)),
-                          SizedBox(height: 2),
-                          Text(
+                  // แถว label
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          getTranslation('weight_kg'),
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          getTranslation('price_cbm'),
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  // แถว value
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
                             item.kg,
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: kSubTitleTextGridColor),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(getTranslation('price_cbm'), style: TextStyle(fontSize: 16, color: Colors.black54)),
-                          SizedBox(height: 2),
-                          Text(
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
                             item.price,
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: kSubTitleTextGridColor),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

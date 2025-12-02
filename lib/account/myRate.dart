@@ -77,7 +77,7 @@ class _MyRateState extends State<MyRate> {
     if (rateData == null) return const Center(child: Text('ไม่มีข้อมูล'));
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -86,7 +86,7 @@ class _MyRateState extends State<MyRate> {
             elevation: 2,
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -195,8 +195,9 @@ class _MyRateState extends State<MyRate> {
             ),
             const SizedBox(height: 8),
 
-            // Product type name
-            Expanded(
+            // Product type name - fixed height
+            SizedBox(
+              height: 40,
               child: Text(
                 rateItem['product_type']?['name'] ?? 'ไม่มีชื่อประเภทสินค้า',
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -210,9 +211,9 @@ class _MyRateState extends State<MyRate> {
             // Product code
             Text('รหัส: ${rateItem['product_type']?['code'] ?? 'ไม่มี'}', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
 
-            const SizedBox(height: 8),
+            const Spacer(),
 
-            // Price
+            // Price - always at bottom
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

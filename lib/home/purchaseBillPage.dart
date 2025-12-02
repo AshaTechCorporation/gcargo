@@ -490,7 +490,8 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                                 if (widget.channel == 'link') {
                                   paymentType = '1';
                                 } else {
-                                  paymentType = await _showPaymentTypeDialog(currentContext);
+                                  paymentType = '1';
+                                  //paymentType = await _showPaymentTypeDialog(currentContext);
                                 }
                                 if (paymentType == null) {
                                   setState(() {

@@ -24,6 +24,7 @@ class LoginService {
   //forgot password
   static Future forgotPassword({String? email}) async {
     final url = Uri.https(publicUrl, '/public/api/forgot_password');
+    //final url = Uri.https(publicUrl, '/public/api/forgot_password_user');
     var headers = {'Content-Type': 'application/json'};
     final response = await http.post(url, headers: headers, body: convert.jsonEncode({'email': email}));
 
