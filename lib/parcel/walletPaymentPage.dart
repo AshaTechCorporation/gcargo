@@ -9,8 +9,9 @@ class WalletPaymentPage extends StatefulWidget {
   final double totalPrice;
   final String ref_no;
   final String orderType;
+  bool vat;
 
-  const WalletPaymentPage({super.key, required this.totalPrice, required this.ref_no, required this.orderType});
+  WalletPaymentPage({super.key, required this.totalPrice, required this.ref_no, required this.orderType, required this.vat});
 
   @override
   State<WalletPaymentPage> createState() => _WalletPaymentPageState();
@@ -125,6 +126,7 @@ class _WalletPaymentPageState extends State<WalletPaymentPage> {
                               note: '',
                               image: '',
                               order_type: widget.orderType,
+                              vat: widget.vat,
                             );
 
                             // Check if widget is still mounted

@@ -78,6 +78,7 @@ class OrderService {
     String? note,
     String? image,
     String? order_type,
+    bool? vat,
   }) async {
     final url = Uri.https(publicUrl, '/public/api/payment_order');
     var headers = {'Content-Type': 'application/json'};
@@ -95,6 +96,7 @@ class OrderService {
         'note': note,
         'image': image,
         'order_type': order_type,
+        'bill_vat': vat == true ? 'Y' : 'N',
       }),
     );
 

@@ -3,10 +3,11 @@ import 'package:gcargo/parcel/QRPaymentPage.dart';
 import 'package:gcargo/parcel/walletPaymentPage.dart';
 
 class PaymentMethodPage extends StatelessWidget {
-  PaymentMethodPage({super.key, required this.totalPrice, required this.ref_no, required this.orderType});
+  PaymentMethodPage({super.key, required this.totalPrice, required this.ref_no, required this.orderType, required this.vat});
   double totalPrice;
   String ref_no;
   String orderType;
+  bool vat;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class PaymentMethodPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => WalletPaymentPage(totalPrice: totalPrice, ref_no: ref_no, orderType: orderType)),
+                  MaterialPageRoute(builder: (_) => WalletPaymentPage(totalPrice: totalPrice, ref_no: ref_no, orderType: orderType, vat: vat)),
                 );
               },
               child: _buildPaymentOption('Wallet (${totalPrice.toStringAsFixed(2)}฿)'),
@@ -36,7 +37,7 @@ class PaymentMethodPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => QRPaymentPage(totalPrice: totalPrice, ref_no: ref_no, orderType: orderType)),
+                  MaterialPageRoute(builder: (_) => QRPaymentPage(totalPrice: totalPrice, ref_no: ref_no, orderType: orderType, vat: vat)),
                 );
               },
               child: _buildPaymentOption('QR พร้อมเพย์ / โอน'),

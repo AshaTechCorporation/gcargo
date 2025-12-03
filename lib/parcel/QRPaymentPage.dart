@@ -12,10 +12,11 @@ import 'package:intl/intl.dart';
 import 'package:promptpay_qrcode_generate/promptpay_qrcode_generate.dart';
 
 class QRPaymentPage extends StatefulWidget {
-  QRPaymentPage({super.key, required this.totalPrice, required this.ref_no, required this.orderType});
+  QRPaymentPage({super.key, required this.totalPrice, required this.ref_no, required this.orderType, required this.vat});
   final double totalPrice;
   final String ref_no;
   final String orderType;
+  bool vat;
 
   @override
   State<QRPaymentPage> createState() => _QRPaymentPageState();
@@ -252,7 +253,11 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
             child: Stack(
               children: [
                 Center(child: Image.file(uploadedImage!, fit: BoxFit.contain)),
-                Positioned(top: 40, right: 20, child: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white, size: 30))),
+                Positioned(
+                  top: 40,
+                  right: 20,
+                  child: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white, size: 30)),
+                ),
               ],
             ),
           );
@@ -279,7 +284,16 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
       if (imageQR != null) {
         // เรียก API ชำระเงิน
         String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        await OrderService.paymentOrder(payment_type: 'upload', ref_no: widget.ref_no, date: formattedDate, total_price: widget.totalPrice, note: '', image: imageQR, order_type: widget.orderType);
+        await OrderService.paymentOrder(
+          payment_type: 'upload',
+          ref_no: widget.ref_no,
+          date: formattedDate,
+          total_price: widget.totalPrice,
+          note: '',
+          image: imageQR,
+          order_type: widget.orderType,
+          vat: widget.vat,
+        );
 
         // หากสำเร็จ
         if (mounted) {
@@ -316,7 +330,11 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(title: const Text('เกิดข้อผิดพลาด'), content: Text(message), actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))]);
+        return AlertDialog(
+          title: const Text('เกิดข้อผิดพลาด'),
+          content: Text(message),
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))],
+        );
       },
     );
   }
@@ -332,7 +350,10 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
         title: Text(getTranslation('qr_promptpay'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
-      body: Padding(padding: const EdgeInsets.all(16), child: SingleChildScrollView(child: Column(children: [_buildBankCard(), const SizedBox(height: 16), _buildUploadBox()]))),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(child: Column(children: [_buildBankCard(), const SizedBox(height: 16), _buildUploadBox()])),
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
         child: SizedBox(
@@ -340,13 +361,20 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
           height: 48,
           child: ElevatedButton(
             onPressed: isLoading ? null : _handlePayment,
-            style: ElevatedButton.styleFrom(backgroundColor: isLoading ? Colors.grey : const Color(0xFF001B47), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isLoading ? Colors.grey : const Color(0xFF001B47),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
             child:
                 isLoading
                     ? const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                        ),
                         SizedBox(width: 8),
                         Text('กำลังดำเนินการ...', style: TextStyle(fontSize: 16, color: Colors.white)),
                       ],
@@ -403,7 +431,8 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
                             width: 40,
                             height: 40,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/No_Image.jpg', width: 40, height: 40, fit: BoxFit.cover),
+                            errorBuilder:
+                                (context, error, stackTrace) => Image.asset('assets/images/No_Image.jpg', width: 40, height: 40, fit: BoxFit.cover),
                           ),
                         )
                         : ClipOval(child: Image.asset('assets/images/No_Image.jpg', width: 40, height: 40, fit: BoxFit.cover)),
@@ -420,7 +449,11 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
                     ),
                     ElevatedButton(
                       onPressed: () => _copyAccountNumber(bank['account_number'] ?? ''),
-                      style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF001B47), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF001B47),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
                       child: Text(getTranslation('copy_account'), style: const TextStyle(fontSize: 12)),
                     ),
                   ],
@@ -437,7 +470,10 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
           const SizedBox(height: 12),
           Align(
             alignment: Alignment.center,
-            child: Text('${getTranslation('total_amount_pay')}: ${widget.totalPrice.toStringAsFixed(2)} ${getTranslation('baht')}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            child: Text(
+              '${getTranslation('total_amount_pay')}: ${widget.totalPrice.toStringAsFixed(2)} ${getTranslation('baht')}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
           ),
         ],
       ),
@@ -448,7 +484,11 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(border: Border.all(color: const Color(0xFF9381FF)), borderRadius: BorderRadius.circular(8), color: const Color(0xFFF7F5FF)),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFF9381FF)),
+        borderRadius: BorderRadius.circular(8),
+        color: const Color(0xFFF7F5FF),
+      ),
       child:
           uploadedImage == null
               ? Column(
@@ -477,7 +517,10 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
                   // แสดงรูปที่อัปโหลด
                   Stack(
                     children: [
-                      ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.file(uploadedImage!, width: 100, height: 100, fit: BoxFit.cover)),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(uploadedImage!, width: 100, height: 100, fit: BoxFit.cover),
+                      ),
                       // ปุ่มดูและลบ
                       Positioned(
                         top: 4,

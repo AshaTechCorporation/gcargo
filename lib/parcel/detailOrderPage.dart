@@ -30,6 +30,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
   // Worker สำหรับ dispose
   late Worker orderWorker;
+  bool needVatReceipt = false;
 
   @override
   void initState() {
@@ -203,6 +204,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         'document_notice': 'เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ',
         'cancel_reason': 'ร้านค้าไม่มีสีตามที่สั่งซื้อจึงต้องยกเลิกรายการสินค้านี้',
         'unknown_product': 'ไม่ระบุชื่อสินค้า',
+        'need_vat_receipt': 'ต้องการใบกำกับภาษี (VAT 7%)',
       },
       'en': {
         'order_details': 'Order Details',
@@ -252,6 +254,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         'document_notice': 'Documents will be sent via Line within 24 hours\nafter successful payment',
         'cancel_reason': 'Store does not have the color as ordered, so this item must be cancelled',
         'unknown_product': 'Unknown Product',
+        'need_vat_receipt': 'Need VAT Receipt (VAT 7%)',
       },
       'zh': {
         'order_details': '订单详情',
@@ -301,6 +304,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         'document_notice': '文件将在付款成功后24小时内\n通过Line发送',
         'cancel_reason': '店铺没有订购的颜色，因此必须取消此商品',
         'unknown_product': '未知商品',
+        'need_vat_receipt': '需要增值税发票 (VAT 7%)',
       },
     };
 
@@ -793,37 +797,67 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     if (status == 'pending' || status == 'รอตรวจสอบ' || status == 'awaiting_payment' || status == 'รอชำระเงิน') {
       return Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Cancel button (smaller size)
-            Expanded(
-              flex: 2, // Smaller flex ratio
-              child: OutlinedButton(
-                onPressed: () async {
-                  print('🔘 กดปุ่มยกเลิก');
-                  final cancelReason = await _showCancelReasonSheet(context);
-                  print('📝 เหตุผล: $cancelReason');
-                  if (cancelReason != null && cancelReason.isNotEmpty) {
-                    print('✅ เรียก _cancelOrder');
-                    await _cancelOrder(cancelReason);
-                  } else {
-                    print('❌ ไม่มีเหตุผล ไม่ยิง API');
-                  }
-                },
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  foregroundColor: Colors.black,
-                  side: BorderSide(color: Colors.grey.shade400),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            // Checkbox สำหรับต้องการใบกำกับภาษี - แสดงเฉพาะสถานะ awaiting_payment
+            if (status == 'awaiting_payment' || status == 'รอชำระเงิน')
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: Checkbox(
+                        value: needVatReceipt,
+                        onChanged: (value) {
+                          setState(() {
+                            needVatReceipt = value ?? false;
+                          });
+                        },
+                        activeColor: kButtonColor,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(getTranslation('need_vat_receipt'), style: TextStyle(fontSize: 14))),
+                  ],
                 ),
-                child: Text(getTranslation('cancel'), style: TextStyle(fontSize: 16)),
               ),
-            ),
-            const SizedBox(width: 12),
-            // Second button depends on status (larger size)
-            Expanded(
-              flex: 3, // Larger flex ratio
-              child: _buildSecondButton(status),
+            // Buttons row
+            Row(
+              children: [
+                // Cancel button (smaller size)
+                Expanded(
+                  flex: 2, // Smaller flex ratio
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      print('🔘 กดปุ่มยกเลิก');
+                      final cancelReason = await _showCancelReasonSheet(context);
+                      print('📝 เหตุผล: $cancelReason');
+                      if (cancelReason != null && cancelReason.isNotEmpty) {
+                        print('✅ เรียก _cancelOrder');
+                        await _cancelOrder(cancelReason);
+                      } else {
+                        print('❌ ไม่มีเหตุผล ไม่ยิง API');
+                      }
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      foregroundColor: Colors.black,
+                      side: BorderSide(color: Colors.grey.shade400),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text(getTranslation('cancel'), style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Second button depends on status (larger size)
+                Expanded(
+                  flex: 3, // Larger flex ratio
+                  child: _buildSecondButton(status),
+                ),
+              ],
             ),
           ],
         ),
@@ -854,19 +888,18 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       // );
     } else if (status == 'awaiting_payment') {
       // For "รอชำระเงิน" - show price button with API total
-      final order = orderController.order.value;
-      final exchangeRate = double.tryParse(order?.exchange_rate ?? depositOrderRate.toString()) ?? depositOrderRate;
-      final totalPriceFromAPI = double.tryParse(order?.total_price ?? '0') ?? 0.0;
+      final totalPriceFromAPI = double.tryParse(orderController.order.value?.total_price ?? '0') ?? 0.0;
 
-      // Use API total if available, otherwise use calculated total
-      final displayPrice = totalPriceFromAPI > 0 ? totalPriceFromAPI * exchangeRate : _calculateTotalBahtPrice();
+      // คำนวณราคารวม VAT ถ้าเลือก
+      final priceWithVat = needVatReceipt ? totalPriceFromAPI * 1.07 : totalPriceFromAPI;
 
       return ElevatedButton(
         onPressed: () {
-          // TODO: Navigate to payment page
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => PaymentMethodPage(totalPrice: totalPriceFromAPI, ref_no: orderCode, orderType: 'order')),
+            MaterialPageRoute(
+              builder: (_) => PaymentMethodPage(totalPrice: priceWithVat, ref_no: orderCode, orderType: 'order', vat: needVatReceipt),
+            ),
           );
         },
         style: ElevatedButton.styleFrom(
@@ -880,8 +913,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           children: [
             Text(getTranslation('total_amount'), style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
             SizedBox(width: 5),
-            if (totalPriceFromAPI > 0)
-              Text('${totalPriceFromAPI.toStringAsFixed(2)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+            if (priceWithVat > 0) Text(priceWithVat.toStringAsFixed(2), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
           ],
         ),
       );
