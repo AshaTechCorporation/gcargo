@@ -162,8 +162,25 @@ class OrderService {
       // Filter by userID and get only the latest one
       List<WalletTrans> filteredList = walletTransList.where((trans) => trans.member_id == userID).toList();
 
-      // Sort by created_at descending (latest first) and take only the first one
+      // แยกตาม type "I" (เงินเข้า) และ "O" (เงินออก)
       if (filteredList.isNotEmpty) {
+        // คำนวณผลรวมของ type "I"
+        double sumTypeI = 0.0;
+        for (var trans in filteredList.where((t) => t.type == 'I')) {
+          sumTypeI += double.tryParse(trans.amount ?? '0') ?? 0.0;
+        }
+
+        // คำนวณผลรวมของ type "O"
+        double sumTypeO = 0.0;
+        for (var trans in filteredList.where((t) => t.type == 'O')) {
+          sumTypeO += double.tryParse(trans.amount ?? '0') ?? 0.0;
+        }
+
+        // ลบกัน I - O = ยอดคงเหลือ
+        double balance = sumTypeI - sumTypeO;
+
+        // สร้าง WalletTrans ใหม่เพื่อส่งยอดคงเหลือกลับ
+        // ใช้ข้อมูลจาก transaction ล่าสุดเป็นฐาน
         filteredList.sort((a, b) {
           if (a.created_at == null && b.created_at == null) return 0;
           if (a.created_at == null) return 1;
@@ -171,12 +188,47 @@ class OrderService {
           return b.created_at!.compareTo(a.created_at!);
         });
 
-        // Return only the latest transaction
-        return [filteredList.first];
+        final latestTrans = filteredList.first;
+        final balanceTrans = WalletTrans(
+          latestTrans.id,
+          latestTrans.code,
+          latestTrans.No,
+          balance.toStringAsFixed(6),
+          latestTrans.created_at,
+          latestTrans.detail,
+          latestTrans.in_from,
+          latestTrans.member_id,
+          latestTrans.out_to,
+          latestTrans.reference_id,
+          latestTrans.status,
+          latestTrans.type,
+          latestTrans.updated_at,
+          latestTrans.member,
+        );
+
+        return [balanceTrans];
       }
 
       // Return empty list if no matching transactions found
       return [];
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  ///ดูยอดเงิน wallet ตามรหัสสมาชิก เส้นเอพีไอใหม่
+  static Future<List<WalletTrans>> getWalletTransNew() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final userID = prefs.getInt('userID');
+    var headers = {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'};
+    final url = Uri.https(publicUrl, '/public/api/get_wallet_trans_by_member');
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data'] as List;
+      return list.map((e) => WalletTrans.fromJson(e)).toList();
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);

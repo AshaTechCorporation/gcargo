@@ -6,8 +6,9 @@ import 'package:gcargo/models/user.dart';
 import 'package:gcargo/models/wallettrans.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AccountHeaderWidget extends StatelessWidget {
+class AccountHeaderWidget extends StatefulWidget {
   final VoidCallback onCreditTap;
   final VoidCallback onPointTap;
   final VoidCallback onParcelTap;
@@ -28,6 +29,28 @@ class AccountHeaderWidget extends StatelessWidget {
     this.isLoading = false,
     this.walletTrans,
   });
+
+  @override
+  State<AccountHeaderWidget> createState() => _AccountHeaderWidgetState();
+}
+
+class _AccountHeaderWidgetState extends State<AccountHeaderWidget> {
+  String _walletBalance = '0';
+  String _pointBalance = '0';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBalancesFromPrefs();
+  }
+
+  Future<void> _loadBalancesFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _walletBalance = prefs.getString('wallet_balance') ?? '0';
+      _pointBalance = prefs.getString('point_balance') ?? '0';
+    });
+  }
 
   String getTranslation(String key) {
     final languageController = Get.find<LanguageController>();
@@ -54,22 +77,6 @@ class AccountHeaderWidget extends StatelessWidget {
     return translations[currentLang]?[key] ?? translations['th']?[key] ?? key;
   }
 
-  // คำนวณยอดเงิน wallet
-  double _calculateWalletBalance() {
-    if (walletTrans == null || walletTrans!.isEmpty) return 0.0;
-
-    double total = 0.0;
-    for (var trans in walletTrans!) {
-      final amount = double.tryParse(trans.amount ?? '0') ?? 0.0;
-      if (trans.type == 'I') {
-        total += amount; // เงินเข้า
-      } else if (trans.type == 'O') {
-        total -= amount; // เงินออก
-      }
-    }
-    return total;
-  }
-
   // ฟังก์ชั่นสำหรับนับจำนวนพัสดุที่มีสถานะ "สำเร็จ"
   int _getCompletedParcelCount() {
     try {
@@ -94,10 +101,10 @@ class AccountHeaderWidget extends StatelessWidget {
     }
   }
 
-  // ฟังก์ชั่นสำหรับฟอแมทพ้อยให้มีคอมม่า
-  String _formatPointBalance(String? balance) {
+  // ฟังก์ชั่นสำหรับฟอแมทตัวเลขให้มีคอมม่า
+  String _formatNumber(String balance) {
     try {
-      if (balance == null || balance.isEmpty) return '0.00';
+      if (balance.isEmpty) return '0.00';
       final double value = double.parse(balance);
       final formatter = NumberFormat('#,##0.00');
       return formatter.format(value);
@@ -124,9 +131,9 @@ class AccountHeaderWidget extends StatelessWidget {
                       children: [
                         ClipOval(
                           child:
-                              (user?.image != null && user!.image!.isNotEmpty)
+                              (widget.user?.image != null && widget.user!.image!.isNotEmpty)
                                   ? Image.network(
-                                    user!.image!,
+                                    widget.user!.image!,
                                     width: isPhone(context) ? 48 : 52,
                                     height: isPhone(context) ? 48 : 52,
                                     fit: BoxFit.cover,
@@ -158,26 +165,26 @@ class AccountHeaderWidget extends StatelessWidget {
                                   ),
                         ),
                         const SizedBox(width: 12),
-                        isLoading
+                        widget.isLoading
                             ? Container(
                               width: size.width * 0.3, // 30% ของหน้าจอ 100,
                               height: isPhone(context) ? 16 : 18,
                               decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
                             )
                             : Text(
-                              user?.fname ?? getTranslation('user_not_logged_in'),
+                              widget.user?.fname ?? getTranslation('user_not_logged_in'),
                               style: TextStyle(fontSize: isPhone(context) ? 16 : 18, fontWeight: FontWeight.w600, color: Colors.black),
                             ),
                       ],
                     ),
-                    isLoading
+                    widget.isLoading
                         ? Container(
                           width: isPhone(context) ? 50 : 70,
                           height: isPhone(context) ? 14 : 18,
                           decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
                         )
                         : Text(
-                          user?.code ?? '',
+                          widget.user?.code ?? '',
                           style: TextStyle(fontSize: isPhone(context) ? 14 : 16, color: Colors.grey, fontWeight: FontWeight.w500),
                         ),
                   ],
@@ -186,7 +193,7 @@ class AccountHeaderWidget extends StatelessWidget {
                 const SizedBox(height: 20),
                 // 🔹 Credit Card รูปเต็มใบ
                 GestureDetector(
-                  onTap: onCreditTap,
+                  onTap: widget.onCreditTap,
                   child: Stack(
                     children: [
                       ClipRRect(
@@ -202,7 +209,7 @@ class AccountHeaderWidget extends StatelessWidget {
                         top: 10,
                         left: 25,
                         child: Text(
-                          '${_calculateWalletBalance().toStringAsFixed(2)}',
+                          _formatNumber(_walletBalance),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: isPhone(context) ? 30 : 30,
@@ -218,7 +225,7 @@ class AccountHeaderWidget extends StatelessWidget {
 
                 // 🔹 Point Card รูปเต็มใบ
                 GestureDetector(
-                  onTap: onPointTap,
+                  onTap: widget.onPointTap,
                   child: Stack(
                     children: [
                       ClipRRect(
@@ -234,7 +241,7 @@ class AccountHeaderWidget extends StatelessWidget {
                         top: 10,
                         left: 25,
                         child: Text(
-                          _formatPointBalance(user?.point_balance),
+                          _formatNumber(_pointBalance),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: isPhone(context) ? 30 : 30,
@@ -256,16 +263,16 @@ class AccountHeaderWidget extends StatelessWidget {
                       '${_getCompletedParcelCount()}',
                       getTranslation('my_parcel'),
                       'assets/icons/box-blusee.png',
-                      onParcelTap,
+                      widget.onParcelTap,
                       getTranslation('status'),
                       context,
                       size,
                     ),
                     _quickItem(
-                      '฿${_calculateWalletBalance().toStringAsFixed(2)}',
+                      '฿${_formatNumber(_walletBalance)}',
                       getTranslation('my_wallet'),
                       'assets/icons/empty-wallet.png',
-                      onWalletTap,
+                      widget.onWalletTap,
                       getTranslation('transfer_money'),
                       context,
                       size,

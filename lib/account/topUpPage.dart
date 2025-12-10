@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/qrpayPage.dart';
+import 'package:intl/intl.dart';
 
 class TopUpPage extends StatefulWidget {
-  const TopUpPage({super.key});
+  TopUpPage({super.key, required this.type, required this.walletBalance});
+  final String type;
+  final String walletBalance;
 
   @override
   State<TopUpPage> createState() => _TopUpPageState();
@@ -29,11 +32,17 @@ class _TopUpPageState extends State<TopUpPage> {
     });
   }
 
+  // ฟอแมทตัวเลขให้มีคอมม่า
+  String _formatAmount(double value) {
+    final formatter = NumberFormat('#,##0.00');
+    return formatter.format(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('เติมเงิน', style: TextStyle(color: Colors.black)),
+        title: widget.type == 'I' ? Text('เติมเงิน', style: TextStyle(color: Colors.black)) : Text('ถอนเงิน', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -48,7 +57,9 @@ class _TopUpPageState extends State<TopUpPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('ยอดเงินที่ต้องการเติมเงิน', style: TextStyle(fontSize: 14)),
+                widget.type == 'I'
+                    ? Text('ยอดเงินที่ต้องการเติมเงิน', style: TextStyle(fontSize: 14))
+                    : Text('ยอดเงินที่ต้องการถอน', style: TextStyle(fontSize: 14)),
                 const SizedBox(height: 8),
                 Container(
                   width: double.infinity,
@@ -118,11 +129,37 @@ class _TopUpPageState extends State<TopUpPage> {
                     amount.isEmpty
                         ? null
                         : () {
-                          // ชำระเงิน
-                          //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ชำระเงิน $amount บาท')));
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => QrpayPage(totalPrice: double.parse(amount))));
+                          // ตรวจสอบกรณีถอนเงิน
+                          if (widget.type == 'O') {
+                            final double enteredAmount = double.tryParse(amount) ?? 0.0;
+                            final double currentBalance = double.tryParse(widget.walletBalance) ?? 0.0;
+
+                            if (enteredAmount > currentBalance) {
+                              // แจ้งเตือนว่ายอดถอนมากกว่ายอดเงินคงเหลือ
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      title: const Text('ไม่สามารถถอนเงินได้'),
+                                      content: Text(
+                                        'ยอดเงินที่ต้องการถอน (${_formatAmount(enteredAmount)} บาท) มากกว่ายอดเงินคงเหลือ (${_formatAmount(currentBalance)} บาท)',
+                                      ),
+                                      actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))],
+                                    ),
+                              );
+                              return;
+                            }
+                          }
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => QrpayPage(totalPrice: double.parse(amount), type: widget.type)),
+                          );
                         },
-                child: const Text('ชำระเงิน', style: TextStyle(fontSize: 16, color: Colors.white)),
+                child:
+                    widget.type == 'I'
+                        ? Text('ชำระเงิน', style: TextStyle(fontSize: 16, color: Colors.white))
+                        : Text('ถอนเงิน', style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
             ),
           ),

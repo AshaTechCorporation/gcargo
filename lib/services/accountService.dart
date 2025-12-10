@@ -77,8 +77,8 @@ class AccountService {
     }
   }
 
-  //เติมเงิน wallet
-  static Future<WalletTrans> walletTrans({String? amount}) async {
+  //เติมเงิน และ ถอนเงิน wallet
+  static Future<WalletTrans> walletTrans({String? amount, String? image, required String type}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userID = prefs.getInt('userID');
@@ -94,7 +94,8 @@ class AccountService {
         "reference_id": "",
         "detail": "เติมเงิน",
         "amount": amount,
-        "type": "I",
+        "type": type,
+        "image": image,
       }),
     );
     if (response.statusCode == 200) {

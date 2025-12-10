@@ -102,7 +102,8 @@ class OrderController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
 
-      final data = await OrderService.getWalletTrans();
+      //final data = await OrderService.getWalletTrans();
+      final data = await OrderService.getWalletTransNew();
 
       if (data.isNotEmpty) {
         walletTrans.value = data;

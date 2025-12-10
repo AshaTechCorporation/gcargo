@@ -177,6 +177,7 @@ class _AccountPageState extends State<AccountPage> {
         inspect(user.transport_rate_id);
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('point_balance', user.point_balance ?? '0');
+        await prefs.setString('wallet_balance', user.wallet_balance ?? '0');
         setState(() {
           importer_code = user.importer_code ?? '';
           transport_rate_id = user.transport_rate_id ?? 0;

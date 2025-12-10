@@ -4,6 +4,7 @@ import 'package:gcargo/controllers/account_controller.dart';
 import 'package:gcargo/controllers/order_controller.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({super.key});
@@ -15,14 +16,23 @@ class WalletPage extends StatefulWidget {
 class _WalletPageState extends State<WalletPage> {
   final OrderController orderController = Get.put(OrderController());
   final AccountController accountController = Get.put(AccountController());
+  String _walletBalance = '0';
 
   @override
   void initState() {
     super.initState();
+    _loadWalletBalance();
     // เรียก API เมื่อโหลดหน้า
     WidgetsBinding.instance.addPostFrameCallback((_) {
       orderController.getWalletTrans();
       accountController.getListWalletTrans();
+    });
+  }
+
+  Future<void> _loadWalletBalance() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _walletBalance = prefs.getString('wallet_balance') ?? '0';
     });
   }
 
@@ -44,6 +54,13 @@ class _WalletPageState extends State<WalletPage> {
   String _formatAmount(double amount) {
     final formatter = NumberFormat('#,##0.00');
     return formatter.format(amount);
+  }
+
+  // จัดฟอร์แมทตัวเลขจาก String
+  String _formatAmountFromString(String amount) {
+    final formatter = NumberFormat('#,##0.00');
+    final value = double.tryParse(amount) ?? 0.0;
+    return formatter.format(value);
   }
 
   @override
@@ -105,7 +122,7 @@ class _WalletPageState extends State<WalletPage> {
                             const Text('ยอดเงินใน Wallet', style: TextStyle(fontSize: 14, color: Colors.black87)),
                             const SizedBox(width: 8),
                             Text(
-                              '${_formatAmount(totalBalance)}฿',
+                              '${_formatAmountFromString(_walletBalance)}฿',
                               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue),
                             ),
                           ],
@@ -123,9 +140,17 @@ class _WalletPageState extends State<WalletPage> {
                     children: [
                       // เติมเงิน
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           // TODO: ไปหน้า WalletPaymentPage
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => TopUpPage()));
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => TopUpPage(type: "I", walletBalance: _walletBalance)),
+                          );
+                          if (result == true) {
+                            await _loadWalletBalance();
+                            orderController.getWalletTrans();
+                            accountController.getListWalletTrans();
+                          }
                         },
                         child: Column(
                           children: [
@@ -143,18 +168,46 @@ class _WalletPageState extends State<WalletPage> {
                       ),
                       const SizedBox(width: 12),
                       // ถอนเงิน
-                      Column(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(color: Color(0xFFEDF6FF), shape: BoxShape.circle),
-                            padding: const EdgeInsets.all(8),
-                            child: Image.asset('assets/icons/money-send.png', fit: BoxFit.contain),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text('ถอนเงิน', style: TextStyle(fontSize: 12)),
-                        ],
+                      GestureDetector(
+                        onTap: () async {
+                          // ตรวจสอบว่ายอดเงินเป็น 0 หรือไม่
+                          final double currentBalance = double.tryParse(_walletBalance) ?? 0.0;
+                          if (currentBalance <= 0) {
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: const Text('ไม่สามารถถอนเงินได้'),
+                                    content: const Text('ยอดเงินคงเหลือเป็น 0 บาท ไม่สามารถถอนเงินได้'),
+                                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('ตกลง'))],
+                                  ),
+                            );
+                            return;
+                          }
+
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => TopUpPage(type: "O", walletBalance: _walletBalance)),
+                          );
+                          if (result == true) {
+                            await _loadWalletBalance();
+                            orderController.getWalletTrans();
+                            accountController.getListWalletTrans();
+                          }
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: const BoxDecoration(color: Color(0xFFEDF6FF), shape: BoxShape.circle),
+                              padding: const EdgeInsets.all(8),
+                              child: Image.asset('assets/icons/money-send.png', fit: BoxFit.contain),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text('ถอนเงิน', style: TextStyle(fontSize: 12)),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -181,11 +234,21 @@ class _WalletPageState extends State<WalletPage> {
                           final amount = double.tryParse(trans.amount ?? '0') ?? 0.0;
                           final finalAmount = trans.type == 'O' ? -amount : amount;
 
+                          // กำหนดชื่อรายการตาม type
+                          String transactionName;
+                          if (trans.type == 'I') {
+                            transactionName = 'เติมเงิน';
+                          } else if (trans.type == 'O') {
+                            transactionName = 'ถอนเงิน';
+                          } else {
+                            transactionName = trans.detail ?? 'ไม่มีรายละเอียด';
+                          }
+
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (index == 0 || _shouldShowDateHeader(index, sortedList)) _dateHeader(_formatTransactionDate(trans.created_at)),
-                              _walletTransaction(trans.detail ?? 'ไม่มีรายละเอียด', finalAmount),
+                              _walletTransaction(transactionName, finalAmount),
                               const SizedBox(height: 8),
                             ],
                           );

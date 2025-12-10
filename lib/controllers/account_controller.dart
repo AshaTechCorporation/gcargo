@@ -6,6 +6,7 @@ import 'package:gcargo/models/tegaboutus.dart';
 import 'package:gcargo/models/user.dart';
 import 'package:gcargo/models/wallettrans.dart';
 import 'package:gcargo/services/accountService.dart';
+import 'package:gcargo/services/orderService.dart';
 import 'package:get/get.dart';
 
 class AccountController extends GetxController {
@@ -126,7 +127,8 @@ class AccountController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
 
-      final data = await AccountService.getListWalletTrans();
+      //final data = await AccountService.getListWalletTrans();
+      final data = await OrderService.getWalletTransNew();
 
       if (data != null) {
         // ไม่ต้องทำอะไร
