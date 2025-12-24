@@ -18,22 +18,60 @@ class _MyRateState extends State<MyRate> {
   @override
   void initState() {
     super.initState();
-    _loadRateData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (widget.transport_rate_id != 0) {
+        await _loadRateData(transport_rate_id: widget.transport_rate_id);
+      } else {
+        await _loadRateDataYes();
+      }
+    });
   }
 
-  Future<void> _loadRateData() async {
+  Future<void> _loadRateData({required int transport_rate_id}) async {
     try {
       setState(() {
         isLoading = true;
         errorMessage = null;
       });
 
-      final data = await AccountService.getMyRate(transport_rate_id: widget.transport_rate_id);
+      final data = await AccountService.getMyRate(transport_rate_id: transport_rate_id);
 
       setState(() {
         rateData = data['data'];
         isLoading = false;
       });
+    } catch (e) {
+      setState(() {
+        errorMessage = e.toString();
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadRateDataYes() async {
+    try {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
+
+      final data = await AccountService.getRateYes();
+
+      // เอาเฉพาะตัวที่ "default": "Yes"
+      final defaultRates = data.where((item) => item['default'] == 'Yes').toList();
+
+      if (defaultRates.isNotEmpty) {
+        await _loadRateData(transport_rate_id: defaultRates.first['id']);
+        // setState(() {
+        //   rateData = defaultRates.first;
+        //   isLoading = false;
+        // });
+      } else {
+        setState(() {
+          errorMessage = 'ไม่พบอัตราค่าขนส่งเริ่มต้น';
+          isLoading = false;
+        });
+      }
     } catch (e) {
       setState(() {
         errorMessage = e.toString();
@@ -65,7 +103,11 @@ class _MyRateState extends State<MyRate> {
                     const SizedBox(height: 16),
                     Text('เกิดข้อผิดพลาด: $errorMessage'),
                     const SizedBox(height: 16),
-                    ElevatedButton(onPressed: _loadRateData, child: const Text('ลองใหม่')),
+                    ElevatedButton(
+                      onPressed:
+                          () => widget.transport_rate_id != 0 ? _loadRateData(transport_rate_id: widget.transport_rate_id) : _loadRateDataYes(),
+                      child: const Text('ลองใหม่'),
+                    ),
                   ],
                 ),
               )

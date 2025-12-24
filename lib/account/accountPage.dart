@@ -609,9 +609,10 @@ class _AccountPageState extends State<AccountPage> {
                             final homeController = Get.find<HomeController>();
                             if (homeController.currentUser.value != null) {
                               if (transport_rate_id == null || transport_rate_id == 0) {
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(const SnackBar(content: Text('ยังไม่ได้กำหนดเรทค่าขนส่ง'), backgroundColor: Colors.orange));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => MyRate(transport_rate_id: transport_rate_id!)));
+                                // ScaffoldMessenger.of(
+                                //   context,
+                                // ).showSnackBar(const SnackBar(content: Text('ยังไม่ได้กำหนดเรทค่าขนส่ง'), backgroundColor: Colors.orange));
                               } else {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => MyRate(transport_rate_id: transport_rate_id!)));
                               }
