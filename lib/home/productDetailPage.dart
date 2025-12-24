@@ -59,6 +59,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   bool isTranslatingRecommendedTitles = false;
   List<String> lastTranslatedItemIds = []; // เก็บ ID ของ items ที่แปลไปแล้ว
 
+  // จำนวนสินค้าในตะกร้า
+  int cartItemCount = 0;
+
   String getTranslation(String key) {
     final currentLang = languageController.currentLanguage.value;
 
@@ -219,6 +222,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       homeController = Get.put(HomeController());
     }
     //_loadExchangeRate();
+
+    // โหลดจำนวนสินค้าในตะกร้า
+    _loadCartItemCount();
+  }
+
+  // โหลดจำนวนสินค้าในตะกร้า
+  void _loadCartItemCount() {
+    try {
+      setState(() {
+        cartItemCount = CartService.getCartItemsCount();
+      });
+    } catch (e) {
+      setState(() {
+        cartItemCount = 0;
+      });
+    }
   }
 
   // ฟังก์ชันสำหรับแปลไตเติ๊ล
@@ -779,6 +798,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 'selectedSize': selectedSize,
                 'selectedColor': selectedColor,
                 'name': widget.name,
+                'id': 0,
               };
 
               try {
@@ -790,6 +810,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ScaffoldMessenger.of(currentContext).showSnackBar(
                     SnackBar(content: Text(getTranslation('added_to_cart')), backgroundColor: Colors.green, duration: Duration(seconds: 2)),
                   );
+                  _loadCartItemCount();
 
                   // Navigate to cart page
                   Navigator.push(currentContext, MaterialPageRoute(builder: (_) => const CartPage()));
@@ -832,14 +853,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
             title: SearchHeaderWidget(
               searchController: searchController,
+              cartItemCount: cartItemCount,
               onFieldSubmitted: (query) {
                 SearchService.handleTextSearch(context: context, query: query, selectedType: widget.type);
               },
               onImagePicked: (XFile image) {
                 SearchService.handleImageSearch(context: context, image: image, selectedType: widget.type);
               },
-              onBagTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+              onBagTap: () async {
+                // เช็ค userID ก่อนไปหน้าตะกร้า
+                final isLoggedIn = await _checkUserLogin();
+                if (!isLoggedIn) return;
+                if (mounted) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+                }
               },
               onNotificationTap: () {
                 // TODO: ไปหน้า notification

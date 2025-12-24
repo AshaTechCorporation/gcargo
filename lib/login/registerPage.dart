@@ -56,11 +56,27 @@ class _RegisterPageState extends State<RegisterPage> {
   List<Provice> filteredSubdistricts = [];
   double? lat;
   double? long;
+  Map<String, dynamic> termsData = {};
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadTerms();
+    });
     _loadProvinceData();
+  }
+
+  // ดึงข้อมูลเงื่อนใขบริการจาก api
+  Future<void> _loadTerms() async {
+    try {
+      final terms = await RegisterService.getTerms();
+      setState(() {
+        termsData = terms;
+      });
+    } catch (e) {
+      print('Error loading terms: $e');
+    }
   }
 
   bool _validateAllFields() {
@@ -505,8 +521,23 @@ class _RegisterPageState extends State<RegisterPage> {
                         return;
                       }
 
-                      // ไม่ใช้ Form validation แล้ว เพราะเราเช็คเองแล้ว
-                      final accepted = await showDialog<bool>(context: context, barrierDismissible: false, builder: (context) => TermsDialog());
+                      // ดึงข้อมูลเงื่อนไขจาก termsData
+                      final termsContent = termsData['data']?['term_and_condition']?.toString();
+
+                      // เช็คว่ามีข้อมูลเงื่อนไขหรือไม่
+                      if (termsContent == null || termsContent.isEmpty) {
+                        // แจ้งเตือนว่าไม่พบเงื่อนไข แต่ยังให้สมัครได้
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('ไม่พบเงื่อนไขและบริการ'), backgroundColor: Colors.orange));
+                      }
+
+                      // แสดง TermsDialog พร้อมส่งข้อมูลเงื่อนไข
+                      final accepted = await showDialog<bool>(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => TermsDialog(termsContent: termsContent),
+                      );
 
                       if (accepted == true) {
                         // TODO: ดำเนินการสมัครต่อ
@@ -564,14 +595,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         } on Exception catch (e) {
                           if (!mounted) return;
                           print(e);
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text('${e.toString()}!'), backgroundColor: Colors.yellowAccent));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${e.toString()}!', style: TextStyle(color: Colors.black)), backgroundColor: Colors.yellowAccent),
+                          );
                         } catch (e) {
                           if (!mounted) return;
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text('${e.toString()}!'), backgroundColor: Colors.yellowAccent));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${e.toString()}!', style: TextStyle(color: Colors.black)), backgroundColor: Colors.yellowAccent),
+                          );
                         }
 
                         //Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage()));

@@ -288,4 +288,18 @@ class RegisterService {
       throw Exception('อัพโหดลไฟล์ล้มเหลว');
     }
   }
+
+  //ดึงข้อมูลเงื่อนใขและบริการ
+  static Future<Map<String, dynamic>> getTerms() async {
+    final url = Uri.https(publicUrl, '/public/api/app_config/1');
+    var headers = {'Content-Type': 'application/json'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
 }

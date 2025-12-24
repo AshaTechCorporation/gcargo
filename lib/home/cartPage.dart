@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/home_controller.dart';
 import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/home/purchaseBillPage.dart';
 import 'package:gcargo/models/cart_item.dart';
+import 'package:gcargo/models/user.dart';
 import 'package:gcargo/services/cart_service.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:gcargo/utils/helpers.dart';
@@ -26,6 +29,8 @@ class _CartPageState extends State<CartPage> {
   late LanguageController languageController;
   bool isLoadingServices = true;
   double depositOrderRate = 4.0; // Default rate
+  User? currentUser;
+  List<Map<String, dynamic>> apiCartItems = [];
 
   String getTranslation(String key) {
     final currentLang = languageController.currentLanguage.value;
@@ -63,6 +68,7 @@ class _CartPageState extends State<CartPage> {
         'baht': 'บาท',
         'items_selected': 'รายการที่เลือก',
         'no_items_selected': 'ไม่มีรายการที่เลือก',
+        'sync_data': 'ซิงค์ข้อมูล',
       },
       'en': {
         'cart': 'Cart',
@@ -96,6 +102,7 @@ class _CartPageState extends State<CartPage> {
         'baht': 'Baht',
         'items_selected': 'Items Selected',
         'no_items_selected': 'No Items Selected',
+        'sync_data': 'Sync Data',
       },
       'zh': {
         'cart': '购物车',
@@ -129,6 +136,7 @@ class _CartPageState extends State<CartPage> {
         'baht': '泰铢',
         'items_selected': '已选择商品',
         'no_items_selected': '未选择商品',
+        'sync_data': '同步数据',
       },
     };
 
@@ -147,11 +155,129 @@ class _CartPageState extends State<CartPage> {
       homeController = Get.put(HomeController());
     }
 
+    // Get current user
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await fristLoad();
+    });
     // Fetch extra services
     _loadExtraServices();
     _loadCartItems();
     // หลังจากโหลดข้อมูลสินค้าเสร็จแล้ว ให้แปลไตเติ๊ล
     _loadExchangeRate();
+  }
+
+  Future<void> fristLoad() async {
+    try {
+      final user = await homeController.getUserByIdFromAPI();
+      if (user != null) {
+        setState(() {
+          currentUser = user;
+        });
+      }
+      // เรียก API getCartItems
+      await _loadApiCartItems();
+    } catch (e) {
+      print('Error in fristLoad: $e');
+    }
+  }
+
+  // โหลดข้อมูลตะกร้าจาก API
+  Future<void> _loadApiCartItems() async {
+    try {
+      final result = await HomeService.getCartItems();
+      if (result['success'] == true && result['products'] != null) {
+        setState(() {
+          apiCartItems = List<Map<String, dynamic>>.from(result['products']);
+        });
+        //inspect(apiCartItems);
+
+        // เช็คและ sync ข้อมูลจาก API กับ Hive
+        await _syncApiCartToHive();
+      } else {
+        setState(() {
+          apiCartItems = [];
+        });
+      }
+    } catch (e) {
+      print('Error loading API cart items: $e');
+      setState(() {
+        apiCartItems = [];
+      });
+    }
+  }
+
+  // sync ข้อมูลจาก API กับ Hive
+  Future<void> _syncApiCartToHive() async {
+    if (apiCartItems.isEmpty) return;
+
+    // ดึงข้อมูลจาก Hive ก่อน
+    final hiveItems = CartService.getCartItems();
+    bool hasNewItems = false;
+
+    for (var apiItem in apiCartItems) {
+      final productCode = apiItem['product_code']?.toString() ?? '';
+      if (productCode.isEmpty) continue;
+
+      // ดึงข้อมูล options สำหรับ size และ color
+      String size = '';
+      String color = '';
+      final options = apiItem['options'];
+      if (options != null && options is List) {
+        for (var option in options) {
+          final name = option['name']?.toString() ?? '';
+          final value = option['value']?.toString() ?? '';
+          if (name == 'ไซส์' || name.toLowerCase() == 'size') {
+            size = value;
+          } else if (name == 'สี' || name.toLowerCase() == 'color') {
+            color = value;
+          }
+        }
+      }
+
+      // เช็คว่ามีใน Hive หรือไม่ โดยเทียบจาก hiveItems ที่ดึงมา
+      final existingHiveItem = hiveItems.where((item) => item.numIid == productCode).toList();
+
+      if (existingHiveItem.isEmpty) {
+        // ถ้าไม่มีใน Hive ให้เพิ่มเข้าไป
+        final productData = {
+          'num_iid': productCode,
+          'title': apiItem['product_name'] ?? '',
+          'price': apiItem['product_price'] ?? '0',
+          'orginal_price': apiItem['product_real_price'] ?? '0',
+          'nick': (apiItem['product_shop']?.toString() ?? '').replaceFirst('_sopid@', ''),
+          'detail_url': apiItem['product_url'] ?? '',
+          'pic_url': apiItem['product_image'] ?? '',
+          'brand': apiItem['product_store_type'] ?? '',
+          'quantity': apiItem['product_qty'] ?? 1,
+          'selectedSize': size,
+          'selectedColor': color,
+          'name': apiItem['product_name'] ?? '',
+          'id': apiItem['id'] ?? 0,
+        };
+
+        await CartService.addToCart(productData);
+        hasNewItems = true;
+      } else {
+        // ถ้ามีใน Hive แล้ว ให้อัพเดท id จาก API โดยเช็คจาก numIid (product_code)
+        final apiId = apiItem['id'];
+        final apiProductCode = apiItem['product_code']?.toString() ?? '';
+        if (apiId != null && apiProductCode.isNotEmpty) {
+          for (var hiveItem in existingHiveItem) {
+            // เช็คว่า numIid ตรงกับ product_code จาก API
+            if (hiveItem.numIid == apiProductCode && hiveItem.id != apiId) {
+              hiveItem.id = apiId is int ? apiId : int.tryParse(apiId.toString()) ?? 0;
+              await hiveItem.save();
+              hasNewItems = true;
+            }
+          }
+        }
+      }
+    }
+
+    // โหลด cart items ใหม่หลังจาก sync ถ้ามี item ใหม่
+    if (hasNewItems) {
+      await _loadCartItems();
+    }
   }
 
   // Load exchange rate from API
@@ -190,6 +316,7 @@ class _CartPageState extends State<CartPage> {
       cartItems = CartService.getCartItems();
       selectedItems = List.generate(cartItems.length, (index) => false);
       selectedForPurchase = List.generate(cartItems.length, (index) => false);
+      inspect(cartItems);
     } catch (e) {
       // Handle error
       cartItems = [];
@@ -370,10 +497,11 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ],
                   SizedBox(height: 6),
-                  Row(
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
                     children: [
                       if (item.selectedSize.isNotEmpty) buildLabel(item.selectedSize),
-                      if (item.selectedSize.isNotEmpty && item.selectedColor.isNotEmpty) const SizedBox(width: 6),
                       if (item.selectedColor.isNotEmpty) buildLabel(item.selectedColor),
                     ],
                   ),
@@ -416,7 +544,7 @@ class _CartPageState extends State<CartPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: Colors.grey.shade200),
-      child: Text(text, style: const TextStyle(fontSize: 12)),
+      child: Text(text, style: TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis),
     );
   }
 
@@ -470,62 +598,180 @@ class _CartPageState extends State<CartPage> {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: SizedBox(
-        height: 48,
-        width: double.infinity,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isDeleteMode ? Colors.white : kButtonColor,
-            foregroundColor: isDeleteMode ? Colors.black : Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
-              side: isDeleteMode ? BorderSide(color: Colors.grey.shade300) : BorderSide.none,
-            ),
-          ),
-          onPressed: () {
-            if (isDeleteMode) {
-              removeSelectedItems();
-            } else if (hasSelectedItems) {
-              // TODO: Navigate to checkout or purchase page
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('go_to_checkout')), backgroundColor: Colors.green));
+      child: Row(
+        children: [
+          // ปุ่มซิงค์ข้อมูล
+          SizedBox(
+            height: 48,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6), side: BorderSide(color: Colors.grey.shade300)),
+              ),
+              onPressed: () async {
+                // ซิงค์ข้อมูลตะกร้า
+                setState(() {
+                  isLoading = true;
+                });
+                try {
+                  // จัดรูปแบบข้อมูลสินค้าจาก Hive
+                  final List<Map<String, dynamic>> productsForSync =
+                      cartItems.map((item) {
+                        return {
+                          'product_shop': item.nick,
+                          'product_code': item.numIid,
+                          'product_name': item.title,
+                          'product_url': item.detailUrl,
+                          'product_image': item.picUrl,
+                          'product_category': item.name,
+                          'product_store_type': item.brand.isNotEmpty ? item.brand : 'shopgs1',
+                          'product_note': '',
+                          'product_price': item.priceAsDouble.toStringAsFixed(6),
+                          'product_real_price': item.originalPriceAsDouble.toStringAsFixed(6),
+                          'product_qty': item.quantity,
+                          'note': '',
+                          'client_note': '',
+                          'options': [
+                            if (item.selectedSize.isNotEmpty) {'name': 'ไซส์', 'value': item.selectedSize},
+                            if (item.selectedColor.isNotEmpty) {'name': 'สี', 'value': item.selectedColor},
+                          ],
+                        };
+                      }).toList();
 
-              final selectedItemsMapList = <Map<String, dynamic>>[];
+                  // กรองเฉพาะสินค้าที่ไม่มีใน API
+                  // final List<Map<String, dynamic>> productsForSync =
+                  //     allProductsFromHive.where((hiveItem) {
+                  //       final hiveProductCode = hiveItem['product_code']?.toString() ?? '';
+                  //       // เช็คว่ามีใน apiCartItems หรือไม่
+                  //       final existsInApi = apiCartItems.any((apiItem) {
+                  //         final apiProductCode = apiItem['product_code']?.toString() ?? '';
+                  //         return apiProductCode == hiveProductCode;
+                  //       });
+                  //       // ถ้าไม่มีใน API ให้รวมเข้า productsForSync
+                  //       return !existsInApi;
+                  //     }).toList();
+                  //inspect(productsForSync);
 
-              for (int i = 0; i < selectedForPurchase.length; i++) {
-                if (selectedForPurchase[i]) {
-                  final item = cartItems[i];
-                  selectedItemsMapList.add({
-                    'num_iid': item.numIid,
-                    'title': item.title,
-                    'translatedTitle': item.translatedTitle,
-                    'price': item.price,
-                    'orginal_price': item.originalPrice,
-                    'nick': item.nick,
-                    'detail_url': item.detailUrl,
-                    'pic_url': item.picUrl,
-                    'brand': item.brand,
-                    'quantity': item.quantity,
-                    'selectedSize': item.selectedSize,
-                    'selectedColor': item.selectedColor,
-                    'name': item.name,
+                  // ถ้าไม่มีสินค้าใหม่ที่ต้อง sync
+                  // if (productsForSync.isEmpty) {
+                  //   setState(() {
+                  //     isLoading = false;
+                  //   });
+                  //   if (mounted) {
+                  //     ScaffoldMessenger.of(
+                  //       context,
+                  //     ).showSnackBar(SnackBar(content: Text(getTranslation('no_new_items_to_sync')), backgroundColor: Colors.orange));
+                  //   }
+                  //   return;
+                  // }
+
+                  // คำนวณราคารวมจาก productsForSync
+                  double totalPrice = 0;
+                  for (var product in productsForSync) {
+                    final price = double.tryParse(product['product_price']?.toString() ?? '0') ?? 0;
+                    final qty =
+                        product['product_qty'] is int ? product['product_qty'] : (int.tryParse(product['product_qty']?.toString() ?? '0') ?? 0);
+                    totalPrice += price * qty;
+                  }
+
+                  final result = await HomeService.syncCart(
+                    date: DateTime.now(),
+                    total_price: totalPrice,
+                    shipping_type: 'car',
+                    payment_term: '1',
+                    note: '',
+                    importer_code: currentUser?.importer_code ?? '',
+                    member_address_id: '',
+                    products: productsForSync,
+                  );
+                  if (result != null) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                    await _loadApiCartItems();
+                  }
+                } catch (e) {
+                  // Handle error silently
+                  setState(() {
+                    isLoading = false;
                   });
                 }
-              }
-
-              Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: selectedItemsMapList, channel: 'nomal')));
-            } else {
-              // ถ้าไม่มีสินค้าที่เลือก ให้ pop กลับ
-              Navigator.pop(context);
-            }
-          },
-          child: Text(
-            isDeleteMode
-                ? getTranslation('remove_selected')
-                : hasSelectedItems
-                ? '${getTranslation('checkout')} ${_getTotalText()}'
-                : getTranslation('select_items_first'),
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('sync_data')), backgroundColor: Colors.green));
+                }
+              },
+              icon: const Icon(Icons.sync, size: 20),
+              label: Text(getTranslation('sync_data')),
+            ),
           ),
-        ),
+          const SizedBox(width: 12),
+          // ปุ่มหลัก
+          Expanded(
+            child: SizedBox(
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isDeleteMode ? Colors.white : kButtonColor,
+                  foregroundColor: isDeleteMode ? Colors.black : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    side: isDeleteMode ? BorderSide(color: Colors.grey.shade300) : BorderSide.none,
+                  ),
+                ),
+                onPressed: () {
+                  if (isDeleteMode) {
+                    removeSelectedItems();
+                  } else if (hasSelectedItems) {
+                    // TODO: Navigate to checkout or purchase page
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(getTranslation('go_to_checkout')), backgroundColor: Colors.green));
+
+                    final selectedItemsMapList = <Map<String, dynamic>>[];
+
+                    for (int i = 0; i < selectedForPurchase.length; i++) {
+                      if (selectedForPurchase[i]) {
+                        final item = cartItems[i];
+                        selectedItemsMapList.add({
+                          'num_iid': item.numIid,
+                          'title': item.title,
+                          'translatedTitle': item.translatedTitle,
+                          'price': item.price,
+                          'orginal_price': item.originalPrice,
+                          'nick': item.nick,
+                          'detail_url': item.detailUrl,
+                          'pic_url': item.picUrl,
+                          'brand': item.brand,
+                          'quantity': item.quantity,
+                          'selectedSize': item.selectedSize,
+                          'selectedColor': item.selectedColor,
+                          'name': item.name,
+                          'id': item.id,
+                        });
+                      }
+                    }
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: selectedItemsMapList, channel: 'nomal')),
+                    );
+                  } else {
+                    // ถ้าไม่มีสินค้าที่เลือก ให้ pop กลับ
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text(
+                  isDeleteMode
+                      ? getTranslation('remove_selected')
+                      : hasSelectedItems
+                      ? '${getTranslation('checkout')} ${_getTotalText()}'
+                      : getTranslation('select_items_first'),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

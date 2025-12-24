@@ -318,13 +318,27 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
   }
 
   double calculateProductTotal(Map<String, dynamic> product) {
-    final price = (product['price'] ?? 0).toDouble();
-    final quantity = (product['quantity'] ?? 1).toInt();
+    final priceValue = product['price'];
+    double price = 0.0;
+    if (priceValue is num) {
+      price = priceValue.toDouble();
+    } else if (priceValue is String) {
+      price = double.tryParse(priceValue) ?? 0.0;
+    }
+    final quantity = (product['quantity'] ?? 1) is int ? (product['quantity'] ?? 1) : int.tryParse(product['quantity']?.toString() ?? '1') ?? 1;
     return price * quantity;
   }
 
   double calculateTotalYuan() {
     return products.fold(0.0, (sum, product) => sum + calculateProductTotal(product));
+  }
+
+  // Helper method to parse double from dynamic value
+  double _parseDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 
   double calculateTotalBaht() {
@@ -570,7 +584,19 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
 
                                 log('✅ Order created successfully: $result');
 
-                                // Remove ordered items from cart
+                                // ลบสินค้าจาก API ก่อน ถ้ามี id ที่ไม่ใช่ 0
+                                for (var product in products) {
+                                  final productId = product['id'];
+                                  if (productId != null && productId != 0) {
+                                    try {
+                                      await HomeService.deleteCartItem(productId is int ? productId : int.tryParse(productId.toString()) ?? 0);
+                                    } catch (e) {
+                                      log('❌ Error deleting cart item id $productId: $e');
+                                    }
+                                  }
+                                }
+
+                                // Remove ordered items from cart (Hive)
                                 await _removeOrderedItemsFromCart();
 
                                 // Show success message
@@ -684,9 +710,9 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                   index: index,
                   image: product['pic_url'] ?? 'assets/images/unsplash1.png',
                   name: product['title'] ?? 'ไม่มีชื่อสินค้า',
-                  price: (product['price'] ?? 0).toDouble(),
-                  originalPrice: product['orginal_price']?.toDouble(),
-                  qty: (product['quantity'] ?? 1).toInt(),
+                  price: _parseDouble(product['price']),
+                  originalPrice: _parseDouble(product['orginal_price']),
+                  qty: (product['quantity'] ?? 1) is int ? (product['quantity'] ?? 1) : int.tryParse(product['quantity']?.toString() ?? '1') ?? 1,
                   selectedSize: product['selectedSize'] ?? '',
                   selectedColor: product['selectedColor'] ?? '',
                   translatedTitle: product['translatedTitle'],

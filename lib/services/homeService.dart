@@ -286,6 +286,85 @@ class HomeService {
     }
   }
 
+  // sync ตะกร้า
+  static Future syncCart({
+    required DateTime date,
+    required double total_price,
+    required String shipping_type,
+    required String payment_term,
+    required String note,
+    required String importer_code,
+    required String member_address_id,
+    required List<Map<String, dynamic>> products,
+  }) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final token = prefs.getString('token');
+    final url = Uri.https(publicUrl, '/public/api/carts');
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
+    final response = await http.post(
+      headers: headers,
+      url,
+      body: convert.jsonEncode({
+        "date": date.toIso8601String(),
+        "total_price": total_price,
+        "member_address_id": member_address_id,
+        "shipping_type": shipping_type,
+        "payment_term": payment_term,
+        "note": note,
+        "importer_code": importer_code,
+        "products": products,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final list = data['data'] as List;
+      return list;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  // ดึงข้อมูลตะกร้า
+  static Future<Map<String, dynamic>> getCartItems() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final token = prefs.getString('token');
+    final url = Uri.https(publicUrl, '/public/api/get_carts');
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
+    final response = await http.get(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      final products = data['data']['products'];
+      if (products != null && products is List && products.isNotEmpty) {
+        return {'success': true, 'products': products};
+      } else {
+        return {'success': false, 'message': data['message'] ?? 'ไม่พบตะกร้า (ตะกร้าว่าง)'};
+      }
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
+  //ลบสินค้าในตะกร้า
+  static Future deleteCartItem(int id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userID = prefs.getInt('userID');
+    final token = prefs.getString('token');
+    final url = Uri.https(publicUrl, '/public/api/carts/$id');
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
+    final response = await http.delete(headers: headers, url);
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      return data;
+    } else {
+      final data = convert.jsonDecode(response.body);
+      throw ApiException(data['message']);
+    }
+  }
+
   //ดึงข้อมูลบริการเสริม
   static Future<List<ServiceTransporterById>> getExtraService() async {
     final url = Uri.https(publicUrl, '/public/api/get_add_on_services');
