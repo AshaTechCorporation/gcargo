@@ -43,6 +43,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
         'order_status': 'ออเดอร์',
         'all': 'ทั้งหมด',
         'pending_review': 'รอตรวจสอบ',
+        'under_review': 'กำลังตรวจสอบ',
         'pending_payment': 'รอชำระเงิน',
         'processing': 'รอดำเนินการ',
         'preparing_shipment': 'เตรียมจัดส่ง',
@@ -77,6 +78,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
         'order_status': 'Order Status',
         'all': 'All',
         'pending_review': 'Pending Review',
+        'under_review': 'Under Review',
         'pending_payment': 'Pending Payment',
         'processing': 'Processing',
         'preparing_shipment': 'Preparing Shipment',
@@ -111,6 +113,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
         'order_status': '订单状态',
         'all': '全部',
         'pending_review': '待审核',
+        'under_review': '审核中',
         'pending_payment': '待付款',
         'processing': '处理中',
         'preparing_shipment': '准备发货',
@@ -161,6 +164,8 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
     switch (apiStatus) {
       case 'awaiting_summary':
         return 'pending_review';
+      case 'under_review':
+        return 'under_review';
       case 'awaiting_payment':
         return 'pending_payment';
       case 'in_progress':
@@ -372,11 +377,19 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
             // Convert API data to display format - extract nested orders only
             final allDisplayOrders = <Map<String, dynamic>>[];
 
+            // สถานะที่ไม่ต้องการแสดง
+            const excludedStatuses = ['under_review', 'shop_paid'];
+
             for (var parentOrder in orderController.orders) {
               // Only process parent orders that have nested orders
               if (parentOrder.orders != null && parentOrder.orders!.isNotEmpty) {
                 // Add each nested order to display list
                 for (var nestedOrder in parentOrder.orders!) {
+                  // กรองสถานะที่ไม่ต้องการแสดงออก
+                  if (excludedStatuses.contains(nestedOrder.status)) {
+                    continue;
+                  }
+
                   allDisplayOrders.add({
                     'date': _formatDate(nestedOrder.date),
                     'status': _getStatusText(nestedOrder.status),
@@ -480,6 +493,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
               getTranslation('pending_review'): allDisplayOrders.where((order) => order['status'] == getTranslation('pending_review')).length,
               getTranslation('pending_payment'): allDisplayOrders.where((order) => order['status'] == getTranslation('pending_payment')).length,
               getTranslation('processing'): allDisplayOrders.where((order) => order['status'] == getTranslation('processing')).length,
+              getTranslation('confirm_payment'): allDisplayOrders.where((order) => order['status'] == getTranslation('confirm_payment')).length,
               getTranslation('preparing_shipment'): allDisplayOrders.where((order) => order['status'] == getTranslation('preparing_shipment')).length,
               getTranslation('completed'): allDisplayOrders.where((order) => order['status'] == getTranslation('completed')).length,
               getTranslation('cancelled'): allDisplayOrders.where((order) => order['status'] == getTranslation('cancelled')).length,
@@ -519,7 +533,16 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
                       itemBuilder: (_, index) {
                         final status = statusList[index];
                         final statusKey =
-                            ['all', 'pending_review', 'pending_payment', 'processing', 'preparing_shipment', 'completed', 'cancelled'][index];
+                            [
+                              'all',
+                              'pending_review',
+                              'pending_payment',
+                              'processing',
+                              'confirm_payment',
+                              'preparing_shipment',
+                              'completed',
+                              'cancelled',
+                            ][index];
                         final isSelected = statusKey == selectedStatus;
                         final count = statusCounts[status] ?? 0;
 
@@ -949,6 +972,7 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
     final isPending = status == getTranslation('pending_review');
     final isAwaitingPayment = status == getTranslation('pending_payment');
     final isInProgress = status == getTranslation('processing');
+    final isConfirmPayment = status == getTranslation('confirm_payment');
     final isPreparing = status == getTranslation('preparing_shipment');
 
     final statusColor =
@@ -960,6 +984,8 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
             ? Colors.blue
             : isInProgress
             ? Colors.orange
+            : isConfirmPayment
+            ? Colors.teal
             : isAwaitingPayment
             ? Colors.purple
             : isPending
@@ -975,6 +1001,8 @@ class _OrderStatusPageState extends State<OrderStatusPage> {
             ? Colors.blue.shade100
             : isInProgress
             ? Colors.orange.shade100
+            : isConfirmPayment
+            ? Colors.teal.shade100
             : isAwaitingPayment
             ? Colors.purple.shade100
             : isPending
