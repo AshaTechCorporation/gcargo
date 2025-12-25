@@ -96,7 +96,7 @@ class OrderService {
         'note': note,
         'image': image,
         'order_type': order_type,
-        'bill_vat': vat == true ? 'Y' : 'N',
+        'vat': vat == true ? 'Y' : 'N',
       }),
     );
 
@@ -129,7 +129,7 @@ class OrderService {
         'member_id': userID.toString(),
         'order_type': order_type,
         'items': item,
-        'bill_vat': vat == true ? 'Y' : 'N',
+        'vat': vat == true ? 'Y' : 'N',
         'total_price': total_price,
       }),
     );
