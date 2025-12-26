@@ -755,10 +755,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 'selectedSize': selectedSize,
                 'selectedColor': selectedColor,
                 'name': widget.name,
+                'shop_id': productController.shopId,
               };
 
               if (mounted) {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData], channel: widget.channel)));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData], channel: widget.channel, type: widget.type)),
+                );
               }
             },
             child: Text(getTranslation('order_now'), style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -799,6 +803,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 'selectedColor': selectedColor,
                 'name': widget.name,
                 'id': 0,
+                'shop_id': productController.shopId,
               };
 
               try {
@@ -813,7 +818,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   _loadCartItemCount();
 
                   // Navigate to cart page
-                  Navigator.push(currentContext, MaterialPageRoute(builder: (_) => const CartPage()));
+                  Navigator.push(currentContext, MaterialPageRoute(builder: (_) => CartPage(type: widget.type)));
                 }
               } catch (e) {
                 // Show error message
@@ -865,7 +870,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 final isLoggedIn = await _checkUserLogin();
                 if (!isLoggedIn) return;
                 if (mounted) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(type: widget.type)));
                 }
               },
               onNotificationTap: () {

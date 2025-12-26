@@ -271,7 +271,7 @@ class _HomePageState extends State<HomePage> {
                     GestureDetector(
                       onTap: () {
                         ////go action
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(type: homeController.selectedItemType.value)));
                       },
                       child: Image.asset(
                         'assets/icons/bag.png',

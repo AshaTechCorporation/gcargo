@@ -248,7 +248,7 @@ class _SearchPageState extends State<SearchPage> {
                     const SizedBox(width: 8),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(type: widget.type)));
                       },
                       child: Image.asset('assets/icons/bag.png', height: 24, width: 24),
                     ),

@@ -303,6 +303,13 @@ class ProductDetailController extends GetxController {
   String get brand => itemData?['brand'] ?? '';
   String get numIidValue => itemData?['num_iid']?.toString() ?? '';
 
+  // shop_id - รองรับทั้ง null, String, int แปลงเป็น String เสมอ
+  String get shopId {
+    final value = itemData?['shop_id'];
+    if (value == null) return '';
+    return value.toString();
+  }
+
   // Get desc_img as a list of image URLs
   List<String> get descImages {
     final descImg = itemData?['desc_img'];

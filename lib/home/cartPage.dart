@@ -13,7 +13,8 @@ import 'package:gcargo/utils/helpers.dart';
 import 'package:get/get.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  const CartPage({super.key, required this.type});
+  final String? type;
 
   @override
   State<CartPage> createState() => _CartPageState();
@@ -748,13 +749,14 @@ class _CartPageState extends State<CartPage> {
                           'selectedColor': item.selectedColor,
                           'name': item.name,
                           'id': item.id,
+                          'shopId': item.shopId,
                         });
                       }
                     }
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: selectedItemsMapList, channel: 'nomal')),
+                      MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: selectedItemsMapList, channel: 'nomal', type: widget.type)),
                     );
                   } else {
                     // ถ้าไม่มีสินค้าที่เลือก ให้ pop กลับ

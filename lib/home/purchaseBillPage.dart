@@ -19,8 +19,9 @@ import 'package:gcargo/utils/helpers.dart';
 class PurchaseBillPage extends StatefulWidget {
   final List<Map<String, dynamic>>? productDataList;
   final String channel;
+  final String? type;
 
-  const PurchaseBillPage({super.key, this.productDataList, required this.channel});
+  const PurchaseBillPage({super.key, this.productDataList, required this.channel, required this.type});
 
   @override
   State<PurchaseBillPage> createState() => _PurchaseBillPageState();
@@ -550,7 +551,7 @@ class _PurchaseBillPageState extends State<PurchaseBillPage> {
                                     product['detail_url'] ?? '', // product_url
                                     product['pic_url'] ?? '', // product_image
                                     product['name'] ?? '', // product_category
-                                    'shopgs1', // product_store_type
+                                    widget.type == 'shopgs1' ? 'taobao' : '1688', // product_store_type
                                     noteController.text, // product_note
                                     product['price']?.toString() ?? '0', // product_price
                                     product['quantity']?.toString() ?? '1', // product_qty
