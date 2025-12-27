@@ -219,18 +219,18 @@ class _CartPageState extends State<CartPage> {
       final productCode = apiItem['product_code']?.toString() ?? '';
       if (productCode.isEmpty) continue;
 
-      // ดึงข้อมูล options สำหรับ size และ color
+      // ดึงข้อมูล variants สำหรับ size และ color (API ส่งกลับมาในชื่อ variants)
       String size = '';
       String color = '';
-      final options = apiItem['options'];
-      if (options != null && options is List) {
-        for (var option in options) {
-          final name = option['name']?.toString() ?? '';
-          final value = option['value']?.toString() ?? '';
-          if (name == 'ไซส์' || name.toLowerCase() == 'size') {
-            size = value;
-          } else if (name == 'สี' || name.toLowerCase() == 'color') {
-            color = value;
+      final variants = apiItem['variants'];
+      if (variants != null && variants is List) {
+        for (var variant in variants) {
+          final optionName = variant['option_name']?.toString() ?? '';
+          final optionValue = variant['option_value']?.toString() ?? '';
+          if (optionName == 'ไซส์' || optionName.toLowerCase() == 'size') {
+            size = optionValue;
+          } else if (optionName == 'สี' || optionName.toLowerCase() == 'color') {
+            color = optionValue;
           }
         }
       }
@@ -240,6 +240,10 @@ class _CartPageState extends State<CartPage> {
 
       if (existingHiveItem.isEmpty) {
         // ถ้าไม่มีใน Hive ให้เพิ่มเข้าไป
+        // shop_id - รองรับทั้ง null, String, int แปลงเป็น String เสมอ
+        final shopIdValue = apiItem['shop_id'];
+        final shopId = shopIdValue == null ? '' : shopIdValue.toString();
+
         final productData = {
           'num_iid': productCode,
           'title': apiItem['product_name'] ?? '',
@@ -254,6 +258,7 @@ class _CartPageState extends State<CartPage> {
           'selectedColor': color,
           'name': apiItem['product_name'] ?? '',
           'id': apiItem['id'] ?? 0,
+          'shopId': shopId,
         };
 
         await CartService.addToCart(productData);
@@ -633,9 +638,12 @@ class _CartPageState extends State<CartPage> {
                           'product_qty': item.quantity,
                           'note': '',
                           'client_note': '',
-                          'options': [
-                            if (item.selectedSize.isNotEmpty) {'name': 'ไซส์', 'value': item.selectedSize},
-                            if (item.selectedColor.isNotEmpty) {'name': 'สี', 'value': item.selectedColor},
+                          'shop_id': item.shopId ?? '',
+                          'variants': [
+                            if (item.selectedSize.isNotEmpty)
+                              {"variant_code": "", "variant_name": "", 'option_name': 'ไซส์', 'option_value': item.selectedSize, "price_delta": 0},
+                            if (item.selectedColor.isNotEmpty)
+                              {"variant_code": "", "variant_name": "", 'option_name': 'สี', 'option_value': item.selectedColor, "price_delta": 0},
                           ],
                         };
                       }).toList();
