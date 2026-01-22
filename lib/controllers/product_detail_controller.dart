@@ -86,11 +86,7 @@ class ProductDetailController extends GetxController {
     return items.map((item) => item['title'] ?? '').join(separator);
   }
 
-  List<Map<String, dynamic>> applyTranslatedTitlesToItems(
-    List<Map<String, dynamic>> originalItems,
-    String translatedText, {
-    String separator = '|||',
-  }) {
+  List<Map<String, dynamic>> applyTranslatedTitlesToItems(List<Map<String, dynamic>> originalItems, String translatedText, {String separator = '|||'}) {
     final translatedTitles = translatedText.split(separator);
 
     return List.generate(originalItems.length, (i) {
@@ -106,11 +102,7 @@ class ProductDetailController extends GetxController {
     return items.map((item) => '${item['name'] ?? ''}:${item['value'] ?? ''}').join(separator);
   }
 
-  List<Map<String, dynamic>> applyTranslatedTitlesToItemsPops(
-    List<Map<String, dynamic>> originalItems,
-    String translatedText, {
-    String separator = '|||',
-  }) {
+  List<Map<String, dynamic>> applyTranslatedTitlesToItemsPops(List<Map<String, dynamic>> originalItems, String translatedText, {String separator = '|||'}) {
     final translatedTitles = translatedText.split(separator);
 
     return List.generate(originalItems.length, (i) {
@@ -488,9 +480,7 @@ class ProductDetailController extends GetxController {
 
   /// เดาชื่อกลุ่มจากข้อมูลภายใน (ยืดหยุ่น ไม่ฟิก)
   String _inferCategoryLabel(String categoryId, List<Map<String, String>> items) {
-    final combined =
-        (items.map((e) => e['raw']).whereType<String>().join(' | ') + ' ' + items.map((e) => e['value']).whereType<String>().join(' | '))
-            .toLowerCase();
+    final combined = (items.map((e) => e['raw']).whereType<String>().join(' | ') + ' ' + items.map((e) => e['value']).whereType<String>().join(' | ')).toLowerCase();
 
     bool _hasAny(List<String> hints) => hints.any((h) => combined.contains(h.toLowerCase()));
 
@@ -587,17 +577,7 @@ class ProductDetailController extends GetxController {
     String result = text;
 
     // Replace common Chinese terms
-    final complexTranslations = {
-      '衬衫': 'เสื้อเชิ้ต',
-      '短裤': 'กางเกงขาสั้น',
-      '长裤': 'กางเกงขายาว',
-      '两件套': 'ชุด 2 ชิ้น',
-      '三件套': 'ชุด 3 ชิ้น',
-      '套装': 'ชุดเซ็ต',
-      '【': ' (',
-      '】': ')',
-      '+': ' + ',
-    };
+    final complexTranslations = {'衬衫': 'เสื้อเชิ้ต', '短裤': 'กางเกงขาสั้น', '长裤': 'กางเกงขายาว', '两件套': 'ชุด 2 ชิ้น', '三件套': 'ชุด 3 ชิ้น', '套装': 'ชุดเซ็ต', '【': ' (', '】': ')', '+': ' + '};
 
     complexTranslations.forEach((chinese, thai) {
       result = result.replaceAll(chinese, thai);

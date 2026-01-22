@@ -37,16 +37,10 @@ class HomeService {
   // }
 
   static Future getItemSearch({required String search, required String type, required int page}) async {
-    final url = Uri.https('api.icom.la', '/$type/api/call.php', {
-      "item_search": 'item_search',
-      "lang": 'zh-CN',
-      "q": '$search',
-      "page": '$page',
-      "api_key": 'tegcargo06062024',
-      "is_promotion": '1',
-    });
+    // final url = Uri.https('api.icom.la', '/$type/api/call.php', {"item_search": 'item_search', "lang": 'zh-CN', "q": '$search', "page": '$page', "api_key": 'tegcargo06062024', "is_promotion": '1'});
+    final url = Uri.https('api.openchinaapi.com', 'v1/$type/products', {"q": '$search', "page": '$page', "page_size": '20', "lang": 'en'});
 
-    var headers = {'Content-Type': 'application/json'};
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Token 8f34ccfbe9282e210e868cbb5763908648c0b15d'};
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
@@ -64,21 +58,32 @@ class HomeService {
 
   //ดูข้อมูลรายละเอียดสินค้า
   static Future getItemDetail({required String num_id, required String type}) async {
-    final url = Uri.https('api.icom.la', '/$type/api/call.php', {
-      "item_get": '',
-      "lang": 'zh-CN',
-      "num_iid": '$num_id',
-      "api_key": 'tegcargo06062024',
-      "is_promotion": '1',
-    });
-    var headers = {'Content-Type': 'application/json'};
+    // final url = Uri.https('api.icom.la', '/$type/api/call.php', {"item_get": '', "lang": 'zh-CN', "num_iid": '$num_id', "api_key": 'tegcargo06062024', "is_promotion": '1'});
+    final url = Uri.https('api.openchinaapi.com', 'v1/$type/products/$num_id');
+
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Token 8f34ccfbe9282e210e868cbb5763908648c0b15d'};
     final response = await http.get(headers: headers, url).timeout(const Duration(seconds: 30));
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
       // return data['item'];
       //return ItemSearch.fromJson(data['item']);
-      if (data is Map && data.containsKey('item') && data['item'] != null) {
-        final item = data['item'];
+      // if (data is Map && data.containsKey('item') && data['item'] != null) {
+      //   final item = data['item'];
+
+      //   final isPropsListEmpty = item['props_list'] is List && (item['props_list'] as List).isEmpty;
+      //   final isPropsNameEmpty = item['props_name'] is String && (item['props_name'] as String).trim().isEmpty;
+
+      //   if (isPropsListEmpty && isPropsNameEmpty) {
+      //     throw ApiException("ไม่พบข้อมูลรายละเอียดสินค้า (props_list & props_name ว่างเปล่า)");
+      //   }
+
+      //   return item;
+      // } else {
+      //   // กรณีไม่มี item
+      //   throw ApiException("ไม่พบข้อมูลสินค้า หรือ API ส่งข้อมูลผิดพลาด");
+      // }
+      if (data is Map && data.containsKey('data') && data['data'] != null) {
+        final item = data['data'];
 
         final isPropsListEmpty = item['props_list'] is List && (item['props_list'] as List).isEmpty;
         final isPropsNameEmpty = item['props_name'] is String && (item['props_name'] as String).trim().isEmpty;
@@ -127,11 +132,16 @@ class HomeService {
   }
 
   //อัปโหลดรูป
-  static Future uploadImage({required String imgcode}) async {
+  static Future uploadImage({required String imgcode, required String type}) async {
     //final url = Uri.https('kongcrdv.com', '/ima/index.php', {"imgcode": '${imgcode}', "key": 'tegcargo06062024'});
-    final url = Uri.https('laonet.icom.la', '/ima/index.php', {"imgcode": '${imgcode}', "key": 'tegcargo06062024'});
-    var headers = {'Content-Type': 'application/json'};
-    final response = await http.get(headers: headers, url);
+    // final url = Uri.https('laonet.icom.la', '/ima/index.php', {"imgcode": '${imgcode}', "key": 'tegcargo06062024'});
+    // final url = Uri.https('api.openchinaapi.com', '/v1/ima/index.php', {"imgcode": '${imgcode}', "key": 'tegcargo06062024'});
+    final uri = Uri.parse(
+      type == '1688' ? "https://api.openchinaapi.com/v1/$type/img-products/?page=1&?imgcode=$imgcode" : "https://api.openchinaapi.com/v1/$type/img-products/?imgcode=$imgcode&page=1",
+      // "https://api.openchinaapi.com/v1/$type/upload-img/?imgcode=$imgcode"
+    );
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Token 8f34ccfbe9282e210e868cbb5763908648c0b15d'};
+    final response = await http.get(headers: headers, uri);
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
       if (data['status'] == "success") {
@@ -149,7 +159,8 @@ class HomeService {
   static Future getItemSearchImg({required String searchImg, required String type}) async {
     // 1) percent‐encode แล้วสร้าง URI
     final encodedImg = Uri.encodeComponent(searchImg);
-    final uri = Uri.parse("https://api.icom.la/$type/api/call.php?api_key=tegcargo06062024&item_search_img&imgid=$encodedImg&lang=zh-CN&page=1");
+    // final uri = Uri.parse("https://api.icom.la/$type/api/call.php?api_key=tegcargo06062024&item_search_img&imgid=$encodedImg&lang=zh-CN&page=1");
+    final uri = Uri.parse("https://api.openchinaapi.com/v1/$type/img-products/?imgcode=$searchImg&page=1");
     // final uri = Uri.https('api.icom.la', '/$type/api/call.php', {
     //   'item_search_img': 'item_search_img',
     //   'lang': 'zh-CN',
@@ -157,6 +168,7 @@ class HomeService {
     //   'page': '1',
     //   'api_key': 'tegcargo06062024',
     // });
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Token 8f34ccfbe9282e210e868cbb5763908648c0b15d'};
 
     final client =
         HttpClient()
@@ -165,17 +177,18 @@ class HomeService {
           ..connectionTimeout = Duration(seconds: 30);
 
     try {
-      final request = await client.getUrl(uri);
+      // final request = await client.getUrl(uri);
+      final response = await http.get(headers: headers, uri);
       // บังคับไม่รับ encoding อื่น
-      request.headers.set(HttpHeaders.acceptEncodingHeader, 'identity');
-      final response = await request.close();
+      // request.headers.set(HttpHeaders.acceptEncodingHeader, 'identity');
+      // final response = await request.close();
 
       if (response.statusCode != HttpStatus.ok) {
         throw ApiException('HTTP ${response.statusCode}');
       }
 
-      final body = await response.transform(convert.utf8.decoder).join();
-      final data = convert.jsonDecode(body);
+      // final body = await response.transform(convert.utf8.decoder).join();
+      final data = convert.jsonDecode(response.body);
 
       // ตรวจสอบโครงสร้าง JSON
       if (data is Map && data.containsKey('item') && data['item'] is Map && data['item']['items'] is Map && data['item']['items']['item'] is List) {

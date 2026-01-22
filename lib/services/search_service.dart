@@ -9,24 +9,14 @@ import 'package:image_picker/image_picker.dart';
 
 class SearchService {
   // ฟังก์ชั่นสำหรับค้นหาด้วยข้อความ
-  static Future<void> handleTextSearch({
-    required BuildContext context,
-    required String query,
-    required String selectedType,
-  }) async {
+  static Future<void> handleTextSearch({required BuildContext context, required String query, required String selectedType}) async {
     if (query.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('กรุณากรอกคำค้นหา')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณากรอกคำค้นหา')));
       return;
     }
 
     // แสดง loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
-    );
+    showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
 
     try {
       // เรียก API ผ่าน HomeController
@@ -42,29 +32,19 @@ class SearchService {
       if (homeController.hasError.value) {
         // แสดงข้อผิดพลาด
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(homeController.errorMessage.value)),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(homeController.errorMessage.value)));
         }
       } else if (homeController.searchItems.isEmpty) {
         // ไม่พบผลลัพธ์
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('ไม่พบสินค้าที่ค้นหา')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่พบสินค้าที่ค้นหา')));
         }
       } else {
         // ไปหน้า SearchPage พร้อมผลลัพธ์
         if (context.mounted) {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => SearchPage(
-                initialSearchResults: homeController.searchItems,
-                initialSearchQuery: query,
-                type: _convertTypeForApi(selectedType),
-              ),
-            ),
+            MaterialPageRoute(builder: (context) => SearchPage(initialSearchResults: homeController.searchItems, initialSearchQuery: query, type: _convertTypeForApi(selectedType))),
           );
         }
       }
@@ -72,46 +52,28 @@ class SearchService {
       // ปิด loading และแสดงข้อผิดพลาด
       if (context.mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('เกิดข้อผิดพลาด: $e')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e')));
       }
     }
   }
 
   // ฟังก์ชั่นสำหรับค้นหาด้วยรูปภาพ
-  static Future<void> handleImageSearch({
-    required BuildContext context,
-    required XFile image,
-    required String selectedType,
-  }) async {
+  static Future<void> handleImageSearch({required BuildContext context, required XFile image, required String selectedType}) async {
     // แสดง loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
-    );
+    showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
 
     try {
       // 1. อัปโหลดรูปภาพ
       File file = File(image.path);
-      final imageUpload = await UoloadService.addImage(
-        file: file,
-        path: 'images/asset/',
-      );
+      final imageUpload = await UoloadService.addImage(file: file, path: 'images/asset/');
 
       if (imageUpload != null) {
         // 2. ประมวลผลรูปภาพ
-        final imgCode = await HomeService.uploadImage(
-          imgcode: 'https://g-cargo.dev-asha9.com/public/$imageUpload',
-        );
+        final imgCode = await HomeService.uploadImage(imgcode: 'https://g-cargo.dev-asha9.com/public/$imageUpload', type: _convertTypeForApi(selectedType));
 
         if (imgCode != null && imgCode.isNotEmpty) {
           // 3. ค้นหาด้วยรูปภาพ
-          final searchResults = await HomeService.getItemSearchImg(
-            searchImg: imgCode,
-            type: _convertTypeForApi(selectedType),
-          );
+          final searchResults = await HomeService.getItemSearchImg(searchImg: imgCode, type: _convertTypeForApi(selectedType));
 
           if (searchResults.isNotEmpty) {
             // ปิด loading
@@ -123,54 +85,37 @@ class SearchService {
             if (context.mounted) {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => SearchPage(
-                    initialSearchResults: searchResults,
-                    initialSearchQuery: 'ค้นหาด้วยรูปภาพ',
-                    type: _convertTypeForApi(selectedType),
-                  ),
-                ),
+                MaterialPageRoute(builder: (context) => SearchPage(initialSearchResults: searchResults, initialSearchQuery: 'ค้นหาด้วยรูปภาพ', type: _convertTypeForApi(selectedType))),
               );
             }
           } else {
             if (context.mounted) {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('ไม่พบสินค้าจากรูปภาพที่ค้นหา')),
-              );
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่พบสินค้าจากรูปภาพที่ค้นหา')));
             }
           }
         } else {
           if (context.mounted) {
             Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('ไม่สามารถประมวลผลรูปภาพได้')),
-            );
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่สามารถประมวลผลรูปภาพได้')));
           }
         }
       } else {
         if (context.mounted) {
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('ไม่สามารถอัปโหลดรูปภาพได้')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่สามารถอัปโหลดรูปภาพได้')));
         }
       }
     } catch (e) {
       if (context.mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('เกิดข้อผิดพลาด: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: ${e.toString()}')));
       }
     }
   }
 
   // ฟังก์ชั่นสำหรับแสดง Image Picker Bottom Sheet
-  static Future<void> showImagePickerBottomSheet({
-    required BuildContext context,
-    required String selectedType,
-  }) async {
+  static Future<void> showImagePickerBottomSheet({required BuildContext context, required String selectedType}) async {
     final XFile? image = await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -182,9 +127,7 @@ class SearchService {
                 title: const Text('เลือกจากแกลเลอรี่'),
                 onTap: () async {
                   final ImagePicker picker = ImagePicker();
-                  final XFile? image = await picker.pickImage(
-                    source: ImageSource.gallery,
-                  );
+                  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
                   // if (image != null) {
                   Navigator.pop(context, image);
@@ -201,9 +144,7 @@ class SearchService {
                 title: const Text('ถ่ายรูป'),
                 onTap: () async {
                   final ImagePicker picker = ImagePicker();
-                  final XFile? image = await picker.pickImage(
-                    source: ImageSource.camera,
-                  );
+                  final XFile? image = await picker.pickImage(source: ImageSource.camera);
                   // if (image != null) {
                   Navigator.pop(context, image);
                   // await handleImageSearch(
@@ -220,11 +161,7 @@ class SearchService {
       },
     );
     if (image != null) {
-      await handleImageSearch(
-        context: context,
-        image: image,
-        selectedType: selectedType,
-      );
+      await handleImageSearch(context: context, image: image, selectedType: selectedType);
     }
   }
 

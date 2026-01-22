@@ -175,10 +175,7 @@ class _HomePageState extends State<HomePage> {
           }
 
           print('🔍 ไปหน้า ProductDetailPage - ID: $productId, type: $type');
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: productId, name: 'Shirt', type: type, channel: 'link')),
-          );
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: productId, name: 'Shirt', type: type, channel: 'link')));
         } else {
           _showAlert('ไม่พบ Product ID จาก API');
         }
@@ -203,11 +200,7 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(getTranslation('alert_title')),
-          content: Text(message),
-          actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(getTranslation('ok')))],
-        );
+        return AlertDialog(title: Text(getTranslation('alert_title')), content: Text(message), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(getTranslation('ok')))]);
       },
     );
   }
@@ -226,12 +219,7 @@ class _HomePageState extends State<HomePage> {
                 automaticallyImplyLeading: false,
                 title: Row(
                   children: [
-                    Obx(
-                      () => Text(
-                        homeController.currentUser.value?.code ?? '',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kSubTitleTextGridColor),
-                      ),
-                    ),
+                    Obx(() => Text(homeController.currentUser.value?.code ?? '', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kSubTitleTextGridColor))),
                     SizedBox(width: 12),
                     Expanded(
                       child: Container(
@@ -256,12 +244,12 @@ class _HomePageState extends State<HomePage> {
                                 },
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                SearchService.showImagePickerBottomSheet(context: context, selectedType: homeController.selectedItemType.value);
-                              },
-                              child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: isPhone(context) ? 20 : 24),
-                            ),
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     SearchService.showImagePickerBottomSheet(context: context, selectedType: homeController.selectedItemType.value);
+                            //   },
+                            //   child: Icon(Icons.camera_alt_outlined, color: Colors.grey.shade600, size: isPhone(context) ? 20 : 24),
+                            // ),
                           ],
                         ),
                       ),
@@ -273,24 +261,14 @@ class _HomePageState extends State<HomePage> {
                         ////go action
                         Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(type: homeController.selectedItemType.value)));
                       },
-                      child: Image.asset(
-                        'assets/icons/bag.png',
-                        width: isPhone(context) ? 20 : 24,
-                        height: isPhone(context) ? 20 : 24,
-                        fit: BoxFit.fill,
-                      ),
+                      child: Image.asset('assets/icons/bag.png', width: isPhone(context) ? 20 : 24, height: isPhone(context) ? 20 : 24, fit: BoxFit.fill),
                     ),
                     SizedBox(width: 12),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
                       },
-                      child: Image.asset(
-                        'assets/icons/notification.png',
-                        width: isPhone(context) ? 20 : 24,
-                        height: isPhone(context) ? 20 : 24,
-                        fit: BoxFit.fill,
-                      ),
+                      child: Image.asset('assets/icons/notification.png', width: isPhone(context) ? 20 : 24, height: isPhone(context) ? 20 : 24, fit: BoxFit.fill),
                     ),
                   ],
                 ),
@@ -342,10 +320,7 @@ class _HomePageState extends State<HomePage> {
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Colors.grey.shade200,
-                                      child: Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
-                                    );
+                                    return Container(color: Colors.grey.shade200, child: Center(child: Icon(Icons.image_not_supported, color: Colors.grey)));
                                   },
                                 );
                               },
@@ -370,10 +345,7 @@ class _HomePageState extends State<HomePage> {
                             margin: EdgeInsets.symmetric(horizontal: 4),
                             width: isActive ? 20 : 8,
                             height: 8,
-                            decoration: BoxDecoration(
-                              color: isActive ? Colors.blue.shade900 : Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
+                            decoration: BoxDecoration(color: isActive ? Colors.blue.shade900 : Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
                           );
                         }),
                       );
@@ -388,12 +360,7 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              'assets/images/pichome.png',
-                              width: double.infinity,
-                              height: isPhone(context) ? 140 : 160,
-                              fit: BoxFit.cover,
-                            ),
+                            child: Image.asset('assets/images/pichome.png', width: double.infinity, height: isPhone(context) ? 140 : 160, fit: BoxFit.cover),
                           ),
                         ),
 
@@ -456,14 +423,7 @@ class _HomePageState extends State<HomePage> {
                                             },
                                     child:
                                         isSearchLoading
-                                            ? SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.grey.shade600),
-                                              ),
-                                            )
+                                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.grey.shade600)))
                                             : Icon(Icons.send, color: Colors.grey.shade600, size: isPhone(context) ? 20 : 24),
                                   ),
                                 ],
@@ -528,43 +488,20 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        padding:
-                            isPhone(context)
-                                ? const EdgeInsets.symmetric(vertical: 12, horizontal: 8)
-                                : const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade300)),
+                        padding: isPhone(context) ? const EdgeInsets.symmetric(vertical: 12, horizontal: 8) : const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                         child: IntrinsicHeight(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              ServiceItemWidget(
-                                iconPath: 'assets/icons/tran1.png',
-                                label: getTranslation('Home.services.shipping_rate'),
-                                serviceKey: 'shipping_rate',
-                              ),
+                              ServiceItemWidget(iconPath: 'assets/icons/tran1.png', label: getTranslation('Home.services.shipping_rate'), serviceKey: 'shipping_rate'),
                               VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                              ServiceItemWidget(
-                                iconPath: 'assets/icons/monny.png',
-                                label: getTranslation('Home.services.exchange_rate'),
-                                serviceKey: 'exchange_rate',
-                              ),
+                              ServiceItemWidget(iconPath: 'assets/icons/monny.png', label: getTranslation('Home.services.exchange_rate'), serviceKey: 'exchange_rate'),
                               VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                              ServiceItemWidget(
-                                iconPath: 'assets/icons/cal1.png',
-                                label: getTranslation('Home.services.calculate_service'),
-                                serviceKey: 'calculate_service',
-                              ),
+                              ServiceItemWidget(iconPath: 'assets/icons/cal1.png', label: getTranslation('Home.services.calculate_service'), serviceKey: 'calculate_service'),
                               VerticalDivider(width: 1, thickness: 1, color: Colors.grey.shade300),
-                              ServiceItemWidget(
-                                iconPath: 'assets/icons/box1.png',
-                                label: getTranslation('Home.services.track_parcel'),
-                                serviceKey: 'track_package',
-                              ),
+                              ServiceItemWidget(iconPath: 'assets/icons/box1.png', label: getTranslation('Home.services.track_parcel'), serviceKey: 'track_package'),
                             ],
                           ),
                         ),
@@ -579,10 +516,7 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            getTranslation('recommended_products'),
-                            style: TextStyle(fontSize: isPhone(context) ? 20 : 24, fontWeight: FontWeight.bold),
-                          ),
+                          Text(getTranslation('recommended_products'), style: TextStyle(fontSize: isPhone(context) ? 20 : 24, fontWeight: FontWeight.bold)),
                           Obx(
                             () => Container(
                               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -592,10 +526,7 @@ class _HomePageState extends State<HomePage> {
                                   value: homeController.selectedItemType.value.isEmpty ? itemType.first : homeController.selectedItemType.value,
                                   items:
                                       itemType.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(item, style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
-                                        );
+                                        return DropdownMenuItem<String>(value: item, child: Text(item, style: TextStyle(fontSize: isPhone(context) ? 14 : 18)));
                                       }).toList(),
                                   onChanged: (String? newValue) {
                                     if (newValue != null) {
@@ -627,11 +558,7 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             width: double.infinity,
                             padding: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.red.shade200),
-                            ),
+                            decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.red.shade200)),
                             child: Column(
                               children: [
                                 Icon(Icons.error_outline, color: Colors.red.shade600, size: isPhone(context) ? 48 : 52),
@@ -656,9 +583,7 @@ class _HomePageState extends State<HomePage> {
                       if (homeController.searchItems.isEmpty) {
                         return Padding(
                           padding: EdgeInsets.all(32),
-                          child: Center(
-                            child: Text(getTranslation('no_products'), style: TextStyle(fontSize: isPhone(context) ? 16 : 20, color: Colors.grey)),
-                          ),
+                          child: Center(child: Text(getTranslation('no_products'), style: TextStyle(fontSize: isPhone(context) ? 16 : 20, color: Colors.grey))),
                         );
                       }
 
@@ -693,12 +618,7 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                     builder:
-                                        (_) => ProductDetailPage(
-                                          num_iid: numIidStr,
-                                          name: 'Shirt',
-                                          type: homeController.selectedItemType.value == 'shopgs1' ? 'taobao' : '1688',
-                                          channel: 'nomal',
-                                        ),
+                                        (_) => ProductDetailPage(num_iid: numIidStr, name: 'Shirt', type: homeController.selectedItemType.value == 'shopgs1' ? 'taobao' : '1688', channel: 'nomal'),
                                   ),
                                 );
                               },

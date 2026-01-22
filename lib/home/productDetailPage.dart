@@ -485,10 +485,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          originalText.split(':').length > 1 ? originalText.split(':')[1] : originalText,
-                          style: TextStyle(color: selected ? Colors.white : Colors.black, fontSize: 10),
-                        ),
+                        Text(originalText.split(':').length > 1 ? originalText.split(':')[1] : originalText, style: TextStyle(color: selected ? Colors.white : Colors.black, fontSize: 10)),
                         if (translatedText != originalText && translatedText.isNotEmpty) ...[
                           SizedBox(height: 2),
                           Text(translatedText, style: TextStyle(color: selected ? Colors.white70 : Colors.grey, fontSize: 10)),
@@ -549,10 +546,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          originalText.split(':').length > 1 ? originalText.split(':')[1] : originalText,
-                          style: TextStyle(color: selected ? Colors.white : Colors.black, fontSize: 10),
-                        ),
+                        Text(originalText.split(':').length > 1 ? originalText.split(':')[1] : originalText, style: TextStyle(color: selected ? Colors.white : Colors.black, fontSize: 10)),
                         if (translatedText != originalText && translatedText.isNotEmpty) ...[
                           SizedBox(height: 2),
                           Text(translatedText, style: TextStyle(color: selected ? Colors.white70 : Colors.grey, fontSize: 10)),
@@ -614,11 +608,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.grey.withValues(alpha: 0.1), blurRadius: 4)],
-            ),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.grey.withValues(alpha: 0.1), blurRadius: 4)]),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -637,29 +627,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   height: double.infinity,
                                   fit: BoxFit.fill,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      color: Colors.grey.shade200,
-                                      child: const Icon(Icons.image_not_supported, color: Colors.grey),
-                                    );
+                                    return Container(width: double.infinity, height: double.infinity, color: Colors.grey.shade200, child: const Icon(Icons.image_not_supported, color: Colors.grey));
                                   },
                                   loadingBuilder: (context, child, loadingProgress) {
                                     if (loadingProgress == null) return child;
-                                    return Container(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      color: Colors.grey.shade200,
-                                      child: const Center(child: CircularProgressIndicator()),
-                                    );
+                                    return Container(width: double.infinity, height: double.infinity, color: Colors.grey.shade200, child: const Center(child: CircularProgressIndicator()));
                                   },
                                 )
-                                : Container(
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  color: Colors.grey.shade200,
-                                  child: const Icon(Icons.image, color: Colors.grey),
-                                ),
+                                : Container(width: double.infinity, height: double.infinity, color: Colors.grey.shade200, child: const Icon(Icons.image, color: Colors.grey)),
                       ),
                       const Positioned(top: 8, right: 8, child: Icon(Icons.favorite_border, color: Colors.grey)),
                     ],
@@ -679,29 +654,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // ไตเติ๊ลต้นฉบับ
-                            Text(
-                              originalTitle,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            Text(originalTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
 
                             // ไตเติ๊ลที่แปลแล้ว (ถ้ามี)
                             if (itemTranslatedTitle != originalTitle) ...[
                               const SizedBox(height: 2),
-                              Text(
-                                itemTranslatedTitle,
-                                style: const TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.w500),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              Text(itemTranslatedTitle, style: const TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.w500), maxLines: 2, overflow: TextOverflow.ellipsis),
                             ],
                           ],
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [Text('¥$price', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))],
-                        ),
+                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('¥$price', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))]),
                       ],
                     ),
                   ),
@@ -759,10 +721,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               };
 
               if (mounted) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData], channel: widget.channel, type: widget.type)),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (_) => PurchaseBillPage(productDataList: [productData], channel: widget.channel, type: widget.type)));
               }
             },
             child: Text(getTranslation('order_now'), style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -812,9 +771,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                 // Show success message
                 if (mounted) {
-                  ScaffoldMessenger.of(currentContext).showSnackBar(
-                    SnackBar(content: Text(getTranslation('added_to_cart')), backgroundColor: Colors.green, duration: Duration(seconds: 2)),
-                  );
+                  ScaffoldMessenger.of(currentContext).showSnackBar(SnackBar(content: Text(getTranslation('added_to_cart')), backgroundColor: Colors.green, duration: Duration(seconds: 2)));
                   _loadCartItemCount();
 
                   // Navigate to cart page
@@ -823,13 +780,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               } catch (e) {
                 // Show error message
                 if (mounted) {
-                  ScaffoldMessenger.of(currentContext).showSnackBar(
-                    SnackBar(
-                      content: Text('${getTranslation('error_occurred')}: $e'),
-                      backgroundColor: Colors.red,
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
+                  ScaffoldMessenger.of(
+                    currentContext,
+                  ).showSnackBar(SnackBar(content: Text('${getTranslation('error_occurred')}: $e'), backgroundColor: Colors.red, duration: const Duration(seconds: 2)));
                 }
               }
             },
@@ -900,10 +853,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               onTap: () async {
                                 await productController.toggleFavorite();
                               },
-                              child: Icon(
-                                productController.isFavorite.value ? Icons.favorite : Icons.favorite_border,
-                                color: productController.isFavorite.value ? kButtonColor : Colors.grey,
-                              ),
+                              child: Icon(productController.isFavorite.value ? Icons.favorite : Icons.favorite_border, color: productController.isFavorite.value ? kButtonColor : Colors.grey),
                             ),
                           ),
                         ),
@@ -917,17 +867,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              height: 20,
-                              width: 200,
-                              decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
-                            ),
+                            Container(height: 20, width: 200, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4))),
                             SizedBox(height: 8),
-                            Container(
-                              height: 24,
-                              width: 100,
-                              decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
-                            ),
+                            Container(height: 24, width: 100, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4))),
                           ],
                         );
                       }
@@ -966,14 +908,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           ],
 
                           SizedBox(height: 6),
-                          Text(
-                            '¥${productController.originalPrice}',
-                            style: TextStyle(fontSize: 32, color: Colors.black, fontWeight: FontWeight.bold),
-                          ),
-                          if (productController.area.isNotEmpty) ...[
-                            SizedBox(height: 4),
-                            Text('จาก: ${productController.area}', style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
-                          ],
+                          Text('¥${productController.originalPrice}', style: TextStyle(fontSize: 32, color: Colors.black, fontWeight: FontWeight.bold)),
+                          if (productController.area.isNotEmpty) ...[SizedBox(height: 4), Text('จาก: ${productController.area}', style: TextStyle(fontSize: 14, color: Colors.grey.shade600))],
                         ],
                       );
                     }),
@@ -1008,10 +944,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     SizedBox(height: 20),
 
                     // แสดงคำอธิบายสินค้า
-                    ProductDescriptionWidget(
-                      productController: productController,
-                      translatedTitle: translatedTitle.isNotEmpty ? translatedTitle : null,
-                    ),
+                    ProductDescriptionWidget(productController: productController, translatedTitle: translatedTitle.isNotEmpty ? translatedTitle : null),
 
                     // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
                     Column(
@@ -1048,18 +981,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       }
 
                       if (homeController.hasError.value) {
-                        return Container(
-                          height: 100,
-                          child: Center(child: Text(getTranslation('error_occurred'), style: TextStyle(color: Colors.grey))),
-                        );
+                        return Container(height: 100, child: Center(child: Text(getTranslation('error_occurred'), style: TextStyle(color: Colors.grey))));
                       }
 
                       final searchItems = homeController.searchItems;
                       if (searchItems.isEmpty) {
-                        return Container(
-                          height: 100,
-                          child: Center(child: Text(getTranslation('recommended'), style: TextStyle(color: Colors.grey))),
-                        );
+                        return Container(height: 100, child: Center(child: Text(getTranslation('recommended'), style: TextStyle(color: Colors.grey))));
                       }
 
                       // แสดงสินค้าสูงสุด 6 รายการ

@@ -69,9 +69,22 @@ class HomeController extends GetxController {
 
       final data = await HomeService.getItemSearch(search: query, type: selectedItemType.value == 'shopgs1' ? 'taobao' : '1688', page: 1);
 
-      if (data != null && data is Map && data['item'] is Map && data['item']['items'] is Map && data['item']['items']['item'] is List) {
-        final List<Map<String, dynamic>> items =
-            (data['item']['items']['item'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+      // if (data != null && data is Map && data['item'] is Map && data['item']['items'] is Map && data['item']['items']['item'] is List && data['data']['item'] is List) {
+      //   final List<Map<String, dynamic>> items = (data['item']['items']['item'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+
+      //   if (items.isNotEmpty) {
+      //     searchItems.value = items;
+      //     // แปลไตเติ๊ลหลังจากได้ข้อมูลสินค้า
+      //     translateHomeTitles();
+      //   } else {
+      //     _setError('ไม่พบสินค้าที่ค้นหา');
+      //   }
+      // } else {
+      //   _setError('ไม่สามารถเชื่อมต่อ API หรือไม่พบสินค้าที่ค้นหา');
+      // }
+
+      if (data['data']['item'] is List) {
+        final List<Map<String, dynamic>> items = (data['data']['item'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
 
         if (items.isNotEmpty) {
           searchItems.value = items;
