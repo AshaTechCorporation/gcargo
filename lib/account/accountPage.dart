@@ -306,11 +306,7 @@ class _AccountPageState extends State<AccountPage> {
                             padding: EdgeInsets.all(20),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              gradient: LinearGradient(
-                                colors: [Color(0xFF4A90E2), Color(0xFF357ABD)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
+                              gradient: LinearGradient(colors: [Color(0xFF4A90E2), Color(0xFF357ABD)], begin: Alignment.topLeft, end: Alignment.bottomRight),
                               boxShadow: [BoxShadow(color: Colors.blue.withOpacity(0.3), spreadRadius: 0, blurRadius: 12, offset: Offset(0, 6))],
                             ),
                             child: Column(
@@ -330,21 +326,12 @@ class _AccountPageState extends State<AccountPage> {
                                         children: [
                                           Text(
                                             getTranslation('importer_code'),
-                                            style: TextStyle(
-                                              fontSize: isPhone(context) ? 12 : 16,
-                                              color: Colors.white.withOpacity(0.8),
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                            style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
                                           ),
                                           SizedBox(height: 4),
                                           Text(
                                             '${importer_code.toUpperCase()}',
-                                            style: TextStyle(
-                                              fontSize: isPhone(context) ? 20 : 24,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 1.2,
-                                            ),
+                                            style: TextStyle(fontSize: isPhone(context) ? 20 : 24, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2),
                                           ),
                                         ],
                                       ),
@@ -352,13 +339,7 @@ class _AccountPageState extends State<AccountPage> {
                                     GestureDetector(
                                       onTap: () {
                                         Clipboard.setData(ClipboardData(text: '${importer_code.toUpperCase()}'));
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('คัดลอกรหัสผู้นำเข้าแล้ว'),
-                                            backgroundColor: Colors.green,
-                                            duration: Duration(seconds: 2),
-                                          ),
-                                        );
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('คัดลอกรหัสผู้นำเข้าแล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)));
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(10),
@@ -380,22 +361,11 @@ class _AccountPageState extends State<AccountPage> {
                                           children: [
                                             Icon(Icons.local_shipping, color: Colors.white, size: isPhone(context) ? 20 : 26),
                                             SizedBox(height: 4),
-                                            Text(
-                                              'ส่งทางรถ',
-                                              style: TextStyle(
-                                                fontSize: isPhone(context) ? 10 : 14,
-                                                color: Colors.white.withOpacity(0.8),
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
+                                            Text('ส่งทางรถ', style: TextStyle(fontSize: isPhone(context) ? 10 : 14, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500)),
                                             SizedBox(height: 2),
                                             Text(
                                               'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbycar']}',
-                                              style: TextStyle(
-                                                fontSize: isPhone(context) ? 12 : 16,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white, fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -407,22 +377,11 @@ class _AccountPageState extends State<AccountPage> {
                                           children: [
                                             Icon(Icons.directions_boat, color: Colors.white, size: isPhone(context) ? 20 : 26),
                                             SizedBox(height: 4),
-                                            Text(
-                                              'ส่งทางเรือ',
-                                              style: TextStyle(
-                                                fontSize: isPhone(context) ? 10 : 14,
-                                                color: Colors.white.withOpacity(0.8),
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
+                                            Text('ส่งทางเรือ', style: TextStyle(fontSize: isPhone(context) ? 10 : 14, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500)),
                                             SizedBox(height: 2),
                                             Text(
                                               'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbyboat']}',
-                                              style: TextStyle(
-                                                fontSize: isPhone(context) ? 12 : 16,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white, fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -447,10 +406,7 @@ class _AccountPageState extends State<AccountPage> {
                                     children: [
                                       Icon(Icons.location_on, color: Color(0xFF4A90E2), size: isPhone(context) ? 20 : 26),
                                       SizedBox(width: 8),
-                                      Text(
-                                        getTranslation('shipping_address'),
-                                        style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
-                                      ),
+                                      Text(getTranslation('shipping_address'), style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50))),
                                     ],
                                   ),
                                   SizedBox(height: 12),
@@ -465,9 +421,7 @@ class _AccountPageState extends State<AccountPage> {
                                           color: Colors.white,
                                           borderRadius: BorderRadius.circular(12),
                                           border: Border.all(color: Color(0xFFE3F2FD)),
-                                          boxShadow: [
-                                            BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 0, blurRadius: 8, offset: Offset(0, 2)),
-                                          ],
+                                          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 0, blurRadius: 8, offset: Offset(0, 2))],
                                         ),
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,10 +430,7 @@ class _AccountPageState extends State<AccountPage> {
                                               children: [
                                                 Container(
                                                   padding: EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xFF4A90E2).withOpacity(0.1),
-                                                    borderRadius: BorderRadius.circular(8),
-                                                  ),
+                                                  decoration: BoxDecoration(color: Color(0xFF4A90E2).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                                                   child: Icon(Icons.store, color: Color(0xFF4A90E2), size: isPhone(context) ? 16 : 22),
                                                 ),
                                                 SizedBox(width: 12),
@@ -489,11 +440,7 @@ class _AccountPageState extends State<AccountPage> {
                                                     children: [
                                                       Text(
                                                         storeGcargo[indexStore]['name'] ?? '',
-                                                        style: TextStyle(
-                                                          color: Color(0xFF2C3E50),
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: isPhone(context) ? 16 : 20,
-                                                        ),
+                                                        style: TextStyle(color: Color(0xFF2C3E50), fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 20),
                                                       ),
                                                       SizedBox(height: 4),
                                                       Text(
@@ -512,11 +459,7 @@ class _AccountPageState extends State<AccountPage> {
                                                 SizedBox(width: 8),
                                                 Text(
                                                   '${getTranslation('phone_number')}: ${storeGcargo[indexStore]['phone'] ?? ''}',
-                                                  style: TextStyle(
-                                                    color: Color(0xFF2C3E50),
-                                                    fontSize: isPhone(context) ? 14 : 18,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                                  style: TextStyle(color: Color(0xFF2C3E50), fontSize: isPhone(context) ? 14 : 18, fontWeight: FontWeight.w500),
                                                 ),
                                               ],
                                             ),
@@ -527,13 +470,9 @@ class _AccountPageState extends State<AccountPage> {
                                                   child: ElevatedButton.icon(
                                                     onPressed: () {
                                                       Clipboard.setData(ClipboardData(text: storeGcargo[indexStore]['address'] ?? ''));
-                                                      ScaffoldMessenger.of(context).showSnackBar(
-                                                        SnackBar(
-                                                          content: Text('คัดลอกที่อยู่แล้ว'),
-                                                          backgroundColor: Colors.green,
-                                                          duration: Duration(seconds: 2),
-                                                        ),
-                                                      );
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(SnackBar(content: Text('คัดลอกที่อยู่แล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)));
                                                     },
                                                     icon: Icon(Icons.copy, size: isPhone(context) ? 16 : 22),
                                                     label: Text('คัดลอกที่อยู่', style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
@@ -577,9 +516,7 @@ class _AccountPageState extends State<AccountPage> {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritePage()));
                             } else {
                               // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
                             }
                           },
                         ),
@@ -590,16 +527,11 @@ class _AccountPageState extends State<AccountPage> {
                           onTap: () async {
                             final homeController = Get.find<HomeController>();
                             if (homeController.currentUser.value != null) {
-                              final _edit = await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)),
-                              );
+                              final _edit = await Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)));
                               if (_edit == true) {}
                             } else {
                               // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
                             }
                           },
                         ),
@@ -618,9 +550,7 @@ class _AccountPageState extends State<AccountPage> {
                               }
                             } else {
                               // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
                             }
                           },
                         ),
@@ -632,9 +562,7 @@ class _AccountPageState extends State<AccountPage> {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => AddressListPage()));
                             } else {
                               // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
                             }
                           },
                         ),
@@ -647,9 +575,7 @@ class _AccountPageState extends State<AccountPage> {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
                             } else {
                               // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
                             }
                           },
                         ),
@@ -666,13 +592,7 @@ class _AccountPageState extends State<AccountPage> {
                             //   ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
                             // }
 
-                            Get.snackbar(
-                              'แจ้งเตือน',
-                              'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                              backgroundColor: Colors.yellowAccent,
-                              colorText: Colors.black,
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
+                            Get.snackbar('แจ้งเตือน', 'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน', backgroundColor: Colors.yellowAccent, colorText: Colors.black, snackPosition: SnackPosition.BOTTOM);
                           },
                         ),
                         _buildMenuItem(
@@ -728,11 +648,7 @@ class _AccountPageState extends State<AccountPage> {
                           child: Container(
                             width: double.infinity,
                             margin: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.grey.shade300),
-                              color: Colors.white,
-                            ),
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey.shade300), color: Colors.white),
                             child: TextButton(
                               onPressed: () async {
                                 if (token == null) {
@@ -772,7 +688,9 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                         ),
 
-                        SizedBox(height: 40),
+                        SizedBox(height: 20),
+                        Center(child: Text('Ver.1.0.26', style: TextStyle(fontSize: 15, color: Colors.grey))),
+                        SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -784,10 +702,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 20)),
-    );
+    return Padding(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12), child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 20)));
   }
 
   Widget _buildMenuItem(String title, {bool showVerified = false, required VoidCallback onTap}) {

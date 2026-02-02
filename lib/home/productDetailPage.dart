@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gcargo/home/firstPage.dart';
 import 'package:gcargo/home/notificationPage.dart';
 import 'package:gcargo/login/loginPage.dart';
@@ -34,6 +35,8 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   int quantity = 1;
+  final TextEditingController _quantityController = TextEditingController();
+  final FocusNode _quantityFocusNode = FocusNode();
   String selectedSize = '';
   String selectedColor = '';
   final TextEditingController searchController = TextEditingController();
@@ -206,6 +209,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   void initState() {
     super.initState();
+    _quantityController.text = quantity.toString();
+    _quantityFocusNode.addListener(() {
+      if (!_quantityFocusNode.hasFocus) {
+        _validateQuantity();
+      }
+    });
     languageController = Get.find<LanguageController>();
 
     // สร้าง controller และเรียก API
@@ -374,8 +383,24 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return true;
   }
 
+  void _validateQuantity() {
+    int? val = int.tryParse(_quantityController.text);
+    if (val == null || val <= 0) {
+      setState(() {
+        quantity = 1;
+        _quantityController.text = '1';
+      });
+    } else {
+      setState(() {
+        quantity = val;
+      });
+    }
+  }
+
   @override
   void dispose() {
+    _quantityController.dispose();
+    _quantityFocusNode.dispose();
     _scrollController.dispose();
     // ลบ controller เมื่อออกจากหน้า
     Get.delete<ProductDetailController>(tag: widget.num_iid);
@@ -796,235 +821,269 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Scaffold(
-        backgroundColor: Colors.white,
+      () => GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          backgroundColor: Colors.white,
 
-        // ✅ AppBar ที่เหมือนหน้า Home
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(56),
-          child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-              onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false),
-            ),
-            title: SearchHeaderWidget(
-              searchController: searchController,
-              cartItemCount: cartItemCount,
-              onFieldSubmitted: (query) {
-                SearchService.handleTextSearch(context: context, query: query, selectedType: widget.type);
-              },
-              onImagePicked: (XFile image) {
-                SearchService.handleImageSearch(context: context, image: image, selectedType: widget.type);
-              },
-              onBagTap: () async {
-                // เช็ค userID ก่อนไปหน้าตะกร้า
-                final isLoggedIn = await _checkUserLogin();
-                if (!isLoggedIn) return;
-                if (mounted) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(type: widget.type)));
-                }
-              },
-              onNotificationTap: () {
-                // TODO: ไปหน้า notification
-                Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
-              },
+          // ✅ AppBar ที่เหมือนหน้า Home
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(56),
+            child: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+                onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false),
+              ),
+              title: SearchHeaderWidget(
+                searchController: searchController,
+                cartItemCount: cartItemCount,
+                onFieldSubmitted: (query) {
+                  SearchService.handleTextSearch(context: context, query: query, selectedType: widget.type);
+                },
+                onImagePicked: (XFile image) {
+                  SearchService.handleImageSearch(context: context, image: image, selectedType: widget.type);
+                },
+                onBagTap: () async {
+                  // เช็ค userID ก่อนไปหน้าตะกร้า
+                  final isLoggedIn = await _checkUserLogin();
+                  if (!isLoggedIn) return;
+                  if (mounted) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(type: widget.type)));
+                  }
+                },
+                onNotificationTap: () {
+                  // TODO: ไปหน้า notification
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
+                },
+              ),
             ),
           ),
-        ),
 
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  controller: _scrollController,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  children: [
-                    Stack(
-                      children: [
-                        ProductImageSliderWidget(productController: productController),
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Obx(
-                            () => GestureDetector(
-                              onTap: () async {
-                                await productController.toggleFavorite();
-                              },
-                              child: Icon(productController.isFavorite.value ? Icons.favorite : Icons.favorite_border, color: productController.isFavorite.value ? kButtonColor : Colors.grey),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    controller: _scrollController,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    children: [
+                      Stack(
+                        children: [
+                          ProductImageSliderWidget(productController: productController),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Obx(
+                              () => GestureDetector(
+                                onTap: () async {
+                                  await productController.toggleFavorite();
+                                },
+                                child: Icon(productController.isFavorite.value ? Icons.favorite : Icons.favorite_border, color: productController.isFavorite.value ? kButtonColor : Colors.grey),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
+                        ],
+                      ),
+                      SizedBox(height: 16),
 
-                    // แสดงข้อมูลสินค้าจาก API
-                    Obx(() {
-                      if (productController.isLoading.value) {
+                      // แสดงข้อมูลสินค้าจาก API
+                      Obx(() {
+                        if (productController.isLoading.value) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(height: 20, width: 200, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4))),
+                              SizedBox(height: 8),
+                              Container(height: 24, width: 100, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4))),
+                            ],
+                          );
+                        }
+
+                        if (productController.hasError.value) {
+                          return Column(
+                            children: [
+                              Icon(Icons.error_outline, color: Colors.red, size: 48),
+                              SizedBox(height: 8),
+                              Text(productController.errorMessage.value, style: TextStyle(color: Colors.red), textAlign: TextAlign.center),
+                              SizedBox(height: 8),
+                              ElevatedButton(onPressed: () => productController.refreshData(), child: Text('ลองใหม่')),
+                            ],
+                          );
+                        }
+
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(height: 20, width: 200, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4))),
-                            SizedBox(height: 8),
-                            Container(height: 24, width: 100, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4))),
+                            // ไตเติ๊ลต้นฉบับ
+                            Text(productController.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+                            // ไตเติ๊ลที่แปลแล้ว
+                            if (isTranslatingTitle) ...[
+                              SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+                                  SizedBox(width: 8),
+                                  Text('กำลังแปล...', style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontStyle: FontStyle.italic)),
+                                ],
+                              ),
+                            ] else if (translatedTitle.isNotEmpty) ...[
+                              SizedBox(height: 4),
+                              Text(translatedTitle, style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontWeight: FontWeight.w500)),
+                            ],
+
+                            SizedBox(height: 6),
+                            Text('¥${productController.originalPrice}', style: TextStyle(fontSize: 32, color: Colors.black, fontWeight: FontWeight.bold)),
+                            if (productController.area.isNotEmpty) ...[SizedBox(height: 4), Text('จาก: ${productController.area}', style: TextStyle(fontSize: 14, color: Colors.grey.shade600))],
                           ],
                         );
-                      }
+                      }),
+                      SizedBox(height: 16),
 
-                      if (productController.hasError.value) {
-                        return Column(
-                          children: [
-                            Icon(Icons.error_outline, color: Colors.red, size: 48),
-                            SizedBox(height: 8),
-                            Text(productController.errorMessage.value, style: TextStyle(color: Colors.red), textAlign: TextAlign.center),
-                            SizedBox(height: 8),
-                            ElevatedButton(onPressed: () => productController.refreshData(), child: Text('ลองใหม่')),
-                          ],
-                        );
-                      }
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
                         children: [
-                          // ไตเติ๊ลต้นฉบับ
-                          Text(productController.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-
-                          // ไตเติ๊ลที่แปลแล้ว
-                          if (isTranslatingTitle) ...[
-                            SizedBox(height: 4),
-                            Row(
-                              children: [
-                                SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
-                                SizedBox(width: 8),
-                                Text('กำลังแปล...', style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontStyle: FontStyle.italic)),
-                              ],
+                          Text(getTranslation('quantity')),
+                          Spacer(),
+                          IconButton(
+                            icon: Icon(Icons.remove),
+                            onPressed: () {
+                              setState(() {
+                                if (quantity > 1) {
+                                  quantity--;
+                                  _quantityController.text = quantity.toString();
+                                }
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: TextField(
+                              controller: _quantityController,
+                              focusNode: _quantityFocusNode,
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(vertical: 8), isDense: true),
+                              onChanged: (value) {
+                                int? val = int.tryParse(value);
+                                if (val != null && val > 0) {
+                                  quantity = val;
+                                }
+                              },
+                              onSubmitted: (value) {
+                                _validateQuantity();
+                              },
                             ),
-                          ] else if (translatedTitle.isNotEmpty) ...[
-                            SizedBox(height: 4),
-                            Text(translatedTitle, style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontWeight: FontWeight.w500)),
-                          ],
-
-                          SizedBox(height: 6),
-                          Text('¥${productController.originalPrice}', style: TextStyle(fontSize: 32, color: Colors.black, fontWeight: FontWeight.bold)),
-                          if (productController.area.isNotEmpty) ...[SizedBox(height: 4), Text('จาก: ${productController.area}', style: TextStyle(fontSize: 14, color: Colors.grey.shade600))],
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              setState(() {
+                                quantity++;
+                                _quantityController.text = quantity.toString();
+                              });
+                            },
+                          ),
                         ],
-                      );
-                    }),
-                    SizedBox(height: 16),
+                      ),
+                      Divider(height: 32),
 
-                    Row(
-                      children: [
-                        Text(getTranslation('quantity')),
-                        Spacer(),
-                        IconButton(
-                          icon: Icon(Icons.remove),
-                          onPressed:
-                              () => setState(() {
-                                if (quantity > 1) quantity--;
-                              }),
-                        ),
-                        Text(quantity.toString(), style: const TextStyle(fontSize: 16)),
-                        IconButton(icon: const Icon(Icons.add), onPressed: () => setState(() => quantity++)),
-                      ],
-                    ),
-                    Divider(height: 32),
+                      Text(getTranslation('size'), style: TextStyle(fontWeight: FontWeight.bold)),
+                      SizedBox(height: 8),
+                      buildSizeSelector(),
 
-                    Text(getTranslation('size'), style: TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8),
-                    buildSizeSelector(),
+                      SizedBox(height: 20),
+                      Text(getTranslation('color'), style: TextStyle(fontWeight: FontWeight.bold)),
+                      SizedBox(height: 8),
+                      buildColorOptions(),
 
-                    SizedBox(height: 20),
-                    Text(getTranslation('color'), style: TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8),
-                    buildColorOptions(),
+                      SizedBox(height: 20),
 
-                    SizedBox(height: 20),
+                      // แสดงคำอธิบายสินค้า
+                      ProductDescriptionWidget(productController: productController, translatedTitle: translatedTitle.isNotEmpty ? translatedTitle : null),
 
-                    // แสดงคำอธิบายสินค้า
-                    ProductDescriptionWidget(productController: productController, translatedTitle: translatedTitle.isNotEmpty ? translatedTitle : null),
+                      // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
+                      Column(
+                        children: [
+                          // Divider(),
+                          // Center(
+                          //   child: GestureDetector(
+                          //     onTap: () {
+                          //       // TODO: แสดงเนื้อหาเพิ่มเติม
+                          //     },
+                          //     child: Row(
+                          //       mainAxisSize: MainAxisSize.min,
+                          //       children: [
+                          //         Text('แสดงเพิ่มเติม', style: TextStyle(color: Colors.grey)),
+                          //         SizedBox(width: 4),
+                          //         Icon(Icons.expand_more, color: Colors.grey, size: 18),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
+                          Divider(),
+                          SizedBox(height: 16),
+                        ],
+                      ),
 
-                    // 🔽 ส่วนนี้แทรกไว้ "ก่อน" หัวข้อ 'สิ่งที่คุณอาจสนใจ'
-                    Column(
-                      children: [
-                        // Divider(),
-                        // Center(
-                        //   child: GestureDetector(
-                        //     onTap: () {
-                        //       // TODO: แสดงเนื้อหาเพิ่มเติม
-                        //     },
-                        //     child: Row(
-                        //       mainAxisSize: MainAxisSize.min,
-                        //       children: [
-                        //         Text('แสดงเพิ่มเติม', style: TextStyle(color: Colors.grey)),
-                        //         SizedBox(width: 4),
-                        //         Icon(Icons.expand_more, color: Colors.grey, size: 18),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
-                        Divider(),
-                        SizedBox(height: 16),
-                      ],
-                    ),
+                      SizedBox(height: 24),
+                      Text(getTranslation('you_might_like'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      SizedBox(height: 12),
 
-                    SizedBox(height: 24),
-                    Text(getTranslation('you_might_like'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    SizedBox(height: 12),
+                      // แสดงข้อมูลจาก homeController.searchItems
+                      Obx(() {
+                        if (homeController.isLoading.value) {
+                          return Container(height: 200, child: Center(child: CircularProgressIndicator()));
+                        }
 
-                    // แสดงข้อมูลจาก homeController.searchItems
-                    Obx(() {
-                      if (homeController.isLoading.value) {
-                        return Container(height: 200, child: Center(child: CircularProgressIndicator()));
-                      }
+                        if (homeController.hasError.value) {
+                          return Container(height: 100, child: Center(child: Text(getTranslation('error_occurred'), style: TextStyle(color: Colors.grey))));
+                        }
 
-                      if (homeController.hasError.value) {
-                        return Container(height: 100, child: Center(child: Text(getTranslation('error_occurred'), style: TextStyle(color: Colors.grey))));
-                      }
+                        final searchItems = homeController.searchItems;
+                        if (searchItems.isEmpty) {
+                          return Container(height: 100, child: Center(child: Text(getTranslation('recommended'), style: TextStyle(color: Colors.grey))));
+                        }
 
-                      final searchItems = homeController.searchItems;
-                      if (searchItems.isEmpty) {
-                        return Container(height: 100, child: Center(child: Text(getTranslation('recommended'), style: TextStyle(color: Colors.grey))));
-                      }
+                        // แสดงสินค้าสูงสุด 6 รายการ
+                        final itemsToShow = searchItems.take(6).toList();
 
-                      // แสดงสินค้าสูงสุด 6 รายการ
-                      final itemsToShow = searchItems.take(6).toList();
+                        // สร้าง list ของ item IDs สำหรับเปรียบเทียบ
+                        final currentItemIds = itemsToShow.map((item) => item['num_iid']?.toString() ?? '').toList();
 
-                      // สร้าง list ของ item IDs สำหรับเปรียบเทียบ
-                      final currentItemIds = itemsToShow.map((item) => item['num_iid']?.toString() ?? '').toList();
+                        // แปลไตเติ๊ลของ recommended items ถ้ายังไม่ได้แปลหรือ items เปลี่ยน
+                        final itemsChanged = !_listEquals(currentItemIds, lastTranslatedItemIds);
 
-                      // แปลไตเติ๊ลของ recommended items ถ้ายังไม่ได้แปลหรือ items เปลี่ยน
-                      final itemsChanged = !_listEquals(currentItemIds, lastTranslatedItemIds);
+                        // ถ้าการแปลล้มเหลว (ไม่มีผลลัพธ์) ให้ลองใหม่
+                        final shouldRetry = translatedRecommendedTitles.isEmpty && lastTranslatedItemIds.isNotEmpty;
 
-                      // ถ้าการแปลล้มเหลว (ไม่มีผลลัพธ์) ให้ลองใหม่
-                      final shouldRetry = translatedRecommendedTitles.isEmpty && lastTranslatedItemIds.isNotEmpty;
+                        if (!isTranslatingRecommendedTitles && (itemsChanged || shouldRetry)) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _translateRecommendedTitles(itemsToShow);
+                          });
+                        }
 
-                      if (!isTranslatingRecommendedTitles && (itemsChanged || shouldRetry)) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          _translateRecommendedTitles(itemsToShow);
-                        });
-                      }
-
-                      return GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        childAspectRatio: 0.75,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        children:
-                            itemsToShow.map((item) {
-                              return _buildRecommendedItem(item);
-                            }).toList(),
-                      );
-                    }),
-                  ],
+                        return GridView.count(
+                          crossAxisCount: 2,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          childAspectRatio: 0.75,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          children:
+                              itemsToShow.map((item) {
+                                return _buildRecommendedItem(item);
+                              }).toList(),
+                        );
+                      }),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(padding: EdgeInsets.fromLTRB(16, 0, 16, 16), child: buildBottomBar()),
-            ],
+                Padding(padding: EdgeInsets.fromLTRB(16, 0, 16, 16), child: buildBottomBar()),
+              ],
+            ),
           ),
         ),
       ),
