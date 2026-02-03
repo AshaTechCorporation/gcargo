@@ -146,6 +146,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  bool is1688Link(String text) {
+    // ตรวจสอบว่ามีคำว่า 1688.com หรือ qr.1688.com อยู่ในข้อความไหม
+    final RegExp regExp = RegExp(r'1688', caseSensitive: false);
+    return regExp.hasMatch(text);
+  }
+
   // ฟังก์ชั่นสำหรับเรียก API searchLink
   Future<void> extractIdFromUrl(String url) async {
     // เริ่ม loading
@@ -156,32 +162,54 @@ class _HomePageState extends State<HomePage> {
     try {
       print('🔍 เริ่มเรียก API searchLink: $url');
 
-      // เรียก API searchLink จาก HomeService
-      final response = await HomeService.searchLink(textLink: url);
-
-      if (response != null) {
-        final productId = response['productId']?.toString();
-        final platform = response['platform']?.toString();
-
-        print('🔍 API Response - productId: $productId, platform: $platform');
-
-        if (productId != null && productId.isNotEmpty) {
-          // กำหนด type ตาม platform จาก API หรือ selectedItemType
-          String type;
-          if (platform != null && platform.isNotEmpty) {
-            type = platform.toLowerCase() == 'taobao' ? 'taobao' : '1688';
-          } else {
-            type = homeController.selectedItemType.value == 'shopgs1' ? 'taobao' : '1688';
-          }
-
-          print('🔍 ไปหน้า ProductDetailPage - ID: $productId, type: $type');
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: productId, name: 'Shirt', type: type, channel: 'link')));
+      if (is1688Link(url)) {
+        print("พบลิงก์จาก 1688!");
+        final response = await HomeService.urlItemSearchLink(urlItem: url, type: '1688');
+        inspect(response);
+        // String? cleanUrl = extract1688Url(input);
+        // print("URL ที่สกัดได้: $cleanUrl");
+        if (response['num_iid'] != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: response['num_iid'], name: 'Shirt', type: '1688', channel: 'link')));
         } else {
-          _showAlert('ไม่พบ Product ID จาก API');
+          _showAlert('ไม่สามารถเรียก API ได้\nกรุณาตรวจสอบ URL ที่กรอก');
         }
+        // ทำ Logic ต่อไป เช่น เปิด WebView หรือส่งไป API
       } else {
-        _showAlert('ไม่สามารถเรียก API ได้\nกรุณาตรวจสอบ URL ที่กรอก');
+        print("ไม่ใช่ลิงก์ 1688");
+        final response = await HomeService.urlItemSearchLink(urlItem: url, type: 'taobao');
+        if (response['num_iid'] != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: response['num_iid'], name: 'Shirt', type: 'taobao', channel: 'link')));
+        } else {
+          _showAlert('ไม่สามารถเรียก API ได้\nกรุณาตรวจสอบ URL ที่กรอก');
+        }
       }
+
+      // เรียก API searchLink จาก HomeService
+      // final response = await HomeService.searchLink(textLink: url);
+
+      // if (response != null) {
+      //   final productId = response['productId']?.toString();
+      //   final platform = response['platform']?.toString();
+
+      //   print('🔍 API Response - productId: $productId, platform: $platform');
+
+      //   if (productId != null && productId.isNotEmpty) {
+      //     // กำหนด type ตาม platform จาก API หรือ selectedItemType
+      //     String type;
+      //     if (platform != null && platform.isNotEmpty) {
+      //       type = platform.toLowerCase() == 'taobao' ? 'taobao' : '1688';
+      //     } else {
+      //       type = homeController.selectedItemType.value == 'shopgs1' ? 'taobao' : '1688';
+      //     }
+
+      //     print('🔍 ไปหน้า ProductDetailPage - ID: $productId, type: $type');
+      //     Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: productId, name: 'Shirt', type: type, channel: 'link')));
+      //   } else {
+      //     _showAlert('ไม่พบ Product ID จาก API');
+      //   }
+      // } else {
+      //   _showAlert('ไม่สามารถเรียก API ได้\nกรุณาตรวจสอบ URL ที่กรอก');
+      // }
     } catch (e) {
       print('❌ Error calling searchLink API: $e');
       _showAlert('เกิดข้อผิดพลาดในการเรียก API');

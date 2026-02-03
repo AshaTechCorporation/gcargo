@@ -109,6 +109,60 @@ class HomeService {
     }
   }
 
+  //ค้นหาUrl
+  static Future urlItemSearchLink({required String urlItem, required String type}) async {
+    // final url = Uri.https('api.icom.la', '/$type/api/call.php', {"item_get": '', "lang": 'zh-CN', "num_iid": '$num_id', "api_key": 'tegcargo06062024', "is_promotion": '1'});
+    // final url = Uri.https('api.openchinaapi.com', 'v1/$type/item_urlencode/?title=no&word=$urlItem');
+    final url = Uri.parse('https://api.openchinaapi.com/v1/$type/item_urlencode/?title=no&word=$urlItem');
+
+    var headers = {'Content-Type': 'application/json', 'Authorization': 'Token 8f34ccfbe9282e210e868cbb5763908648c0b15d'};
+    final response = await http.get(headers: headers, url).timeout(const Duration(seconds: 30));
+    if (response.statusCode == 200) {
+      final data = convert.jsonDecode(response.body);
+      // return data['item'];
+      //return ItemSearch.fromJson(data['item']);
+      // if (data is Map && data.containsKey('item') && data['item'] != null) {
+      //   final item = data['item'];
+
+      //   final isPropsListEmpty = item['props_list'] is List && (item['props_list'] as List).isEmpty;
+      //   final isPropsNameEmpty = item['props_name'] is String && (item['props_name'] as String).trim().isEmpty;
+
+      //   if (isPropsListEmpty && isPropsNameEmpty) {
+      //     throw ApiException("ไม่พบข้อมูลรายละเอียดสินค้า (props_list & props_name ว่างเปล่า)");
+      //   }
+
+      //   return item;
+      // } else {
+      //   // กรณีไม่มี item
+      //   throw ApiException("ไม่พบข้อมูลสินค้า หรือ API ส่งข้อมูลผิดพลาด");
+      // }
+      if (data is Map && data.containsKey('data') && data['data'] != null) {
+        final item = data['data'];
+
+        final isPropsListEmpty = item['props_list'] is List && (item['props_list'] as List).isEmpty;
+        final isPropsNameEmpty = item['props_name'] is String && (item['props_name'] as String).trim().isEmpty;
+
+        if (isPropsListEmpty && isPropsNameEmpty) {
+          throw ApiException("ไม่พบข้อมูลรายละเอียดสินค้า (props_list & props_name ว่างเปล่า)");
+        }
+
+        return item;
+      } else {
+        // กรณีไม่มี item
+        throw ApiException("ไม่พบข้อมูลสินค้า หรือ API ส่งข้อมูลผิดพลาด");
+      }
+    } else {
+      // final data = convert.jsonDecode(response.body);
+      // throw ApiException(data['message']);
+      try {
+        final data = convert.jsonDecode(response.body);
+        throw ApiException(data['message'] ?? 'เกิดข้อผิดพลาดที่ไม่รู้จัก');
+      } catch (e) {
+        throw ApiException('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ (${response.statusCode})');
+      }
+    }
+  }
+
   //แปลภาษา
   static Future translate({required String text, required String from, required String to}) async {
     // return;
