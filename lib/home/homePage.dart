@@ -171,6 +171,8 @@ class _HomePageState extends State<HomePage> {
         if (response['num_iid'] != null) {
           Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: response['num_iid'], name: 'Shirt', type: '1688', channel: 'link')));
         } else {
+          searchLinkController.clear();
+          setState(() {});
           _showAlert('ไม่สามารถเรียก API ได้\nกรุณาตรวจสอบ URL ที่กรอก');
         }
         // ทำ Logic ต่อไป เช่น เปิด WebView หรือส่งไป API
@@ -180,6 +182,8 @@ class _HomePageState extends State<HomePage> {
         if (response['num_iid'] != null) {
           Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: response['num_iid'], name: 'Shirt', type: 'taobao', channel: 'link')));
         } else {
+          searchLinkController.clear();
+          setState(() {});
           _showAlert('ไม่สามารถเรียก API ได้\nกรุณาตรวจสอบ URL ที่กรอก');
         }
       }

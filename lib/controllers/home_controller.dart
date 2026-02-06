@@ -49,13 +49,13 @@ class HomeController extends GetxController {
     selectedItemType.value = itemType.first;
     // เรียก API หลังจาก build เสร็จแล้วเพื่อหลีกเลี่ยง setState during build error
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      searchItemsFromAPI('Shirt');
       getExchangeRateFromAPI();
       getImgBannerFromAPI();
       getUserDataAndShippingAddresses();
       getExtraServicesFromAPI();
       getServiceRateFromAPI();
       getServiceFeeFromAPI();
+      searchItemsFromAPI('Shirt');
     });
   }
 

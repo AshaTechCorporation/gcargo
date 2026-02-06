@@ -689,7 +689,7 @@ class _AccountPageState extends State<AccountPage> {
                         ),
 
                         SizedBox(height: 20),
-                        Center(child: Text('Ver.1.0.26', style: TextStyle(fontSize: 15, color: Colors.grey))),
+                        Center(child: Text('Ver.1.0.27', style: TextStyle(fontSize: 15, color: Colors.grey))),
                         SizedBox(height: 20),
                       ],
                     ),
