@@ -16,6 +16,7 @@ class ProductsTrack {
   String? product_store_type;
   String? product_note;
   String? product_price;
+  String? product_real_price;
   int? product_qty;
   List<PartAddOnTrack>? add_on_services;
   List<OptionsOrdersTeack>? options;
@@ -31,6 +32,7 @@ class ProductsTrack {
     this.product_store_type,
     this.product_note,
     this.product_price,
+    this.product_real_price,
     this.product_qty,
     this.add_on_services,
     this.options,

@@ -70,16 +70,7 @@ class OrderService {
   }
 
   //ชำระเงิน
-  static Future paymentOrder({
-    String? payment_type,
-    String? ref_no,
-    String? date,
-    double? total_price,
-    String? note,
-    String? image,
-    String? order_type,
-    bool? vat,
-  }) async {
+  static Future paymentOrder({String? payment_type, String? ref_no, String? date, double? total_price, String? note, String? image, String? order_type, bool? vat}) async {
     final url = Uri.https(publicUrl, '/public/api/payment_order');
     var headers = {'Content-Type': 'application/json'};
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -110,13 +101,7 @@ class OrderService {
   }
 
   //ชำระเงินหลานรายการ
-  static Future paymentOrderMultiple({
-    String? payment_type,
-    double? total_price,
-    String? order_type,
-    List<Map<String, dynamic>>? item,
-    bool? vat,
-  }) async {
+  static Future paymentOrderMultiple({String? payment_type, double? total_price, String? order_type, List<Map<String, dynamic>>? item, bool? vat}) async {
     final url = Uri.https(publicUrl, '/public/api/payment_order_multi');
     var headers = {'Content-Type': 'application/json'};
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -124,14 +109,7 @@ class OrderService {
     final response = await http.post(
       url,
       headers: headers,
-      body: convert.jsonEncode({
-        'payment_type': payment_type,
-        'member_id': userID.toString(),
-        'order_type': order_type,
-        'items': item,
-        'vat': vat == true ? 'Y' : 'N',
-        'total_price': total_price,
-      }),
+      body: convert.jsonEncode({'payment_type': payment_type, 'member_id': userID.toString(), 'order_type': order_type, 'items': item, 'vat': vat == true ? 'Y' : 'N', 'total_price': total_price}),
     );
 
     if (response.statusCode == 200) {

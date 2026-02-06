@@ -393,11 +393,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.receipt_outlined, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text('ไม่พบข้อมูลออเดอร์', style: TextStyle(fontSize: 18, color: Colors.grey)),
-                ],
+                children: [Icon(Icons.receipt_outlined, size: 64, color: Colors.grey), SizedBox(height: 16), Text('ไม่พบข้อมูลออเดอร์', style: TextStyle(fontSize: 18, color: Colors.grey))],
               ),
             ),
           );
@@ -419,12 +415,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                             children: const [
                               Icon(Icons.warning_amber_rounded, color: Color(0xFFFFC107)),
                               SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ',
-                                  style: TextStyle(fontSize: 13, color: Colors.black87),
-                                ),
-                              ),
+                              Expanded(child: Text('เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ', style: TextStyle(fontSize: 13, color: Colors.black87))),
                             ],
                           ),
                         )
@@ -466,10 +457,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  productList.first.product_store_type ?? '1688',
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kTextTitleHeadColor),
-                                ),
+                                Text(productList.first.product_store_type ?? '1688', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kTextTitleHeadColor)),
                                 Text(() {
                                   // เช็คข้อมูล add_on_service อย่างปลอดภัย
                                   final orderLists = orderController.order.value?.order_lists;
@@ -491,9 +479,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                               children: [
                                 Builder(
                                   builder: (context) {
-                                    final exchangeRate =
-                                        double.tryParse(orderController.order.value?.exchange_rate ?? depositOrderRate.toString()) ??
-                                        depositOrderRate;
+                                    final exchangeRate = double.tryParse(orderController.order.value?.exchange_rate ?? depositOrderRate.toString()) ?? depositOrderRate;
                                     final chinaShippingFee = double.tryParse(orderController.order.value?.china_shipping_fee ?? '0') ?? 0.0;
                                     final chinaShippingBaht = chinaShippingFee * exchangeRate;
 
@@ -511,9 +497,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                             ...productList.asMap().entries.map((entry) {
                               final index = entry.key;
                               final product = entry.value;
-                              return Column(
-                                children: [_buildProductItemFromTrack(product), if (index < productList.length - 1) const SizedBox(height: 12)],
-                              );
+                              return Column(children: [_buildProductItemFromTrack(product), if (index < productList.length - 1) const SizedBox(height: 12)]);
                             }),
                           ],
                         ),
@@ -556,7 +540,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   }
 
   Widget _buildProductItemFromTrack(ProductsTrack product) {
-    final rawPrice = product.product_price ?? '0';
+    final rawPrice = product.product_real_price ?? product.product_price ?? '0';
     final parsedPrice = double.tryParse(rawPrice);
     final productPrice = parsedPrice != null ? parsedPrice.toStringAsFixed(2) : rawPrice;
     final productQty = product.product_qty ?? 1;
@@ -583,12 +567,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
               // แสดงชื่อสินค้าที่แปลแล้ว (ถ้ามี)
               if (translatedProductName.isNotEmpty) ...[
                 const SizedBox(height: 2),
-                Text(
-                  translatedProductName,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700, fontWeight: FontWeight.w500),
-                ),
+                Text(translatedProductName, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: Colors.blue.shade700, fontWeight: FontWeight.w500)),
               ],
               const SizedBox(height: 4),
               // แสดง options ถ้ามี
@@ -653,11 +632,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       padding: EdgeInsets.symmetric(vertical: 3),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: filled ? kCicleSelectedColor : Colors.transparent,
-          border: Border.all(color: kCicleSelectedColor),
-          borderRadius: BorderRadius.circular(16),
-        ),
+        decoration: BoxDecoration(color: filled ? kCicleSelectedColor : Colors.transparent, border: Border.all(color: kCicleSelectedColor), borderRadius: BorderRadius.circular(16)),
         child: Text(text, style: const TextStyle(fontSize: 14, color: Colors.black)),
       ),
     );
@@ -700,10 +675,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
             _buildPriceRow(getTranslation('china_shipping'), '0.00฿'),
 
           // Deposit fee
-          if (depositFee > 0)
-            _buildPriceRow(getTranslation('deposit_fee'), ' (${depositFee.toStringAsFixed(2)}฿)')
-          else
-            _buildPriceRow(getTranslation('deposit_fee'), '0.00฿'),
+          if (depositFee > 0) _buildPriceRow(getTranslation('deposit_fee'), ' (${depositFee.toStringAsFixed(2)}฿)') else _buildPriceRow(getTranslation('deposit_fee'), '0.00฿'),
 
           // Service fee
           // _buildPriceRow(getTranslation('service_fee'), '${serviceFee.toStringAsFixed(2)}฿'),
@@ -742,11 +714,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         Text(getTranslation('additional_info'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
 
-        if (order?.shipping_type != null)
-          _buildPriceRow(
-            getTranslation('shipping_type_text'),
-            order!.shipping_type! == 'Ship' ? getTranslation('by_ship') : getTranslation('by_truck'),
-          ),
+        if (order?.shipping_type != null) _buildPriceRow(getTranslation('shipping_type_text'), order!.shipping_type! == 'Ship' ? getTranslation('by_ship') : getTranslation('by_truck')),
 
         if (order?.created_at != null) _buildPriceRow(getTranslation('order_created_date'), _formatDate(order!.created_at.toString())),
 
@@ -761,7 +729,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     double total = 0.0;
     for (var product in productList) {
       try {
-        final price = double.parse(product.product_price ?? '0');
+        final price = double.parse(product.product_real_price ?? product.product_price ?? '0');
         final qty = product.product_qty ?? 1;
         total += price * qty;
       } catch (e) {
@@ -895,12 +863,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
       return ElevatedButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => PaymentMethodPage(totalPrice: priceWithVat, ref_no: orderCode, orderType: 'order', vat: needVatReceipt),
-            ),
-          );
+          Navigator.push(context, MaterialPageRoute(builder: (_) => PaymentMethodPage(totalPrice: priceWithVat, ref_no: orderCode, orderType: 'order', vat: needVatReceipt)));
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: kButtonColor,
@@ -1017,10 +980,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('${_reasonController.text.length}/200', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                    ),
+                    Align(alignment: Alignment.centerRight, child: Text('${_reasonController.text.length}/200', style: const TextStyle(fontSize: 12, color: Colors.grey))),
                     const SizedBox(height: 16),
 
                     // 🔹 ปุ่มบันทึก
