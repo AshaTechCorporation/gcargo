@@ -163,13 +163,14 @@ class _HomePageState extends State<HomePage> {
       print('🔍 เริ่มเรียก API searchLink: $url');
 
       if (is1688Link(url)) {
-        print("พบลิงก์จาก 1688!");
+        print(is1688Link(url));
+        final response2 = await HomeService.searchLink(textLink: url);
         final response = await HomeService.urlItemSearchLink(urlItem: url, type: '1688');
         inspect(response);
         // String? cleanUrl = extract1688Url(input);
         // print("URL ที่สกัดได้: $cleanUrl");
-        if (response['num_iid'] != null) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: response['num_iid'], name: 'Shirt', type: '1688', channel: 'link')));
+        if (response['num_iid'] != null || response2['productId'] != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: response2['productId'] ?? response['num_iid'], name: 'Shirt', type: '1688', channel: 'link')));
         } else {
           searchLinkController.clear();
           setState(() {});
@@ -177,10 +178,11 @@ class _HomePageState extends State<HomePage> {
         }
         // ทำ Logic ต่อไป เช่น เปิด WebView หรือส่งไป API
       } else {
-        print("ไม่ใช่ลิงก์ 1688");
+        print(is1688Link(url));
+        final response2 = await HomeService.searchLink(textLink: url);
         final response = await HomeService.urlItemSearchLink(urlItem: url, type: 'taobao');
-        if (response['num_iid'] != null) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: response['num_iid'], name: 'Shirt', type: 'taobao', channel: 'link')));
+        if (response['num_iid'] != null || response2['productId'] != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailPage(num_iid: response2['productId'] ?? response['num_iid'], name: 'Shirt', type: 'taobao', channel: 'link')));
         } else {
           searchLinkController.clear();
           setState(() {});

@@ -113,10 +113,11 @@ class HomeService {
   static Future urlItemSearchLink({required String urlItem, required String type}) async {
     // final url = Uri.https('api.icom.la', '/$type/api/call.php', {"item_get": '', "lang": 'zh-CN', "num_iid": '$num_id', "api_key": 'tegcargo06062024', "is_promotion": '1'});
     // final url = Uri.https('api.openchinaapi.com', 'v1/$type/item_urlencode/?title=no&word=$urlItem');
+
     final url = Uri.parse('https://api.openchinaapi.com/v1/$type/item_urlencode/?title=no&word=$urlItem');
 
     var headers = {'Content-Type': 'application/json', 'Authorization': 'Token 8f34ccfbe9282e210e868cbb5763908648c0b15d'};
-    final response = await http.get(headers: headers, url).timeout(const Duration(seconds: 30));
+    final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
       // return data['item'];
