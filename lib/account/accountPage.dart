@@ -257,452 +257,470 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return GetBuilder<LanguageController>(
-      builder:
-          (controller) => Scaffold(
-            backgroundColor: Colors.white,
-            body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Menu Sections
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        const SizedBox(height: 20),
+      builder: (controller) => Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Menu Sections
+              Expanded(
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 20),
 
-                        // Header Profile (ชื่อผู้ใช้ + ยอด)
-                        GetBuilder<HomeController>(
-                          builder:
-                              (homeController) => Obx(
-                                () => AccountHeaderWidget(
-                                  onCreditTap: () {},
-                                  onPointTap: () {},
-                                  onParcelTap: () {
-                                    if (_isLoggedIn()) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
-                                    } else {
-                                      _showLoginRequiredDialog();
-                                    }
-                                  },
-                                  onWalletTap: () {
-                                    if (_isLoggedIn()) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
-                                    } else {
-                                      _showLoginRequiredDialog();
-                                    }
-                                  },
-                                  onTransferTap: () {},
-                                  user: homeController.currentUser.value,
-                                  isLoading: homeController.isLoading.value,
-                                  walletTrans: orderController.walletTrans,
-                                ),
-                              ),
+                    // Header Profile (ชื่อผู้ใช้ + ยอด)
+                    GetBuilder<HomeController>(
+                      builder: (homeController) => Obx(
+                        () => AccountHeaderWidget(
+                          onCreditTap: () {},
+                          onPointTap: () {},
+                          onParcelTap: () {
+                            if (_isLoggedIn()) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ParcelStatusPage()));
+                            } else {
+                              _showLoginRequiredDialog();
+                            }
+                          },
+                          onWalletTap: () {
+                            if (_isLoggedIn()) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
+                            } else {
+                              _showLoginRequiredDialog();
+                            }
+                          },
+                          onTransferTap: () {},
+                          user: homeController.currentUser.value,
+                          isLoading: homeController.isLoading.value,
+                          walletTrans: orderController.walletTrans,
                         ),
-                        if (_isLoggedIn()) SizedBox(height: 15),
-                        if (_isLoggedIn()) // เช็คว่าล็อกอินแล้วหรือไม่
-                          // Importer Code Card
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            padding: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              gradient: LinearGradient(colors: [Color(0xFF4A90E2), Color(0xFF357ABD)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                              boxShadow: [BoxShadow(color: Colors.blue.withOpacity(0.3), spreadRadius: 0, blurRadius: 12, offset: Offset(0, 6))],
-                            ),
-                            child: Column(
+                      ),
+                    ),
+                    if (_isLoggedIn()) SizedBox(height: 15),
+                    if (_isLoggedIn()) // เช็คว่าล็อกอินแล้วหรือไม่
+                      // Importer Code Card
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: LinearGradient(colors: [Color(0xFF4A90E2), Color(0xFF357ABD)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                          boxShadow: [BoxShadow(color: Colors.blue.withOpacity(0.3), spreadRadius: 0, blurRadius: 12, offset: Offset(0, 6))],
+                        ),
+                        child: Column(
+                          children: [
+                            // Main Importer Code
+                            Row(
                               children: [
-                                // Main Importer Code
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(12),
-                                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-                                      child: Icon(Icons.badge_outlined, color: Colors.white, size: isPhone(context) ? 24 : 30),
-                                    ),
-                                    SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            getTranslation('importer_code'),
-                                            style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
-                                          ),
-                                          SizedBox(height: 4),
-                                          Text(
-                                            '${importer_code.toUpperCase()}',
-                                            style: TextStyle(fontSize: isPhone(context) ? 20 : 24, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Clipboard.setData(ClipboardData(text: '${importer_code.toUpperCase()}'));
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('คัดลอกรหัสผู้นำเข้าแล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)));
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
-                                        child: Icon(Icons.copy, color: Colors.white, size: isPhone(context) ? 18 : 22),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 16),
-                                // Shipping Methods
                                 Container(
-                                  padding: EdgeInsets.all(16),
-                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-                                  child: Row(
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+                                  child: Icon(Icons.badge_outlined, color: Colors.white, size: isPhone(context) ? 24 : 30),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Icon(Icons.local_shipping, color: Colors.white, size: isPhone(context) ? 20 : 26),
-                                            SizedBox(height: 4),
-                                            Text('ส่งทางรถ', style: TextStyle(fontSize: isPhone(context) ? 10 : 14, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500)),
-                                            SizedBox(height: 2),
-                                            Text(
-                                              'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbycar']}',
-                                              style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white, fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
+                                      Text(
+                                        getTranslation('importer_code'),
+                                        style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
                                       ),
-                                      Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Icon(Icons.directions_boat, color: Colors.white, size: isPhone(context) ? 20 : 26),
-                                            SizedBox(height: 4),
-                                            Text('ส่งทางเรือ', style: TextStyle(fontSize: isPhone(context) ? 10 : 14, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500)),
-                                            SizedBox(height: 2),
-                                            Text(
-                                              'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbyboat']}',
-                                              style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white, fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        '${importer_code.toUpperCase()}',
+                                        style: TextStyle(fontSize: isPhone(context) ? 20 : 24, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2),
                                       ),
                                     ],
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Clipboard.setData(ClipboardData(text: '${importer_code.toUpperCase()}'));
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('คัดลอกรหัสผู้นำเข้าแล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)));
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
+                                    child: Icon(Icons.copy, color: Colors.white, size: isPhone(context) ? 18 : 22),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        SizedBox(height: 16),
-                        // Store Address Section
-                        (storeGcargo.isEmpty || !_isLoggedIn())
-                            ? const SizedBox()
-                            : Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            SizedBox(height: 16),
+                            // Shipping Methods
+                            Container(
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                              child: Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.location_on, color: Color(0xFF4A90E2), size: isPhone(context) ? 20 : 26),
-                                      SizedBox(width: 8),
-                                      Text(getTranslation('shipping_address'), style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50))),
-                                    ],
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.local_shipping, color: Colors.white, size: isPhone(context) ? 20 : 26),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'ส่งทางรถ',
+                                          style: TextStyle(fontSize: isPhone(context) ? 10 : 14, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(height: 2),
+                                        Text(
+                                          'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbycar']}',
+                                          style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(height: 12),
-                                  Column(
-                                    children: List.generate(
-                                      storeGcargo.length,
-                                      (indexStore) => Container(
-                                        width: double.infinity,
-                                        margin: EdgeInsets.only(bottom: 12),
-                                        padding: EdgeInsets.all(16),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12),
-                                          border: Border.all(color: Color(0xFFE3F2FD)),
-                                          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 0, blurRadius: 8, offset: Offset(0, 2))],
+                                  Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.directions_boat, color: Colors.white, size: isPhone(context) ? 20 : 26),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'ส่งทางเรือ',
+                                          style: TextStyle(fontSize: isPhone(context) ? 10 : 14, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  padding: EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(color: Color(0xFF4A90E2).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                                                  child: Icon(Icons.store, color: Color(0xFF4A90E2), size: isPhone(context) ? 16 : 22),
-                                                ),
-                                                SizedBox(width: 12),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        storeGcargo[indexStore]['name'] ?? '',
-                                                        style: TextStyle(color: Color(0xFF2C3E50), fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 20),
-                                                      ),
-                                                      SizedBox(height: 4),
-                                                      Text(
-                                                        (storeGcargo[indexStore]['address'] ?? '').replaceAll(RegExp(r'[\r\n]'), ''),
-                                                        style: TextStyle(color: Color(0xFF7F8C8D), fontSize: isPhone(context) ? 14 : 18),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 12),
-                                            Row(
-                                              children: [
-                                                Icon(Icons.phone, color: Color(0xFF27AE60), size: isPhone(context) ? 16 : 22),
-                                                SizedBox(width: 8),
-                                                Text(
-                                                  '${getTranslation('phone_number')}: ${storeGcargo[indexStore]['phone'] ?? ''}',
-                                                  style: TextStyle(color: Color(0xFF2C3E50), fontSize: isPhone(context) ? 14 : 18, fontWeight: FontWeight.w500),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 12),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: ElevatedButton.icon(
-                                                    onPressed: () {
-                                                      Clipboard.setData(ClipboardData(text: storeGcargo[indexStore]['address'] ?? ''));
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(SnackBar(content: Text('คัดลอกที่อยู่แล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)));
-                                                    },
-                                                    icon: Icon(Icons.copy, size: isPhone(context) ? 16 : 22),
-                                                    label: Text('คัดลอกที่อยู่', style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
-                                                    style: ElevatedButton.styleFrom(
-                                                      backgroundColor: Color(0xFF4A90E2),
-                                                      foregroundColor: Colors.white,
-                                                      padding: EdgeInsets.symmetric(vertical: 8),
-                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                        SizedBox(height: 2),
+                                        Text(
+                                          'SUN/${importer_code.toUpperCase()}${importcard[0]['Sendbyboat']}',
+                                          style: TextStyle(fontSize: isPhone(context) ? 12 : 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-
-                        if (_isLoggedIn()) SizedBox(height: 24),
-                        _buildSectionTitle(getTranslation('Account.news_promotion')),
-                        _buildMenuItem(
-                          getTranslation('Account.news_promotion'),
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => NewsPromotionPage()));
-                          },
+                          ],
                         ),
-                        _buildMenuItem(
-                          getTranslation('Account.coupon'),
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => CouponPage()));
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('Account.favorite'),
-                          onTap: () {
-                            if (token != null) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritePage()));
-                            } else {
-                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                            }
-                          },
-                        ),
-
-                        _buildSectionTitle(getTranslation('general_section')),
-                        _buildMenuItem(
-                          getTranslation('profile'),
-                          onTap: () async {
-                            final homeController = Get.find<HomeController>();
-                            if (homeController.currentUser.value != null) {
-                              final _edit = await Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)));
-                              if (_edit == true) {}
-                            } else {
-                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                            }
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('my_rate'),
-                          onTap: () async {
-                            final homeController = Get.find<HomeController>();
-                            if (homeController.currentUser.value != null) {
-                              if (transport_rate_id == null || transport_rate_id == 0) {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => MyRate(transport_rate_id: transport_rate_id!)));
-                                // ScaffoldMessenger.of(
-                                //   context,
-                                // ).showSnackBar(const SnackBar(content: Text('ยังไม่ได้กำหนดเรทค่าขนส่ง'), backgroundColor: Colors.orange));
-                              } else {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => MyRate(transport_rate_id: transport_rate_id!)));
-                              }
-                            } else {
-                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                            }
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('Account.address_list'),
-                          onTap: () async {
-                            final homeController = Get.find<HomeController>();
-                            if (homeController.currentUser.value != null) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => AddressListPage()));
-                            } else {
-                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                            }
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('Account.bank_verify'),
-                          showVerified: true,
-                          onTap: () async {
-                            final homeController = Get.find<HomeController>();
-                            if (homeController.currentUser.value != null) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
-                            } else {
-                              // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                            }
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('Account.security'),
-                          onTap: () async {
-                            // final homeController = Get.find<HomeController>();
-                            // if (homeController.currentUser.value != null) {
-                            //   Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
-                            // } else {
-                            //   // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
-                            //   ScaffoldMessenger.of(
-                            //     context,
-                            //   ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
-                            // }
-
-                            Get.snackbar('แจ้งเตือน', 'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน', backgroundColor: Colors.yellowAccent, colorText: Colors.black, snackPosition: SnackPosition.BOTTOM);
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('change_language'),
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
-                            // Get.snackbar(
-                            //   'แจ้งเตือน',
-                            //   'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
-                            //   backgroundColor: Colors.yellowAccent,
-                            //   colorText: Colors.black,
-                            //   snackPosition: SnackPosition.BOTTOM,
-                            // );
-                          },
-                        ),
-
-                        _buildSectionTitle(getTranslation('help_section')),
-                        _buildMenuItem(
-                          getTranslation('Account.contact_staff'),
-                          onTap: () {
-                            showQrDialog(
-                              context,
-                              handle: '@gcargo',
-                              //avatarUrl: 'https://i.pravatar.cc/150?img=12', // หรือ avatarAsset: 'assets/images/avatar.png'
-                              onDownload: () {
-                                // TODO: ทำฟังก์ชันบันทึกรูป/แชร์
-                              },
-                            );
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('Account.user_manual'),
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => UserManualPage()));
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('Account.faq'),
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => FaqPage()));
-                          },
-                        ),
-                        _buildMenuItem(
-                          getTranslation('Account.about_us'),
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUsPage()));
-                          },
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        Center(
-                          child: Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey.shade300), color: Colors.white),
-                            child: TextButton(
-                              onPressed: () async {
-                                if (token == null) {
-                                  // ไปหน้า Login
-                                  //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage()));
-                                } else {
-                                  final confirm = await showDialog(
-                                    context: context,
-                                    builder:
-                                        (context) => LogoutConfirmationDialog(
-                                          onConfirm: () {
-                                            // TODO: ลบ token ออกจาก SharedPreferences
-                                            Navigator.pop(context, true);
-                                          },
-                                          onCancel: () => Navigator.pop(context, false),
-                                        ),
-                                  );
-                                  if (confirm == true) {
-                                    await clearToken();
-                                    if (mounted) {
-                                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
-                                    }
-                                  }
-                                }
-                              },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 16),
-                                foregroundColor: Color(0xFF4A4A4A),
-                                textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                              child: Text(
-                                token == null ? getTranslation('Account.login') : getTranslation('Account.logout'),
-                                style: TextStyle(fontFamily: 'SukhumvitSet', fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold),
-                              ),
+                      ),
+                    SizedBox(height: 16),
+                    // Store Address Section
+                    (storeGcargo.isEmpty || !_isLoggedIn())
+                        ? const SizedBox()
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_on, color: Color(0xFF4A90E2), size: isPhone(context) ? 20 : 26),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      getTranslation('shipping_address'),
+                                      style: TextStyle(fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 12),
+                                Column(
+                                  children: List.generate(
+                                    storeGcargo.length,
+                                    (indexStore) => Container(
+                                      width: double.infinity,
+                                      margin: EdgeInsets.only(bottom: 12),
+                                      padding: EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: Color(0xFFE3F2FD)),
+                                        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 0, blurRadius: 8, offset: Offset(0, 2))],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.all(8),
+                                                decoration: BoxDecoration(color: Color(0xFF4A90E2).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                                                child: Icon(Icons.store, color: Color(0xFF4A90E2), size: isPhone(context) ? 16 : 22),
+                                              ),
+                                              SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      storeGcargo[indexStore]['name'] ?? '',
+                                                      style: TextStyle(color: Color(0xFF2C3E50), fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 20),
+                                                    ),
+                                                    SizedBox(height: 4),
+                                                    Text(
+                                                      (storeGcargo[indexStore]['address'] ?? '').replaceAll(RegExp(r'[\r\n]'), ''),
+                                                      style: TextStyle(color: Color(0xFF7F8C8D), fontSize: isPhone(context) ? 14 : 18),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 12),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.phone, color: Color(0xFF27AE60), size: isPhone(context) ? 16 : 22),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                '${getTranslation('phone_number')}: ${storeGcargo[indexStore]['phone'] ?? ''}',
+                                                style: TextStyle(color: Color(0xFF2C3E50), fontSize: isPhone(context) ? 14 : 18, fontWeight: FontWeight.w500),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 12),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: ElevatedButton.icon(
+                                                  onPressed: () {
+                                                    Clipboard.setData(ClipboardData(text: storeGcargo[indexStore]['address'] ?? ''));
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(SnackBar(content: Text('คัดลอกที่อยู่แล้ว'), backgroundColor: Colors.green, duration: Duration(seconds: 2)));
+                                                  },
+                                                  icon: Icon(Icons.copy, size: isPhone(context) ? 16 : 22),
+                                                  label: Text('คัดลอกที่อยู่', style: TextStyle(fontSize: isPhone(context) ? 14 : 18)),
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: Color(0xFF4A90E2),
+                                                    foregroundColor: Colors.white,
+                                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
 
-                        SizedBox(height: 20),
-                        Center(child: Text('Ver.1.0.28', style: TextStyle(fontSize: 15, color: Colors.grey))),
-                        SizedBox(height: 20),
-                      ],
+                    if (_isLoggedIn()) SizedBox(height: 24),
+                    _buildSectionTitle(getTranslation('Account.news_promotion')),
+                    _buildMenuItem(
+                      getTranslation('Account.news_promotion'),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => NewsPromotionPage()));
+                      },
                     ),
-                  ),
-                ],
+                    _buildMenuItem(
+                      getTranslation('Account.coupon'),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CouponPage()));
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('Account.favorite'),
+                      onTap: () {
+                        if (token != null) {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritePage()));
+                        } else {
+                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                        }
+                      },
+                    ),
+
+                    _buildSectionTitle(getTranslation('general_section')),
+                    _buildMenuItem(
+                      getTranslation('profile'),
+                      onTap: () async {
+                        final homeController = Get.find<HomeController>();
+                        if (homeController.currentUser.value != null) {
+                          final _edit = await Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(user: homeController.currentUser.value)));
+                          if (_edit == true) {}
+                        } else {
+                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                        }
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('my_rate'),
+                      onTap: () async {
+                        final homeController = Get.find<HomeController>();
+                        if (homeController.currentUser.value != null) {
+                          if (transport_rate_id == null || transport_rate_id == 0) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => MyRate(transport_rate_id: transport_rate_id!)));
+                            // ScaffoldMessenger.of(
+                            //   context,
+                            // ).showSnackBar(const SnackBar(content: Text('ยังไม่ได้กำหนดเรทค่าขนส่ง'), backgroundColor: Colors.orange));
+                          } else {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => MyRate(transport_rate_id: transport_rate_id!)));
+                          }
+                        } else {
+                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                        }
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('Account.address_list'),
+                      onTap: () async {
+                        final homeController = Get.find<HomeController>();
+                        if (homeController.currentUser.value != null) {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddressListPage()));
+                        } else {
+                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                        }
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('Account.bank_verify'),
+                      showVerified: true,
+                      onTap: () async {
+                        final homeController = Get.find<HomeController>();
+                        if (homeController.currentUser.value != null) {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => BankVerifyPage()));
+                        } else {
+                          // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                        }
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('Account.security'),
+                      onTap: () async {
+                        // final homeController = Get.find<HomeController>();
+                        // if (homeController.currentUser.value != null) {
+                        //   Navigator.push(context, MaterialPageRoute(builder: (context) => SecurityPage()));
+                        // } else {
+                        //   // แสดง dialog หรือ snackbar แจ้งว่าไม่มีข้อมูลผู้ใช้
+                        //   ScaffoldMessenger.of(
+                        //     context,
+                        //   ).showSnackBar(SnackBar(content: Text(getTranslation('user_not_found')), backgroundColor: Colors.orange));
+                        // }
+
+                        Get.snackbar('แจ้งเตือน', 'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน', backgroundColor: Colors.yellowAccent, colorText: Colors.black, snackPosition: SnackPosition.BOTTOM);
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('change_language'),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeLanguagePage()));
+                        // Get.snackbar(
+                        //   'แจ้งเตือน',
+                        //   'ฟังก์ชั่นนี้ยังไม่เปิดใช้งาน',
+                        //   backgroundColor: Colors.yellowAccent,
+                        //   colorText: Colors.black,
+                        //   snackPosition: SnackPosition.BOTTOM,
+                        // );
+                      },
+                    ),
+
+                    _buildSectionTitle(getTranslation('help_section')),
+                    _buildMenuItem(
+                      getTranslation('Account.contact_staff'),
+                      onTap: () {
+                        showQrDialog(
+                          context,
+                          handle: '@gcargo',
+                          //avatarUrl: 'https://i.pravatar.cc/150?img=12', // หรือ avatarAsset: 'assets/images/avatar.png'
+                          onDownload: () {
+                            // TODO: ทำฟังก์ชันบันทึกรูป/แชร์
+                          },
+                        );
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('Account.user_manual'),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => UserManualPage()));
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('Account.faq'),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => FaqPage()));
+                      },
+                    ),
+                    _buildMenuItem(
+                      getTranslation('Account.about_us'),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUsPage()));
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    Center(
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade300),
+                          color: Colors.white,
+                        ),
+                        child: TextButton(
+                          onPressed: () async {
+                            if (token == null) {
+                              // ไปหน้า Login
+                              //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage()));
+                            } else {
+                              final confirm = await showDialog(
+                                context: context,
+                                builder: (context) => LogoutConfirmationDialog(
+                                  onConfirm: () {
+                                    // TODO: ลบ token ออกจาก SharedPreferences
+                                    Navigator.pop(context, true);
+                                  },
+                                  onCancel: () => Navigator.pop(context, false),
+                                ),
+                              );
+                              if (confirm == true) {
+                                await clearToken();
+                                if (mounted) {
+                                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FirstPage()), (route) => false);
+                                }
+                              }
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            foregroundColor: Color(0xFF4A4A4A),
+                            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                          child: Text(
+                            token == null ? getTranslation('Account.login') : getTranslation('Account.logout'),
+                            style: TextStyle(fontFamily: 'SukhumvitSet', fontSize: isPhone(context) ? 16 : 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+                    Center(
+                      child: Text('Ver.1.0.31', style: TextStyle(fontSize: 15, color: Colors.grey)),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
+        ),
+      ),
     );
   }
 
   Widget _buildSectionTitle(String title) {
-    return Padding(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12), child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 20)));
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      child: Text(
+        title,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: isPhone(context) ? 16 : 20),
+      ),
+    );
   }
 
   Widget _buildMenuItem(String title, {bool showVerified = false, required VoidCallback onTap}) {
