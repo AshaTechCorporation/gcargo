@@ -184,8 +184,8 @@ class _AccountHeaderWidgetState extends State<AccountHeaderWidget> {
                           decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
                         )
                         : Text(
-                          widget.user?.code ?? '',
-                          style: TextStyle(fontSize: isPhone(context) ? 14 : 16, color: Colors.grey, fontWeight: FontWeight.w500),
+                          widget.user?.importer_code?.toUpperCase() ?? widget.user?.code ?? '',
+                          style: TextStyle(fontSize: isPhone(context) ? 14 : 16, color: Colors.grey, fontWeight: FontWeight.bold),
                         ),
                   ],
                 ),
