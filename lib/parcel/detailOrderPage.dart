@@ -4,6 +4,7 @@ import 'package:gcargo/controllers/order_controller.dart';
 import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/models/orders/productsTrack.dart';
 import 'package:gcargo/parcel/paymentMethodPage.dart';
+import 'package:gcargo/parcel/printSlipPreviewPage.dart';
 import 'package:gcargo/services/homeService.dart';
 import 'package:gcargo/services/orderService.dart';
 import 'package:gcargo/utils/helpers.dart';
@@ -197,14 +198,17 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         'awaiting_review': 'รอตรวจสอบ',
         'awaiting_payment': 'รอชำระเงิน',
         'in_progress': 'รอดำเนินการ',
+        'confirm_payment': 'ชำระเงินสำเร็จ',
         'preparing_shipment': 'เตรียมจัดส่ง',
         'shipped': 'สำเร็จ',
+        'delivered': 'จัดส่งแล้ว',
         'cancelled': 'ยกเลิก',
         'unknown_status': 'ไม่ทราบสถานะ',
         'document_notice': 'เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ',
         'cancel_reason': 'ร้านค้าไม่มีสีตามที่สั่งซื้อจึงต้องยกเลิกรายการสินค้านี้',
         'unknown_product': 'ไม่ระบุชื่อสินค้า',
         'need_vat_receipt': 'ต้องการใบกำกับภาษี (VAT 7%)',
+        'print_slip': 'ปริ๊นสลิป',
       },
       'en': {
         'order_details': 'Order Details',
@@ -247,14 +251,17 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         'awaiting_review': 'Awaiting Review',
         'awaiting_payment': 'Awaiting Payment',
         'in_progress': 'In Progress',
+        'confirm_payment': 'Payment Confirmed',
         'preparing_shipment': 'Preparing Shipment',
         'shipped': 'Shipped',
+        'delivered': 'Delivered',
         'cancelled': 'Cancelled',
         'unknown_status': 'Unknown Status',
         'document_notice': 'Documents will be sent via Line within 24 hours\nafter successful payment',
         'cancel_reason': 'Store does not have the color as ordered, so this item must be cancelled',
         'unknown_product': 'Unknown Product',
         'need_vat_receipt': 'Need VAT Receipt (VAT 7%)',
+        'print_slip': 'Print Slip',
       },
       'zh': {
         'order_details': '订单详情',
@@ -297,14 +304,17 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         'awaiting_review': '等待审核',
         'awaiting_payment': '等待付款',
         'in_progress': '进行中',
+        'confirm_payment': '付款确认',
         'preparing_shipment': '准备发货',
         'shipped': '已发货',
+        'delivered': '已送达',
         'cancelled': '已取消',
         'unknown_status': '未知状态',
         'document_notice': '文件将在付款成功后24小时内\n通过Line发送',
         'cancel_reason': '店铺没有订购的颜色，因此必须取消此商品',
         'unknown_product': '未知商品',
         'need_vat_receipt': '需要增值税发票 (VAT 7%)',
+        'print_slip': '打印凭证',
       },
     };
 
@@ -330,15 +340,24 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         return getTranslation('awaiting_payment');
       case 'in_progress':
         return getTranslation('in_progress');
+      case 'confirm_payment':
+        return getTranslation('confirm_payment');
       case 'preparing_shipment':
         return getTranslation('preparing_shipment');
       case 'shipped':
         return getTranslation('shipped');
+      case 'delivered':
+        return getTranslation('delivered');
       case 'cancelled':
         return getTranslation('cancelled');
       default:
         return getTranslation('unknown_status');
     }
+  }
+
+  bool get _shouldShowPrintSlipButton {
+    final rawStatus = orderController.order.value?.status;
+    return rawStatus == 'confirm_payment' || rawStatus == 'preparing_shipment' || rawStatus == 'shipped' || rawStatus == 'delivered';
   }
 
   // Format date from API
@@ -393,7 +412,11 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [Icon(Icons.receipt_outlined, size: 64, color: Colors.grey), SizedBox(height: 16), Text('ไม่พบข้อมูลออเดอร์', style: TextStyle(fontSize: 18, color: Colors.grey))],
+                children: [
+                  Icon(Icons.receipt_outlined, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text('ไม่พบข้อมูลออเดอร์', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                ],
               ),
             ),
           );
@@ -406,6 +429,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                 child: ListView(
                   padding: EdgeInsets.all(16),
                   children: [
+                    if (_shouldShowPrintSlipButton) ...[_buildPrintSlipButton(), const SizedBox(height: 12)],
                     orderStatus == 'สำเร็จ'
                         ? Container(
                           width: double.infinity,
@@ -415,7 +439,12 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                             children: const [
                               Icon(Icons.warning_amber_rounded, color: Color(0xFFFFC107)),
                               SizedBox(width: 8),
-                              Expanded(child: Text('เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ', style: TextStyle(fontSize: 13, color: Colors.black87))),
+                              Expanded(
+                                child: Text(
+                                  'เอกสารจะจัดส่งให้ทางไลน์ภายใน 24 ชั่วโมง\nหลังจากชำระเงินสำเร็จ',
+                                  style: TextStyle(fontSize: 13, color: Colors.black87),
+                                ),
+                              ),
                             ],
                           ),
                         )
@@ -457,7 +486,10 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(productList.first.product_store_type ?? '1688', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kTextTitleHeadColor)),
+                                Text(
+                                  productList.first.product_store_type ?? '1688',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kTextTitleHeadColor),
+                                ),
                                 Text(() {
                                   // เช็คข้อมูล add_on_service อย่างปลอดภัย
                                   final orderLists = orderController.order.value?.order_lists;
@@ -479,7 +511,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                               children: [
                                 Builder(
                                   builder: (context) {
-                                    final exchangeRate = double.tryParse(orderController.order.value?.exchange_rate ?? depositOrderRate.toString()) ?? depositOrderRate;
+                                    final exchangeRate =
+                                        double.tryParse(orderController.order.value?.exchange_rate ?? depositOrderRate.toString()) ??
+                                        depositOrderRate;
                                     final chinaShippingFee = double.tryParse(orderController.order.value?.china_shipping_fee ?? '0') ?? 0.0;
                                     final chinaShippingBaht = chinaShippingFee * exchangeRate;
 
@@ -497,7 +531,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                             ...productList.asMap().entries.map((entry) {
                               final index = entry.key;
                               final product = entry.value;
-                              return Column(children: [_buildProductItemFromTrack(product), if (index < productList.length - 1) const SizedBox(height: 12)]);
+                              return Column(
+                                children: [_buildProductItemFromTrack(product), if (index < productList.length - 1) const SizedBox(height: 12)],
+                              );
                             }),
                           ],
                         ),
@@ -524,6 +560,34 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildPrintSlipButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          final order = orderController.order.value;
+          if (order == null) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PrintSlipPreviewPage(order: order, statusText: orderStatus),
+            ),
+          );
+        },
+        icon: Image.asset('assets/icons/print-icon.png', width: 20, height: 20),
+        label: Text(getTranslation('print_slip'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          side: BorderSide(color: Colors.grey.shade300),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
     );
   }
 
@@ -567,7 +631,12 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
               // แสดงชื่อสินค้าที่แปลแล้ว (ถ้ามี)
               if (translatedProductName.isNotEmpty) ...[
                 const SizedBox(height: 2),
-                Text(translatedProductName, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: Colors.blue.shade700, fontWeight: FontWeight.w500)),
+                Text(
+                  translatedProductName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700, fontWeight: FontWeight.w500),
+                ),
               ],
               const SizedBox(height: 4),
               // แสดง options ถ้ามี
@@ -632,7 +701,11 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       padding: EdgeInsets.symmetric(vertical: 3),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(color: filled ? kCicleSelectedColor : Colors.transparent, border: Border.all(color: kCicleSelectedColor), borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(
+          color: filled ? kCicleSelectedColor : Colors.transparent,
+          border: Border.all(color: kCicleSelectedColor),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Text(text, style: const TextStyle(fontSize: 14, color: Colors.black)),
       ),
     );
@@ -675,7 +748,10 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
             _buildPriceRow(getTranslation('china_shipping'), '0.00฿'),
 
           // Deposit fee
-          if (depositFee > 0) _buildPriceRow(getTranslation('deposit_fee'), ' (${depositFee.toStringAsFixed(2)}฿)') else _buildPriceRow(getTranslation('deposit_fee'), '0.00฿'),
+          if (depositFee > 0)
+            _buildPriceRow(getTranslation('deposit_fee'), ' (${depositFee.toStringAsFixed(2)}฿)')
+          else
+            _buildPriceRow(getTranslation('deposit_fee'), '0.00฿'),
 
           // Service fee
           // _buildPriceRow(getTranslation('service_fee'), '${serviceFee.toStringAsFixed(2)}฿'),
@@ -714,7 +790,11 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         Text(getTranslation('additional_info'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
 
-        if (order?.shipping_type != null) _buildPriceRow(getTranslation('shipping_type_text'), order!.shipping_type! == 'Ship' ? getTranslation('by_ship') : getTranslation('by_truck')),
+        if (order?.shipping_type != null)
+          _buildPriceRow(
+            getTranslation('shipping_type_text'),
+            order!.shipping_type! == 'Ship' ? getTranslation('by_ship') : getTranslation('by_truck'),
+          ),
 
         if (order?.created_at != null) _buildPriceRow(getTranslation('order_created_date'), _formatDate(order!.created_at.toString())),
 
@@ -863,7 +943,12 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
       return ElevatedButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => PaymentMethodPage(totalPrice: priceWithVat, ref_no: orderCode, orderType: 'order', vat: needVatReceipt)));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PaymentMethodPage(totalPrice: priceWithVat, ref_no: orderCode, orderType: 'order', vat: needVatReceipt),
+            ),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: kButtonColor,
@@ -980,7 +1065,10 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Align(alignment: Alignment.centerRight, child: Text('${_reasonController.text.length}/200', style: const TextStyle(fontSize: 12, color: Colors.grey))),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text('${_reasonController.text.length}/200', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    ),
                     const SizedBox(height: 16),
 
                     // 🔹 ปุ่มบันทึก

@@ -41,6 +41,10 @@
 	<string>อนุญาตเข้าถึงตำแหน่ง เพื่อกำหนดที่ตั้งร้านของคุณ</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
