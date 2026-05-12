@@ -700,7 +700,7 @@ class _AccountPageState extends State<AccountPage> {
 
                     SizedBox(height: 20),
                     Center(
-                      child: Text('Ver.1.0.32', style: TextStyle(fontSize: 15, color: Colors.grey)),
+                      child: Text('Ver.1.0.33', style: TextStyle(fontSize: 15, color: Colors.grey)),
                     ),
                     SizedBox(height: 20),
                   ],
