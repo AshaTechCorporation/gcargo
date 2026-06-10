@@ -1,5 +1,4 @@
 import 'package:gcargo/constants.dart';
-import 'package:gcargo/models/bill.dart';
 import 'package:gcargo/models/legalimport.dart';
 import 'package:gcargo/models/orders/ordersPage.dart';
 import 'package:gcargo/models/wallettrans.dart';
@@ -15,7 +14,10 @@ class OrderService {
   static Future<List<OrdersPage>> geTrackOrders() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/public/api/get_orders_by_member/$userID');
+    final url = Uri.https(
+      publicUrl,
+      '/public/api/get_orders_by_member/$userID',
+    );
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -45,7 +47,11 @@ class OrderService {
   }
 
   //ยกเลิกออเดอร์ เปลี่ยนสถานะ
-  static Future updateStatusOrder({String? status, String? remark_cancel, List<int>? orders}) async {
+  static Future updateStatusOrder({
+    String? status,
+    String? remark_cancel,
+    List<int>? orders,
+  }) async {
     final url = Uri.https(publicUrl, '/public/api/update_status_order');
     var headers = {'Content-Type': 'application/json'};
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -70,7 +76,16 @@ class OrderService {
   }
 
   //ชำระเงิน
-  static Future paymentOrder({String? payment_type, String? ref_no, String? date, double? total_price, String? note, String? image, String? order_type, bool? vat}) async {
+  static Future paymentOrder({
+    String? payment_type,
+    String? ref_no,
+    String? date,
+    double? total_price,
+    String? note,
+    String? image,
+    String? order_type,
+    bool? vat,
+  }) async {
     final url = Uri.https(publicUrl, '/public/api/payment_order');
     var headers = {'Content-Type': 'application/json'};
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -101,7 +116,13 @@ class OrderService {
   }
 
   //ชำระเงินหลานรายการ
-  static Future paymentOrderMultiple({String? payment_type, double? total_price, String? order_type, List<Map<String, dynamic>>? item, bool? vat}) async {
+  static Future paymentOrderMultiple({
+    String? payment_type,
+    double? total_price,
+    String? order_type,
+    List<Map<String, dynamic>>? item,
+    bool? vat,
+  }) async {
     final url = Uri.https(publicUrl, '/public/api/payment_order_multi');
     var headers = {'Content-Type': 'application/json'};
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -109,7 +130,14 @@ class OrderService {
     final response = await http.post(
       url,
       headers: headers,
-      body: convert.jsonEncode({'payment_type': payment_type, 'member_id': userID.toString(), 'order_type': order_type, 'items': item, 'vat': vat == true ? 'Y' : 'N', 'total_price': total_price}),
+      body: convert.jsonEncode({
+        'payment_type': payment_type,
+        'member_id': userID.toString(),
+        'order_type': order_type,
+        'items': item,
+        'vat': vat == true ? 'Y' : 'N',
+        'total_price': total_price,
+      }),
     );
 
     if (response.statusCode == 200) {
@@ -127,7 +155,10 @@ class OrderService {
     final token = prefs.getString('token');
     print(token);
     final userID = prefs.getInt('userID');
-    var headers = {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'};
+    var headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
     final url = Uri.https(publicUrl, '/public/api/get_wallet_trans/$userID');
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -135,10 +166,12 @@ class OrderService {
       final list = data['data'] as List;
 
       // Convert to WalletTrans objects
-      List<WalletTrans> walletTransList = list.map((e) => WalletTrans.fromJson(e)).toList();
+      List<WalletTrans> walletTransList =
+          list.map((e) => WalletTrans.fromJson(e)).toList();
 
       // Filter by userID and get only the latest one
-      List<WalletTrans> filteredList = walletTransList.where((trans) => trans.member_id == userID).toList();
+      List<WalletTrans> filteredList =
+          walletTransList.where((trans) => trans.member_id == userID).toList();
 
       // แยกตาม type "I" (เงินเข้า) และ "O" (เงินออก)
       if (filteredList.isNotEmpty) {
@@ -200,7 +233,10 @@ class OrderService {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userID = prefs.getInt('userID');
-    var headers = {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'};
+    var headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
     final url = Uri.https(publicUrl, '/public/api/get_wallet_trans_by_member');
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -217,7 +253,10 @@ class OrderService {
   static Future<List<LegalImport>> getDeliveryOrders() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
-    final url = Uri.https(publicUrl, '/public/api/get_delivery_orders_by_member/$userID');
+    final url = Uri.https(
+      publicUrl,
+      '/public/api/get_delivery_orders_by_member/$userID',
+    );
     var headers = {'Content-Type': 'application/json'};
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
@@ -247,7 +286,7 @@ class OrderService {
   }
 
   //รายการเปิดบิล
-  static Future<List<Bill>> getBills() async {
+  static Future<List<Map<String, dynamic>>> getBills() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
     final url = Uri.https(publicUrl, '/public/api/get_bill_by_member/$userID');
@@ -255,8 +294,12 @@ class OrderService {
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
-      final list = data['data'] as List;
-      return list.map((e) => Bill.fromJson(e)).toList();
+      final list = data['data'];
+      if (list is! List) return [];
+      return list
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);
@@ -264,7 +307,7 @@ class OrderService {
   }
 
   //บิลตามไอดี
-  static Future<Bill> getBillById({required int id}) async {
+  static Future<Map<String, dynamic>?> getBillById({required int id}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getInt('userID');
     final url = Uri.https(publicUrl, '/public/api/bills/$id');
@@ -272,7 +315,8 @@ class OrderService {
     final response = await http.get(headers: headers, url);
     if (response.statusCode == 200) {
       final data = convert.jsonDecode(response.body);
-      return Bill.fromJson(data['data']);
+      final bill = data['data'];
+      return bill is Map ? Map<String, dynamic>.from(bill) : null;
     } else {
       final data = convert.jsonDecode(response.body);
       throw ApiException(data['message']);

@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:flutter/scheduler.dart';
-import 'package:gcargo/models/bill.dart';
 import 'package:gcargo/models/legalimport.dart';
 import 'package:gcargo/models/wallettrans.dart';
 import 'package:get/get.dart';
@@ -16,8 +15,8 @@ class OrderController extends GetxController {
   var deilveryOrders = <LegalImport>[].obs;
   var order = Rxn<OrdersPage>();
   var walletTrans = <WalletTrans>[].obs;
-  var billing = <Bill>[];
-  var billingById = Rxn<Bill>();
+  var billing = <Map<String, dynamic>>[];
+  var billingById = Rxn<Map<String, dynamic>>();
 
   @override
   void onInit() {

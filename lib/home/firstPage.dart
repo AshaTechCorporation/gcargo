@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gcargo/account/accountPage.dart';
 import 'package:gcargo/bill/orderHistoryPage.dart';
+import 'package:gcargo/bill/shippingBillPage.dart';
 import 'package:gcargo/bill/transportCostPage.dart';
 import 'package:gcargo/home/homePage.dart';
 import 'package:gcargo/constants.dart';
@@ -72,6 +73,7 @@ class _FirstPageState extends State<FirstPage> {
         'parcel_status': 'พัสดุ',
         'exchange_status': 'แลกเปลี่ยน',
         'problem_package': 'แจ้งเคลม',
+        'shipping_bill': 'บิลค่าขนส่ง',
         'product_history': 'ประวัติค่าสินค้า',
         'transport_cost': 'ประวัติค่าขนส่ง',
       },
@@ -80,6 +82,7 @@ class _FirstPageState extends State<FirstPage> {
         'parcel_status': 'Parcel',
         'exchange_status': 'Exchange',
         'problem_package': 'Report Issue',
+        'shipping_bill': 'Shipping Bill',
         'product_history': 'Product History',
         'transport_cost': 'Shipping History',
       },
@@ -88,6 +91,7 @@ class _FirstPageState extends State<FirstPage> {
         'parcel_status': '包裹',
         'exchange_status': '换汇',
         'problem_package': '报告问题',
+        'shipping_bill': '运费账单',
         'product_history': '商品历史',
         'transport_cost': '运费历史',
       },
@@ -171,7 +175,7 @@ class _FirstPageState extends State<FirstPage> {
     );
   }
 
-  Widget _billActionItem({required String icon, required String label, required bool isSelected, required VoidCallback onTap, required Size size}) {
+  Widget _billActionItem({required String icon, required String label, required bool isSelected, required VoidCallback onTap}) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -183,31 +187,32 @@ class _FirstPageState extends State<FirstPage> {
           children: [
             const SizedBox(height: 4),
 
-            // ปุ่มเต็ม (พื้น + ไอคอน + ข้อความ)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: isPhone(context) ? 12 : 18, vertical: isPhone(context) ? 10 : 16),
-              width: isPhone(context) ? size.width * 0.4 : size.width * 0.4,
+              width: double.infinity,
+              constraints: BoxConstraints(minHeight: isPhone(context) ? 96 : 116),
+              padding: EdgeInsets.symmetric(horizontal: isPhone(context) ? 6 : 12, vertical: isPhone(context) ? 10 : 16),
               decoration: BoxDecoration(
                 color: isSelected ? const Color(0xFFE9F7EF) : const Color(0xFFF0F4FA),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Row(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // ไอคอนวงกลม
                   Container(
                     width: isPhone(context) ? 36 : 42,
                     height: isPhone(context) ? 36 : 42,
                     decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
                     child: Center(child: Image.asset(icon, width: isPhone(context) ? 20 : 25, height: isPhone(context) ? 20 : 25)),
                   ),
-                  const SizedBox(width: 8),
-                  // ข้อความ
+                  const SizedBox(height: 8),
                   Text(
                     label,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: isPhone(context) ? 14 : 18,
+                      fontSize: isPhone(context) ? 12 : 16,
                       fontWeight: FontWeight.w600,
                       color: isSelected ? const Color(0xFF6BD08B) : Colors.black,
                     ),
@@ -244,7 +249,6 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
       extendBody: true,
       body: Stack(
@@ -350,10 +354,20 @@ class _FirstPageState extends State<FirstPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _billActionItem(
+                        icon: 'assets/icons/document-text.png',
+                        label: getStatusTranslation('shipping_bill'),
+                        isSelected: false,
+                        onTap: () {
+                          setState(() {
+                            _showBillPanel = false;
+                          });
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ShippingBillPage()));
+                        },
+                      ),
+                      _billActionItem(
                         icon: 'assets/icons/task-square.png',
                         label: getStatusTranslation('product_history'),
                         isSelected: false,
-                        size: size,
                         onTap: () {
                           setState(() {
                             _showBillPanel = false;
@@ -365,7 +379,6 @@ class _FirstPageState extends State<FirstPage> {
                         icon: 'assets/icons/menu-board.png',
                         label: getStatusTranslation('transport_cost'),
                         isSelected: true,
-                        size: size,
                         onTap: () {
                           setState(() {
                             _showBillPanel = false;

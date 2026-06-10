@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gcargo/bill/documentDetailPage.dart';
+import 'package:gcargo/bill/transportCostDetailPage.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/language_controller.dart';
 import 'package:gcargo/controllers/order_controller.dart';
-import 'package:gcargo/parcel/widgets/date_range_picker_widget.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -59,7 +58,8 @@ class _TransportCostPageState extends State<TransportCostPage> {
         'search_document': 'Search Document Number',
         'no_documents_found': 'No Documents Found',
         'no_documents_status': 'No documents in status',
-        'documents_will_show_here': 'When there are documents, they will appear here',
+        'documents_will_show_here':
+            'When there are documents, they will appear here',
         'document_number': 'Document Number',
         'amount': 'Amount',
         'status': 'Status',
@@ -149,12 +149,19 @@ class _TransportCostPageState extends State<TransportCostPage> {
           backgroundColor: Colors.grey.shade50,
           appBar: AppBar(
             backgroundColor: Colors.grey.shade50,
-            title: Text(getTranslation('transport_cost'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            title: Text(
+              getTranslation('transport_cost'),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [CircularProgressIndicator(), SizedBox(height: 16), Text(getTranslation('loading'))],
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text(getTranslation('loading')),
+              ],
             ),
           ),
         );
@@ -164,16 +171,21 @@ class _TransportCostPageState extends State<TransportCostPage> {
       final displayOrders = <Map<String, dynamic>>[];
       for (var bill in orderController.billing) {
         displayOrders.add({
-          'id': bill.id ?? 0, // เพิ่ม id สำหรับส่งไป detail page
-          'date': _formatDate(bill.in_thai_date ?? bill.created_at?.toString()),
-          'docNo': bill.code ?? '',
-          'status': _getStatusText(bill.status),
-          'amount': double.tryParse(bill.total_amount ?? '0') ?? 0.0,
+          'id': _toInt(bill['id']),
+          'date': _formatDate(
+            (bill['in_thai_date'] ?? bill['created_at'])?.toString(),
+          ),
+          'docNo': bill['code']?.toString() ?? '',
+          'status': _getStatusText(bill['status']?.toString()),
+          'amount': _toDouble(bill['total_amount']),
         });
       }
 
-      // ✅ กรองตามสถานะและวันที่
-      var filteredData = selectedStatus == 'all' ? displayOrders : displayOrders.where((e) => e['status'] == getTranslation(selectedStatus)).toList();
+      // ✅ แสดงเฉพาะรายการที่สำเร็จแล้ว
+      var filteredData =
+          displayOrders
+              .where((e) => e['status'] == getTranslation('completed'))
+              .toList();
 
       // กรองตามช่วงวันที่
       if (startDate != null && endDate != null) {
@@ -184,20 +196,29 @@ class _TransportCostPageState extends State<TransportCostPage> {
 
               try {
                 final itemDate = DateFormat('dd/MM/yyyy').parse(itemDateStr);
-                final startOfDay = DateTime(startDate!.year, startDate!.month, startDate!.day);
-                final endOfDay = DateTime(endDate!.year, endDate!.month, endDate!.day, 23, 59, 59);
+                final startOfDay = DateTime(
+                  startDate!.year,
+                  startDate!.month,
+                  startDate!.day,
+                );
+                final endOfDay = DateTime(
+                  endDate!.year,
+                  endDate!.month,
+                  endDate!.day,
+                  23,
+                  59,
+                  59,
+                );
 
-                return itemDate.isAfter(startOfDay.subtract(const Duration(days: 1))) && itemDate.isBefore(endOfDay.add(const Duration(days: 1)));
+                return itemDate.isAfter(
+                      startOfDay.subtract(const Duration(days: 1)),
+                    ) &&
+                    itemDate.isBefore(endOfDay.add(const Duration(days: 1)));
               } catch (e) {
                 return false;
               }
             }).toList();
       }
-
-      // ✅ นับแต่ละสถานะ (เหลือ 3 สถานะ)
-      final int totalCount = displayOrders.length;
-      final int pendingCount = displayOrders.where((e) => e['status'] == getTranslation('processing')).length;
-      final int successCount = displayOrders.where((e) => e['status'] == getTranslation('completed')).length;
 
       return Scaffold(
         backgroundColor: Colors.white,
@@ -208,7 +229,14 @@ class _TransportCostPageState extends State<TransportCostPage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(getTranslation('transport_cost'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+              Text(
+                getTranslation('transport_cost'),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
               SizedBox(width: 20),
               Expanded(
                 child: TextFormField(
@@ -219,20 +247,35 @@ class _TransportCostPageState extends State<TransportCostPage> {
                       context: context,
                       firstDate: DateTime(2023),
                       lastDate: DateTime(2030),
-                      initialDateRange: DateTimeRange(start: DateTime(2024, 1, 1), end: DateTime(2025, 7, 1)),
+                      initialDateRange: DateTimeRange(
+                        start: DateTime(2024, 1, 1),
+                        end: DateTime(2025, 7, 1),
+                      ),
                     );
                     if (picked != null) {
-                      String formatted = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
+                      String formatted =
+                          '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
                       setState(() {
                         _dateController.text = formatted;
                       });
                     }
                   },
                   decoration: InputDecoration(
-                    prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 18)),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Image.asset(
+                        'assets/icons/calendar_icon.png',
+                        width: 18,
+                      ),
+                    ),
                     hintText: getTranslation('select_date_range'),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     filled: true,
                     fillColor: Colors.white,
                   ),
@@ -240,7 +283,10 @@ class _TransportCostPageState extends State<TransportCostPage> {
               ),
             ],
           ),
-          leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black), onPressed: () => Navigator.pop(context)),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
         body: SafeArea(
           child: Column(
@@ -298,30 +344,44 @@ class _TransportCostPageState extends State<TransportCostPage> {
                         decoration: InputDecoration(
                           hintText: getTranslation('search_document'),
                           hintStyle: const TextStyle(color: Colors.grey),
-                          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: Colors.grey,
+                          ),
                           filled: true,
                           fillColor: Colors.grey.shade100,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 0,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
 
                       // 🔹 Filter Chips
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _buildChip(getTranslation('all'), 'all', count: totalCount),
-                            _buildChip(getTranslation('processing'), 'processing', count: pendingCount),
-                            _buildChip(getTranslation('completed'), 'completed', count: successCount),
-                          ],
-                        ),
-                      ),
+                      // SingleChildScrollView(
+                      //   scrollDirection: Axis.horizontal,
+                      //   child: Row(
+                      //     children: [
+                      //       _buildChip(getTranslation('all'), 'all', count: totalCount),
+                      //       _buildChip(getTranslation('processing'), 'processing', count: pendingCount),
+                      //       _buildChip(getTranslation('completed'), 'completed', count: successCount),
+                      //     ],
+                      //   ),
+                      // ),
+                      // const SizedBox(height: 20),
                       const SizedBox(height: 20),
                       // 🔹 Group by date
                       if (filteredData.isEmpty)
-                        Center(child: Text(getTranslation('no_documents_found'), style: TextStyle(fontSize: 16, color: Colors.grey)))
+                        Center(
+                          child: Text(
+                            getTranslation('no_documents_found'),
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        )
                       else
                         ..._buildGroupedList(filteredData),
                     ],
@@ -335,6 +395,7 @@ class _TransportCostPageState extends State<TransportCostPage> {
     }); // ปิด Obx
   }
 
+  // ignore: unused_element
   Widget _buildChip(String label, String statusKey, {int? count}) {
     final bool selected = selectedStatus == statusKey;
 
@@ -348,23 +409,42 @@ class _TransportCostPageState extends State<TransportCostPage> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         margin: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
-          color: selected ? kBackgroundTextColor.withOpacity(0.1) : Colors.white,
+          color:
+              selected
+                  ? kBackgroundTextColor.withValues(alpha: 0.1)
+                  : Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? kBackgroundTextColor : Colors.grey.shade300),
+          border: Border.all(
+            color: selected ? kBackgroundTextColor : Colors.grey.shade300,
+          ),
         ),
         child: Row(
           children: [
             Text(
               label,
-              style: TextStyle(color: selected ? kBackgroundTextColor : Colors.black, fontWeight: selected ? FontWeight.bold : FontWeight.normal),
+              style: TextStyle(
+                color: selected ? kBackgroundTextColor : Colors.black,
+                fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
             if (count != null) ...[
               const SizedBox(width: 6),
               Container(
                 width: 25,
                 height: 25,
-                decoration: BoxDecoration(color: selected ? kCicleColor : Colors.grey.shade300, shape: BoxShape.circle),
-                child: Center(child: Text('$count', style: TextStyle(fontSize: 12, color: selected ? Colors.white : Colors.black))),
+                decoration: BoxDecoration(
+                  color: selected ? kCicleColor : Colors.grey.shade300,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '$count',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: selected ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
               ),
             ],
           ],
@@ -407,7 +487,16 @@ class _TransportCostPageState extends State<TransportCostPage> {
 
     return InkWell(
       onTap: () {
-        //Navigator.push(context, MaterialPageRoute(builder: (_) => TransportCostDetailPage(paper_number: item['docNo'], billId: item['id'])));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => TransportCostDetailPage(
+                  paper_number: item['docNo'],
+                  billId: item['id'],
+                ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -415,19 +504,32 @@ class _TransportCostPageState extends State<TransportCostPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [BoxShadow(color: Colors.black12.withValues(alpha: 0.03), blurRadius: 4, offset: const Offset(0, 2))],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12.withValues(alpha: 0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Image.asset('assets/icons/menu-board-blue.png', width: 24, height: 24),
+                Image.asset(
+                  'assets/icons/menu-board-blue.png',
+                  width: 24,
+                  height: 24,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '${getTranslation('document_number')} ${item['docNo']}',
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
                 Text(
@@ -451,13 +553,30 @@ class _TransportCostPageState extends State<TransportCostPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(getTranslation('china_thailand_transport'), style: TextStyle(color: Colors.grey, fontSize: 13)),
-                Text('${item['amount'].toStringAsFixed(2)} ${getTranslation('baht')}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                Text(
+                  getTranslation('china_thailand_transport'),
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                Text(
+                  '${item['amount'].toStringAsFixed(2)} ${getTranslation('baht')}',
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  double _toDouble(dynamic value) {
+    if (value is num) return value.toDouble();
+    return double.tryParse(value?.toString() ?? '') ?? 0.0;
   }
 }

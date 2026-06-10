@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gcargo/bill/orderDetailPage.dart';
 import 'package:gcargo/constants.dart';
 import 'package:gcargo/controllers/language_controller.dart';
+import 'package:gcargo/controllers/order_controller.dart';
+import 'package:gcargo/parcel/detailOrderPage.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -14,8 +15,12 @@ class OrderHistoryPage extends StatefulWidget {
 
 class _OrderHistoryPageState extends State<OrderHistoryPage> {
   late LanguageController languageController;
-  String selectedStatus = 'all';
-  final TextEditingController _dateController = TextEditingController(text: '1/01/2024 - 01/07/2025');
+  late final OrderController orderController;
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  DateTime? startDate;
+  DateTime? endDate;
+  String searchQuery = '';
 
   String getTranslation(String key) {
     final currentLang = languageController.currentLanguage.value;
@@ -37,6 +42,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         'type': 'ประเภท',
         'general_type': 'แบบทั่วไป',
         'special_type': 'แบบพิเศษ',
+        'by_sea': 'ทางเรือ',
+        'by_land': 'ทางรถ',
         'note': 'หมายเหตุ',
         'no_note': 'ไม่มีหมายเหตุ',
         'view_details': 'ดูรายละเอียด',
@@ -61,6 +68,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         'type': 'Type',
         'general_type': 'General',
         'special_type': 'Special',
+        'by_sea': 'By Sea',
+        'by_land': 'By Land',
         'note': 'Note',
         'no_note': 'No Note',
         'view_details': 'View Details',
@@ -85,6 +94,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         'type': '类型',
         'general_type': '普通',
         'special_type': '特殊',
+        'by_sea': '海运',
+        'by_land': '陆运',
         'note': '备注',
         'no_note': '无备注',
         'view_details': '查看详情',
@@ -102,17 +113,18 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   void initState() {
     super.initState();
     languageController = Get.find<LanguageController>();
+    orderController = Get.isRegistered<OrderController>() ? Get.find<OrderController>() : Get.put(OrderController());
+    _dateController.text = getTranslation('select_date_range');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      orderController.getOrders();
+    });
   }
 
-  String _getTypeTranslation(String type) {
-    switch (type) {
-      case 'แบบทั่วไป':
-        return getTranslation('general_type');
-      case 'แบบพิเศษ':
-        return getTranslation('special_type');
-      default:
-        return type;
-    }
+  @override
+  void dispose() {
+    _dateController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   String _getNoteTranslation(String note) {
@@ -124,15 +136,172 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     }
   }
 
-  final List<Map<String, dynamic>> allOrders = [
-    // {'date': '01/07/2025', 'code': '00001', 'status': 'สำเร็จ', 'total': 550.00, 'box': 2, 'type': 'แบบทั่วไป', 'note': 'ทดสอบระบบ'},
-    // {'date': '30/06/2025', 'code': '00002', 'status': 'ยกเลิก', 'total': 230.00, 'box': 1, 'type': 'แบบพิเศษ', 'note': 'ไม่มีหมายเหตุ'},
-  ];
+  bool _isCompletedStatus(String? status) {
+    return ['shipped', 'completed', 'delivered', 'success', 'paid'].contains(status);
+  }
+
+  String _getShippingTypeText(String? shippingType) {
+    switch (shippingType) {
+      case 'car':
+        return getTranslation('by_land');
+      case 'ship':
+        return getTranslation('by_sea');
+      default:
+        return shippingType ?? '-';
+    }
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return '';
+    try {
+      return DateFormat('dd/MM/yyyy').format(DateTime.parse(dateString));
+    } catch (e) {
+      return dateString;
+    }
+  }
+
+  DateTime? _parseDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return null;
+    try {
+      return DateTime.parse(dateString);
+    } catch (e) {
+      try {
+        return DateFormat('dd/MM/yyyy').parse(dateString);
+      } catch (e2) {
+        return null;
+      }
+    }
+  }
+
+  int _getBoxCount(dynamic order) {
+    final deliveryLists = order.delivery_order_lists;
+    if (deliveryLists != null && deliveryLists.isNotEmpty) {
+      return deliveryLists.length;
+    }
+    final orderLists = order.order_lists;
+    if (orderLists != null && orderLists.isNotEmpty) return orderLists.length;
+    return 0;
+  }
+
+  List<Map<String, dynamic>> _buildCompletedOrders() {
+    final displayOrders = <Map<String, dynamic>>[];
+
+    for (final parentOrder in orderController.orders) {
+      final nestedOrders = parentOrder.orders;
+      if (nestedOrders == null || nestedOrders.isEmpty) continue;
+
+      for (final nestedOrder in nestedOrders) {
+        if (!_isCompletedStatus(nestedOrder.status)) continue;
+
+        displayOrders.add({
+          'date': _formatDate(nestedOrder.date),
+          'rawDate': nestedOrder.date ?? '',
+          'status': getTranslation('completed'),
+          'code': nestedOrder.code ?? '',
+          'total': double.tryParse(nestedOrder.total_price ?? '0') ?? 0.0,
+          'box': _getBoxCount(nestedOrder),
+          'type': _getShippingTypeText(nestedOrder.shipping_type),
+          'note': (nestedOrder.note?.trim().isNotEmpty ?? false) ? nestedOrder.note! : getTranslation('no_note'),
+          'orderId': nestedOrder.id ?? 0,
+        });
+      }
+    }
+
+    if (searchQuery.isNotEmpty) {
+      final query = searchQuery.toLowerCase();
+      displayOrders.removeWhere((order) => !(order['code']?.toString().toLowerCase().contains(query) ?? false));
+    }
+
+    if (startDate != null && endDate != null) {
+      displayOrders.removeWhere((order) {
+        final orderDate = _parseDate(order['rawDate']?.toString());
+        if (orderDate == null) return true;
+        final startOfDay = DateTime(startDate!.year, startDate!.month, startDate!.day);
+        final endOfDay = DateTime(endDate!.year, endDate!.month, endDate!.day, 23, 59, 59);
+        return !(orderDate.isAfter(startOfDay.subtract(const Duration(days: 1))) && orderDate.isBefore(endOfDay.add(const Duration(days: 1))));
+      });
+    }
+
+    displayOrders.sort((a, b) {
+      final aDate = _parseDate(a['rawDate']?.toString()) ?? DateTime(1900);
+      final bDate = _parseDate(b['rawDate']?.toString()) ?? DateTime(1900);
+      return bDate.compareTo(aDate);
+    });
+
+    return displayOrders;
+  }
+
+  Map<String, List<Map<String, dynamic>>> _groupOrdersByDate(List<Map<String, dynamic>> orders) {
+    final grouped = <String, List<Map<String, dynamic>>>{};
+    for (final order in orders) {
+      grouped.putIfAbsent(order['date']?.toString() ?? '', () => []).add(order);
+    }
+    return grouped;
+  }
+
+  Future<void> _selectDateRange() async {
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: startDate != null && endDate != null ? DateTimeRange(start: startDate!, end: endDate!) : null,
+    );
+
+    if (picked == null) return;
+
+    setState(() {
+      startDate = picked.start;
+      endDate = picked.end;
+      _dateController.text = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
+    });
+  }
+
+  void _performSearch() {
+    setState(() {
+      searchQuery = _searchController.text.trim();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final filteredOrders = selectedStatus == 'all' ? allOrders : allOrders.where((o) => o['status'] == getTranslation(selectedStatus)).toList();
+      if (orderController.isLoading.value) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF7F7F7),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.black),
+            title: Text(getTranslation('order_history'), style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (orderController.hasError.value) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF7F7F7),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.black),
+            title: Text(getTranslation('order_history'), style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(orderController.errorMessage.value, textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 16),
+                ElevatedButton(onPressed: orderController.getOrders, child: Text(getTranslation('try_again'))),
+              ],
+            ),
+          ),
+        );
+      }
+
+      final filteredOrders = _buildCompletedOrders();
+      final groupedOrders = _groupOrdersByDate(filteredOrders);
 
       return Scaffold(
         backgroundColor: const Color(0xFFF7F7F7),
@@ -149,20 +318,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                 child: TextFormField(
                   controller: _dateController,
                   readOnly: true,
-                  onTap: () async {
-                    DateTimeRange? picked = await showDateRangePicker(
-                      context: context,
-                      firstDate: DateTime(2023),
-                      lastDate: DateTime(2030),
-                      initialDateRange: DateTimeRange(start: DateTime(2024, 1, 1), end: DateTime(2025, 7, 1)),
-                    );
-                    if (picked != null) {
-                      String formatted = '${DateFormat('dd/MM/yyyy').format(picked.start)} - ${DateFormat('dd/MM/yyyy').format(picked.end)}';
-                      setState(() {
-                        _dateController.text = formatted;
-                      });
-                    }
-                  },
+                  onTap: _selectDateRange,
                   decoration: InputDecoration(
                     prefixIcon: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/icons/calendar_icon.png', width: 18)),
                     hintText: getTranslation('select_date_range'),
@@ -182,46 +338,48 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           child: Column(
             children: [
               // 🔎 Search
-              Container(
-                height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(color: const Color(0xFFF2F2F2), borderRadius: BorderRadius.circular(10)),
-                child: Row(
-                  children: [
-                    Icon(Icons.search, size: 20, color: Colors.grey),
-                    SizedBox(width: 8),
-                    Text(getTranslation('search_order_number'), style: TextStyle(color: Colors.grey)),
-                  ],
+              TextField(
+                controller: _searchController,
+                onSubmitted: (_) => _performSearch(),
+                decoration: InputDecoration(
+                  hintText: getTranslation('search_order_number'),
+                  filled: true,
+                  fillColor: const Color(0xFFF2F2F2),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  suffixIcon: IconButton(icon: Icon(Icons.search, color: kButtonColor), onPressed: _performSearch),
                 ),
               ),
               const SizedBox(height: 12),
 
               // 🟢 Status filter
-              Row(
-                children: [
-                  _buildStatusChip(getTranslation('all'), 'all', 0),
-                  const SizedBox(width: 8),
-                  _buildStatusChip(getTranslation('completed'), 'completed', 0),
-                  const SizedBox(width: 8),
-                  _buildStatusChip(getTranslation('cancelled'), 'cancelled', 0),
-                ],
-              ),
-              const SizedBox(height: 16),
+              // Row(
+              //   children: [
+              //     _buildStatusChip(getTranslation('completed'), 'completed', filteredOrders.length),
+              //   ],
+              // ),
+              // const SizedBox(height: 16),
 
               // 🧾 Order List
               if (filteredOrders.isEmpty)
                 Center(child: Text(getTranslation('no_orders_found'), style: TextStyle(fontSize: 16, color: Colors.grey)))
               else
-                ...filteredOrders.map((order) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(order['date'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      _buildOrderCard(order),
-                    ],
-                  );
-                }).toList(),
+                Expanded(
+                  child: ListView(
+                    children:
+                        groupedOrders.entries.map((entry) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(entry.key, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              ...entry.value.map(_buildOrderCard),
+                              const SizedBox(height: 16),
+                            ],
+                          );
+                        }).toList(),
+                  ),
+                ),
             ],
           ),
         ),
@@ -230,29 +388,25 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   }
 
   // 🔘 Status Chip Widget (ดีไซน์เหมือน OrderStatusPage)
-  Widget _buildStatusChip(String label, String statusKey, int count) {
-    final bool isSelected = selectedStatus == statusKey;
+  // ignore: unused_element
+  Widget _buildStatusChip(String label, int count) {
     return InkWell(
-      onTap: () => setState(() => selectedStatus = statusKey),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? kBackgroundTextColor.withOpacity(0.1) : Colors.white,
+          color: kBackgroundTextColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: isSelected ? kBackgroundTextColor : Colors.grey.shade300),
+          border: Border.all(color: kBackgroundTextColor),
         ),
         child: Row(
           children: [
-            Text(
-              label,
-              style: TextStyle(color: isSelected ? kBackgroundTextColor : Colors.black, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
-            ),
+            Text(label, style: const TextStyle(color: kBackgroundTextColor, fontWeight: FontWeight.bold)),
             const SizedBox(width: 6),
             Container(
               width: 25,
               height: 25,
-              decoration: BoxDecoration(color: isSelected ? kCicleColor : Colors.grey.shade300, shape: BoxShape.circle),
-              child: Center(child: Text('$count', style: TextStyle(fontSize: 12, color: isSelected ? Colors.white : Colors.black))),
+              decoration: const BoxDecoration(color: kCicleColor, shape: BoxShape.circle),
+              child: Center(child: Text('$count', style: const TextStyle(fontSize: 12, color: Colors.white))),
             ),
           ],
         ),
@@ -262,7 +416,11 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
 
   Widget _buildOrderCard(Map<String, dynamic> order) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OrderDetailPage(status: order['status']))),
+      onTap: () {
+        final orderId = order['orderId'] as int? ?? 0;
+        if (orderId <= 0) return;
+        Navigator.push(context, MaterialPageRoute(builder: (_) => DetailOrderPage(orderId: orderId)));
+      },
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 12),
@@ -307,7 +465,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             const SizedBox(height: 12),
 
             // 🔹 บรรทัด 2: จำนวนกล่อง
-            Text('${order['box']} ${getTranslation('boxes')} (${_getTypeTranslation(order['type'])})', style: const TextStyle(fontSize: 13)),
+            Text('${order['box']} ${getTranslation('boxes')} (${order['type']})', style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 6),
 
             // 🔹 บรรทัด 3: หมายเหตุ
