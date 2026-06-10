@@ -169,7 +169,8 @@ class _TransportCostPageState extends State<TransportCostPage> {
 
       // ใช้ API data จาก OrderController
       final displayOrders = <Map<String, dynamic>>[];
-      for (var bill in orderController.billing) {
+      for (var rawBill in orderController.billing) {
+        final bill = _asMap(rawBill);
         displayOrders.add({
           'id': _toInt(bill['id']),
           'date': _formatDate(
@@ -578,5 +579,15 @@ class _TransportCostPageState extends State<TransportCostPage> {
   double _toDouble(dynamic value) {
     if (value is num) return value.toDouble();
     return double.tryParse(value?.toString() ?? '') ?? 0.0;
+  }
+
+  Map<String, dynamic> _asMap(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) return Map<String, dynamic>.from(value);
+    try {
+      final json = value?.toJson();
+      if (json is Map) return Map<String, dynamic>.from(json);
+    } catch (_) {}
+    return {};
   }
 }

@@ -143,7 +143,8 @@ class _ShippingBillPageState extends State<ShippingBillPage> {
   }
 
   List<Map<String, dynamic>> _buildDisplayBills() {
-    return orderController.billing.map((bill) {
+    return orderController.billing.map((rawBill) {
+      final bill = _asMap(rawBill);
       final memberAddress = _asMap(bill['member_address']);
       final billLists = _asList(bill['bill_lists_grouped']);
       final firstBillList =
@@ -660,6 +661,10 @@ class _ShippingBillPageState extends State<ShippingBillPage> {
   Map<String, dynamic> _asMap(dynamic value) {
     if (value is Map<String, dynamic>) return value;
     if (value is Map) return Map<String, dynamic>.from(value);
+    try {
+      final json = value?.toJson();
+      if (json is Map) return Map<String, dynamic>.from(json);
+    } catch (_) {}
     return {};
   }
 

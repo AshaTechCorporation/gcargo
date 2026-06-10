@@ -93,8 +93,8 @@ class _TransportCostDetailPageState extends State<TransportCostDetailPage> {
           );
         }
 
-        final bill = orderController.billingById.value;
-        if (bill == null) {
+        final bill = _asMap(orderController.billingById.value);
+        if (bill.isEmpty) {
           return const Center(child: Text('ไม่พบข้อมูล'));
         }
 
@@ -369,8 +369,8 @@ class _TransportCostDetailPageState extends State<TransportCostDetailPage> {
   }
 
   List<Widget> _buildPaymentRows() {
-    final bill = orderController.billingById.value;
-    final payments = _asList(bill?['payment']);
+    final bill = _asMap(orderController.billingById.value);
+    final payments = _asList(bill['payment']);
     final firstPayment =
         payments.isNotEmpty ? _asMap(payments.first) : <String, dynamic>{};
     return [
@@ -386,8 +386,8 @@ class _TransportCostDetailPageState extends State<TransportCostDetailPage> {
   }
 
   List<Map<String, dynamic>> _buildBillRows() {
-    final bill = orderController.billingById.value;
-    if (bill == null) return [];
+    final bill = _asMap(orderController.billingById.value);
+    if (bill.isEmpty) return [];
 
     final poRows = _asList(bill['bill_po_lists']);
     if (poRows.isNotEmpty) {
@@ -478,6 +478,10 @@ class _TransportCostDetailPageState extends State<TransportCostDetailPage> {
   Map<String, dynamic> _asMap(dynamic value) {
     if (value is Map<String, dynamic>) return value;
     if (value is Map) return Map<String, dynamic>.from(value);
+    try {
+      final json = value?.toJson();
+      if (json is Map) return Map<String, dynamic>.from(json);
+    } catch (_) {}
     return {};
   }
 
@@ -509,9 +513,8 @@ class _TransportCostDetailPageState extends State<TransportCostDetailPage> {
   }
 
   String _formatAddress() {
-    final address = _asMap(
-      orderController.billingById.value?['member_address'],
-    );
+    final bill = _asMap(orderController.billingById.value);
+    final address = _asMap(bill['member_address']);
     if (address.isEmpty) return '-';
     return [
           address['address'],
@@ -525,7 +528,8 @@ class _TransportCostDetailPageState extends State<TransportCostDetailPage> {
   }
 
   String _rateLabel() {
-    final rate = orderController.billingById.value?['rate']?.toString();
+    final bill = _asMap(orderController.billingById.value);
+    final rate = bill['rate']?.toString();
     if (rate == null || rate.trim().isEmpty) return '';
     final typeMatch = RegExp(r'"type"\s*:\s*"([^"]+)"').firstMatch(rate);
     final priceMatch = RegExp(r'"rate_price"\s*:\s*([0-9.]+)').firstMatch(rate);

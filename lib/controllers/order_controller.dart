@@ -15,8 +15,8 @@ class OrderController extends GetxController {
   var deilveryOrders = <LegalImport>[].obs;
   var order = Rxn<OrdersPage>();
   var walletTrans = <WalletTrans>[].obs;
-  var billing = <Map<String, dynamic>>[];
-  var billingById = Rxn<Map<String, dynamic>>();
+  var billing = <dynamic>[];
+  var billingById = Rxn<dynamic>();
 
   @override
   void onInit() {
