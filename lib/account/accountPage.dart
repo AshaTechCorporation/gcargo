@@ -619,15 +619,15 @@ class _AccountPageState extends State<AccountPage> {
                     _buildSectionTitle(getTranslation('help_section')),
                     _buildMenuItem(
                       getTranslation('Account.contact_staff'),
-                      onTap: () {
-                        showQrDialog(
-                          context,
-                          handle: '@gcargo',
-                          //avatarUrl: 'https://i.pravatar.cc/150?img=12', // หรือ avatarAsset: 'assets/images/avatar.png'
-                          onDownload: () {
-                            // TODO: ทำฟังก์ชันบันทึกรูป/แชร์
-                          },
-                        );
+                      onTap: () async {
+                        try {
+                          final contact = await AccountService.getTegAboutUs();
+                          if (!context.mounted) return;
+                          await showQrDialog(context, line: contact.line ?? '', phone: contact.phone ?? '');
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ไม่สามารถโหลดข้อมูลติดต่อเจ้าหน้าที่ได้')));
+                        }
                       },
                     ),
                     _buildMenuItem(
