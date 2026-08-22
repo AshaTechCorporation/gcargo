@@ -720,7 +720,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     final exchangeRate = double.tryParse(order?.exchange_rate ?? depositOrderRate.toString()) ?? depositOrderRate;
     final chinaShippingFee = double.tryParse(order?.china_shipping_fee ?? '0') ?? 0.0;
     final depositFee = double.tryParse(order?.deposit_fee ?? '0') ?? 0.0;
-    final totalPriceFromAPI = double.tryParse(order?.total_price ?? '0') ?? 0.0;
+    final payableTotalBaht = _getPayableTotalBaht();
     final china_shipping_fee = order?.china_shipping_fee ?? '0';
 
     // Calculate additional fees
@@ -739,11 +739,11 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           const Divider(),
 
           // Product details
-          _buildPriceRow(getTranslation('product_total'), '¥${totalProductPrice.toStringAsFixed(2)} (${totalBahtPrice.toStringAsFixed(2)}฿)'),
+          _buildPriceRow(getTranslation('product_total'), '${totalBahtPrice.toStringAsFixed(2)}฿ (¥${totalProductPrice.toStringAsFixed(2)})'),
 
           // China shipping fee
           if (chinaShippingFee > 0)
-            _buildPriceRow(getTranslation('china_shipping'), '¥${chinaShippingFee.toStringAsFixed(2)} (${chinaShippingBaht.toStringAsFixed(2)}฿')
+            _buildPriceRow(getTranslation('china_shipping'), '${chinaShippingBaht.toStringAsFixed(2)}฿ (¥${chinaShippingFee.toStringAsFixed(2)})')
           else
             _buildPriceRow(getTranslation('china_shipping'), '0.00฿'),
 
@@ -766,8 +766,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           const Divider(),
 
           // Total from API vs calculated
-          if (totalPriceFromAPI > 0)
-            _buildPriceRow(getTranslation('total_amount'), '${totalPriceFromAPI.toStringAsFixed(2)}฿', isBold: true)
+          if (payableTotalBaht > 0)
+            _buildPriceRow(getTranslation('total_amount'), '${payableTotalBaht.toStringAsFixed(2)}฿', isBold: true)
           else
             _buildPriceRow(getTranslation('calculated_total'), '${totalWithFees.toStringAsFixed(2)}฿', isBold: true),
 
@@ -821,6 +821,19 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
   double _calculateTotalBahtPrice() {
     return _calculateTotalProductPrice() * depositOrderRate; // Use API exchange rate
+  }
+
+  double _getPayableTotalBaht() {
+    final rawTotal = double.tryParse(orderController.order.value?.total_price ?? '0') ?? 0.0;
+    final totalProductYuan = _calculateTotalProductPrice();
+
+    // บางสถานะ API ยังส่ง total_price เป็นหยวน หากยอดตรงกับยอดรวมสินค้า
+    // ให้แปลงเป็นบาท ส่วนยอดที่ระบบสรุปเป็นบาทแล้วให้ใช้ตามเดิมเพื่อไม่คูณเรทซ้ำ
+    if (rawTotal <= 0 || (rawTotal - totalProductYuan).abs() < 0.01) {
+      return _calculateTotalBahtPrice();
+    }
+
+    return rawTotal;
   }
 
   Widget _buildPriceRow(String label, String value, {bool isBold = false}) {
@@ -935,11 +948,11 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       //   child: Text(getTranslation('buy_again'), style: TextStyle(fontSize: 16)),
       // );
     } else if (status == 'awaiting_payment') {
-      // For "รอชำระเงิน" - show price button with API total
-      final totalPriceFromAPI = double.tryParse(orderController.order.value?.total_price ?? '0') ?? 0.0;
+      // For "รอชำระเงิน" - always display and submit the payable total in Baht
+      final totalPriceBaht = _getPayableTotalBaht();
 
       // คำนวณราคารวม VAT ถ้าเลือก
-      final priceWithVat = needVatReceipt ? totalPriceFromAPI * 1.07 : totalPriceFromAPI;
+      final priceWithVat = needVatReceipt ? totalPriceBaht * 1.07 : totalPriceBaht;
 
       return ElevatedButton(
         onPressed: () {
@@ -961,7 +974,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           children: [
             Text(getTranslation('total_amount'), style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
             SizedBox(width: 5),
-            if (priceWithVat > 0) Text(priceWithVat.toStringAsFixed(2), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+            if (priceWithVat > 0) Text('${priceWithVat.toStringAsFixed(2)}฿', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
           ],
         ),
       );

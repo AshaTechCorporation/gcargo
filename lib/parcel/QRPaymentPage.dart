@@ -102,18 +102,12 @@ class _QRPaymentPageState extends State<QRPaymentPage> {
     try {
       final accounts = await AccountService.getBankVerify();
       setState(() {
+        final expectedVat = widget.vat ? 'Y' : 'N';
         for (var i = 0; i < accounts.length; i++) {
-          // if (widget.vat == true) {
-          //   if (accounts[i]['vat'] == "Y") {
-          //     bankAccounts.add(accounts[i]);
-          //   }
-          // } else {
-          if (accounts[i]['vat'] == "N") {
+          if (accounts[i]['vat'] == expectedVat) {
             bankAccounts.add(accounts[i]);
           }
-          // }
         }
-        // bankAccounts = accounts;
         isLoadingBanks = false;
       });
     } catch (e) {
