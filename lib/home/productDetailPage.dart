@@ -1058,7 +1058,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       ),
                       Divider(height: 32),
 
-                      Text(getTranslation('size'), style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        productController.sizeOptionLabel == 'ขนาด/ไซส์'
+                            ? getTranslation('size')
+                            : productController.sizeOptionLabel,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(height: 8),
                       buildSizeSelector(),
 

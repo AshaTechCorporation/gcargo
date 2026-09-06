@@ -86,7 +86,11 @@ class ProductDetailController extends GetxController {
     return items.map((item) => item['title'] ?? '').join(separator);
   }
 
-  List<Map<String, dynamic>> applyTranslatedTitlesToItems(List<Map<String, dynamic>> originalItems, String translatedText, {String separator = '|||'}) {
+  List<Map<String, dynamic>> applyTranslatedTitlesToItems(
+    List<Map<String, dynamic>> originalItems,
+    String translatedText, {
+    String separator = '|||',
+  }) {
     final translatedTitles = translatedText.split(separator);
 
     return List.generate(originalItems.length, (i) {
@@ -102,7 +106,11 @@ class ProductDetailController extends GetxController {
     return items.map((item) => '${item['name'] ?? ''}:${item['value'] ?? ''}').join(separator);
   }
 
-  List<Map<String, dynamic>> applyTranslatedTitlesToItemsPops(List<Map<String, dynamic>> originalItems, String translatedText, {String separator = '|||'}) {
+  List<Map<String, dynamic>> applyTranslatedTitlesToItemsPops(
+    List<Map<String, dynamic>> originalItems,
+    String translatedText, {
+    String separator = '|||',
+  }) {
     final translatedTitles = translatedText.split(separator);
 
     return List.generate(originalItems.length, (i) {
@@ -426,15 +434,86 @@ class ProductDetailController extends GetxController {
         }
       }
     });
+
+    // APIs can use one generic category (for example "-1" / 商品规格)
+    // instead of a dedicated size category. Preserve its real option keys so
+    // the existing SKU and price-selection logic continues to work.
+    if (mapping.isEmpty && _singleGenericOptionGroup != null) {
+      final groupId = _singleGenericOptionGroup!['id']?.toString();
+      final items = groupId == null ? null : _optionsByCategory[groupId];
+      for (final item in items ?? const <Map<String, String>>[]) {
+        final value = item['value'];
+        final key = item['key'];
+        if (value != null && key != null) {
+          mapping[translateToThai(value)] = key;
+        }
+      }
+    }
+
     return mapping;
   }
 
   // Get props_list data
   Map<String, dynamic> get propsList {
     final props = itemData?['props_list'];
+
+    // Keep the original API shape untouched when props_list is already a map.
     if (props is Map<String, dynamic>) {
       return props;
     }
+    if (props is Map) {
+      return Map<String, dynamic>.fromEntries(props.entries.map((entry) => MapEntry(entry.key.toString(), entry.value)));
+    }
+
+    // Some product-detail responses return the same options as a list. Convert
+    // the common list shapes to the map shape consumed by the existing option,
+    // SKU, image and translation logic.
+    if (props is List) {
+      final normalized = <String, dynamic>{};
+      final categoryIds = <String, String>{};
+
+      String categoryIdFor(String label) {
+        final normalizedLabel = label.trim();
+        return categoryIds.putIfAbsent(normalizedLabel, () => categoryIds.length.toString());
+      }
+
+      for (var index = 0; index < props.length; index++) {
+        final option = props[index];
+
+        if (option is String && option.trim().isNotEmpty) {
+          final parts = option.split(':');
+          final label = parts.length > 1 ? parts.first.trim() : '';
+          final categoryId = categoryIdFor(label);
+          normalized['$categoryId:$index'] = option;
+          continue;
+        }
+
+        if (option is! Map) continue;
+
+        final entry = Map<String, dynamic>.fromEntries(option.entries.map((entry) => MapEntry(entry.key.toString(), entry.value)));
+
+        // Shape: [{"1627207:28341": "颜色分类:黑色"}, ...]
+        if (entry.length == 1 && entry.keys.first.contains(':')) {
+          normalized[entry.keys.first] = entry.values.first;
+          continue;
+        }
+
+        // Shape: [{"key": "1627207:28341", "value": "颜色分类:黑色"}, ...]
+        final explicitKey = entry['key'] ?? entry['properties'] ?? entry['property'] ?? entry['prop_key'];
+        final label = entry['label'] ?? entry['name'] ?? entry['prop_name'] ?? entry['property_name'] ?? '';
+        final value = entry['value'] ?? entry['option'] ?? entry['prop_value'] ?? entry['property_value'];
+
+        if (value == null) continue;
+
+        final key =
+            explicitKey != null && explicitKey.toString().contains(':') ? explicitKey.toString() : '${categoryIdFor(label.toString())}:$index';
+        final valueText = value.toString();
+        normalized[key] = label.toString().trim().isNotEmpty && !valueText.contains(':') ? '${label.toString().trim()}:$valueText' : valueText;
+      }
+
+      return normalized;
+    }
+
     return {};
   }
 
@@ -480,7 +559,9 @@ class ProductDetailController extends GetxController {
 
   /// เดาชื่อกลุ่มจากข้อมูลภายใน (ยืดหยุ่น ไม่ฟิก)
   String _inferCategoryLabel(String categoryId, List<Map<String, String>> items) {
-    final combined = (items.map((e) => e['raw']).whereType<String>().join(' | ') + ' ' + items.map((e) => e['value']).whereType<String>().join(' | ')).toLowerCase();
+    final combined =
+        (items.map((e) => e['raw']).whereType<String>().join(' | ') + ' ' + items.map((e) => e['value']).whereType<String>().join(' | '))
+            .toLowerCase();
 
     bool _hasAny(List<String> hints) => hints.any((h) => combined.contains(h.toLowerCase()));
 
@@ -517,6 +598,7 @@ class ProductDetailController extends GetxController {
     if (_hasAny(colorHints)) return 'สี';
     if (_hasAny(sizeHints)) return 'ขนาด/ไซส์';
     if (_hasAny(capacityHints)) return 'ความจุ/สเปก';
+    if (_hasAny(['商品规格', '商品規格', 'product specification'])) return 'ตัวเลือกสินค้า';
 
     // fallback: ตั้งชื่อทั่วไป + running number
     final idx = int.tryParse(categoryId);
@@ -532,6 +614,17 @@ class ProductDetailController extends GetxController {
     });
     return out;
   }
+
+  Map<String, dynamic>? get _singleGenericOptionGroup {
+    final groups = optionGroups;
+    if (groups.length != 1) return null;
+
+    final label = groups.first['label'];
+    if (label == 'สี' || label == 'ขนาด/ไซส์') return null;
+    return groups.first;
+  }
+
+  String get sizeOptionLabel => _singleGenericOptionGroup?['label']?.toString() ?? 'ขนาด/ไซส์';
 
   /// หา key จริง ("0:0", "1:2", ...) จาก (categoryId, optionValue ที่ผู้ใช้เลือก)
   String? getOptionKeyByCategoryAndValue(String categoryId, String optionValue) {
@@ -566,7 +659,10 @@ class ProductDetailController extends GetxController {
     if (matchLabel != null) return List<String>.from(matchLabel['options'] ?? const []);
 
     final one = optionGroups.firstWhereOrNull((g) => g['id'] == '1');
-    return one != null ? List<String>.from(one['options'] ?? const []) : <String>[];
+    if (one != null) return List<String>.from(one['options'] ?? const []);
+
+    final genericGroup = _singleGenericOptionGroup;
+    return genericGroup != null ? List<String>.from(genericGroup['options'] ?? const []) : <String>[];
   }
 
   // ------------------------- แปลข้อความ (จีน/อังกฤษ -> ไทย) -------------------------
@@ -577,7 +673,17 @@ class ProductDetailController extends GetxController {
     String result = text;
 
     // Replace common Chinese terms
-    final complexTranslations = {'衬衫': 'เสื้อเชิ้ต', '短裤': 'กางเกงขาสั้น', '长裤': 'กางเกงขายาว', '两件套': 'ชุด 2 ชิ้น', '三件套': 'ชุด 3 ชิ้น', '套装': 'ชุดเซ็ต', '【': ' (', '】': ')', '+': ' + '};
+    final complexTranslations = {
+      '衬衫': 'เสื้อเชิ้ต',
+      '短裤': 'กางเกงขาสั้น',
+      '长裤': 'กางเกงขายาว',
+      '两件套': 'ชุด 2 ชิ้น',
+      '三件套': 'ชุด 3 ชิ้น',
+      '套装': 'ชุดเซ็ต',
+      '【': ' (',
+      '】': ')',
+      '+': ' + ',
+    };
 
     complexTranslations.forEach((chinese, thai) {
       result = result.replaceAll(chinese, thai);
